@@ -69,7 +69,10 @@ module.exports = {
         let info = await ytdl.getInfo(selected.link)
         let data = ops.active.get(message.guild.id) || {};
 
-        if (!data.connection) data.connection = await message.member.voice.channel.join();
+        if (!data.connection) {
+            data.connection = await message.member.voice.channel.join();
+            message.guild.me.voice.setDeaf(true).catch(() => { return })
+        }
         if (!data.queue) data.queue = [];
         data.guildID = message.guild.id;
         data.queue.push({

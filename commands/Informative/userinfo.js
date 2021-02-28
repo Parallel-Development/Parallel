@@ -5,7 +5,7 @@ module.exports = {
     name: 'userinfo',
     description: 'Shows informated related to a user',
     usage: 'userinfo <user>',
-    aliases: ['memberinfo'],
+    aliases: ['memberinfo', 'whois'],
     async execute(client, message, args) {    
         var member;
 

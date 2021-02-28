@@ -121,7 +121,14 @@ client.on('voiceStateUpdate', (oldState, newState) => {
     if(oldState.member.id !== client.user.id) return
     if(newState.channel == null) {
         active.delete(oldState.guild.id)
+        return;
     }
+    if(!newState.member.selfDeaf) {
+        if(newState.channel == null) return;
+        newState.guild.me.voice.setDeaf(true).catch(() => { return })
+        return;
+    }
+
 })  
 
 client.on('guildMemberAdd', async(member) => {
@@ -383,7 +390,7 @@ client.on('message', async(message) => {
             })
             return;
         }
-        
+
         try {
             var { prefix } = prefixSetting
         } catch (err) {
