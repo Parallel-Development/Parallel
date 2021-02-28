@@ -362,7 +362,28 @@ client.on('message', async(message) => {
     if(!message.guild) return;
     if(!message.guild.me.hasPermission('SEND_MESSAGES', 'READ_MESSAGES')) return;
 
+    const check = await blacklistSchema.findOne({
+        user: message.author.id
+    }).catch(e => false)
+
     if(message.content.startsWith(`<@!${client.user.id}>`)) {
+        if (check) {
+            let { reason, date, sent } = check;
+
+            if (sent == 'true') return;
+
+            const blacklistEmbed = new Discord.MessageEmbed()
+                .setColor('#FF0000')
+                .setDescription(`Unfortunately, you are blacklisted from this bot. These means you may no longer use this bot\n\n> Blacklist reason: ${reason}\n> Blacklisted on: ${date}\n\nYou can submit an appeal [here](https://docs.google.com/document/d/15EwKPOPvlIO5iSZj-qQyBjmQ5X7yKHlijW9wCiDfffM/edit)`)
+                .setAuthor('You were blacklisted!', client.user.displayAvatarURL());
+            message.author.send(blacklistEmbed).catch(() => { return message.react('🛑') }).catch(() => { return })
+            await blacklistSchema.updateMany({
+                user: message.author.id,
+                sent: 'true'
+            })
+            return;
+        }
+        
         try {
             var { prefix } = prefixSetting
         } catch (err) {
@@ -415,13 +436,9 @@ client.on('message', async(message) => {
 
 
     // Blacklist Check
- 
-    const check = await blacklistSchema.findOne({
-        user: message.author.id
-    }).catch(e => false)
 
     if(check) {
-        const { reason, date, sent } = check;
+        let { reason, date, sent } = check;
 
         if(sent == 'true') return;
 
