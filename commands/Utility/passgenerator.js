@@ -23,8 +23,8 @@ module.exports = {
             return;
         } else {
             if(isNaN(amount)) return message.channel.send('Please specify a number')
-            if (amount > 1000) return message.channel.send('The max length is 1000 charecters')
-            if(amount < 1) return message.channel.send('The minimum length is 1 charecter')
+            if (amount > 1000) return message.channel.send('The max length is 1000 characters')
+            if(amount < 1) return message.channel.send('The minimum length is 1 character')
             for(var i = 0; i < amount; i++) {
                 password += chars.charAt(Math.floor(Math.random() * chars.length))
             }
