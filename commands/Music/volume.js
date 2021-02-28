@@ -17,7 +17,7 @@ module.exports = {
 
         const accessdenied = new Discord.MessageEmbed()
             .setColor("#FF0000")
-            .setDescription('<:error:815355171537289257> Because you are not the only one listening to music, you do not have permission to make this bot leave')
+            .setDescription('<:error:815355171537289257> Because you are not the only one listening to music, you do not have permission to change the volume')
         if(!message.member.voice.channel)  return message.channel.send(notinVC)
         if(!message.guild.me.voice.channel) return message.channel.send(botnotinVC)
         if (message.member.voice.channel.id !== message.guild.me.voice.channel.id) return message.channel.send(botnotinVC)
