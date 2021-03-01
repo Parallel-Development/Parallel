@@ -6,6 +6,7 @@ module.exports = {
     name: 'warn',
     description: 'Warns the specified member in the server',
     usage: 'warn <member> [reason]',
+    aliases: ['strike'],
     async execute(client, message, args) {
         const missingperms = new Discord.MessageEmbed()
             .setColor('#FF0000')
