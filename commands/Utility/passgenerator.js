@@ -29,10 +29,11 @@ module.exports = {
                 password += chars.charAt(Math.floor(Math.random() * chars.length))
             }
             const output = new Discord.MessageEmbed()
-            .setColor('RANDOM')
+            .setColor('#09fff2')
             .setAuthor('Password Generator', client.user.displayAvatarURL())
             .setDescription(`Randomly generated passwords are not saved anywhere, or shown to anyone else. **Only you can see this password**\n\n\`${password}\``)
             if(amount < 8) output.setFooter('Warning: this password is not secure, as it\'s very short')
+            if(amount > 30) output.setFooter('Warning: This password may be too long for some websites or applications')
             message.author.send(output)
             message.channel.send('Password sent in your DM\'s <a:check:800062978899836958>')
         }
