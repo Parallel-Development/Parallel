@@ -15,7 +15,7 @@ module.exports = {
                 password += chars.charAt(Math.floor(Math.random() * chars.length))
             }
             const output = new Discord.MessageEmbed()
-            .setColor('RANDOM')
+            .setColor('#09fff2')
             .setAuthor('Password Generator', client.user.displayAvatarURL())
             .setDescription(`Randomly generated passwords are not saved anywhere, or shown to anyone else. **Only you can see this password**\n\n\`${password}\``)
             message.author.send(output)
