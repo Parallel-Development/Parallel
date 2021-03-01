@@ -7,7 +7,7 @@ module.exports = {
     name: 'delwarn',
     description: 'Deletes a warning from a user',
     usage: 'delwarn <code>',
-    aliases: ['deleteinfraction', 'delinfraction'],
+    aliases: ['deleteinfraction', 'delinfraction', 'rmpunish', 'deletepunish', 'removepunish', 'rmwarn', 'removewarn'],
     async execute(client, message, args) {
         const accessdenied = new Discord.MessageEmbed()
             .setColor('#FF0000')
