@@ -71,7 +71,7 @@ module.exports = {
 
         if (!data.connection) {
             data.connection = await message.member.voice.channel.join();
-            message.guild.me.voice.setDeaf(true).catch(() => { return })
+            //message.guild.me.voice.setDeaf(true).catch(() => { return })
         }
         if (!data.queue) data.queue = [];
         data.guildID = message.guild.id;
