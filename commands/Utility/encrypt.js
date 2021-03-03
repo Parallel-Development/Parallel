@@ -1,7 +1,5 @@
 const Discord = require('discord.js')
-const CryptoJS = require('crypto-js')
 const { execute } = require('../Informative/serverinfo')
-const { invalid } = require('moment')
 
 module.exports = {
     name: 'encrypt',
@@ -36,7 +34,8 @@ module.exports = {
         if(text.length > 500) return message.channel.send(toolarge)
 
         if(type.toLowerCase() == 'base64') {
-            const base64output = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(text))
+            const base64outputraw = new Buffer.from(text)
+            const base64output = base64outputraw.toString('base64')
             if(base64output.length > 1024) return message.channel.send('Error: output was too long (above 1024 characters)')
             const base64outputembed = new Discord.MessageEmbed()
             .setColor('#09fff2')
