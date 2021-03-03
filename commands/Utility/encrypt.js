@@ -13,7 +13,7 @@ module.exports = {
 
         const invalidtype = new Discord.MessageEmbed()
         .setColor('#FF0000')
-        .setDescription('This is an invalid type! Please specify a valid type: \`base64\`, \`binary\`, or \`hex\`')
+        .setDescription('This is an invalid type! Please specify a valid type: \`base64\` or \`binary\`')
         .setAuthor('Error', client.user.displayAvatarURL())
 
         const notext = new Discord.MessageEmbed()
