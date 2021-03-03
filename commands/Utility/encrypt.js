@@ -8,7 +8,7 @@ module.exports = {
     async execute(client, message, args) {
         const missingargtype = new Discord.MessageEmbed()
         .setColor('#FF0000')
-        .setDescription('Please specify a type: \`base64\`, \`binary\`, or \`hex\`')
+        .setDescription('Please specify a type: \`base64\` or \`binary\`')
         .setAuthor('Error', client.user.displayAvatarURL())
 
         const invalidtype = new Discord.MessageEmbed()
