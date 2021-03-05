@@ -21,10 +21,9 @@ module.exports = {
         const settingslist = new Discord.MessageEmbed()
             .setColor('#09fff2')
             .addField('Prefix', 'Sets the server bot prefix for razor to whatever you input (prefix)')
-            .addField('Logs', 'Chooses a channel to log information to. If you pass \`none\`, logging will be disabled (logs)')
             .setAuthor('Settings', client.user.displayAvatarURL())
 
-        if (!option) return message.channel.send(settingslist)
+        if (!option || option.toLowerCase() !== 'prefix') return message.channel.send(settingslist)
 
         if (option === 'prefix') {
             if (!setting) return message.channel.send('Please specify a prefix')
