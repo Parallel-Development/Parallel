@@ -12,7 +12,7 @@ module.exports = {
             .setDescription('<:error:815355171537289257> You must be in a voice channel to run this command! Join a voice channel and try again')
 
         if (!message.member.voice.channel) return message.channel.send(notinVC)
-        if (message.guild.me.voice.channel) return message.channel.send('I am already in this voice channel!')
+        if (message.guild.me.voice.channel) return message.channel.send('I am already in a voice channel!')
 
         if (!message.guild.me.hasPermission('CONNECT')) {
             if (!message.guild.me.hasPermission('ADMINISTRATOR')) {
