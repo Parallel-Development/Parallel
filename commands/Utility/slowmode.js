@@ -56,27 +56,6 @@ module.exports = {
       guildid: message.guild.id,
       logs: 'none'
     })
-
-    if (!logCheckSlowmode) {
-
-      const slowmodeLog = new Discord.MessageEmbed()
-        .setColor('#000066')
-        .addField('Channel', message.channel, true)
-        .addField('Channel ID', message.channel.id, true)
-        .addField('Moderator', message.author, true)
-        .addField('Date', date, true)
-        .addField('Slowmode', `${time} seconds`, true)
-        .setAuthor('Slowmode Set', client.user.displayAvatarURL())
-
-      let webhooks = await message.guild.fetchWebhooks();
-      let webhook = await webhooks.first();
-
-      webhook.send({
-        username: 'Razor',
-        avatar: client.user.displayAvatarURL(),
-        embeds: [slowmodeLog]
-      })
-    }
   }
 }
   

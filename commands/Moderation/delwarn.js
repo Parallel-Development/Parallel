@@ -55,27 +55,5 @@ module.exports = {
         let date = new Date();
         date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
 
-        const logCheckDelWarn = await settingsSchema.findOne({
-            guildid: message.guild.id,
-            logs: 'none'
-        })
-
-        if (!logCheckDelWarn) {
-            const delWarnLog = new Discord.MessageEmbed()
-                .setColor('#000066')
-                .addField('Punishment ID', code)
-                .addField('Moderator', message.author, true)
-                .addField('Date', date, true)
-                .setAuthor('Warning Deleted', client.user.displayAvatarURL())
-
-            let webhooks = await message.guild.fetchWebhooks();
-            let webhook = await webhooks.first();
-
-            webhook.send({
-                username: 'Razor',
-                avatar: client.user.displayAvatarURL(),
-                embeds: [delWarnLog]
-            })
-        }
     }
 }

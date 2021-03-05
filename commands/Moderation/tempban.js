@@ -149,30 +149,5 @@ module.exports = {
             code: code,
             date: date
         }).save();
-
-        const logCheckTempBan = await settingsSchema.findOne({
-            guildid: message.guild.id,
-            logs: 'none'
-        })
-
-        if (!logCheckTempBan) {
-            const tempBanLog = new Discord.MessageEmbed()
-                .setColor('#000066')
-                .addField('User', member, true)
-                .addField('User ID', member.id, true)
-                .addField('Moderator', message.author, true)
-                .addField('Date', date, true)
-                .addField('Reason', reason, true)
-                .setAuthor('User Banned', client.user.displayAvatarURL())
-
-            let webhooks = await message.guild.fetchWebhooks();
-            let webhook = await webhooks.first();
-
-            webhook.send({
-                username: 'Razor',
-                avatar: client.user.displayAvatarURL(),
-                embeds: [tempBanLog]
-            })
-        }
     }
 }

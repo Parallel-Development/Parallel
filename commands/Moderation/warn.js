@@ -108,31 +108,5 @@ module.exports = {
 
         member.send(warndm).catch(() => { return })
 
-        const logCheckWarn = await settingsSchema.findOne({
-            guildid: message.guild.id,
-            logs: 'none'
-        })
-
-        if (!logCheckWarn) {
-            const warnLog = new Discord.MessageEmbed()
-                .setColor('#000066')
-                .addField('User', member, true)
-                .addField('User ID', member.id, true)
-                .addField('Moderator', message.author, true)
-                .addField('Date', date, true)
-                .addField('Reason', reason, true)
-                .addField('Punishment ID', code)
-                .setAuthor('User Warned', client.user.displayAvatarURL())
-
-            let webhooks = await message.guild.fetchWebhooks();
-            let webhook = await webhooks.first();
-
-            webhook.send({
-                username: 'Razor',
-                avatar: client.user.displayAvatarURL(),
-                embeds: [warnLog]
-            })
-        }
-
     }
 }

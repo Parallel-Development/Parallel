@@ -44,28 +44,6 @@ module.exports = {
 
                 message.channel.send(deletedAllServerWarnings)
 
-                const logCheckClearServerWarn = await settingsSchema.findOne({
-                    guildid: message.guild.id,
-                    logs: 'none'
-                })
-
-                if (!logCheckClearServerWarn) {
-                    const clearServerWarnLog = new Discord.MessageEmbed()
-                        .setColor('#000066')
-                        .addField('Moderator', message.author, true)
-                        .addField('Date', date, true)
-                        .setAuthor('All Server Warnings Cleared', client.user.displayAvatarURL())
-
-                    let webhooks = await message.guild.fetchWebhooks();
-                    let webhook = await webhooks.first();
-
-                    webhook.send({
-                        username: 'Razor',
-                        avatar: client.user.displayAvatarURL(),
-                        embeds: [clearServerWarnLog]
-                    })
-                }
-
                 collector.stop();
                 return;
             } else {
