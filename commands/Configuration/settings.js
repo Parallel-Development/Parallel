@@ -29,7 +29,7 @@ module.exports = {
         if (option === 'prefix') {
             if (!setting) return message.channel.send('Please specify a prefix')
 
-            await settingsSchema.updateMany({
+            await settingsSchema.updateOne({
                 guildid: message.guild.id,
                 prefix: setting
             })
@@ -38,8 +38,6 @@ module.exports = {
         }
 
         if (option === 'logs') {
-
-            return message.channel.send('Sorry, this action has been temporarily disabled due to issues with the command')
 
             const missingperms = new Discord.MessageEmbed()
                 .setColor('#FF0000')
@@ -86,7 +84,7 @@ module.exports = {
 
                 message.channel.send(logginghere)
 
-                await settingsSchema.updateMany({
+                await settingsSchema.updateOne({
                     guildid: message.guild.id,
                     logs: channel.id
                 })
