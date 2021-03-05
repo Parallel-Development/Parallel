@@ -30,7 +30,8 @@ module.exports = {
             if (!setting) return message.channel.send('Please specify a prefix')
 
             await settingsSchema.updateOne({
-                guildid: message.guild.id,
+                guildid: message.guild.id
+            }, {
                 prefix: setting
             })
 
@@ -86,6 +87,8 @@ module.exports = {
 
                 await settingsSchema.updateOne({
                     guildid: message.guild.id,
+                    
+                }, {
                     logs: channel.id
                 })
             } else {
@@ -110,8 +113,9 @@ module.exports = {
 
                 message.channel.send(logginghere)
 
-                await settingsSchema.updateMany({
-                    guildid: message.guild.id,
+                await settingsSchema.updateOne({
+                    guildid: message.guild.id
+                }, {
                     logs: channel.id
                 })
             }
