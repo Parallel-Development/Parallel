@@ -57,7 +57,7 @@ setInterval(async() => {
    if(expiredDate.length < 1) return;
    
    expiredDate.forEach(async(expiredDate) => {
-       let {type, userID, guildid, _id, code} = expiredDate
+       let {type, userID, guildid, _id} = expiredDate
        
        if(type === 'mute') {
             await punishmentSchema.deleteOne({
@@ -73,32 +73,14 @@ setInterval(async() => {
 
             member.roles.remove(role).catch(() =>  { return })
 
-            const autounmuteCheck = await settingsSchema.findOne({
-                guildid: guildid,
-                logs: 'none'
-            })
+            const unmutedm = new Discord.MessageEmbed()
+            .setColor('#09fff2')
+            .setAuthor(`You have been unmuted`, client.user.displayAvatarURL())
+            .setDescription(`You have been unmuted in **${member.guild.name}**`)
+            .addField('Reason', '[AUTO] Mute expired')
 
-            let date = new Date();
-            date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
+            member.send(unmutedm)
 
-            if(!autounmuteCheck) {
-                const unmuteLog = new Discord.MessageEmbed()
-                .setColor('#000066')
-                .addField('User', member, true)
-                .addField('User ID', member.id, true)
-                .addField('Moderator', client.user, true)
-                .addField('Date', date, true)
-                .setAuthor('User Unmuted', client.user.displayAvatarURL())
-
-                let webhooks = await member.guild.fetchWebhooks();
-                let webhook = await webhooks.first();
-
-                webhook.send({
-                    username: 'Razor',
-                    avatar: client.user.displayAvatarURL(),
-                    embeds: [unmuteLog]
-                })
-            }
         }
 
         if(type === 'ban') {

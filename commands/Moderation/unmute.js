@@ -33,6 +33,11 @@ module.exports = {
             .setDescription('I cannot unmute this user, because the muted role has the same or higher hierarchy as me')
             .setAuthor('Error', client.user.displayAvatarURL())
 
+        const notmuted = new Discord.MessageEmbed()
+            .setColor('#FF0000')
+            .setDescription('This user is not currently muted!')
+            .setAuthor('Error', client.user.displayAvatarURL())
+
         if (!message.member.hasPermission('MANAGE_MESSAGES')) return message.channel.send(accessdenied)
         if (!message.guild.me.hasPermission('MANAGE_ROLES')) return message.channel.send(missingperms);
 
@@ -57,17 +62,26 @@ module.exports = {
         if (!member) return message.reply('There was an error catching this member. Maybe try a ping?')
 
         var reason = args.splice(1).join(' ');
-        if (!reason) {
-            var reason = 'Unspecified'
-        }
+        if(!reason) var reason = 'Unspecified';
 
         const unmutemsg = new Discord.MessageEmbed()
             .setColor('#90fff2')
             .setDescription(`${member} has been unmuted <a:check:800062847974375424>`)
 
         const role = message.guild.roles.cache.find(x => x.name === 'Muted');
+        const isMuted = await punishmentSchema.findOne({
+            guildid: message.guild.id,
+            userID: member.id,
+            type: 'mute'
+        })
 
         if (!role) return message.channel.send(rolereq)
+        if(!member.roles.cache.get(role.id)) {
+            if(!isMuted) return message.channel.send(notmuted)
+        }
+        if(!isMuted) {
+            if(!member.roles.cache.get(role.id)) return message.channel.send(notmuted)
+        }
         if (message.guild.me.roles.highest.position <= role.position) return message.channel.send(roletoolower)
         member.roles.remove(role).catch(() => { return })
 
@@ -81,5 +95,12 @@ module.exports = {
         let date = new Date();
         date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
 
+        const unmutedm = new Discord.MessageEmbed()
+        unmutedm.setColor('#09fff2')
+        unmutedm.setDescription(`You have been unmuted in ${message.guild.name}`)
+        unmutedm.addField('Reason', reason)
+        unmutedm.setAuthor(`You have been unmuted`, client.user.displayAvatarURL())
+        member.send(unmutedm).catch(() => { return })
     }
+
 }
