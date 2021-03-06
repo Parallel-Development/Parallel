@@ -3,7 +3,7 @@ const util = require('util')
 const config = require('../../config.json')
 const settingsSchema = require('../../schemas/settings-schema')
 const { execute } = require('../Moderation/ban')
-const allowed = ['633776442366361601', '483375587176480768']
+const allowed = config.eval
 
 module.exports = {
     name: 'run',

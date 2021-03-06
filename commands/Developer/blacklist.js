@@ -1,4 +1,5 @@
 const Discord = require('discord.js')
+const config = require('../../config.json')
 const { execute } = require('../Moderation/ban')
 
 module.exports = {
@@ -8,7 +9,7 @@ module.exports = {
     aliases: ['fuck'],
     async execute(client, message, args) {
         const blacklistSchema = require(`../../schemas/blacklist-schema`)
-        const allowed = ['633776442366361601', '483375587176480768']
+        const allowed = config.developers
 
         if (!allowed.includes(message.author.id)) return message.react('🔒')
 

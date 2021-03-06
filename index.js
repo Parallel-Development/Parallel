@@ -251,26 +251,6 @@ client.on('message', async(message) => {
         if(!message.content.startsWith(prefix) ) return;
     }
 
-
-    // Blacklist Check
-
-    if(check) {
-        let { reason, date, sent } = check;
-
-        if(sent == 'true') return;
-
-        const blacklistEmbed = new Discord.MessageEmbed()
-        .setColor('#FF0000')
-        .setDescription(`Unfortunately, you are blacklisted from this bot. These means you may no longer use this bot\n\n> Blacklist reason: ${reason}\n> Blacklisted on: ${date}\n\nYou can submit an appeal [here](https://docs.google.com/document/d/15EwKPOPvlIO5iSZj-qQyBjmQ5X7yKHlijW9wCiDfffM/edit)`)
-        .setAuthor('You were blacklisted!', client.user.displayAvatarURL());
-        message.author.send(blacklistEmbed).catch(() => { return message.react('🛑') }).catch(() => { return })
-        await blacklistSchema.updateMany({
-            user: message.author.id,
-            sent: 'true'
-        })
-        return;
-    }
-
     // Run
 
     let ops = {
@@ -288,9 +268,31 @@ client.on('message', async(message) => {
 
     const command = client.commands.get(cmd) || client.commands.get(client.aliases.get(cmd));
     if(!command) return;
+
+    // Blacklist Check
+
+    if (check) {
+        let { reason, date, sent } = check;
+
+        if (sent == 'true') return;
+
+        const blacklistEmbed = new Discord.MessageEmbed()
+            .setColor('#FF0000')
+            .setDescription(`Unfortunately, you are blacklisted from this bot. These means you may no longer use this bot\n\n> Blacklist reason: ${reason}\n> Blacklisted on: ${date}\n\nYou can submit an appeal [here](https://docs.google.com/document/d/15EwKPOPvlIO5iSZj-qQyBjmQ5X7yKHlijW9wCiDfffM/edit)`)
+            .setAuthor('You were blacklisted!', client.user.displayAvatarURL());
+        message.author.send(blacklistEmbed).catch(() => { return message.react('🛑') }).catch(() => { return })
+        await blacklistSchema.updateMany({
+            user: message.author.id,
+            sent: 'true'
+        })
+        return;
+    }
+
+    // Cooldown Check
+
     if (talkedRecently.has(message.author.id)) return message.react('🕑')
     else {
-        const cooldownWhitelist = ['633776442366361601', '483375587176480768']
+        const cooldownWhitelist = config.developers
         if (!cooldownWhitelist.includes(message.author.id)) {
             talkedRecently.add(message.author.id);
             setTimeout(() => {
@@ -298,6 +300,7 @@ client.on('message', async(message) => {
             }, 1500)
         }
     }
+    
     try {
         command.execute(client, message, args, ops)
     } catch {

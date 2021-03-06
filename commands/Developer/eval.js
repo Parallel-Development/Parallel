@@ -1,6 +1,7 @@
 const Discord = require('discord.js')
+const config = require('../../config.json')
 const util = require('util')
-const allowed = ['633776442366361601', '483375587176480768']
+const allowed = config.eval
 
 module.exports = {
     name: 'eval',
