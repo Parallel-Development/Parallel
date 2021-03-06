@@ -182,8 +182,13 @@ client.on('message', async(message) => {
     const check = await blacklistSchema.findOne({
         user: message.author.id
     }).catch(e => false)
+    
+    const prefixSetting = await settingsSchema.findOne({
+        guildid: message.guild.id
+    }).catch(e => false)
 
     if(message.content.startsWith(`<@!${client.user.id}>`)) {
+        
         if (check) {
             let { reason, date, sent } = check;
 
@@ -230,11 +235,6 @@ client.on('message', async(message) => {
     }
 
     // Automatic setup if there are no settings for the server found
-    
-
-    const prefixSetting = await settingsSchema.findOne({
-        guildid: message.guild.id
-    }).catch(e => false) 
     
     if(!prefixSetting) {
         await new settingsSchema({
