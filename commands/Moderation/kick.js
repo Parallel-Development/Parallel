@@ -97,7 +97,7 @@ module.exports = {
 
         member.send(kickmsgdm).catch(() => { return })
 
-        message.guild.members.kick(member, { reason: true }).catch(() => {
+        member.kick({reason: reason}).catch(() => {
             return message.channel.send(roletoolower)
         })
 
