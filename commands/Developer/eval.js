@@ -9,7 +9,7 @@ module.exports = {
     usage: 'eval <code>',
     aliases: ['e', 'ev', 'evaluate'],
     async execute(client, message, args) {
-        if (!allowed.includes(message.author.id)) return message.react('🔒')
+        if (!allowed.includes(message.author.id)) return;
 
         let code = args.join(' ');
         if (!code) return message.channel.send('Please input something to run')

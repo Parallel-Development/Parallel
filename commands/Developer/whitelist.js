@@ -12,7 +12,7 @@ module.exports = {
         const blacklistSchema = require(`../../schemas/blacklist-schema`)
 
         let allowed = config.developers;
-        if(!allowed.includes(message.author.id)) return message.react('🔒')
+        if(!allowed.includes(message.author.id)) return;
 
         const id = args[0];
 

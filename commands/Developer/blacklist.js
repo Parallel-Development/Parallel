@@ -11,7 +11,7 @@ module.exports = {
         const blacklistSchema = require(`../../schemas/blacklist-schema`)
         const allowed = config.developers
 
-        if (!allowed.includes(message.author.id)) return message.react('🔒')
+        if (!allowed.includes(message.author.id)) return;
 
         if (!args[0]) return message.channel.send('Please specify an ID!')
         if (isNaN(args[0])) return message.channel.send('Blacklist is ID based. Please input an ID only')
