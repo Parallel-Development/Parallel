@@ -35,9 +35,32 @@ module.exports = {
         try {
             member = await message.guild.members.cache.find(member => member.id == parseInt(getUserFromMention(args[0])));
         } catch (err) {
-            member = null
+            try {
+                const userWarnings = await warningSchema.find({
+                    guildid: message.guild.id,
+                    userid: member.id
+                })
+                    .catch(e => false)
+                const user = client.users.cache.find(args[0])
+                if(userWarnings.length > 0) {
+                    let userWarningList = new Discord.MessageEmbed()
+                    .setColor('#09fff2')
+                    .setAuthor(`Warnings for ${user.tag}`, client.user.displayAvatarURL())
+                    userWarningList.forEach((warnings) => {
+                        let { type, reason, code, date } = userWarnings
+                        warningsList.addField(`${type}`, `ID: \`${code}\`\nReason: \`${reason}\`\nDate: \`${date}\``, false)
+                    })
+                    message.channel.send(userWarningList)
+                } else {
+                    return message.channel.send('This user doesn\'t have any warnings!')
+                }
+                
+            } catch {
+                member = null
+            }
+
         }
-        if (!member) return message.reply('There was an error catching this member. Maybe try a ping?')
+        if (!member) return message.reply('No such member found on this server, no such user cached')
     
         const warnings = await warningSchema.find({
             guildid: message.guild.id,
@@ -50,7 +73,7 @@ module.exports = {
             warningsList.setAuthor(`Warnings for ${member.user.tag}`, client.user.displayAvatarURL())
             warningsList.setColor('#09fff2')
             warnings.forEach((warnings) => {
-                const {type, reason, code, date} = warnings
+                let {type, reason, code, date} = warnings
                 warningsList.addField(`${type}`, `ID: \`${code}\`\nReason: \`${reason}\`\nDate: \`${date}\``, false)
             })
     
