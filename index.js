@@ -78,9 +78,8 @@ setInterval(async() => {
             const unmutedm = new Discord.MessageEmbed()
                 .setColor('#09fff2')
                 .setAuthor('You were unmuted', client.user.displayAvatarURL())
-                .setTitle(`You were unmuted in ${message.guild.name}`)
+                .setTitle(`You were unmuted in ${server.name}`)
                 .addField('Reason', '[AUTO] Mute expired')
-                .setFooter(moment(message.createdtimeStamp).format('MMMM Do YYYY'))
 
             member.send(unmutedm)
 
