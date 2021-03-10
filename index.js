@@ -10,6 +10,8 @@ client.commands = new Discord.Collection()
 client.aliases = new Discord.Collection()
 client.categories = fs.readdirSync('./commands')
 
+const cmdSchema = require('./schemas/cmd-schema')
+
 const { connect } = require('mongoose');
 const blacklistSchema = require('./schemas/blacklist-schema');
 const settingsSchema = require('./schemas/settings-schema');
@@ -169,6 +171,10 @@ client.on('message', async(message) => {
         guildid: message.guild.id
     }).catch(e => false)
 
+    const cmdSetting = await cmdSchema.findOne({
+        guildid: message.guild.id
+    }).catch(e => false)
+
     if(message.content.startsWith(`<@!${client.user.id}>`)) {
         
         if (check) {
@@ -217,6 +223,14 @@ client.on('message', async(message) => {
     }
 
     // Automatic setup if there are no settings for the server found
+
+    if(!cmdSetting) {
+        await new cmdSchema({
+            guildname: message.guild.name,
+            guildid: message.guild.id,
+            locked: new Array()
+        }).save();
+    }
     
     if(!prefixSetting) {
         await new settingsSchema({
@@ -268,6 +282,17 @@ client.on('message', async(message) => {
             sent: 'true'
         })
         return;
+    }
+
+    const commandsLockedInChannel = await cmdSchema.findOne({
+        guildid: message.guild.id,
+        tags: ["locked", message.channel.id]
+    })
+    if(commandsLockedInChannel) {
+        const whitelistedCommandFolders = ['Moderation', 'Configuration', 'Developer']
+        if(!whitelistedCommandFolders.includes(command.categories.name)) {
+            return message.reply('that command is disabled in this channel!')
+        }
     }
 
     // Cooldown Check
