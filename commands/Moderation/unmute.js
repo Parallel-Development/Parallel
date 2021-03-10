@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 const punishmentSchema = require('../../schemas/punishment-schema')
 const settingsSchema = require('../../schemas/settings-schema');
+const moment = require('moment')
 
 module.exports = {
     name: 'unmute',
@@ -96,10 +97,11 @@ module.exports = {
         date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
 
         const unmutedm = new Discord.MessageEmbed()
-        unmutedm.setColor('#09fff2')
-        unmutedm.setDescription(`You have been unmuted in ${message.guild.name}`)
-        unmutedm.addField('Reason', reason)
-        unmutedm.setAuthor(`You have been unmuted`, client.user.displayAvatarURL())
+        .setColor('#09fff2')
+        .setAuthor('You were unmuted', client.user.displayAvatarURL())
+        .setTitle(`You were unmuted in ${message.guild.name}`)
+        .addField('Reason', reason)
+        .setFooter(moment(message.createdtimeStamp).format('MMMM Do YYYY'))
         member.send(unmutedm).catch(() => { return })
     }
 
