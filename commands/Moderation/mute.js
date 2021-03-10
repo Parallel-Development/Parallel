@@ -144,17 +144,6 @@ module.exports = {
             expires: 'never'
         }).save();
 
-        const mutemsgdm = new Discord.MessageEmbed()
-            .setColor('#FF0000')
-            .addField('Date', date, true)
-            .addField('Reason', reason, true)
-            .addField('Duration', 'permanent', true)
-            .setAuthor(`You have been muted in ${message.guild.name}!`, client.user.displayAvatarURL())
-
-        member.send(mutemsgdm).catch(() => { return })
-
-        if (!silent) message.channel.send(mutemsg);
-
         var code = '';
         var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
         var charsLength = chars.length
@@ -162,6 +151,19 @@ module.exports = {
             code += chars.charAt(Math.floor(Math.random() * charsLength))
         }
 
+
+        const mutemsgdm = new Discord.MessageEmbed()
+            .setColor('#FF0000')
+            .setAuthor('Razor Moderation', client.user.displayAvatarURL())
+            .setTitle(`You were muted in ${message.guild.name}`)
+            .addField('Reason', reason, true)
+            .addField('Expires', 'never', true)
+            .addField('Date', date)
+            .setFooter(`Punishment ID: ${code}`)
+
+        member.send(mutemsgdm).catch(() => { return })
+
+        if (!silent) message.channel.send(mutemsg);
         await new warningSchema({
             guildname: message.guild.name,
             guildid: message.guild.id,

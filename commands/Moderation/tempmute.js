@@ -130,12 +130,21 @@ module.exports = {
         let date = new Date();
         date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
 
+        var code = '';
+        var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+        var charsLength = chars.length
+        for (var i = 0; i < 15; i++) {
+            code += chars.charAt(Math.floor(Math.random() * charsLength))
+        }
+
         const tempmutemsgdm = new Discord.MessageEmbed()
             .setColor('#FF0000')
-            .addField('Date', date, true)
+            .setAuthor('Razor Moderation', client.user.displayAvatarURL())
+            .setTitle(`You were muted in ${message.guild.name}`)
             .addField('Reason', reason, true)
-            .addField('Duration', rawTime, true)
-            .setAuthor(`You were muted in ${message.member.guild}!`, client.user.displayAvatarURL())
+            .addField('Expires', rawTime, true)
+            .addField('Date', date)
+            .setFooter(`Punishment ID: ${code}`)
 
         const check = await punishmentSchema.findOne({
             guildid: message.guild.id,
@@ -175,13 +184,6 @@ module.exports = {
         member.send(tempmutemsgdm).catch(() => { return })
 
         if (!silent) message.channel.send(mutemsg);
-
-        var code = '';
-        var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-        var charsLength = chars.length
-        for (var i = 0; i < 15; i++) {
-            code += chars.charAt(Math.floor(Math.random() * charsLength))
-        }
 
         await new warningSchema({
             guildname: message.guild.name,

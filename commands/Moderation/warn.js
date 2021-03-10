@@ -99,10 +99,11 @@ module.exports = {
 
         const warndm = new Discord.MessageEmbed()
             .setColor('#FF0000')
-            .addField('Date', date, true)
-            .addField('Reason', reason, true)
-            .addField('Punishment ID', code)
-            .setAuthor(`You were warned in ${message.guild.name}!`, client.user.displayAvatarURL())
+            .setAuthor('Razor Moderation', client.user.displayAvatarURL())
+            .setTitle(`You were warned in ${message.guild.name}`)
+            .addField('Reason', reason)
+            .addField('Date', date)
+            .setFooter(`Punishment ID: ${code}`)
 
         if (!silent) message.channel.send(userwarned)
 

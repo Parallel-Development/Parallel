@@ -89,11 +89,20 @@ module.exports = {
             .setColor('#09fff2')
             .setDescription(`${member} has been kicked <a:check:800062847974375424>`)
 
+        var code = '';
+        var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+        var charsLength = chars.length
+        for (var i = 0; i < 15; i++) {
+            code += chars.charAt(Math.floor(Math.random() * charsLength))
+        }
+
         const kickmsgdm = new Discord.MessageEmbed()
             .setColor('#FF0000')
-            .addField('Date', date, true)
+            .setAuthor('Razor Moderation', client.user.displayAvatarURL())
+            .setTitle(`You were kicked from ${message.guild.name}`)
             .addField('Reason', reason, true)
-            .setAuthor(`You were kicked from ${message.guild.name}!`, client.user.displayAvatarURL())
+            .addField('Date', date)
+            .setFooter(`Punishment ID: ${code}`)
 
         member.send(kickmsgdm).catch(() => { return })
 
@@ -102,13 +111,6 @@ module.exports = {
         })
 
         if (!silent) message.channel.send(kickmsg)
-
-        var code = '';
-        var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-        var charsLength = chars.length
-        for (var i = 0; i < 15; i++) {
-            code += chars.charAt(Math.floor(Math.random() * charsLength))
-        }
 
         await new warningSchema({
             guildname: message.guild.name,

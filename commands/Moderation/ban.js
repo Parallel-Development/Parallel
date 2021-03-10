@@ -85,25 +85,28 @@ module.exports = {
         let date = new Date();
         date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
 
-        const banmsgdm = new Discord.MessageEmbed()
-            .setColor('#FF0000')
-            .addField('Date', date, true)
-            .addField('Reason', reason, true)
-            .addField('Duration', 'permanent', true)
-            .setAuthor(`You were banned from ${message.guild.name}!`, client.user.displayAvatarURL())
-
-        member.send(banmsgdm).catch(() => { return })
-
-        message.guild.members.ban(member, { reason: reason })
-
-        if (!silent) message.channel.send(banmsg);
-
         var code = '';
         var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
         var charsLength = chars.length
         for (var i = 0; i < 15; i++) {
             code += chars.charAt(Math.floor(Math.random() * charsLength))
         }
+
+        const banmsgdm = new Discord.MessageEmbed()
+        .setColor('#FF0000')
+        .setAuthor('Razor Moderation', client.user.displayAvatarURL())
+        .setTitle(`You were banned from ${message.guild.name}`)
+        .addField('Reason', reason, true)
+        .addField('Expires', 'never', true)
+        .addField('Date', date)
+        .setFooter(`Punishment ID: ${code}`)
+        message.channel.send(banmsgdm)
+
+        member.send(banmsgdm).catch(() => { return })
+
+        message.guild.members.ban(member, { reason: reason })
+
+        if (!silent) message.channel.send(banmsg);
 
         await new warningSchema({
             guildname: message.guild.name,

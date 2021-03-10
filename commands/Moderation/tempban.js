@@ -3,6 +3,7 @@ const ms = require('ms');
 const punishmentSchema = require('../../schemas/punishment-schema');
 const warningSchema = require('../../schemas/warning-schema')
 const settingsSchema = require('../../schemas/settings-schema');
+const { duration } = require('moment');
 
 module.exports = {
     name: 'tempban',
@@ -110,12 +111,21 @@ module.exports = {
         let date = new Date();
         date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
 
+        var code = '';
+        var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+        var charsLength = chars.length
+        for (var i = 0; i < 15; i++) {
+            code += chars.charAt(Math.floor(Math.random() * charsLength))
+        }
+
         const tempbanmsgdm = new Discord.MessageEmbed()
             .setColor('#FF0000')
-            .addField('Date', date, true)
+            .setAuthor('Razor Moderation', client.user.displayAvatarURL())
+            .setTitle(`You were banned from ${message.guild.name}`)
             .addField('Reason', reason, true)
-            .addField('Duration', rawTime, true)
-            .setAuthor(`You were banned from ${message.guild.name}!`, client.user.displayAvatarURL())
+            .addField('Expires', rawTime, true)
+            .addField('Date', date)
+            .setFooter(`Punishment ID: ${code}`)
 
         await new punishmentSchema({
             guildname: message.guild.name,
@@ -132,13 +142,6 @@ module.exports = {
         message.guild.members.ban(member, { reason: reason })
 
         if (!silent) message.channel.send(banmsg).catch(() => { return })
-
-        var code = '';
-        var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-        var charsLength = chars.length
-        for (var i = 0; i < 15; i++) {
-            code += chars.charAt(Math.floor(Math.random() * charsLength))
-        }
 
         await new warningSchema({
             guildname: message.guild.name,
