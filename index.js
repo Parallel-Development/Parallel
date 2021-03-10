@@ -76,10 +76,11 @@ setInterval(async() => {
             member.roles.remove(role).catch(() =>  { return })
 
             const unmutedm = new Discord.MessageEmbed()
-            .setColor('#09fff2')
-            .setAuthor(`You have been unmuted`, client.user.displayAvatarURL())
-            .setDescription(`You have been unmuted in **${member.guild.name}**`)
-            .addField('Reason', '[AUTO] Mute expired')
+                .setColor('#09fff2')
+                .setAuthor('You were unmuted', client.user.displayAvatarURL())
+                .setTitle(`You were unmuted in ${message.guild.name}`)
+                .addField('Reason', '[AUTO] Mute expired')
+                .setFooter(moment(message.createdtimeStamp).format('MMMM Do YYYY'))
 
             member.send(unmutedm)
 
