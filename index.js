@@ -223,14 +223,6 @@ client.on('message', async(message) => {
     }
 
     // Automatic setup if there are no settings for the server found
-
-    if(!cmdSetting) {
-        await new cmdSchema({
-            guildname: message.guild.name,
-            guildid: message.guild.id,
-            locked: new Array()
-        }).save();
-    }
     
     if(!prefixSetting) {
         await new settingsSchema({
