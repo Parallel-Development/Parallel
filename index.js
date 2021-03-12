@@ -10,8 +10,6 @@ client.commands = new Discord.Collection()
 client.aliases = new Discord.Collection()
 client.categories = fs.readdirSync('./commands')
 
-const cmdSchema = require('./schemas/cmd-schema')
-
 const { connect } = require('mongoose');
 const blacklistSchema = require('./schemas/blacklist-schema');
 const settingsSchema = require('./schemas/settings-schema');
@@ -276,10 +274,6 @@ client.on('message', async(message) => {
         return;
     }
 
-    const commandsLockedInChannel = await cmdSchema.findOne({
-        guildid: message.guild.id,
-        tags: ["locked", message.channel.id]
-    })
     if(commandsLockedInChannel) {
         const whitelistedCommandFolders = ['Moderation', 'Configuration', 'Developer']
         if(!whitelistedCommandFolders.includes(command.categories.name)) {
