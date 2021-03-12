@@ -169,10 +169,6 @@ client.on('message', async(message) => {
         guildid: message.guild.id
     }).catch(e => false)
 
-    const cmdSetting = await cmdSchema.findOne({
-        guildid: message.guild.id
-    }).catch(e => false)
-
     if(message.content.startsWith(`<@!${client.user.id}>`)) {
         
         if (check) {
