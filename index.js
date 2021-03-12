@@ -270,13 +270,6 @@ client.on('message', async(message) => {
         return;
     }
 
-    if(commandsLockedInChannel) {
-        const whitelistedCommandFolders = ['Moderation', 'Configuration', 'Developer']
-        if(!whitelistedCommandFolders.includes(command.categories.name)) {
-            return message.reply('that command is disabled in this channel!')
-        }
-    }
-
     // Cooldown Check
 
     if (talkedRecently.has(message.author.id)) return message.react('🕑')
