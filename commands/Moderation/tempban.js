@@ -104,10 +104,6 @@ module.exports = {
         if (reason.startsWith('-s')) silent = true;
         if (silent) message.delete()
 
-        const banmsg = new Discord.MessageEmbed()
-            .setColor('#09fff2')
-            .setDescription(`${member} has been temporarily banned <a:check:800062847974375424>`)
-
         let date = new Date();
         date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
 
@@ -117,6 +113,10 @@ module.exports = {
         for (var i = 0; i < 15; i++) {
             code += chars.charAt(Math.floor(Math.random() * charsLength))
         }
+
+        const banmsg = new Discord.MessageEmbed()
+            .setColor('#09fff2')
+            .setDescription(`${member} has been temporarily banned with ID \`${code}\`<a:check:800062847974375424>`)
 
         const tempbanmsgdm = new Discord.MessageEmbed()
             .setColor('#FF0000')

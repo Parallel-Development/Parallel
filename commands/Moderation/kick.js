@@ -85,10 +85,6 @@ module.exports = {
         let date = new Date();
         date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
 
-        const kickmsg = new Discord.MessageEmbed()
-            .setColor('#09fff2')
-            .setDescription(`${member} has been kicked <a:check:800062847974375424>`)
-
         var code = '';
         var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
         var charsLength = chars.length
@@ -105,6 +101,10 @@ module.exports = {
             .setFooter(`Punishment ID: ${code}`)
 
         member.send(kickmsgdm).catch(() => { return })
+
+        const kickmsg = new Discord.MessageEmbed()
+            .setColor('#09fff2')
+            .setDescription(`${member} has been kicked with ID \`${code}\` <a:check:800062847974375424>`)
 
         member.kick(reason).catch(() => {
             return message.channel.send(roletoolower)

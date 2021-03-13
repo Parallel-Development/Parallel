@@ -123,10 +123,6 @@ module.exports = {
             }
         }
 
-        const mutemsg = new Discord.MessageEmbed()
-            .setColor('#09fff2')
-            .setDescription(`${member} has been muted <a:check:800062847974375424>`)
-
         let date = new Date();
         date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
 
@@ -136,6 +132,10 @@ module.exports = {
         for (var i = 0; i < 15; i++) {
             code += chars.charAt(Math.floor(Math.random() * charsLength))
         }
+
+        const mutemsg = new Discord.MessageEmbed()
+            .setColor('#09fff2')
+            .setDescription(`${member} has been muted with ID \`${code}\`<a:check:800062847974375424>`)
 
         const tempmutemsgdm = new Discord.MessageEmbed()
             .setColor('#FF0000')
