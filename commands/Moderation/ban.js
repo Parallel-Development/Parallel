@@ -100,7 +100,6 @@ module.exports = {
         .addField('Expires', 'never', true)
         .addField('Date', date)
         .setFooter(`Punishment ID: ${code}`)
-        message.channel.send(banmsg)
 
         member.send(banmsgdm).catch(() => { return })
 
