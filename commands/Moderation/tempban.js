@@ -116,7 +116,7 @@ module.exports = {
 
         const banmsg = new Discord.MessageEmbed()
             .setColor('#09fff2')
-            .setDescription(`${member} has been temporarily banned with ID \`${code}\`<a:check:800062847974375424>`)
+            .setDescription(`${member} has been temporarily banned with ID \`${code}\` <a:check:800062847974375424>`)
 
         const tempbanmsgdm = new Discord.MessageEmbed()
             .setColor('#FF0000')
