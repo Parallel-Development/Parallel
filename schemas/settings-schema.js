@@ -10,6 +10,7 @@ const settingsSchema = mongoose.Schema({
     guildid: reqString,
     prefix: reqString,
     logs: reqString,
+    baninfo: reqString
 })
 
 module.exports = mongoose.model('settings', settingsSchema)

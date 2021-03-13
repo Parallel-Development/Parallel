@@ -223,7 +223,8 @@ client.on('message', async(message) => {
             guildname: message.guild.name,
             guildid: message.guild.id,
             prefix: 'r!',
-            logs: 'none'
+            logs: 'none',
+            baninfo: 'none'
         }).save()
 
         if(!message.content.startsWith('r!')) return;
@@ -231,6 +232,14 @@ client.on('message', async(message) => {
     }  else {
         let { prefix } = prefixSetting
         if(!message.content.startsWith(prefix) ) return;
+    }
+
+    if(prefixSetting) {
+        let { guildname, guildid, prefix, logs, baninfo } = prefixSetting
+        if(!guildname) await settingsSchema.updateOne({ guildid: message.guild.id, guildname: message.guild.name})
+        if (!prefix) await settingsSchema.updateOne({ guildid: message.guild.id, prefix: 'r!' })
+        if (!logs) await settingsSchema.updateOne({ guildid: message.guild.id, logs: 'none' })
+        if (!baninfo) await settingsSchema.updateOne({ guildid: message.guild.id, baninfo: 'none' })
     }
 
     // Run

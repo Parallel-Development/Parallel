@@ -92,6 +92,10 @@ module.exports = {
             .setColor('#09fff2')
             .setDescription(`${member} has been banned with ID \`${code}\` <a:check:800062847974375424>`)
 
+        const baninfoCheck = await settingsSchema.findOne({
+            guildid: message.guild.id,
+        })
+
         const banmsgdm = new Discord.MessageEmbed()
         .setColor('#FF0000')
         .setAuthor('Razor Moderation', client.user.displayAvatarURL())
@@ -99,7 +103,9 @@ module.exports = {
         .addField('Reason', reason, true)
         .addField('Expires', 'never', true)
         .addField('Date', date)
-        .setFooter(`Punishment ID: ${code}`)
+        let { baninfo } = baninfoCheck
+        if(baninfo !== 'none') banmsgdm.addField('Additional Information', baninfo, true)
+        banmsgdm.setFooter(`Punishment ID: ${code}`)
 
         member.send(banmsgdm).catch(() => { return })
 
