@@ -52,7 +52,7 @@ module.exports = {
             warningsList.setColor('#09fff2')
             warnings.forEach((warnings) => {
                 let {type, reason, code, date} = warnings
-                warningsList.addField(`${type}`, `ID: \`${code}\`\nReason: \`${reason}\`\nDate: \`${date}\``, false)
+                warningsList.addField(`${type}`, `ID: \`${code}\`\nReason: \`${reason}\`\nDate: \`${date}\`\n`, false)
             })
     
             message.channel.send(warningsList).catch(() => { return })

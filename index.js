@@ -48,7 +48,7 @@ setInterval(async() => {
 
     // Check for expired punishments
 
-    var currentDate = new Date().getTime()
+    let currentDate = new Date().getTime()
     const expiredDate = await punishmentSchema.find({
         expires: { $lte: currentDate },
     })
@@ -232,14 +232,6 @@ client.on('message', async(message) => {
     }  else {
         let { prefix } = prefixSetting
         if(!message.content.startsWith(prefix) ) return;
-    }
-
-    if(prefixSetting) {
-        let { guildname, guildid, prefix, logs, baninfo } = prefixSetting
-        if(!guildname) await settingsSchema.updateOne({ guildid: message.guild.id, guildname: message.guild.name})
-        if (!prefix) await settingsSchema.updateOne({ guildid: message.guild.id, prefix: 'r!' })
-        if (!logs) await settingsSchema.updateOne({ guildid: message.guild.id, logs: 'none' })
-        if (!baninfo) await settingsSchema.updateOne({ guildid: message.guild.id, baninfo: 'none' })
     }
 
     // Run

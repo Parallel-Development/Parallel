@@ -1,11 +1,12 @@
 const Discord = require('discord.js')
 const warningSchema = require('../../schemas/warning-schema')
 const settingsSchema = require('../../schemas/settings-schema');
+const ms = require('ms')
 
 module.exports = {
     name: 'warn',
     description: 'Warns the specified member in the server',
-    usage: 'warn <member> [reason]',
+    usage: 'warn <member> [reason] | warn <member> [time] {reason}',
     aliases: ['strike'],
     async execute(client, message, args) {
         const missingperms = new Discord.MessageEmbed()
@@ -66,10 +67,9 @@ module.exports = {
             if (member.roles.highest.position >= message.guild.me.roles.highest.position) return message.channel.send(roletoolower)
         }
 
-
-        var reason = args.splice(1).join(' ')
+        let reason = args.splice(1).join(' ')
         let silent = false;
-        if (!reason) var reason = 'Unspecified'
+        if (!reason)  reason = 'Unspecified'
         if (reason.startsWith('-s')) silent = true;
         if (silent) message.delete()
 
@@ -102,7 +102,7 @@ module.exports = {
             .setAuthor('Razor Moderation', client.user.displayAvatarURL())
             .setTitle(`You were warned in ${message.guild.name}`)
             .addField('Reason', reason)
-            .addField('Date', date)
+            .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
 
         if (!silent) message.channel.send(userwarned)
