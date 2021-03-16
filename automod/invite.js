@@ -262,7 +262,7 @@ exports.run = async(client, message) => {
         message.channel.send(usertempbanned)
     }
 
-    if (fast == 'tempmute') {
+    if (invites == 'tempmute') {
         deleteMessages();
         let date = new Date();
         date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
