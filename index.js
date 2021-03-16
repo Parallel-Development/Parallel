@@ -119,6 +119,7 @@ client.on('guildMemberAdd', async(member) => {
 
     const joinCheck = await punishmentSchema.findOne({
         userID: member.id,
+        guildid: message.guild.id,
         type: 'mute'
     })
 
