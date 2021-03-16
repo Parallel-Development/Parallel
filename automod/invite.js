@@ -4,7 +4,7 @@ const warningSchema = require('../schemas/warning-schema')
 const punishmentSchema = require('../schemas/punishment-schema')
 
 exports.run = async(client, message) => {
-    //if(message.member.hasPermission('MANAGE_MESSAGES')) return;
+    if(message.member.hasPermission('MANAGE_MESSAGES')) return;
 
     const automodGrab = await automodSchema.findOne({
         guildid: message.guild.id
