@@ -11,4 +11,3 @@ module.exports = {
         m.edit(`Pong! Websocket: \`${client.ws.ping}ms\` | Latency: \`${Date.now() - m.createdTimestamp}ms\``)
     }
 }
-

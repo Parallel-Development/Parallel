@@ -47,12 +47,14 @@ module.exports = {
         .catch(e => false)
     
         if(warnings.length > 0) {
+            let count = 0;
             let warningsList = new Discord.MessageEmbed()
             warningsList.setAuthor(`Warnings for ${member.user.tag}`, client.user.displayAvatarURL())
             warningsList.setColor('#09fff2')
             warnings.forEach((warnings) => {
+                count++
                 let {type, reason, code, date} = warnings
-                warningsList.addField(`${type}`, `ID: \`${code}\`\nReason: \`${reason}\`\nDate: \`${date}\`\n`, false)
+                warningsList.addField(`${count}: ${type}`, `ID: \`${code}\`\nReason: \`${reason}\`\nDate: \`${date}\`\n`)
             })
     
             message.channel.send(warningsList).catch(() => { return })

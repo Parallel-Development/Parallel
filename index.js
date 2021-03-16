@@ -15,7 +15,9 @@ const blacklistSchema = require('./schemas/blacklist-schema');
 const settingsSchema = require('./schemas/settings-schema');
 const punishmentSchema = require('./schemas/punishment-schema');
 const warningSchema = require('./schemas/warning-schema');
+const automodSchema = require('./schemas/automod-schema')
 let talkedRecently = new Set();
+const userMap = new Map()
 
 const active = new Map()
 
@@ -155,6 +157,14 @@ for (const folder of commandFolders) {
     }
 }
 
+/*
+'id' => {
+    msgCount: 0,
+    lastMessage: 'message',
+    timer: fn()
+}
+*/
+
 client.on('message', async(message) => {
 
     if(message.author.bot) return;
@@ -166,6 +176,10 @@ client.on('message', async(message) => {
     }).catch(e => false)
     
     const prefixSetting = await settingsSchema.findOne({
+        guildid: message.guild.id
+    }).catch(e => false)
+
+    const automodCheck = await automodSchema.findOne({
         guildid: message.guild.id
     }).catch(e => false)
 
@@ -196,27 +210,50 @@ client.on('message', async(message) => {
         message.channel.send(`Hello! My current prefix is \`${prefix}\`. For a list of commands, run ${prefix}help`)
     }
 
-    // RazorDev
+    // Automod; spam check
 
-    if(message.guild.id == '747624284008218787') {
-        let razorDevBlacklisted = ['nigg', 'niger', 'fagg', 'horny', 'cumming', 'ejaculat', 'penis', 'vagina', 'suck my dick', 'slut', 'pussy', 'blowjob', 'sexslave', 'sex slave']
-        let razorDevFoundInText = false;
-        for(i in razorDevBlacklisted) {
-            if(message.content.toLowerCase().includes(razorDevBlacklisted[i])) razorDevFoundInText = true;
+    if(userMap.has(message.author.id)) {
+        const userData = userMap.get(message.author.id)
+        let msgCount = userData.msgCount
+        if(parseInt(msgCount) === 6) {
+            var file = require('./automod/spam')
+            file.run(client, message)
+            userMap.delete(message.author.id)
+        } else {
+            msgCount++
+            userData.msgCount = msgCount;
+            userMap.set(message.author.id, userData)
         }
-        if(razorDevFoundInText) {
-            message.delete();
-            message.reply('you are not allowed to use this language on this server! You have been timed out for 10 seconds')
-            let mutedRole = message.guild.roles.cache.find(r => r.name == 'Muted')
-            if(!mutedRole) return;
-            message.member.roles.add(mutedRole)
-            setTimeout(async => {
-                message.member.roles.remove(mutedRole)
-            }, 10000)
-        }
+    } else {
+        userMap.set(message.author.id, {
+            msgCount: 1,
+            lastMessage: message,
+            timer: null
+        })
+        setTimeout(() => {
+            userMap.delete(message.author.id)
+        }, 7000)
     }
 
     // Automatic setup if there are no settings for the server found
+
+    if(!automodCheck) {
+        await new automodSchema({
+            guildname: message.guild.name,
+            guildid: message.guild.id,
+            filter: 'disabled',
+            filterList: [],
+            fast: 'disabled',
+            walltext: 'disabled',
+            flood: 'disabled',
+            links: 'disabled',
+            invites: 'disabled',
+            massMention: 'disabled',
+            emojiSpam: 'disabled',
+            duration: '0',
+            rawDuration: '0'
+        }).save();
+    }
     
     if(!prefixSetting) {
         await new settingsSchema({
@@ -231,7 +268,7 @@ client.on('message', async(message) => {
 
     }  else {
         let { prefix } = prefixSetting
-        if(!message.content.startsWith(prefix) ) return;
+        if(!message.content.startsWith(prefix)) return;
     }
 
     // Run
