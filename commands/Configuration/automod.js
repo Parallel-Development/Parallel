@@ -310,6 +310,19 @@ module.exports = {
                         .setAuthor('Automod Update', client.user.displayAvatarURL())
                         message.channel.send(success)
                         break;
+                    case 'disable':
+                        await automodSchema.updateOne({
+                            guildid: message.guild.id
+                        },
+                            {
+                                fast: 'disbaled'
+                            })
+                        var success = new Discord.MessageEmbed()
+                            .setColor('#09fff2')
+                            .setDescription(`Fast message spam will no longer be filtered <a:check:800062847974375424>`)
+                            .setAuthor('Automod Update', client.user.displayAvatarURL())
+                        message.channel.send(success)
+                        break;
                 }
                 break;
             case 'walltext':
@@ -478,6 +491,19 @@ module.exports = {
                         var success = new Discord.MessageEmbed()
                         .setColor('#09fff2')
                         .setDescription(`Users who send discord invites will now get muted for \`${rawTime}\` <a:check:800062847974375424>`)
+                        .setAuthor('Automod Update', client.user.displayAvatarURL())
+                        message.channel.send(success)
+                        break;
+                    case 'disable':
+                        await automodSchema.updateOne({
+                            guildid: message.guild.id
+                        },
+                        {
+                            invites: 'disbaled'
+                        })
+                        var success = new Discord.MessageEmbed()
+                        .setColor('#09fff2')
+                        .setDescription(`Invites will no longer be filtered <a:check:800062847974375424>`)
                         .setAuthor('Automod Update', client.user.displayAvatarURL())
                         message.channel.send(success)
                         break;
