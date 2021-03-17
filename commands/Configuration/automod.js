@@ -315,7 +315,9 @@ module.exports = {
                             guildid: message.guild.id
                         },
                             {
-                                fast: 'disbaled'
+                                fast: 'disbaled',
+                                duration: 0,
+                                rawDuration: 0
                             })
                         var success = new Discord.MessageEmbed()
                             .setColor('#09fff2')
@@ -499,7 +501,9 @@ module.exports = {
                             guildid: message.guild.id
                         },
                         {
-                            invites: 'disbaled'
+                            invites: 'disbaled',
+                            duration: 0,
+                            rawDuration: 0
                         })
                         var success = new Discord.MessageEmbed()
                         .setColor('#09fff2')
