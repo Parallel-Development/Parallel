@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 const { i } = require('mathjs');
 const config = require('../../config.json')
+const moment = require('moment')
 const { execute } = require('../Moderation/ban');
 
 module.exports = {
@@ -25,6 +26,9 @@ module.exports = {
             return;
         }
 
+        let reason = args[1];
+        if(!reason) reason = 'Unspecified'
+
 
         await blacklistSchema.deleteOne({
             user: id
@@ -35,6 +39,26 @@ module.exports = {
             .setDescription(`ID \`${id}\` has been removed from the blacklist <a:check:800062847974375424>`)
 
         message.channel.send(whitelisted)
+
+        const server = client.guilds.cache.get('747624284008218787')
+        const member = server.members.cache.get(args[0])
+        const role = server.roles.cache.find(r => r.name == 'Blacklisted')
+
+        // Log the whitelist
+
+        const channel = server.channels.cache.get('821901486984265797')
+        const whitelistEmbed = new Discord.MessageEmbed()
+        .setColor('#ffa500')
+        .setAuthor('User Whitelisted', client.user.displayAvatarURL())
+        .addField('User ID', args[0], true)
+        .addField('Reason', reason, true)
+        .addField('Blacklist Manager ID', message.author.id)
+        .addField('Date (GMT)', moment(new Date().getTime()).format('dddd, MMMM Do YYYY, h:mm:ss, a'), true)
+        channel.send(whitelistEmbed)
+
+        // Removes the role "Blacklisted" from the user in the developmental server
+
+        member.roles.remove(role).catch(() => { return })
     }
 }
     

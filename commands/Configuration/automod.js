@@ -135,7 +135,7 @@ module.exports = {
                     case 'add':
                         var word = args.splice(2).join(' ')
                         if(!word) return message.channel.send('Please specify a word to add to the filter!')
-                        const wordAlreadyInFilter = await automodSchema.findOne({
+                        const wordAlreadyInFilter = await automodSchema.find({
                             guildid: message.guild.id,
                             filterList: {
                                 $elemMatch: {
@@ -143,9 +143,10 @@ module.exports = {
                                 }
                             }
                         })
+                        console.log(wordAlreadyInFilter)
 
                         if(wordAlreadyInFilter) return message.channel.send('This word is already in the filter! Run `automod filter view` to view the current list of filtered words')
-                        await automodSchema.findOneAndUpdate({
+                        await automodSchema.updateOne({
                             guildid: message.guild.id
                         },
                         {
@@ -156,7 +157,7 @@ module.exports = {
                     case 'remove':
                         var word = args.splice(2).join(' ')
                         if(!word) return message.channel.send('Please specify a word to remove from the filter')
-                        const wordNotInFilter = await automodSchema.findOne({
+                        const wordNotInFilter = await automodSchema.find({
                             guildid: message.guild.id,
                             filterList: {
                                 $elemMatch: {
@@ -165,7 +166,7 @@ module.exports = {
                             }
                         })
                         if(!wordNotInFilter) return message.channel.send(`Could not find the word \`${word}\` on the filter. Run \`automod filter view\` to view the current list of filtered words`)
-                        await automodSchema.findOneAndUpdate({
+                        await automodSchema.updateOne({
                             guildid: message.guild.id
                         },
                         {
@@ -174,7 +175,7 @@ module.exports = {
                         message.channel.send(`\`${word}\` has been removed from the filter!`)
                         break;
                     case 'removeall':
-                        await automodSchema.findOneAndUpdate({
+                        await automodSchema.updateOne({
                             guildid: message.guild.id
                         },
                         {

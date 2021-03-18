@@ -119,7 +119,7 @@ client.on('guildMemberAdd', async(member) => {
 
     const joinCheck = await punishmentSchema.findOne({
         userID: member.id,
-        guildid: message.guild.id,
+        guildid: member.guild.id,
         type: 'mute'
     })
 
@@ -127,6 +127,16 @@ client.on('guildMemberAdd', async(member) => {
         let role = member.guild.roles.cache.find(r => r.name === 'Muted')
         if(!role) return;
         member.roles.add(role).catch(() => { return })
+    }
+
+    const blacklistCheck = await blacklistSchema.findOne({
+        user: member.id
+    })
+    if(blacklistCheck) {
+        if (member.guild.id == '747624284008218787') {
+            const blacklistRole = member.guild.roles.cache.find(r => r.name == 'Blacklisted')
+            member.roles.add(blacklistRole)
+        }
     }
 
 }) 
