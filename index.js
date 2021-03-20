@@ -220,7 +220,7 @@ client.on('message', async(message) => {
         })
         setTimeout(() => {
             userMap.delete(message.author.id)
-        }, 7000)
+        }, 10000)
     }
 
     // Invites
