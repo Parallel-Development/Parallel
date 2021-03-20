@@ -28,7 +28,6 @@ module.exports = {
             'tostring',
             'schema',
             'console',
-            ''
         ]
 
         let foundInText = false
