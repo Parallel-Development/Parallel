@@ -20,7 +20,7 @@ module.exports = {
         // Filter
         const filter = [
             'replace',
-            'client.token',
+            'token',
             'config',
             'process',
             'fs.unlink',
