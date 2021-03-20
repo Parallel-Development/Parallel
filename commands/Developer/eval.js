@@ -28,6 +28,7 @@ module.exports = {
             'tostring',
             'schema',
             'console',
+            'throw'
         ]
         let foundInText = false
         for(i in filter) {
