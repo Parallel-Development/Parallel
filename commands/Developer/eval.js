@@ -29,12 +29,11 @@ module.exports = {
             'schema',
             'console',
         ]
-
         let foundInText = false
-        for(i of filter) {
+        for(i in filter) {
             if(code.toLowerCase().includes(filter[i])) foundInText = true
         }
-        if(foundInText && !dev.includes(message.author.id)) return message.channel.send('Error: refused to execute this command because it may be potentially abusive. If you think this is an error, contact a developer')
+        if (foundInText && !dev.includes(message.author.id)) return message.channel.send('Error: refused to execute this command because it may be potentially abusive. If you think this is an error, contact a developer')
 
         try {
             output = await eval(code)
