@@ -18,7 +18,6 @@ const warningSchema = require('./schemas/warning-schema');
 const automodSchema = require('./schemas/automod-schema')
 let talkedRecently = new Set();
 const userMap = new Map()
-
 const active = new Map()
 
 console.log('Attempting to start the bot...')
@@ -176,9 +175,12 @@ for (const folder of commandFolders) {
 }
 */
 
+let easterEggCooldown = false;
+
 client.on('message', async(message) => {
 
     if(message.author.bot) return;
+
     if(!message.guild) return;
     if(!message.guild.me.hasPermission('SEND_MESSAGES', 'READ_MESSAGES')) return;
 
@@ -307,6 +309,8 @@ client.on('message', async(message) => {
         var cmd = args.shift().slice(prefix.length).toLowerCase();
     }
 
+    const cooldown = new Set()
+
     const command = client.commands.get(cmd) || client.commands.get(client.aliases.get(cmd));
     if(!command) return;
 
@@ -343,7 +347,7 @@ client.on('message', async(message) => {
     }
     
     try {
-        command.execute(client, message, args, ops)
+        command.execute(client, message, args, ops, cooldown)
     } catch {
         return
     }

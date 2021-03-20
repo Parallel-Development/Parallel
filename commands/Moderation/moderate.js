@@ -30,7 +30,7 @@ module.exports = {
     
         if (member) {
             if (message.guild.me.roles.highest.position <= member.roles.highest.position) {
-                message.channel.send('I cannot moderate this guy\'s nickname because his highest role has the same or higher hoist than mine')
+                message.channel.send('I cannot moderate this user\'s nickname, as their highest role is hoisted above me')
                 return;
             }
         }

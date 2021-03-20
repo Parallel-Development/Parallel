@@ -2,6 +2,7 @@ const Discord = require('discord.js')
 const config = require('../../config.json')
 const util = require('util')
 const allowed = config.eval
+const dev = config.developers
 
 module.exports = {
     name: 'eval',
@@ -15,6 +16,26 @@ module.exports = {
         if (!code) return message.channel.send('Please input something to run')
 
         let output;
+
+        // Filter
+        const filter = [
+            'replace',
+            'client.token',
+            'config',
+            'process',
+            'fs.unlink',
+            'buffer',
+            'tostring',
+            'schema',
+            'console',
+            ''
+        ]
+
+        let foundInText = false
+        for(i of filter) {
+            if(code.toLowerCase().includes(filter[i])) foundInText = true
+        }
+        if(foundInText && !dev.includes(message.author.id)) return message.channel.send('Error: refused to execute this command because it may be potentially abusive. If you think this is an error, contact a developer')
 
         try {
             output = await eval(code)
