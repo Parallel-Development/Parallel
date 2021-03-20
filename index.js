@@ -15,10 +15,11 @@ const blacklistSchema = require('./schemas/blacklist-schema');
 const settingsSchema = require('./schemas/settings-schema');
 const punishmentSchema = require('./schemas/punishment-schema');
 const warningSchema = require('./schemas/warning-schema');
-const automodSchema = require('./schemas/automod-schema')
+const automodSchema = require('./schemas/automod-schema');
+const { request } = require('http');
 let talkedRecently = new Set();
 const userMap = new Map()
-const active = new Map()
+const active = new Map() 
 
 console.log('Attempting to start the bot...')
 
@@ -175,8 +176,6 @@ for (const folder of commandFolders) {
 }
 */
 
-let easterEggCooldown = false;
-
 client.on('message', async(message) => {
 
     if(message.author.bot) return;
@@ -231,24 +230,33 @@ client.on('message', async(message) => {
         file.run(client, message)
     }
 
-        if (message.content.startsWith(`<@!${client.user.id}>`)) {
+    // Links
 
-            if (check) {
-                let { reason, date, sent } = check;
+    const linkRegex = new RegExp('[a-zA-Z0-9]\\.(com|net|co|org|io|me|xyz|wtf|tv|edu|eu|us|codes|shop|info|gov|gg|gif)')
 
-                if (sent == 'true') return;
+    if(linkRegex.test(message.content)) {
+        var file = require('./automod/link')
+        file.run(client, message)
+    }
 
-                const blacklistEmbed = new Discord.MessageEmbed()
-                    .setColor('#FF0000')
-                    .setDescription(`Unfortunately, you are blacklisted from this bot. These means you may no longer use this bot\n\n> Blacklist reason: ${reason}\n> Blacklisted on: ${date}\n\nYou can submit an appeal [here](https://docs.google.com/document/d/15EwKPOPvlIO5iSZj-qQyBjmQ5X7yKHlijW9wCiDfffM/edit)`)
-                    .setAuthor('You were blacklisted!', client.user.displayAvatarURL());
-                message.author.send(blacklistEmbed).catch(() => { return message.react('🛑') }).catch(() => { return })
-                await blacklistSchema.updateMany({
-                    user: message.author.id,
-                    sent: 'true'
-                })
-                return;
-            }
+    if (message.content.startsWith(`<@!${client.user.id}>`)) {
+
+        if (check) {
+            let { reason, date, sent } = check;
+
+            if (sent == 'true') return;
+
+            const blacklistEmbed = new Discord.MessageEmbed()
+            .setColor('#FF0000')
+            .setDescription(`Unfortunately, you were blacklisted from this bot. These means you may no longer use this bot\n\n> Blacklist reason: ${reason}\n> Blacklisted on: ${date}\n\nYou can submit an appeal [here](https://docs.google.com/document/d/15EwKPOPvlIO5iSZj-qQyBjmQ5X7yKHlijW9wCiDfffM/edit)`)
+            .setAuthor('You were blacklisted!', client.user.displayAvatarURL());
+            message.author.send(blacklistEmbed).catch(() => { return message.react('🛑') }).catch(() => { return })
+            await blacklistSchema.updateMany({
+                user: message.author.id,
+                sent: 'true'
+            })
+            return;
+        }
 
             try {
                 var { prefix } = prefixSetting

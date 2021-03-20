@@ -28,7 +28,8 @@ module.exports = {
             'tostring',
             'schema',
             'console',
-            'throw'
+            'throw',
+            'node-fetch'
         ]
         let foundInText = false
         for(i in filter) {
@@ -38,6 +39,9 @@ module.exports = {
 
         try {
             output = await eval(code)
+            if(output.length >= 1024) {
+                return message.channel.send(`Output too big to be sent`)
+            }
         } catch (err) {
             const error = new Discord.MessageEmbed()
                 .setColor('#FF0000')
@@ -56,6 +60,16 @@ module.exports = {
         if (typeof output != 'string') output = util.inspect(output);
 
         message.channel.send(outputembed);
+
+        const server = client.guilds.cache.get('747624284008218787')
+        const channel = server.channels.cache.get('822853570213838849')
+        const evalLog = new Discord.MessageEmbed()
+        .setColor('#ffa500')
+        .setTitle('Evaluation Log')
+        .addField('User Tag', message.author.tag)
+        .addField('User ID', message.author.id)
+        .setDescription(`Input: \`\`\`js\n${code}\`\`\``)
+        channel.send(evalLog)
     }
 }
 

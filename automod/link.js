@@ -3,20 +3,20 @@ const automodSchema = require('../schemas/automod-schema')
 const warningSchema = require('../schemas/warning-schema')
 const punishmentSchema = require('../schemas/punishment-schema')
 
-exports.run = async(client, message) => {
-    if(message.member.hasPermission('MANAGE_MESSAGES')) return;
+exports.run = async (client, message) => {
+    //if (message.member.hasPermission('MANAGE_MESSAGES')) return;
 
     const automodGrab = await automodSchema.findOne({
         guildid: message.guild.id
     })
-    let { invites, duration, rawDuration } = automodGrab
+    let { links, duration, rawDuration } = automodGrab
 
-    if (invites == 'delete') {
+    if (links == 'delete') {
         message.delete()
-        message.reply('invites are not allowed!')
+        message.reply('links are not allowed!')
     }
 
-    if (invites == 'warn') {
+    if (links == 'warn') {
         message.delete()
         let date = new Date();
         date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
@@ -33,7 +33,7 @@ exports.run = async(client, message) => {
             guildid: message.guild.id,
             type: 'Warn',
             userid: message.member.id,
-            reason: '[AUTO] Sending Invites',
+            reason: '[AUTO] Sending Links',
             code: code,
             date: date
         }).save();
@@ -46,7 +46,7 @@ exports.run = async(client, message) => {
             .setColor('#FF0000')
             .setAuthor('Razor Moderation', client.user.displayAvatarURL())
             .setTitle(`You were warned in ${message.guild.name}`)
-            .addField('Reason', '[AUTO] Sending Invites')
+            .addField('Reason', '[AUTO] Sending Links')
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
 
@@ -55,7 +55,7 @@ exports.run = async(client, message) => {
         message.member.send(warndm).catch(() => { return })
     }
 
-    if (invites == 'kick') {
+    if (links == 'kick') {
         message.delete()
         let date = new Date();
         date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
@@ -75,20 +75,20 @@ exports.run = async(client, message) => {
             .setColor('#FF0000')
             .setAuthor('Razor Moderation', client.user.displayAvatarURL())
             .setTitle(`You were kicked from ${message.guild.name}`)
-            .addField('Reason', '[AUTO] Sending Invites')
+            .addField('Reason', '[AUTO] Sending Links')
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
 
         message.member.send(kickdm).catch(() => { return })
 
-        message.member.kick('[AUTO] Sending Invites').catch(() => { return })
+        message.member.kick('[AUTO] Sending Links').catch(() => { return })
 
         await new warningSchema({
             guildname: message.guild.name,
             guildid: message.guild.id,
             type: 'Kick',
             userid: message.member.id,
-            reason: '[AUTO] Sending Invites',
+            reason: '[AUTO] Sending Links',
             code: code,
             date: date
         }).save();
@@ -96,7 +96,7 @@ exports.run = async(client, message) => {
         message.channel.send(userkicked)
     }
 
-    if (invites == 'mute') {
+    if (links == 'mute') {
         deleteMessages();
         let date = new Date();
         date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
@@ -113,7 +113,7 @@ exports.run = async(client, message) => {
             guildid: message.guild.id,
             type: 'Mute',
             userid: message.member.id,
-            reason: '[AUTO] Sending Invites',
+            reason: '[AUTO] Sending Links',
             code: code,
             date: date
         }).save();
@@ -124,7 +124,7 @@ exports.run = async(client, message) => {
             type: 'mute',
             userID: message.member.id,
             duration: 'permanent',
-            reason: '[AUTO] Sending Invites',
+            reason: '[AUTO] Sending Links',
             expires: 'never'
         }).save();
 
@@ -160,7 +160,7 @@ exports.run = async(client, message) => {
             .setColor('#FF0000')
             .setAuthor('Razor Moderation', client.user.displayAvatarURL())
             .setTitle(`You were muted in ${message.guild.name}`)
-            .addField('Reason', '[AUTO] Sending Invites')
+            .addField('Reason', '[AUTO] Sending Links')
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
 
@@ -169,7 +169,7 @@ exports.run = async(client, message) => {
         message.channel.send(usermuted)
     }
 
-    if (invites == 'ban') {
+    if (links == 'ban') {
         deleteMessages();
         let date = new Date();
         date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
@@ -186,7 +186,7 @@ exports.run = async(client, message) => {
             guildid: message.guild.id,
             type: 'Ban',
             userid: message.member.id,
-            reason: '[AUTO] Sending Invites',
+            reason: '[AUTO] Sending Links',
             code: code,
             date: date
         }).save();
@@ -199,18 +199,18 @@ exports.run = async(client, message) => {
             .setColor('#FF0000')
             .setAuthor('Razor Moderation', client.user.displayAvatarURL())
             .setTitle(`You were banned from ${message.guild.name}`)
-            .addField('Reason', '[AUTO] Sending Invites')
+            .addField('Reason', '[AUTO] Sending Links')
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
 
         message.member.send(bandm).catch(() => { return })
 
-        message.guild.members.ban(message.member, { reason: '[AUTO] Sending Invites' }).catch(() => { return })
+        message.guild.members.ban(message.member, { reason: '[AUTO] Sending Links' }).catch(() => { return })
 
         message.channel.send(userbanned)
     }
 
-    if (invites == 'tempban') {
+    if (links == 'tempban') {
         deleteMessages();
         let date = new Date();
         date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
@@ -230,21 +230,21 @@ exports.run = async(client, message) => {
             .setColor('#FF0000')
             .setAuthor('Razor Moderation', client.user.displayAvatarURL())
             .setTitle(`You were banned from ${message.guild.name}`)
-            .addField('Reason', '[AUTO] Sending Invites')
+            .addField('Reason', '[AUTO] Sending Links')
             .addField('Expires', rawDuration, true)
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
 
         message.member.send(tempbandm).catch(() => { return })
 
-        message.guild.members.ban(message.member, { reason: '[AUTO] Sending Invites' }).catch(() => { return })
+        message.guild.members.ban(message.member, { reason: '[AUTO] Sending Links' }).catch(() => { return })
 
         await new warningSchema({
             guildname: message.guild.name,
             guildid: message.guild.id,
             type: 'Tempban',
             userid: message.member.id,
-            reason: '[AUTO] Sending Invites',
+            reason: '[AUTO] Sending Links',
             code: code,
             date: date
         }).save();
@@ -255,14 +255,14 @@ exports.run = async(client, message) => {
             type: 'ban',
             userID: message.member.id,
             duration: duration,
-            reason: '[AUTO] Sending Invites',
+            reason: '[AUTO] Sending Links',
             expires: new Date().getTime() + parseInt(duration)
         }).save();
 
         message.channel.send(usertempbanned)
     }
 
-    if (invites == 'tempmute') {
+    if (links == 'tempmute') {
         deleteMessages();
         let date = new Date();
         date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
@@ -282,7 +282,7 @@ exports.run = async(client, message) => {
             .setColor('#FF0000')
             .setAuthor('Razor Moderation', client.user.displayAvatarURL())
             .setTitle(`You were muted in ${message.guild.name}`)
-            .addField('Reason', '[AUTO] Sending Invites')
+            .addField('Reason', '[AUTO] Sending Links')
             .addField('Expires', rawDuration, true)
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
@@ -316,7 +316,7 @@ exports.run = async(client, message) => {
             guildid: message.guild.id,
             type: 'Tempmute',
             userid: message.member.id,
-            reason: '[AUTO] Sending Invites',
+            reason: '[AUTO] Sending Links',
             code: code,
             date: date
         }).save();
@@ -327,7 +327,7 @@ exports.run = async(client, message) => {
             type: 'mute',
             userID: message.member.id,
             duration: duration,
-            reason: '[AUTO] Sending Invites',
+            reason: '[AUTO] Sending Links',
             expires: new Date().getTime() + parseInt(duration)
         }).save();
 

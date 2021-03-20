@@ -15,6 +15,9 @@ module.exports = {
             guildid: message.guild.id
         })
 
+        const server = client.guilds.cache.get('747624284008218787')
+        const channel = server.channels.cache.get('822853570213838849')
+
         let count = 0;
 
         const sessionstarted = new Discord.MessageEmbed()
@@ -24,7 +27,7 @@ module.exports = {
         if (!allowed.includes(message.author.id)) return;
         message.channel.send(sessionstarted)
         let filter = m => m.author.id === message.author.id
-        let collector = new Discord.MessageCollector(message.channel, filter, { time: 300000 })
+        let collector = new Discord.MessageCollector(message.channel, filter, { time: 1800000 })
         collector.on('collect', (message, col) => {
             if (message.content.startsWith('.end')) {
                 collector.stop();
@@ -44,6 +47,26 @@ module.exports = {
             count++
             let output;
 
+            // Filter
+            const filter = [
+                'replace',
+                'token',
+                'config',
+                'process',
+                'fs.unlink',
+                'buffer',
+                'tostring',
+                'schema',
+                'console',
+                'throw',
+                'node-fetch'
+            ]
+            let foundInText = false
+            for (i in filter) {
+                if (message.content.toLowerCase().includes(filter[i])) foundInText = true
+            }
+            if (foundInText && !dev.includes(message.author.id)) return message.channel.send('Error: refused to execute this command because it may be potentially abusive. If you think this is an error, contact a developer')
+
             try {
                 output = eval(message.content)
                 const outputEmbed = new Discord.MessageEmbed()
@@ -60,6 +83,15 @@ module.exports = {
                     .setFooter(`Type: error`)
                 return message.channel.send(error)
             }
+
+            var evalLog = new Discord.MessageEmbed()
+            .setColor('#ffa500')
+            .setTitle('Evaluation Log')
+            .addField('User Tag', message.author.tag)
+            .addField('User ID', message.author.id)
+            .setDescription(`Input: \`\`\`js\n${message.content}\`\`\``)
+            .setFooter('This was ran inside a session')
+            channel.send(evalLog)
 
 
         })
