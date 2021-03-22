@@ -197,6 +197,14 @@ client.on('message', async(message) => {
 
     // Automod
 
+    // Walltext 
+
+    const walltextCheck = message.content.split('\n')
+    if(walltextCheck.length >= 6) {
+        var file = require('./automod/walltext')
+        file.run(client, message)
+    }
+
     // Spam
 
     if(userMap.has(message.author.id)) {

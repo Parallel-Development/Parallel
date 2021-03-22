@@ -25,7 +25,7 @@ module.exports = {
         .addField('flood', 'Toggle the punishment for is someone sends long spammy messages, flooding the chat', true)
         .addField('links', 'Toggle the punishment for if someone sends links in chat', true)
         .addField('invites', 'Toggle the punishment for if someone sends a Discord invite', true)
-        .addField('massmetion', 'Toggle the punishment for if someone mentions 6 or more people', true)
+        .addField('massmention', 'Toggle the punishment for if someone mentions 6 or more people', true)
         .setAuthor(`Auto-moderation for ${message.guild.name}`, client.user.displayAvatarURL())
 
         const option = args[0]
@@ -331,18 +331,132 @@ module.exports = {
             case 'walltext':
                 switch (toggle) {
                     case 'delete':
+                        await automodSchema.updateOne({
+                            guildid: message.guild.id
+                        },
+                            {
+                                walltext: 'delete',
+                                duration: 0,
+                                rawDuration: 0
+                            })
+                        var success = new Discord.MessageEmbed()
+                            .setColor('#09fff2')
+                            .setDescription('Users who send walltext will get their spam deleted <a:check:800062847974375424>')
+                            .setAuthor('Automod Update', client.user.displayAvatarURL())
+                        message.channel.send(success)
                         break;
                     case 'warn':
+                        await automodSchema.updateOne({
+                            guildid: message.guild.id
+                        },
+                            {
+                                walltext: 'warn',
+                                duration: 0,
+                                rawDuration: 0
+                            })
+                        var success = new Discord.MessageEmbed()
+                            .setColor('#09fff2')
+                            .setDescription('Users who send walltext will get warned <a:check:800062847974375424>')
+                            .setAuthor('Automod Update', client.user.displayAvatarURL())
+                        message.channel.send(success)
                         break;
                     case 'kick':
+                        await automodSchema.updateOne({
+                            guildid: message.guild.id
+                        },
+                            {
+                                walltext: 'kick',
+                                duration: 0,
+                                rawDuration: 0
+                            })
+                        var success = new Discord.MessageEmbed()
+                            .setColor('#09fff2')
+                            .setDescription('Users who send walltext will get kicked <a:check:800062847974375424>')
+                            .setAuthor('Automod Update', client.user.displayAvatarURL())
+                        message.channel.send(success)
                         break
                     case 'mute':
+                        await automodSchema.updateOne({
+                            guildid: message.guild.id
+                        },
+                            {
+                                walltext: 'mute',
+                                duration: 0,
+                                rawDuration: 0
+                            })
+                        var success = new Discord.MessageEmbed()
+                            .setColor('#09fff2')
+                            .setDescription('Users who send walltext will get muted <a:check:800062847974375424>')
+                            .setAuthor('Automod Update', client.user.displayAvatarURL())
+                        message.channel.send(success)
                         break;
                     case 'ban':
+                        await automodSchema.updateOne({
+                            guildid: message.guild.id
+                        },
+                            {
+                                walltext: 'ban',
+                                duration: 0,
+                                rawDuration: 0
+                            })
+                        var success = new Discord.MessageEmbed()
+                            .setColor('#09fff2')
+                            .setDescription('Users who send walltext will get banned <a:check:800062847974375424>')
+                            .setAuthor('Automod Update', client.user.displayAvatarURL())
+                        message.channel.send(success)
                         break;
                     case 'tempban':
+                        var rawTime = args[2];
+                        if (!rawTime) return message.channel.send('Please specify a duration!')
+                        var time = ms(rawTime);
+                        if (isNaN(time)) return message.channel.send('Please specify a valid time!')
+                        await automodSchema.updateOne({
+                            guildid: message.guild.id
+                        },
+                            {
+                                walltext: 'tempban',
+                                duration: time,
+                                rawDuration: rawTime
+                            })
+                        var success = new Discord.MessageEmbed()
+                            .setColor('#09fff2')
+                            .setDescription(`Users who send walltext will get banned for \`${rawTime}\` <a:check:800062847974375424>`)
+                            .setAuthor('Automod Update', client.user.displayAvatarURL())
+                        message.channel.send(success)
                         break;
                     case 'tempmute':
+                        var rawTime = args[2];
+                        if (!rawTime) return message.channel.send('Please specify a duration!')
+                        var time = ms(rawTime);
+                        if (isNaN(time)) return message.channel.send('Please specify a valid time!')
+                        await automodSchema.updateOne({
+                            guildid: message.guild.id
+                        },
+                            {
+                                walltext: 'tempmute',
+                                duration: time,
+                                rawDuration: rawTime
+                            })
+                        var success = new Discord.MessageEmbed()
+                            .setColor('#09fff2')
+                            .setDescription(`Users who send walltext will get muted for \`${rawTime}\` <a:check:800062847974375424>`)
+                            .setAuthor('Automod Update', client.user.displayAvatarURL())
+                        message.channel.send(success)
+                        break;
+                    case 'disable':
+                        await automodSchema.updateOne({
+                            guildid: message.guild.id
+                        },
+                            {
+                                walltext: 'disbaled',
+                                duration: 0,
+                                rawDuration: 0
+                            })
+                        var success = new Discord.MessageEmbed()
+                            .setColor('#09fff2')
+                            .setDescription(`Walltext no longer be filtered <a:check:800062847974375424>`)
+                            .setAuthor('Automod Update', client.user.displayAvatarURL())
+                        message.channel.send(success)
                         break;
                 }
                 break;
