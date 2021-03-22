@@ -25,11 +25,17 @@ module.exports = {
         }
         if (!member) member = message.member
 
-        let memberRoles = new Array();
+        let memberRolesRaw = new Array();
+        let memberRoles;
         member.roles.cache.forEach(role => {
-            memberRoles.push("<@&" + role.id + ">")
+            memberRolesRaw.push("<@&" + role.id + ">")
         })
-        memberRoles.pop(0)
+        memberRolesRaw.pop(0)
+        if(member.roles.cache.size < 1) {
+            memberRoles = 'None'
+        } else {
+            memberRoles = memberRolesRaw.join(', ')
+        }
 
         if (memberRoles.length < 1) memberRoles = "No roles";
 
@@ -60,7 +66,7 @@ module.exports = {
             .addField('Status', status, true)
             .addField('Joined', moment(member.joinedAt).format('dddd, MMMM Do YYYY, h:mm:ss a'), false)
             .addField('Created', moment(member.user.createdAt).format('dddd, MMMM Do YYYY, h:mm:ss a'), false)
-            .addField(`Roles [${member.roles.cache.size - 1}]`, memberRoles.join(', '), false)
+            .addField(`Roles [${member.roles.cache.size - 1}]`, memberRoles, false)
             .setFooter(`Information requested by ${message.author.tag}`)
 
         message.channel.send(userinfo);
