@@ -908,7 +908,7 @@ module.exports = {
                 }
                 break;
             default:
-                return message.channel.send('Invalid option!')
+                return message.channel.send('Invalid setting!')
         }
     }
 }
