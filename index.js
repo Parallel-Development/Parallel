@@ -358,7 +358,6 @@ client.on('message', async(message) => {
 
     const command = client.commands.get(cmd) || client.commands.get(client.aliases.get(cmd));
     if(!command) return;
-    console.log(command)
 
     // Blacklist Check
 
