@@ -4,6 +4,7 @@ const config = require('../../config.json')
 const settingsSchema = require('../../schemas/settings-schema')
 const { execute } = require('../Moderation/ban')
 const allowed = config.eval
+const dev = config.developers
 
 module.exports = {
     name: 'run',

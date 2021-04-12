@@ -12,17 +12,16 @@ module.exports = {
       .setColor('#FF0000')
       .setDescription('You do not have the required permissions to execute this command')
 
-    const needtime = new Discord.MessageEmbed()
-      .setColor('#FF0000')
-      .setDescription('Please specify a time')
-      .setAuthor('Error', client.user.displayAvatarURL())
+    const currentsm = new Discord.MessageEmbed()
+      .setColor('#09fff2')
+      .setDescription(`The current slowmode is \`${message.channel.rateLimitPerUser} seconds\` | Please specify a time to set the slowmode`)
 
     const missingperms = new Discord.MessageEmbed()
       .setColor('#FF0000')
       .setDescription('I do not have the permission to set the slowmode. Please give me the `Manage Channels` permission and run again')
       .setAuthor('Error', client.user.displayAvatarURL())
 
-    if (!message.member.hasPermission('MANAGE_CHANNELS')) return message.channel.send(accessdenied)
+    if (!message.member.hasPermission('MANAGE_MESSAGES')) return message.channel.send(accessdenied)
     if (!message.guild.me.hasPermission('MANAGE_CHANNELS')) return message.channel.send(missingperms)
 
     let time = Math.round(parseFloat(args[0]))
@@ -38,7 +37,7 @@ module.exports = {
       message.channel.send(slowmodeset)
       return;
     }
-    if (!time) return message.channel.send(needtime)
+    if (!time) return message.channel.send(currentsm)
     if (time > 21600) return message.channel.send('I can only set the slowmode to a value between 1 and 21600 seconds.')
 
     channel.setRateLimitPerUser(time).catch(() => { return })
@@ -51,11 +50,6 @@ module.exports = {
 
     let date = new Date();
     date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
-
-    const logCheckSlowmode = await settingsSchema.findOne({
-      guildid: message.guild.id,
-      logs: 'none'
-    })
   }
 }
   

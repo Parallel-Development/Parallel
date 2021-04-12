@@ -2,7 +2,6 @@ const Discord = require('discord.js')
 const automodSchema = require('../schemas/automod-schema')
 const warningSchema = require('../schemas/warning-schema')
 const punishmentSchema = require('../schemas/punishment-schema')
-
 exports.run = async (client, message) => {
     if (message.member.hasPermission('MANAGE_MESSAGES')) return;
 
@@ -12,8 +11,7 @@ exports.run = async (client, message) => {
     let { walltext, duration, rawDuration } = automodGrab
 
     if (walltext == 'delete') {
-        message.delete()
-        message.reply('please don\'t send text in the form of a wall!')
+        message.reply('that word is filtered on this server!')
     }
 
     if (walltext == 'warn') {
@@ -28,15 +26,46 @@ exports.run = async (client, message) => {
             code += chars.charAt(Math.floor(Math.random() * charsLength))
         }
 
-        await new warningSchema({
-            guildname: message.guild.name,
-            guildid: message.guild.id,
+        const caseInfo = {
+            moderatorID: message.guild.me.id,
             type: 'Warn',
-            userid: message.member.id,
-            reason: '[AUTO] Sending Walltext',
-            code: code,
-            date: date
-        }).save();
+            date: date,
+            reason: '[AUTO] Walltext',
+            code: code
+        }
+
+        const warningCheck = await warningSchema.findOne({
+            guildid: message.guild.id,
+            userid: member.id
+        })
+
+        if (!warningCheck) {
+            await new warningSchema({
+                userid: member.id,
+                guildname: message.guild.name,
+                guildid: message.guild.id,
+                warnings: []
+            }).save()
+            await warningSchema.updateOne({
+                guildid: message.guild.id,
+                userid: member.id
+            },
+                {
+                    $push: {
+                        warnings: caseInfo
+                    }
+                })
+        } else {
+            await warningSchema.updateOne({
+                guildid: message.guild.id,
+                userid: member.id
+            },
+                {
+                    $push: {
+                        warnings: caseInfo
+                    }
+                })
+        }
 
         const userwarned = new Discord.MessageEmbed()
             .setColor('#09fff2')
@@ -46,7 +75,7 @@ exports.run = async (client, message) => {
             .setColor('#FF0000')
             .setAuthor('Razor Moderation', client.user.displayAvatarURL())
             .setTitle(`You were warned in ${message.guild.name}`)
-            .addField('Reason', '[AUTO] Sending Walltext')
+            .addField('Reason', '[AUTO] Walltext')
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
 
@@ -75,29 +104,60 @@ exports.run = async (client, message) => {
             .setColor('#FF0000')
             .setAuthor('Razor Moderation', client.user.displayAvatarURL())
             .setTitle(`You were kicked from ${message.guild.name}`)
-            .addField('Reason', '[AUTO] Sending Walltext')
+            .addField('Reason', '[AUTO] Walltext')
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
 
         message.member.send(kickdm).catch(() => { return })
 
-        message.member.kick('[AUTO] Sending Walltext').catch(() => { return })
+        message.member.kick('[AUTO] Walltext').catch(() => { return })
 
-        await new warningSchema({
-            guildname: message.guild.name,
-            guildid: message.guild.id,
+        const caseInfo = {
+            moderatorID: message.guild.me.id,
             type: 'Kick',
-            userid: message.member.id,
-            reason: '[AUTO] Sending Walltext',
-            code: code,
-            date: date
-        }).save();
+            date: date,
+            reason: '[AUTO] Walltext',
+            code: code
+        }
+
+        const warningCheck = await warningSchema.findOne({
+            guildid: message.guild.id,
+            userid: member.id
+        })
+
+        if (!warningCheck) {
+            await new warningSchema({
+                userid: member.id,
+                guildname: message.guild.name,
+                guildid: message.guild.id,
+                warnings: []
+            }).save()
+            await warningSchema.updateOne({
+                guildid: message.guild.id,
+                userid: member.id
+            },
+                {
+                    $push: {
+                        warnings: caseInfo
+                    }
+                })
+        } else {
+            await warningSchema.updateOne({
+                guildid: message.guild.id,
+                userid: member.id
+            },
+                {
+                    $push: {
+                        warnings: caseInfo
+                    }
+                })
+        }
 
         message.channel.send(userkicked)
     }
 
     if (walltext == 'mute') {
-        deleteMessages();
+        message.delete()
         let date = new Date();
         date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
 
@@ -108,15 +168,46 @@ exports.run = async (client, message) => {
             code += chars.charAt(Math.floor(Math.random() * charsLength))
         }
 
-        await new warningSchema({
-            guildname: message.guild.name,
-            guildid: message.guild.id,
+        const caseInfo = {
+            moderatorID: message.guild.me.id,
             type: 'Mute',
-            userid: message.member.id,
-            reason: '[AUTO] Sending Walltext',
-            code: code,
-            date: date
-        }).save();
+            date: date,
+            reason: '[AUTO] Walltext',
+            code: code
+        }
+
+        const warningCheck = await warningSchema.findOne({
+            guildid: message.guild.id,
+            userid: member.id
+        })
+
+        if (!warningCheck) {
+            await new warningSchema({
+                userid: member.id,
+                guildname: message.guild.name,
+                guildid: message.guild.id,
+                warnings: []
+            }).save()
+            await warningSchema.updateOne({
+                guildid: message.guild.id,
+                userid: member.id
+            },
+                {
+                    $push: {
+                        warnings: caseInfo
+                    }
+                })
+        } else {
+            await warningSchema.updateOne({
+                guildid: message.guild.id,
+                userid: member.id
+            },
+                {
+                    $push: {
+                        warnings: caseInfo
+                    }
+                })
+        }
 
         await new punishmentSchema({
             guildname: message.guild.name,
@@ -124,7 +215,7 @@ exports.run = async (client, message) => {
             type: 'mute',
             userID: message.member.id,
             duration: 'permanent',
-            reason: '[AUTO] Sending Walltext',
+            reason: '[AUTO] Walltext',
             expires: 'never'
         }).save();
 
@@ -160,7 +251,7 @@ exports.run = async (client, message) => {
             .setColor('#FF0000')
             .setAuthor('Razor Moderation', client.user.displayAvatarURL())
             .setTitle(`You were muted in ${message.guild.name}`)
-            .addField('Reason', '[AUTO] Sending Walltext')
+            .addField('Reason', '[AUTO] Walltext')
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
 
@@ -170,7 +261,7 @@ exports.run = async (client, message) => {
     }
 
     if (walltext == 'ban') {
-        deleteMessages();
+        message.delete()
         let date = new Date();
         date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
 
@@ -181,15 +272,46 @@ exports.run = async (client, message) => {
             code += chars.charAt(Math.floor(Math.random() * charsLength))
         }
 
-        await new warningSchema({
-            guildname: message.guild.name,
-            guildid: message.guild.id,
+        const caseInfo = {
+            moderatorID: message.guild.me.id,
             type: 'Ban',
-            userid: message.member.id,
-            reason: '[AUTO] Sending Walltext',
-            code: code,
-            date: date
-        }).save();
+            date: date,
+            reason: '[AUTO] Walltext',
+            code: code
+        }
+
+        const warningCheck = await warningSchema.findOne({
+            guildid: message.guild.id,
+            userid: member.id
+        })
+
+        if (!warningCheck) {
+            await new warningSchema({
+                userid: member.id,
+                guildname: message.guild.name,
+                guildid: message.guild.id,
+                warnings: []
+            }).save()
+            await warningSchema.updateOne({
+                guildid: message.guild.id,
+                userid: member.id
+            },
+                {
+                    $push: {
+                        warnings: caseInfo
+                    }
+                })
+        } else {
+            await warningSchema.updateOne({
+                guildid: message.guild.id,
+                userid: member.id
+            },
+                {
+                    $push: {
+                        warnings: caseInfo
+                    }
+                })
+        }
 
         const userbanned = new Discord.MessageEmbed()
             .setColor('#09fff2')
@@ -199,19 +321,19 @@ exports.run = async (client, message) => {
             .setColor('#FF0000')
             .setAuthor('Razor Moderation', client.user.displayAvatarURL())
             .setTitle(`You were banned from ${message.guild.name}`)
-            .addField('Reason', '[AUTO] Sending Walltext')
+            .addField('Reason', '[AUTO] Walltext')
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
 
         message.member.send(bandm).catch(() => { return })
 
-        message.guild.members.ban(message.member, { reason: '[AUTO] Sending Walltext' }).catch(() => { return })
+        message.guild.members.ban(message.member, { reason: '[AUTO] Walltext' }).catch(() => { return })
 
         message.channel.send(userbanned)
     }
 
     if (walltext == 'tempban') {
-        deleteMessages();
+        message.delete()
         let date = new Date();
         date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
 
@@ -230,24 +352,56 @@ exports.run = async (client, message) => {
             .setColor('#FF0000')
             .setAuthor('Razor Moderation', client.user.displayAvatarURL())
             .setTitle(`You were banned from ${message.guild.name}`)
-            .addField('Reason', '[AUTO] Sending Walltext')
+            .addField('Reason', '[AUTO] Walltext')
             .addField('Expires', rawDuration, true)
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
 
         message.member.send(tempbandm).catch(() => { return })
 
-        message.guild.members.ban(message.member, { reason: '[AUTO] Sending Walltext' }).catch(() => { return })
+        message.guild.members.ban(message.member, { reason: '[AUTO] Walltext' }).catch(() => { return })
 
-        await new warningSchema({
-            guildname: message.guild.name,
-            guildid: message.guild.id,
+        const caseInfo = {
+            moderatorID: message.guild.me.id,
             type: 'Tempban',
-            userid: message.member.id,
-            reason: '[AUTO] Sending Walltext',
-            code: code,
-            date: date
-        }).save();
+            expires: new Date().getTime() + parseInt(duration),
+            date: date,
+            reason: '[AUTO] Walltext',
+            code: code
+        }
+
+        const warningCheck = await warningSchema.findOne({
+            guildid: message.guild.id,
+            userid: member.id
+        })
+
+        if (!warningCheck) {
+            await new warningSchema({
+                userid: member.id,
+                guildname: message.guild.name,
+                guildid: message.guild.id,
+                warnings: []
+            }).save()
+            await warningSchema.updateOne({
+                guildid: message.guild.id,
+                userid: member.id
+            },
+                {
+                    $push: {
+                        warnings: caseInfo
+                    }
+                })
+        } else {
+            await warningSchema.updateOne({
+                guildid: message.guild.id,
+                userid: member.id
+            },
+                {
+                    $push: {
+                        warnings: caseInfo
+                    }
+                })
+        }
 
         await new punishmentSchema({
             guildname: message.guild.name,
@@ -255,7 +409,7 @@ exports.run = async (client, message) => {
             type: 'ban',
             userID: message.member.id,
             duration: duration,
-            reason: '[AUTO] Sending Walltext',
+            reason: '[AUTO] Walltext',
             expires: new Date().getTime() + parseInt(duration)
         }).save();
 
@@ -263,7 +417,7 @@ exports.run = async (client, message) => {
     }
 
     if (walltext == 'tempmute') {
-        deleteMessages();
+        message.delete()
         let date = new Date();
         date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
 
@@ -282,7 +436,7 @@ exports.run = async (client, message) => {
             .setColor('#FF0000')
             .setAuthor('Razor Moderation', client.user.displayAvatarURL())
             .setTitle(`You were muted in ${message.guild.name}`)
-            .addField('Reason', '[AUTO] Sending Walltext')
+            .addField('Reason', '[AUTO] Walltext')
             .addField('Expires', rawDuration, true)
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
@@ -311,15 +465,47 @@ exports.run = async (client, message) => {
             }
         }
 
-        await new warningSchema({
-            guildname: message.guild.name,
-            guildid: message.guild.id,
+        const caseInfo = {
+            moderatorID: message.guild.me.id,
             type: 'Tempmute',
-            userid: message.member.id,
-            reason: '[AUTO] Sending Walltext',
-            code: code,
-            date: date
-        }).save();
+            expires: new Date().getTime() + parseInt(duration),
+            date: date,
+            reason: '[AUTO] Walltext',
+            code: code
+        }
+
+        const warningCheck = await warningSchema.findOne({
+            guildid: message.guild.id,
+            userid: member.id
+        })
+
+        if (!warningCheck) {
+            await new warningSchema({
+                userid: member.id,
+                guildname: message.guild.name,
+                guildid: message.guild.id,
+                warnings: []
+            }).save()
+            await warningSchema.updateOne({
+                guildid: message.guild.id,
+                userid: member.id
+            },
+                {
+                    $push: {
+                        warnings: caseInfo
+                    }
+                })
+        } else {
+            await warningSchema.updateOne({
+                guildid: message.guild.id,
+                userid: member.id
+            },
+                {
+                    $push: {
+                        warnings: caseInfo
+                    }
+                })
+        }
 
         await new punishmentSchema({
             guildname: message.guild.name,
@@ -327,7 +513,7 @@ exports.run = async (client, message) => {
             type: 'mute',
             userID: message.member.id,
             duration: duration,
-            reason: '[AUTO] Sending Walltext',
+            reason: '[AUTO] Walltext',
             expires: new Date().getTime() + parseInt(duration)
         }).save();
 

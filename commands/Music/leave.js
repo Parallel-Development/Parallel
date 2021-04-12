@@ -4,7 +4,7 @@ module.exports = {
     name: 'leave',
     description: 'Makes the bot leave the voice channel you are in',
     usage: 'leave',
-    aliases: ['disconnect'],
+    aliases: ['disconnect', ''],
     async execute(client, message, args) {
         const notinVC = new Discord.MessageEmbed()
             .setColor('#FF0000')

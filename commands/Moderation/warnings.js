@@ -40,26 +40,28 @@ module.exports = {
         
         if (!member) return message.reply('No such member found on this server, no such user cached')
     
-        const warnings = await warningSchema.find({
+        const warningsCheck = await warningSchema.findOne({
             guildid: message.guild.id,
             userid: member.id
         })
-        .catch(e => false)
-    
-        if(warnings.length > 0) {
-            let count = 0;
-            let warningsList = new Discord.MessageEmbed()
-            warningsList.setAuthor(`Warnings for ${member.user.tag}`, client.user.displayAvatarURL())
-            warningsList.setColor('#09fff2')
-            warnings.forEach((warnings) => {
-                count++
-                let {type, reason, code, date} = warnings
-                warningsList.addField(`${count}: ${type}`, `ID: \`${code}\`\nReason: \`${reason}\`\nDate: \`${date}\`\n`)
-            })
-    
-            message.channel.send(warningsList).catch(() => { return })
-        } else {
-            message.channel.send('This user does not have any warnings!')
+        if(!warningsCheck) return message.channel.send('This user has no infractions!')
+
+        const warningsEmbed = new Discord.MessageEmbed()
+        .setColor('#09fff2')
+        .setAuthor(`Warnings for ${member.user.tag}`, client.user.displayAvatarURL())
+        .setDescription(`All times are in GMT | Run \`punishinfo (code)\` to get more information about a punishment`)
+
+        let count = 0
+        for(const i of warningsCheck.warnings) {
+            count++
+            if (i.reason.length > 20) {
+                i.reason = i.reason.substr(0, 20) + '...'
+            }
+            warningsEmbed.addField(`${count}: ${i.type}`, `Reason: \`${i.reason}\`\nDate: \`${i.date}\`\nPunishment ID: \`${i.code}\``)
         }
+
+        if(count = 0) return message.channel.send('This user has no infractions!')
+
+        message.channel.send(warningsEmbed)
     }
 }

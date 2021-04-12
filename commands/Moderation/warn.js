@@ -7,7 +7,7 @@ module.exports = {
     name: 'warn',
     description: 'Warns the specified member in the server',
     usage: 'warn <member> [reason] | warn <member> [time] {reason}',
-    aliases: ['strike'],
+    aliases: ['strike', 'w'],
     async execute(client, message, args) {
         const missingperms = new Discord.MessageEmbed()
             .setColor('#FF0000')
@@ -26,7 +26,7 @@ module.exports = {
 
         const moderator = new Discord.MessageEmbed()
             .setColor('#FF0000')
-            .setDescription('This user is a moderator, therefore I cannot ban them')
+            .setDescription('This user is a moderator, therefore I cannot warn them')
             .setAuthor('Error', client.user.displayAvatarURL());
         
         const yourroletoolow = new Discord.MessageEmbed()
@@ -83,15 +83,46 @@ module.exports = {
             code += chars.charAt(Math.floor(Math.random() * charsLength))
         }
 
-        await new warningSchema({
-            guildname: message.guild.name,
-            guildid: message.guild.id,
+        const caseInfo = {
+            moderatorID: message.author.id,
             type: 'Warn',
-            userid: member.id,
+            date: date,
             reason: reason,
-            code: code,
-            date: date
-        }).save();
+            code: code
+        }
+
+        const warningCheck = await warningSchema.findOne({
+            guildid: message.guild.id,
+            userid: member.id
+        })
+
+        if(!warningCheck) {
+            await new warningSchema({
+                userid: member.id,
+                guildname: message.guild.name,
+                guildid: message.guild.id,
+                warnings: []
+            }).save()
+            await warningSchema.updateOne({
+                guildid: message.guild.id,
+                userid: member.id
+            },
+            {
+                $push: {
+                    warnings: caseInfo
+                }
+            })
+        } else {
+            await warningSchema.updateOne({
+                guildid: message.guild.id,
+                userid: member.id
+            },
+            {
+                $push: {
+                    warnings: caseInfo
+                }
+            })
+        }
 
         const userwarned = new Discord.MessageEmbed()
             .setColor('#09fff2')

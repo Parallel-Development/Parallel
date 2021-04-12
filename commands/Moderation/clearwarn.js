@@ -45,11 +45,6 @@ module.exports = {
             guildid: message.guild.id,
             userid: member.id
         })
-        await punishmentSchema.deleteOne({
-            guildid: message.guild.id,
-            type: 'warn',
-            userID: member.id
-        })
 
         const clearwarnembed = new Discord.MessageEmbed()
             .setColor('#09fff2')

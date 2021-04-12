@@ -30,11 +30,6 @@ module.exports = {
                     guildid: message.guild.id
                 })
 
-                await punishmentSchema.deleteOne({
-                    guildid: message.guild.id,
-                    type: 'warn',
-                })
-
                 let date = new Date();
                 date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
 

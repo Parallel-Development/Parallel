@@ -103,6 +103,48 @@ module.exports = {
         .addField('Reason', reason)
         .setFooter(moment(message.createdtimeStamp).format('MMMM Do YYYY'))
         member.send(unmutedm).catch(() => { return })
+
+        const caseInfo = {
+            moderatorID: message.author.id,
+            type: 'Unmute',
+            date: date,
+            reason: reason,
+            code: code
+        }
+
+        const warningCheck = await warningSchema.findOne({
+            guildid: message.guild.id,
+            userid: member.id
+        })
+
+        if (!warningCheck) {
+            await new warningSchema({
+                userid: member.id,
+                guildname: message.guild.name,
+                guildid: message.guild.id,
+                warnings: []
+            }).save()
+            await warningSchema.updateOne({
+                guildid: message.guild.id,
+                userid: member.id
+            },
+                {
+                    $push: {
+                        warnings: caseInfo
+                    }
+                })
+        } else {
+            await warningSchema.updateOne({
+                guildid: message.guild.id,
+                userid: member.id
+            },
+                {
+                    $push: {
+                        warnings: caseInfo
+                    }
+                })
+        }
+
     }
 
 }

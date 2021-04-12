@@ -17,7 +17,7 @@ module.exports = {
 
         const automodList = new Discord.MessageEmbed()
         .setColor('#09fff2')
-        .setDescription('You are able to toggle what punishment a user will be given. The punishments are:\n> delete\n> warn\n> kick\n> mute\n> ban\n> tempban\n> tempmute\n\n\nYou can disable any trigger by inputting `disable`')
+        .setDescription('You are able to toggle what punishment a user will be given. The punishments are:\n> delete\n> warn\n> kick\n> mute\n> ban\n> tempban\n> tempmute\n\n\nYou can disable any trigger by inputting `disable`\n\n\nSyntax: \`automod (setting) [punishment]\`')
         .addField('filter', 'Toggle the punishment for if someone sends a word in the `Filter List`', true)
         .addField('filterlist', 'Add, remove, or view the list of filtered words', true)
         .addField('fast', 'Toggle the punishment for if someone sends messages too quickly', true)
@@ -36,15 +36,12 @@ module.exports = {
             guildid: message.guild.id
         })
 
-        let { filter, filterList, fast, walltext, flood, links, invites, massmention} = automodGrab
-
         switch(option) {
-            /*
             case 'filter':
                 switch(toggle) {
                     case 'delete':
                         await automodSchema.updateOne({
-                            guildid: message.guild.it
+                            guildid: message.guild.id
                         },
                         {
                             filter: 'delete'   
@@ -53,7 +50,7 @@ module.exports = {
                         break;
                     case 'warn':
                         await automodSchema.updateOne({
-                            guildid: message.guild.it
+                            guildid: message.guild.id
                         },
                             {
                                 filter: 'warn'
@@ -62,7 +59,7 @@ module.exports = {
                         break;
                     case 'kick':
                         await automodSchema.updateOne({
-                            guildid: message.guild.it
+                            guildid: message.guild.id
                         },
                             {
                                 filter: 'kick'
@@ -71,7 +68,7 @@ module.exports = {
                         break
                     case 'mute':
                         await automodSchema.updateOne({
-                            guildid: message.guild.it
+                            guildid: message.guild.id
                         },
                             {
                                 filter: 'mute'
@@ -80,7 +77,7 @@ module.exports = {
                         break;
                     case 'ban':
                         await automodSchema.updateOne({
-                            guildid: message.guild.it
+                            guildid: message.guild.id
                         },
                             {
                                 filter: 'ban'
@@ -93,7 +90,7 @@ module.exports = {
                         var time = ms(rawTime)
                         if(isNaN(time)) return message.channel.send('Please specify a valid duration')
                         await automodSchema.updateOne({
-                            guildid: message.guild.it
+                            guildid: message.guild.id
                         },
                         {
                             filter: 'tempban',
@@ -107,7 +104,7 @@ module.exports = {
                         var time = ms(rawTime)
                         if (isNaN(time)) return message.channel.send('Please specify a valid duration')
                         await automodSchema.updateOne({
-                            guildid: message.guild.it
+                            guildid: message.guild.id
                         },
                         {
                                 filter: 'tempmute',
@@ -126,7 +123,11 @@ module.exports = {
                         message.channel.send('Users will no longer be punished for sending words in the `Filter list`')
                         break;
                     default:
-                        return message.channel.send('Invalid setting!')
+                        if (!args[0]) {
+                            return message.channel.send('Invalid option!')
+                        } else {
+                            return message.channel.send('Please specify a punishment')
+                        }
                 }
                 break;
             
@@ -137,35 +138,27 @@ module.exports = {
                         if(!word) return message.channel.send('Please specify a word to add to the filter!')
                         const wordAlreadyInFilter = await automodSchema.find({
                             guildid: message.guild.id,
-                            filterList: {
-                                $elemMatch: {
-                                    word
-                                }
-                            }
+                            filterList: word
                         })
-                        console.log(wordAlreadyInFilter)
-
-                        if(wordAlreadyInFilter) return message.channel.send('This word is already in the filter! Run `automod filter view` to view the current list of filtered words')
+    
+                        if(wordAlreadyInFilter && wordAlreadyInFilter.length != 0) return message.channel.send('This word is already in the filter! Run `automod filter view` to view the current list of filtered words')
                         await automodSchema.updateOne({
                             guildid: message.guild.id
                         },
                         {
-                            $push: { filterList: word }
+                            $push: { filterList: word.toLowerCase() }
                         })
-                        message.channel.send(`\`${word}\` has been added to the filter`)
+                        message.channel.send(`\`${word.toLowerCase()}\` has been added to the filter`)
                         break;
                     case 'remove':
                         var word = args.splice(2).join(' ')
                         if(!word) return message.channel.send('Please specify a word to remove from the filter')
                         const wordNotInFilter = await automodSchema.find({
                             guildid: message.guild.id,
-                            filterList: {
-                                $elemMatch: {
-                                    word
-                                }
-                            }
+                            filterList: word
                         })
-                        if(!wordNotInFilter) return message.channel.send(`Could not find the word \`${word}\` on the filter. Run \`automod filter view\` to view the current list of filtered words`)
+
+                        if(!wordNotInFilter || wordNotInFilter.length == 0) return message.channel.send(`Could not find the word \`${word}\` on the filter. Run \`automod filterlist view\` to view the current list of filtered words`)
                         await automodSchema.updateOne({
                             guildid: message.guild.id
                         },
@@ -184,18 +177,28 @@ module.exports = {
                         message.channel.send('Wiped all words from the filter')
                         break;
                     case 'view':
+                        const noWordsInFilter = await automodSchema.findOne({
+                            guildid: message.guild.id,
+                        })
+
+                        const { filterList } = noWordsInFilter
+                        
+                        if(filterList == null) return message.channel.send('No words are on the filter! Want to add some? `automod filterlist add (word)`')
+                        if (filterList.length == 0) return message.channel.send('No words are on the filter! Want to add some? `automod filterlist add (word)`')
                         const filterViewList = new Discord.MessageEmbed()
                         .setColor('#09fff2')
                         .setAuthor(`Filter list for ${message.guild.name}`, client.user.displayAvatarURL())
-                        .setDescription(`\`${filterList}\``)
+                        .setDescription(`\`${filterList.join(', ')}\``)
                         message.channel.send(filterViewList)
                         break;
                     default:
-                        return message.channel.send('Invalid setting!')
+                        if(!args[0]) {
+                            return message.channel.send('Invalid option!')
+                        } else {
+                            return message.channel.send('Options: add, remove, removeall, view')
+                        }
                 }
                 break;
-            */
-                
             case 'fast':
                 switch (toggle) {
                     case 'delete':
@@ -326,6 +329,12 @@ module.exports = {
                             .setAuthor('Automod Update', client.user.displayAvatarURL())
                         message.channel.send(success)
                         break;
+                    default:
+                        if (!args[0]) {
+                            return message.channel.send('Invalid option!')
+                        } else {
+                            return message.channel.send('Please specify a punishment')
+                        }
                 }
                 break;
             case 'walltext':
@@ -458,6 +467,12 @@ module.exports = {
                             .setAuthor('Automod Update', client.user.displayAvatarURL())
                         message.channel.send(success)
                         break;
+                    default:
+                        if (!args[0]) {
+                            return message.channel.send('Invalid option!')
+                        } else {
+                            return message.channel.send('Please specify a punishment')
+                        }
                 }
                 break;
             case 'flood':
@@ -608,6 +623,12 @@ module.exports = {
                             .setAuthor('Automod Update', client.user.displayAvatarURL())
                         message.channel.send(success)
                         break;
+                    default:
+                        if (!args[0]) {
+                            return message.channel.send('Invalid option!')
+                        } else {
+                            return message.channel.send('Please specify a punishment')
+                        }
                 }
                 break;
             case 'invites':
@@ -740,24 +761,150 @@ module.exports = {
                         .setAuthor('Automod Update', client.user.displayAvatarURL())
                         message.channel.send(success)
                         break;
+                    default:
+                        if (!args[0]) {
+                            return message.channel.send('Invalid option!')
+                        } else {
+                            return message.channel.send('Please specify a punishment')
+                        }
                 }
                 break;
             case 'massmention':
                 switch (toggle) {
                     case 'delete':
+                        await automodSchema.updateOne({
+                            guildid: message.guild.id
+                        },
+                            {
+                                massmention: 'delete',
+                                duration: 0,
+                                rawDuration: 0
+                            })
+                        var success = new Discord.MessageEmbed()
+                            .setColor('#09fff2')
+                            .setDescription('Users who ping 5+ people will get there message deleted <a:check:800062847974375424>')
+                            .setAuthor('Automod Update', client.user.displayAvatarURL())
+                        message.channel.send(success)
                         break;
                     case 'warn':
+                        await automodSchema.updateOne({
+                            guildid: message.guild.id
+                        },
+                            {
+                                massmention: 'warn',
+                                duration: 0,
+                                rawDuration: 0
+                            })
+                        var success = new Discord.MessageEmbed()
+                            .setColor('#09fff2')
+                            .setDescription('Users who ping 5+ people will get warned <a:check:800062847974375424>')
+                            .setAuthor('Automod Update', client.user.displayAvatarURL())
+                        message.channel.send(success)
                         break;
                     case 'kick':
+                        await automodSchema.updateOne({
+                            guildid: message.guild.id
+                        },
+                            {
+                                massmention: 'kick',
+                                duration: 0,
+                                rawDuration: 0
+                            })
+                        var success = new Discord.MessageEmbed()
+                            .setColor('#09fff2')
+                            .setDescription('Users who ping 5+ people will now get kicked <a:check:800062847974375424>')
+                            .setAuthor('Automod Update', client.user.displayAvatarURL())
+                        message.channel.send(success)
                         break
                     case 'mute':
+                        await automodSchema.updateOne({
+                            guildid: message.guild.id
+                        },
+                            {
+                                massmention: 'mute',
+                                duration: 0,
+                                rawDuration: 0
+                            })
+                        var success = new Discord.MessageEmbed()
+                            .setColor('#09fff2')
+                            .setDescription('Users who ping 5+ people will now get muted <a:check:800062847974375424>')
+                            .setAuthor('Automod Update', client.user.displayAvatarURL())
+                        message.channel.send(success)
                         break;
                     case 'ban':
+                        await automodSchema.updateOne({
+                            guildid: message.guild.id
+                        },
+                            {
+                                massmention: 'ban',
+                                duration: 0,
+                                rawDuration: 0
+                            })
+                        var success = new Discord.MessageEmbed()
+                            .setColor('#09fff2')
+                            .setDescription('Users who ping 5+ people will now get banned <a:check:800062847974375424>')
+                            .setAuthor('Automod Update', client.user.displayAvatarURL())
+                        message.channel.send(success)
                         break;
                     case 'tempban':
+                        var rawTime = args[2];
+                        if (!rawTime) return message.channel.send('Please specify a duration!')
+                        var time = ms(rawTime);
+                        if (isNaN(time)) return message.channel.send('Please specify a valid time!')
+                        await automodSchema.updateOne({
+                            guildid: message.guild.id
+                        },
+                            {
+                                massmention: 'tempban',
+                                duration: time,
+                                rawDuration: rawTime
+                            })
+                        var success = new Discord.MessageEmbed()
+                            .setColor('#09fff2')
+                            .setDescription(`Users who ping 5+ people will now get banned for \`${rawTime}\` <a:check:800062847974375424>`)
+                            .setAuthor('Automod Update', client.user.displayAvatarURL())
+                        message.channel.send(success)
                         break;
                     case 'tempmute':
+                        var rawTime = args[2];
+                        if (!rawTime) return message.channel.send('Please specify a duration!')
+                        var time = ms(rawTime);
+                        if (isNaN(time)) return message.channel.send('Please specify a valid time!')
+                        await automodSchema.updateOne({
+                            guildid: message.guild.id
+                        },
+                            {
+                                massmention: 'tempmute',
+                                duration: time,
+                                rawDuration: rawTime
+                            })
+                        var success = new Discord.MessageEmbed()
+                            .setColor('#09fff2')
+                            .setDescription(`Users who ping 5+ people will now get muted for \`${rawTime}\` <a:check:800062847974375424>`)
+                            .setAuthor('Automod Update', client.user.displayAvatarURL())
+                        message.channel.send(success)
                         break;
+                    case 'disable':
+                        await automodSchema.updateOne({
+                            guildid: message.guild.id
+                        },
+                            {
+                                massmention: 'disbaled',
+                                duration: 0,
+                                rawDuration: 0
+                            })
+                        var success = new Discord.MessageEmbed()
+                            .setColor('#09fff2')
+                            .setDescription(`Mass mention will no longer be filtered <a:check:800062847974375424>`)
+                            .setAuthor('Automod Update', client.user.displayAvatarURL())
+                        message.channel.send(success)
+                        break;
+                    default:
+                        if (!args[0]) {
+                            return message.channel.send('Invalid option!')
+                        } else {
+                            return message.channel.send('Please specify a punishment')
+                        }
                 }
                 break;
             default:

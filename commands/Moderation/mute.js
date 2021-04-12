@@ -7,7 +7,7 @@ module.exports = {
     name: 'mute',
     description: 'Mutes the specified member in the server',
     usage: 'mute <member> [reason]',
-    aliases: ['silence', 'shut'],
+    aliases: ['silence', 'shut', 'm'],
     async execute(client, message, args) {
         const roletoolower = new Discord.MessageEmbed()
             .setColor('#FF0000')
@@ -164,15 +164,47 @@ module.exports = {
         member.send(mutemsgdm).catch(() => { return })
 
         if (!silent) message.channel.send(mutemsg);
-        await new warningSchema({
-            guildname: message.guild.name,
-            guildid: message.guild.id,
+
+        const caseInfo = {
+            moderatorID: message.author.id,
             type: 'Mute',
-            userid: member.id,
+            date: date,
             reason: reason,
-            code: code,
-            date: date
-        }).save();
+            code: code
+        }
+
+        const warningCheck = await warningSchema.findOne({
+            guildid: message.guild.id,
+            userid: member.id
+        })
+
+        if (!warningCheck) {
+            await new warningSchema({
+                userid: member.id,
+                guildname: message.guild.name,
+                guildid: message.guild.id,
+                warnings: []
+            }).save()
+            await warningSchema.updateOne({
+                guildid: message.guild.id,
+                userid: member.id
+            },
+                {
+                    $push: {
+                        warnings: caseInfo
+                    }
+                })
+        } else {
+            await warningSchema.updateOne({
+                guildid: message.guild.id,
+                userid: member.id
+            },
+                {
+                    $push: {
+                        warnings: caseInfo
+                    }
+                })
+        }
     }
 }
 

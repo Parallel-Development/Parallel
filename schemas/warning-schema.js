@@ -6,13 +6,10 @@ const reqString = {
 }
 
 const warningSchema = mongoose.Schema({
+    userid: reqString,
     guildname: reqString,
     guildid: reqString,
-    type: reqString,
-    userid: reqString,
-    reason: reqString,
-    code: reqString,
-    date: reqString
+    warnings: [Object]
 })
 
 module.exports = mongoose.model('warnings', warningSchema)

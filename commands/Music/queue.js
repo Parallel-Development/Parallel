@@ -14,6 +14,7 @@ module.exports = {
         let nowPlaying = queue[0]
 
         let resp = new Discord.MessageEmbed()
+            .setAuthor(`Queue for ${message.guild.name}`, client.user.displayAvatarURL())
             .setColor('#09fff2')
             .setDescription(`__**Now Playing**__\n[${nowPlaying.songTitle}](${nowPlaying.songURL})\nRequested by: **${nowPlaying.requester}**`)
 

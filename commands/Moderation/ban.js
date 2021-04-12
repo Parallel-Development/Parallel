@@ -6,6 +6,7 @@ module.exports = {
     name: 'ban',
     description: 'Bans the specified member',
     usage: 'ban <member> [reason]',
+    aliases: ['b', 'banish'],
     async execute(client, message, args) {
         const roletoolower = new Discord.MessageEmbed()
             .setColor('#FF0000')
@@ -113,14 +114,45 @@ module.exports = {
 
         if (!silent) message.channel.send(banmsg);
 
-        await new warningSchema({
-            guildname: message.guild.name,
-            guildid: message.guild.id,
+        const caseInfo = {
+            moderatorID: message.author.id,
             type: 'Ban',
-            userid: member.id,
+            date: date,
             reason: reason,
-            code: code,
-            date: date
-        }).save();
+            code: code
+        }
+
+        const warningCheck = await warningSchema.findOne({
+            guildid: message.guild.id,
+            userid: member.id
+        })
+
+        if (!warningCheck) {
+            await new warningSchema({
+                userid: member.id,
+                guildname: message.guild.name,
+                guildid: message.guild.id,
+                warnings: []
+            }).save()
+            await warningSchema.updateOne({
+                guildid: message.guild.id,
+                userid: member.id
+            },
+                {
+                    $push: {
+                        warnings: caseInfo
+                    }
+                })
+        } else {
+            await warningSchema.updateOne({
+                guildid: message.guild.id,
+                userid: member.id
+            },
+                {
+                    $push: {
+                        warnings: caseInfo
+                    }
+                })
+        }
     }
 }

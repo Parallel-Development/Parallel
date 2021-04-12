@@ -2,36 +2,21 @@ const Discord = require('discord.js')
 const automodSchema = require('../schemas/automod-schema')
 const warningSchema = require('../schemas/warning-schema')
 const punishmentSchema = require('../schemas/punishment-schema')
-exports.run = async(client, message) => {
-    if(message.member.hasPermission('MANAGE_MESSAGES')) return;
+exports.run = async (client, message) => {
+    if (message.member.hasPermission('MANAGE_MESSAGES')) return;
 
     const automodGrab = await automodSchema.findOne({
         guildid: message.guild.id
     })
-    let { fast, duration, rawDuration } = automodGrab 
-    
+    let { filter, duration, rawDuration } = automodGrab
 
-    async function deleteMessages() {
-        try {
-            message.channel.messages.fetch({
-                limit: 7
-            }).then(messages => {
-                let userMessages = []
-                messages.filter(m => m.author.id == message.author.id).forEach(msg => userMessages.push(msg))
-                message.channel.bulkDelete(userMessages)
-            })
-        } catch (e) {
-            return;
-        }
+    if (filter == 'delete') {
+        message.delete()
+        message.reply('that word is filtered on this server!')
     }
 
-    if(fast == 'delete') {
-        deleteMessages();
-        message.channel.send(`${message.member} slow down there!`)
-    }
-
-    if (fast == 'warn') {
-        deleteMessages();
+    if (filter == 'warn') {
+        message.delete()
         let date = new Date();
         date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
 
@@ -46,7 +31,7 @@ exports.run = async(client, message) => {
             moderatorID: message.guild.me.id,
             type: 'Warn',
             date: date,
-            reason: '[AUTO] Fast Message Spam',
+            reason: '[AUTO] Using Filtered Words',
             code: code
         }
 
@@ -91,7 +76,7 @@ exports.run = async(client, message) => {
             .setColor('#FF0000')
             .setAuthor('Razor Moderation', client.user.displayAvatarURL())
             .setTitle(`You were warned in ${message.guild.name}`)
-            .addField('Reason', '[AUTO] Fast Message Spam')
+            .addField('Reason', '[AUTO] Using Filtered Words')
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
 
@@ -100,8 +85,8 @@ exports.run = async(client, message) => {
         message.member.send(warndm).catch(() => { return })
     }
 
-    if(fast == 'kick') {
-        deleteMessages();
+    if (filter == 'kick') {
+        message.delete()
         let date = new Date();
         date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
 
@@ -120,19 +105,19 @@ exports.run = async(client, message) => {
             .setColor('#FF0000')
             .setAuthor('Razor Moderation', client.user.displayAvatarURL())
             .setTitle(`You were kicked from ${message.guild.name}`)
-            .addField('Reason', '[AUTO] Fast Message Spam')
+            .addField('Reason', '[AUTO] Using Filtered Words')
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
 
         message.member.send(kickdm).catch(() => { return })
 
-        message.member.kick('[AUTO] Fast Message Spam').catch(() => { return })
+        message.member.kick('[AUTO] Using Filtered Words').catch(() => { return })
 
         const caseInfo = {
             moderatorID: message.guild.me.id,
             type: 'Kick',
             date: date,
-            reason: '[AUTO] Fast Message Spam',
+            reason: '[AUTO] Using Filtered Words',
             code: code
         }
 
@@ -172,8 +157,8 @@ exports.run = async(client, message) => {
         message.channel.send(userkicked)
     }
 
-    if(fast == 'mute') {
-        deleteMessages();
+    if (filter == 'mute') {
+        message.delete()
         let date = new Date();
         date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
 
@@ -188,7 +173,7 @@ exports.run = async(client, message) => {
             moderatorID: message.guild.me.id,
             type: 'Mute',
             date: date,
-            reason: '[AUTO] Fast Message Spam',
+            reason: '[AUTO] Using Filtered Words',
             code: code
         }
 
@@ -231,7 +216,7 @@ exports.run = async(client, message) => {
             type: 'mute',
             userID: message.member.id,
             duration: 'permanent',
-            reason: '[AUTO] Fast Message Spam',
+            reason: '[AUTO] Using Filtered Words',
             expires: 'never'
         }).save();
 
@@ -254,7 +239,7 @@ exports.run = async(client, message) => {
             try {
                 var role = message.guild.roles.cache.find(r => r.name == 'Muted')
                 await message.member.roles.add(role)
-            } catch(e) {
+            } catch (e) {
                 return;
             }
         }
@@ -267,7 +252,7 @@ exports.run = async(client, message) => {
             .setColor('#FF0000')
             .setAuthor('Razor Moderation', client.user.displayAvatarURL())
             .setTitle(`You were muted in ${message.guild.name}`)
-            .addField('Reason', '[AUTO] Fast Message Spam')
+            .addField('Reason', '[AUTO] Using Filtered Words')
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
 
@@ -276,8 +261,8 @@ exports.run = async(client, message) => {
         message.channel.send(usermuted)
     }
 
-    if(fast == 'ban') {
-        deleteMessages();
+    if (filter == 'ban') {
+        message.delete()
         let date = new Date();
         date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
 
@@ -292,7 +277,7 @@ exports.run = async(client, message) => {
             moderatorID: message.guild.me.id,
             type: 'Ban',
             date: date,
-            reason: '[AUTO] Fast Message Spam',
+            reason: '[AUTO] Using Filtered Words',
             code: code
         }
 
@@ -337,19 +322,19 @@ exports.run = async(client, message) => {
             .setColor('#FF0000')
             .setAuthor('Razor Moderation', client.user.displayAvatarURL())
             .setTitle(`You were banned from ${message.guild.name}`)
-            .addField('Reason', '[AUTO] Fast Message Spam')
+            .addField('Reason', '[AUTO] Using Filtered Words')
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
 
         message.member.send(bandm).catch(() => { return })
 
-        message.guild.members.ban(message.member, { reason: '[AUTO] Fast Message Spam ' }).catch(() => { return })
+        message.guild.members.ban(message.member, { reason: '[AUTO] Using Filtered Words ' }).catch(() => { return })
 
         message.channel.send(userbanned)
     }
 
-    if(fast == 'tempban') {
-        deleteMessages();
+    if (filter == 'tempban') {
+        message.delete()
         let date = new Date();
         date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
 
@@ -368,21 +353,21 @@ exports.run = async(client, message) => {
             .setColor('#FF0000')
             .setAuthor('Razor Moderation', client.user.displayAvatarURL())
             .setTitle(`You were banned from ${message.guild.name}`)
-            .addField('Reason', '[AUTO] Fast Message Spam')
+            .addField('Reason', '[AUTO] Using Filtered Words')
             .addField('Expires', rawDuration, true)
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
 
         message.member.send(tempbandm).catch(() => { return })
 
-        message.guild.members.ban(message.member, { reason: '[AUTO] Fast Message Spam '}).catch(() => { return })
+        message.guild.members.ban(message.member, { reason: '[AUTO] Using Filtered Words' }).catch(() => { return })
 
         const caseInfo = {
             moderatorID: message.guild.me.id,
             type: 'Tempban',
             expires: new Date().getTime() + parseInt(duration),
             date: date,
-            reason: '[AUTO] Fast Message Spam',
+            reason: '[AUTO] Using Filtered Words',
             code: code
         }
 
@@ -425,15 +410,15 @@ exports.run = async(client, message) => {
             type: 'ban',
             userID: message.member.id,
             duration: duration,
-            reason: '[AUTO] Fast Message Spam',
+            reason: '[AUTO] Using Filtered Words',
             expires: new Date().getTime() + parseInt(duration)
         }).save();
 
         message.channel.send(usertempbanned)
     }
 
-    if(fast == 'tempmute') {
-        deleteMessages();
+    if (filter == 'tempmute') {
+        message.delete()
         let date = new Date();
         date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
 
@@ -452,7 +437,7 @@ exports.run = async(client, message) => {
             .setColor('#FF0000')
             .setAuthor('Razor Moderation', client.user.displayAvatarURL())
             .setTitle(`You were muted in ${message.guild.name}`)
-            .addField('Reason', '[AUTO] Fast Message Spam')
+            .addField('Reason', '[AUTO] Using Filtered Words')
             .addField('Expires', rawDuration, true)
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
@@ -486,7 +471,7 @@ exports.run = async(client, message) => {
             type: 'Tempmute',
             expires: new Date().getTime() + parseInt(duration),
             date: date,
-            reason: '[AUTO] Fast Message Spam',
+            reason: '[AUTO] Using Filtered Words',
             code: code
         }
 
@@ -529,7 +514,7 @@ exports.run = async(client, message) => {
             type: 'mute',
             userID: message.member.id,
             duration: duration,
-            reason: '[AUTO] Fast Message Spam',
+            reason: '[AUTO] Using Filtered Words',
             expires: new Date().getTime() + parseInt(duration)
         }).save();
 

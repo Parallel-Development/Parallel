@@ -21,20 +21,32 @@ module.exports = {
 
         const check = await warningSchema.findOne({
             guildid: message.guild.id,
-            code: code
+            warnings: {
+                $elemMatch: {
+                    code: code
+                }
+            }
         })
-
         if (check) {
 
-            await warningSchema.deleteOne({
-                guildid: message.guild.id,
-                code: code
-            })
+            const { userid } = check
 
-            await punishmentSchema.deleteOne({
+            await warningSchema.updateOne({
                 guildid: message.guild.id,
-                type: 'warn',
-                code: code
+                userid: userid,
+                warnings: {
+                    $elemMatch: {
+                        code: code
+                    }
+                }
+
+            },
+            {
+                $pull: {
+                    warnings: {
+                        code: code
+                    }
+                }
             })
 
             const delwarnembed = new Discord.MessageEmbed()

@@ -80,7 +80,7 @@ module.exports = {
             songURL: selected.link,
             requester: message.author.tag,
             url: selected.link,
-            announceChannel: message.channel.id,
+            announceChannel: message.channel.id
         })
         if (!data.dispatcher) play(client, ops, data);
         else {

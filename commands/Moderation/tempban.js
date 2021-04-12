@@ -9,6 +9,7 @@ module.exports = {
     name: 'tempban',
     description: 'Temporarily bans the specified member from the server',
     usage: 'tempban <member> <time> [reason]',
+    aliases: ['tempbanish'],
     async execute(client, message, args) {
         const yourroletoolow = new Discord.MessageEmbed()
             .setColor('#FF0000')
@@ -143,14 +144,46 @@ module.exports = {
 
         if (!silent) message.channel.send(banmsg).catch(() => { return })
 
-        await new warningSchema({
-            guildname: message.guild.name,
-            guildid: message.guild.id,
+        const caseInfo = {
+            moderatorID: message.author.id,
             type: 'Tempban',
-            userid: member.id,
+            expires: new Date().getTime() + time,
+            date: date,
             reason: reason,
-            code: code,
-            date: date
-        }).save();
+            code: code
+        }
+
+        const warningCheck = await warningSchema.findOne({
+            guildid: message.guild.id,
+            userid: member.id
+        })
+
+        if (!warningCheck) {
+            await new warningSchema({
+                userid: member.id,
+                guildname: message.guild.name,
+                guildid: message.guild.id,
+                warnings: []
+            }).save()
+            await warningSchema.updateOne({
+                guildid: message.guild.id,
+                userid: member.id
+            },
+                {
+                    $push: {
+                        warnings: caseInfo
+                    }
+                })
+        } else {
+            await warningSchema.updateOne({
+                guildid: message.guild.id,
+                userid: member.id
+            },
+                {
+                    $push: {
+                        warnings: caseInfo
+                    }
+                })
+        }
     }
 }

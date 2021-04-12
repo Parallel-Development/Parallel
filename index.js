@@ -19,7 +19,7 @@ const automodSchema = require('./schemas/automod-schema');
 const { request } = require('http');
 let talkedRecently = new Set();
 const userMap = new Map()
-const active = new Map() 
+const active = new Map()
 
 console.log('Attempting to start the bot...')
 
@@ -103,10 +103,12 @@ setInterval(async() => {
 
 client.on('voiceStateUpdate', (oldState, newState) => {
     if(oldState.member.id !== client.user.id) return
+
     if(newState.channel == null) {
         active.delete(oldState.guild.id)
         return;
     }
+
     if(!newState.member.selfDeaf) {
         if(newState.channel == null) return;
         newState.guild.me.voice.setDeaf(true).catch(() => { return })
@@ -195,7 +197,27 @@ client.on('message', async(message) => {
         guildid: message.guild.id
     }).catch(e => false)
 
-    // Automod
+    // Automod //
+
+    // Filter
+
+    const filterCheck = await automodSchema.findOne({
+        guildid: message.guild.id,
+    })
+
+    let foundInText = false
+    const { filterList } = filterCheck
+
+    for(const i in filterList) {
+        const filterRegex = new RegExp(`\\b${filterList[i]}\\b`)
+        if(filterRegex.test(message.content.toLowerCase())) {
+            foundInText = true
+        }
+    }
+    if(foundInText) {
+        var file = require('./automod/filter')
+        file.run(client, message)
+    }
 
     // Walltext 
 
@@ -247,32 +269,37 @@ client.on('message', async(message) => {
         file.run(client, message)
     }
 
-    if (message.content.startsWith(`<@!${client.user.id}>`)) {
+    // Mass Mention
 
-        if (check) {
-            let { reason, date, sent } = check;
+    if (message.mentions.users.size >= 5) {
+        message.channel.send('Mass Mention')
+    }
 
-            if (sent == 'true') return;
+    if (check) {
+        let { reason, date, sent } = check;
 
-            const blacklistEmbed = new Discord.MessageEmbed()
-            .setColor('#FF0000')
-            .setDescription(`Unfortunately, you were blacklisted from this bot. These means you may no longer use this bot\n\n> Blacklist reason: ${reason}\n> Blacklisted on: ${date}\n\nYou can submit an appeal [here](https://docs.google.com/document/d/15EwKPOPvlIO5iSZj-qQyBjmQ5X7yKHlijW9wCiDfffM/edit)`)
-            .setAuthor('You were blacklisted!', client.user.displayAvatarURL());
-            message.author.send(blacklistEmbed).catch(() => { return message.react('🛑') }).catch(() => { return })
-            await blacklistSchema.updateMany({
-                user: message.author.id,
-                sent: 'true'
-            })
-            return;
+        if (sent == 'true') return;
+
+        const blacklistEmbed = new Discord.MessageEmbed()
+        .setColor('#FF0000')
+        .setDescription(`Unfortunately, you were blacklisted from this bot. These means you may no longer use this bot\n\n> Blacklist reason: ${reason}\n> Blacklisted on: ${date}\n\nYou can submit an appeal [here](https://docs.google.com/document/d/15EwKPOPvlIO5iSZj-qQyBjmQ5X7yKHlijW9wCiDfffM/edit)`)
+        .setAuthor('You were blacklisted!', client.user.displayAvatarURL());
+        message.author.send(blacklistEmbed).catch(() => { return message.react('🛑') }).catch(() => { return })
+        await blacklistSchema.updateMany({
+            user: message.author.id,
+            sent: 'true'
+        })
+        return;
+    }
+
+    if (message.content.startsWith('<@!745401642664460319>')) {
+        try {
+            var { prefix } = prefixSetting
+        } catch (err) {
+            var prefix = 'r!'
         }
-
-            try {
-                var { prefix } = prefixSetting
-            } catch (err) {
-                var prefix = 'r!'
-            }
-            message.channel.send(`Hello! My current prefix is \`${prefix}\`. For a list of commands, run ${prefix}help`)
-        }
+        message.channel.send(`Hello! My current prefix is \`${prefix}\`. For a list of commands, run ${prefix}help`)
+    }
 
     // Automatic setup if there are no settings for the server found
 
@@ -288,7 +315,6 @@ client.on('message', async(message) => {
             links: 'disabled',
             invites: 'disabled',
             massMention: 'disabled',
-            emojiSpam: 'disabled',
             duration: '0',
             rawDuration: '0'
         }).save();

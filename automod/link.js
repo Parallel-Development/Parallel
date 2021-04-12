@@ -28,15 +28,46 @@ exports.run = async (client, message) => {
             code += chars.charAt(Math.floor(Math.random() * charsLength))
         }
 
-        await new warningSchema({
-            guildname: message.guild.name,
-            guildid: message.guild.id,
+        const caseInfo = {
+            moderatorID: message.guild.me.id,
             type: 'Warn',
-            userid: message.member.id,
+            date: date,
             reason: '[AUTO] Sending Links',
-            code: code,
-            date: date
-        }).save();
+            code: code
+        }
+
+        const warningCheck = await warningSchema.findOne({
+            guildid: message.guild.id,
+            userid: member.id
+        })
+
+        if (!warningCheck) {
+            await new warningSchema({
+                userid: member.id,
+                guildname: message.guild.name,
+                guildid: message.guild.id,
+                warnings: []
+            }).save()
+            await warningSchema.updateOne({
+                guildid: message.guild.id,
+                userid: member.id
+            },
+                {
+                    $push: {
+                        warnings: caseInfo
+                    }
+                })
+        } else {
+            await warningSchema.updateOne({
+                guildid: message.guild.id,
+                userid: member.id
+            },
+                {
+                    $push: {
+                        warnings: caseInfo
+                    }
+                })
+        }
 
         const userwarned = new Discord.MessageEmbed()
             .setColor('#09fff2')
@@ -83,15 +114,46 @@ exports.run = async (client, message) => {
 
         message.member.kick('[AUTO] Sending Links').catch(() => { return })
 
-        await new warningSchema({
-            guildname: message.guild.name,
-            guildid: message.guild.id,
+        const caseInfo = {
+            moderatorID: message.guild.me.id,
             type: 'Kick',
-            userid: message.member.id,
+            date: date,
             reason: '[AUTO] Sending Links',
-            code: code,
-            date: date
-        }).save();
+            code: code
+        }
+
+        const warningCheck = await warningSchema.findOne({
+            guildid: message.guild.id,
+            userid: member.id
+        })
+
+        if (!warningCheck) {
+            await new warningSchema({
+                userid: member.id,
+                guildname: message.guild.name,
+                guildid: message.guild.id,
+                warnings: []
+            }).save()
+            await warningSchema.updateOne({
+                guildid: message.guild.id,
+                userid: member.id
+            },
+                {
+                    $push: {
+                        warnings: caseInfo
+                    }
+                })
+        } else {
+            await warningSchema.updateOne({
+                guildid: message.guild.id,
+                userid: member.id
+            },
+                {
+                    $push: {
+                        warnings: caseInfo
+                    }
+                })
+        }
 
         message.channel.send(userkicked)
     }
@@ -108,15 +170,46 @@ exports.run = async (client, message) => {
             code += chars.charAt(Math.floor(Math.random() * charsLength))
         }
 
-        await new warningSchema({
-            guildname: message.guild.name,
-            guildid: message.guild.id,
+        const caseInfo = {
+            moderatorID: message.guild.me.id,
             type: 'Mute',
-            userid: message.member.id,
+            date: date,
             reason: '[AUTO] Sending Links',
-            code: code,
-            date: date
-        }).save();
+            code: code
+        }
+
+        const warningCheck = await warningSchema.findOne({
+            guildid: message.guild.id,
+            userid: member.id
+        })
+
+        if (!warningCheck) {
+            await new warningSchema({
+                userid: member.id,
+                guildname: message.guild.name,
+                guildid: message.guild.id,
+                warnings: []
+            }).save()
+            await warningSchema.updateOne({
+                guildid: message.guild.id,
+                userid: member.id
+            },
+                {
+                    $push: {
+                        warnings: caseInfo
+                    }
+                })
+        } else {
+            await warningSchema.updateOne({
+                guildid: message.guild.id,
+                userid: member.id
+            },
+                {
+                    $push: {
+                        warnings: caseInfo
+                    }
+                })
+        }
 
         await new punishmentSchema({
             guildname: message.guild.name,
@@ -181,15 +274,46 @@ exports.run = async (client, message) => {
             code += chars.charAt(Math.floor(Math.random() * charsLength))
         }
 
-        await new warningSchema({
-            guildname: message.guild.name,
-            guildid: message.guild.id,
+        const caseInfo = {
+            moderatorID: message.guild.me.id,
             type: 'Ban',
-            userid: message.member.id,
+            date: date,
             reason: '[AUTO] Sending Links',
-            code: code,
-            date: date
-        }).save();
+            code: code
+        }
+
+        const warningCheck = await warningSchema.findOne({
+            guildid: message.guild.id,
+            userid: member.id
+        })
+
+        if (!warningCheck) {
+            await new warningSchema({
+                userid: member.id,
+                guildname: message.guild.name,
+                guildid: message.guild.id,
+                warnings: []
+            }).save()
+            await warningSchema.updateOne({
+                guildid: message.guild.id,
+                userid: member.id
+            },
+                {
+                    $push: {
+                        warnings: caseInfo
+                    }
+                })
+        } else {
+            await warningSchema.updateOne({
+                guildid: message.guild.id,
+                userid: member.id
+            },
+                {
+                    $push: {
+                        warnings: caseInfo
+                    }
+                })
+        }
 
         const userbanned = new Discord.MessageEmbed()
             .setColor('#09fff2')
@@ -239,15 +363,47 @@ exports.run = async (client, message) => {
 
         message.guild.members.ban(message.member, { reason: '[AUTO] Sending Links' }).catch(() => { return })
 
-        await new warningSchema({
-            guildname: message.guild.name,
-            guildid: message.guild.id,
+        const caseInfo = {
+            moderatorID: message.guild.me.id,
             type: 'Tempban',
-            userid: message.member.id,
+            expires: new Date().getTime() + parseInt(duration),
+            date: date,
             reason: '[AUTO] Sending Links',
-            code: code,
-            date: date
-        }).save();
+            code: code
+        }
+
+        const warningCheck = await warningSchema.findOne({
+            guildid: message.guild.id,
+            userid: member.id
+        })
+
+        if (!warningCheck) {
+            await new warningSchema({
+                userid: member.id,
+                guildname: message.guild.name,
+                guildid: message.guild.id,
+                warnings: []
+            }).save()
+            await warningSchema.updateOne({
+                guildid: message.guild.id,
+                userid: member.id
+            },
+                {
+                    $push: {
+                        warnings: caseInfo
+                    }
+                })
+        } else {
+            await warningSchema.updateOne({
+                guildid: message.guild.id,
+                userid: member.id
+            },
+                {
+                    $push: {
+                        warnings: caseInfo
+                    }
+                })
+        }
 
         await new punishmentSchema({
             guildname: message.guild.name,
@@ -311,15 +467,47 @@ exports.run = async (client, message) => {
             }
         }
 
-        await new warningSchema({
-            guildname: message.guild.name,
-            guildid: message.guild.id,
+        const caseInfo = {
+            moderatorID: message.guild.me.id,
             type: 'Tempmute',
-            userid: message.member.id,
+            expires: new Date().getTime() + parseInt(duration),
+            date: date,
             reason: '[AUTO] Sending Links',
-            code: code,
-            date: date
-        }).save();
+            code: code
+        }
+
+        const warningCheck = await warningSchema.findOne({
+            guildid: message.guild.id,
+            userid: member.id
+        })
+
+        if (!warningCheck) {
+            await new warningSchema({
+                userid: member.id,
+                guildname: message.guild.name,
+                guildid: message.guild.id,
+                warnings: []
+            }).save()
+            await warningSchema.updateOne({
+                guildid: message.guild.id,
+                userid: member.id
+            },
+                {
+                    $push: {
+                        warnings: caseInfo
+                    }
+                })
+        } else {
+            await warningSchema.updateOne({
+                guildid: message.guild.id,
+                userid: member.id
+            },
+                {
+                    $push: {
+                        warnings: caseInfo
+                    }
+                })
+        }
 
         await new punishmentSchema({
             guildname: message.guild.name,

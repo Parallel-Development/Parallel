@@ -2,7 +2,6 @@ const Discord = require('discord.js')
 const ms = require('ms')
 const punishmentSchema = require('../../schemas/punishment-schema')
 const warningSchema = require('../../schemas/warning-schema')
-const settingsSchema = require('../../schemas/settings-schema');
 
 module.exports = {
     name: 'tempmute',
@@ -185,15 +184,47 @@ module.exports = {
 
         if (!silent) message.channel.send(mutemsg);
 
-        await new warningSchema({
-            guildname: message.guild.name,
-            guildid: message.guild.id,
+        const caseInfo = {
+            moderatorID: message.author.id,
             type: 'Tempmute',
-            userid: member.id,
+            expires: new Date().getTime() + time,
+            date: date,
             reason: reason,
-            code: code,
-            date: date
-        }).save();
+            code: code
+        }
+
+        const warningCheck = await warningSchema.findOne({
+            guildid: message.guild.id,
+            userid: member.id
+        })
+
+        if (!warningCheck) {
+            await new warningSchema({
+                userid: member.id,
+                guildname: message.guild.name,
+                guildid: message.guild.id,
+                warnings: []
+            }).save()
+            await warningSchema.updateOne({
+                guildid: message.guild.id,
+                userid: member.id
+            },
+                {
+                    $push: {
+                        warnings: caseInfo
+                    }
+                })
+        } else {
+            await warningSchema.updateOne({
+                guildid: message.guild.id,
+                userid: member.id
+            },
+                {
+                    $push: {
+                        warnings: caseInfo
+                    }
+                })
+        }
     }
 
 }

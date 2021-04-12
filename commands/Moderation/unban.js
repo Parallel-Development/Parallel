@@ -4,6 +4,7 @@ module.exports = {
     name: 'unban',
     description: 'Unbans the specified member from the server',
     usage: 'unban',
+    aliaes: ['pardon'],
     async execute(client, message, args) {
         
         const accessdenied = new Discord.MessageEmbed()
