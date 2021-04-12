@@ -6,7 +6,7 @@ const ms = require('ms')
 module.exports = {
     name: 'warn',
     description: 'Warns the specified member in the server',
-    usage: 'warn <member> [reason] | warn <member> [time] {reason}',
+    usage: 'warn <member> [reason]\nwarn <member> -secret [reason]',
     aliases: ['strike', 'w'],
     async execute(client, message, args) {
         const missingperms = new Discord.MessageEmbed()
@@ -70,7 +70,7 @@ module.exports = {
         let reason = args.splice(1).join(' ')
         let silent = false;
         if (!reason)  reason = 'Unspecified'
-        if (reason.startsWith('-s')) silent = true;
+        if (reason.startsWith('-s') || reason.startsWith('-secret')) silent = true;
         if (silent) message.delete()
 
         let date = new Date();

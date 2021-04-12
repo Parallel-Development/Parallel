@@ -5,7 +5,7 @@ const settingsSchema = require('../../schemas/settings-schema');
 module.exports = {
     name: 'kick',
     description: 'Kicks a user from the server',
-    usage: 'kick <member> [reason]',
+    usage: 'kick <member> [reason]\nkick <member> -secret [reason]',
     aliases: ['boot'],
     async execute(client, message, args) {
         const roletoolower = new Discord.MessageEmbed()
@@ -36,11 +36,6 @@ module.exports = {
         const missingperms = new Discord.MessageEmbed()
             .setColor('#FF0000')
             .setDescription('I do not have the permission to kick members. Please give me the `Kick Members` permission and run again')
-            .setAuthor('Error', client.user.displayAvatarURL());
-
-        const yourself = new Discord.MessageEmbed()
-            .setColor('#FF0000')
-            .setDescription('You want to ban yourself... That\'s not happening')
             .setAuthor('Error', client.user.displayAvatarURL());
 
         if (!message.member.hasPermission('KICK_MEMBERS')) return message.channel.send(accessdenied);
@@ -79,7 +74,7 @@ module.exports = {
         if (!reason) {
             var reason = 'Unspecified'
         }
-        if (reason.startsWith('-s')) silent = true;
+        if (reason.startsWith('-s') || reason.startsWith('-secret')) silent = true;
         if (silent) message.delete();
 
         let date = new Date();

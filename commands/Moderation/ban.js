@@ -5,7 +5,7 @@ const warningSchema = require('../../schemas/warning-schema')
 module.exports = {
     name: 'ban',
     description: 'Bans the specified member',
-    usage: 'ban <member> [reason]',
+    usage: 'ban <member> [reason]\nban <member> -secret [reason]',
     aliases: ['b', 'banish'],
     async execute(client, message, args) {
         const roletoolower = new Discord.MessageEmbed()
@@ -76,7 +76,7 @@ module.exports = {
         if (!reason) {
             var reason = 'Unspecified'
         }
-        if (reason.startsWith('-s')) silent = true;
+        if (reason.startsWith('-s') || reason.startsWith('-secret')) silent = true;
         if (silent) message.delete();
 
         let date = new Date();

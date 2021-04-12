@@ -9,7 +9,6 @@ const settingsSchema = mongoose.Schema({
     guildname: reqString,
     guildid: reqString,
     prefix: reqString,
-    logs: reqString,
     baninfo: reqString
 })
 

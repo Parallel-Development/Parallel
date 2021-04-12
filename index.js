@@ -153,6 +153,9 @@ client.on('guildDelete', async(guild) => {
     await punishmentSchema.deleteMany({
         guildid: guild.id
     })
+    await automodSchema.deleteMany({
+        guildid: message.guild.id
+    })
 })
 
 ////////////////////////////////////
@@ -355,6 +358,7 @@ client.on('message', async(message) => {
 
     const command = client.commands.get(cmd) || client.commands.get(client.aliases.get(cmd));
     if(!command) return;
+    console.log(command)
 
     // Blacklist Check
 
