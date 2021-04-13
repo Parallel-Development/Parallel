@@ -37,19 +37,19 @@ exports.run = async (client, message) => {
 
         const warningCheck = await warningSchema.findOne({
             guildid: message.guild.id,
-            userid: member.id
+            userid: message.author.id
         })
 
         if (!warningCheck) {
             await new warningSchema({
-                userid: member.id,
+                userid: message.author.id,
                 guildname: message.guild.name,
                 guildid: message.guild.id,
                 warnings: []
             }).save()
             await warningSchema.updateOne({
                 guildid: message.guild.id,
-                userid: member.id
+                userid: message.author.id
             },
                 {
                     $push: {
@@ -59,7 +59,7 @@ exports.run = async (client, message) => {
         } else {
             await warningSchema.updateOne({
                 guildid: message.guild.id,
-                userid: member.id
+                userid: message.author.id
             },
                 {
                     $push: {
@@ -123,19 +123,19 @@ exports.run = async (client, message) => {
 
         const warningCheck = await warningSchema.findOne({
             guildid: message.guild.id,
-            userid: member.id
+            userid: message.author.id
         })
 
         if (!warningCheck) {
             await new warningSchema({
-                userid: member.id,
+                userid: message.author.id,
                 guildname: message.guild.name,
                 guildid: message.guild.id,
                 warnings: []
             }).save()
             await warningSchema.updateOne({
                 guildid: message.guild.id,
-                userid: member.id
+                userid: message.author.id
             },
                 {
                     $push: {
@@ -145,7 +145,7 @@ exports.run = async (client, message) => {
         } else {
             await warningSchema.updateOne({
                 guildid: message.guild.id,
-                userid: member.id
+                userid: message.author.id
             },
                 {
                     $push: {
@@ -179,19 +179,19 @@ exports.run = async (client, message) => {
 
         const warningCheck = await warningSchema.findOne({
             guildid: message.guild.id,
-            userid: member.id
+            userid: message.author.id
         })
 
         if (!warningCheck) {
             await new warningSchema({
-                userid: member.id,
+                userid: message.author.id,
                 guildname: message.guild.name,
                 guildid: message.guild.id,
                 warnings: []
             }).save()
             await warningSchema.updateOne({
                 guildid: message.guild.id,
-                userid: member.id
+                userid: message.author.id
             },
                 {
                     $push: {
@@ -201,7 +201,7 @@ exports.run = async (client, message) => {
         } else {
             await warningSchema.updateOne({
                 guildid: message.guild.id,
-                userid: member.id
+                userid: message.author.id
             },
                 {
                     $push: {
@@ -214,7 +214,7 @@ exports.run = async (client, message) => {
             guildname: message.guild.name,
             guildid: message.guild.id,
             type: 'mute',
-            userID: message.member.id,
+            userID: message.message.author.id,
             duration: 'permanent',
             reason: '[AUTO] Walltext',
             expires: 'never'
@@ -283,19 +283,19 @@ exports.run = async (client, message) => {
 
         const warningCheck = await warningSchema.findOne({
             guildid: message.guild.id,
-            userid: member.id
+            userid: message.author.id
         })
 
         if (!warningCheck) {
             await new warningSchema({
-                userid: member.id,
+                userid: message.author.id,
                 guildname: message.guild.name,
                 guildid: message.guild.id,
                 warnings: []
             }).save()
             await warningSchema.updateOne({
                 guildid: message.guild.id,
-                userid: member.id
+                userid: message.author.id
             },
                 {
                     $push: {
@@ -305,7 +305,7 @@ exports.run = async (client, message) => {
         } else {
             await warningSchema.updateOne({
                 guildid: message.guild.id,
-                userid: member.id
+                userid: message.author.id
             },
                 {
                     $push: {
@@ -373,19 +373,19 @@ exports.run = async (client, message) => {
 
         const warningCheck = await warningSchema.findOne({
             guildid: message.guild.id,
-            userid: member.id
+            userid: message.author.id
         })
 
         if (!warningCheck) {
             await new warningSchema({
-                userid: member.id,
+                userid: message.author.id,
                 guildname: message.guild.name,
                 guildid: message.guild.id,
                 warnings: []
             }).save()
             await warningSchema.updateOne({
                 guildid: message.guild.id,
-                userid: member.id
+                userid: message.author.id
             },
                 {
                     $push: {
@@ -395,7 +395,7 @@ exports.run = async (client, message) => {
         } else {
             await warningSchema.updateOne({
                 guildid: message.guild.id,
-                userid: member.id
+                userid: message.author.id
             },
                 {
                     $push: {
@@ -408,7 +408,7 @@ exports.run = async (client, message) => {
             guildname: message.guild.name,
             guildid: message.guild.id,
             type: 'ban',
-            userID: message.member.id,
+            userID: message.message.author.id,
             duration: duration,
             reason: '[AUTO] Walltext',
             expires: new Date().getTime() + parseInt(duration)
@@ -477,19 +477,19 @@ exports.run = async (client, message) => {
 
         const warningCheck = await warningSchema.findOne({
             guildid: message.guild.id,
-            userid: member.id
+            userid: message.author.id
         })
 
         if (!warningCheck) {
             await new warningSchema({
-                userid: member.id,
+                userid: message.author.id,
                 guildname: message.guild.name,
                 guildid: message.guild.id,
                 warnings: []
             }).save()
             await warningSchema.updateOne({
                 guildid: message.guild.id,
-                userid: member.id
+                userid: message.author.id
             },
                 {
                     $push: {
@@ -499,7 +499,7 @@ exports.run = async (client, message) => {
         } else {
             await warningSchema.updateOne({
                 guildid: message.guild.id,
-                userid: member.id
+                userid: message.author.id
             },
                 {
                     $push: {

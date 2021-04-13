@@ -5,7 +5,7 @@ const warningSchema = require('../../schemas/warning-schema')
 module.exports = {
     name: 'ban',
     description: 'Bans the specified member',
-    usage: 'ban <member> [reason]\nban <member> -silent [reason]',
+    usage: 'ban <member> [reason]',
     aliases: ['b', 'banish'],
     async execute(client, message, args) {
         const roletoolower = new Discord.MessageEmbed()
@@ -72,16 +72,9 @@ module.exports = {
         }
 
         var reason = args.splice(1).join(' ');
-        let silent = false;
         if (!reason) {
             var reason = 'Unspecified'
         }
-
-        if (args[1] == '-s' || args[1] == '-silent') {
-            silent = true;
-            reason = args.splice(2).join(' ')
-        }
-        if (silent) message.delete();
 
         let date = new Date();
         date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
@@ -116,7 +109,7 @@ module.exports = {
 
         message.guild.members.ban(member, { reason: reason })
 
-        if (!silent) message.channel.send(banmsg);
+        message.channel.send(banmsg);
 
         const caseInfo = {
             moderatorID: message.author.id,

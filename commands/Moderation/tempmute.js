@@ -6,7 +6,7 @@ const warningSchema = require('../../schemas/warning-schema')
 module.exports = {
     name: 'tempmute',
     description: 'Temporarily mutes the specified member in the server',
-    usage: 'tempmute <member> [time] (reason)\ntempmute <member> [time] -silent {reason}',
+    usage: 'tempmute <member> [time] (reason)',
     async execute(client, message, args) {
         const roletoolower = new Discord.MessageEmbed()
             .setColor('#FF0000')
@@ -91,15 +91,9 @@ module.exports = {
         if (time < 1000) return message.channel.send(badtimetoolow)
 
         var reason = args.splice(2).join(' ');
-        let silent = false;
         if (!reason) {
             var reason = 'Unspecified'
         }
-        if (args[2] == '-s' || args[1] == '-silent') {
-            silent = true;
-            reason = args.splice(3).join(' ')
-        }
-        if (silent) message.delete();
 
         var role = message.guild.roles.cache.find(x => x.name === 'Muted');
 
@@ -184,8 +178,8 @@ module.exports = {
         }).save();
 
         member.send(tempmutemsgdm).catch(() => { return })
-
-        if (!silent) message.channel.send(mutemsg);
+        
+        message.channel.send(mutemsg);
 
         const caseInfo = {
             moderatorID: message.author.id,

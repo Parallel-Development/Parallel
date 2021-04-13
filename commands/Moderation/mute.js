@@ -6,7 +6,7 @@ const settingsSchema = require('../../schemas/settings-schema');
 module.exports = {
     name: 'mute',
     description: 'Mutes the specified member in the server',
-    usage: 'mute <member> [reason]\nmute <member> -silent [reason]',
+    usage: 'mute <member> [reason]',
     aliases: ['silence', 'shut', 'm'],
     async execute(client, message, args) {
         const roletoolower = new Discord.MessageEmbed()
@@ -71,15 +71,9 @@ module.exports = {
         }
 
         var reason = args.splice(1).join(' ');
-        let silent = false;
         if (!reason) {
             var reason = 'Unspecified'
         }
-        if (args[1] == '-s' || args[1] == '-silent') {
-            silent = true;
-            reason = args.splice(2).join(' ')
-        }
-        if (silent) message.delete();
 
         var role = message.guild.roles.cache.find(x => x.name === 'Muted');
 
@@ -166,7 +160,7 @@ module.exports = {
 
         member.send(mutemsgdm).catch(() => { return })
 
-        if (!silent) message.channel.send(mutemsg);
+        message.channel.send(mutemsg);
 
         const caseInfo = {
             moderatorID: message.author.id,

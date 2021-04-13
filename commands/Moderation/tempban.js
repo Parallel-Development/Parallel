@@ -8,7 +8,7 @@ const { duration } = require('moment');
 module.exports = {
     name: 'tempban',
     description: 'Temporarily bans the specified member from the server',
-    usage: 'tempban <member> <time> [reason]\ntempban <member> [time] -silent {reason}',
+    usage: 'tempban <member> <time> [reason]',
     aliases: ['tempbanish'],
     async execute(client, message, args) {
         const yourroletoolow = new Discord.MessageEmbed()
@@ -98,15 +98,9 @@ module.exports = {
         if (time < 1000) return message.channel.send(badtimetoolow)
 
         var reason = args.splice(2).join(' ');
-        let silent = false;
         if (!reason) {
             var reason = 'Unspecified'
         }
-        if (args[2] == '-s' || args[1] == '-silent') {
-            silent = true;
-            reason = args.splice(3).join(' ')
-        }
-        if (silent) message.delete()
 
         let date = new Date();
         date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
@@ -144,8 +138,8 @@ module.exports = {
         member.send(tempbanmsgdm).catch(() => { return })
 
         message.guild.members.ban(member, { reason: reason })
-
-        if (!silent) message.channel.send(banmsg).catch(() => { return })
+        
+        message.channel.send(banmsg).catch(() => { return })
 
         const caseInfo = {
             moderatorID: message.author.id,
