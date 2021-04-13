@@ -181,6 +181,56 @@ for (const folder of commandFolders) {
 }
 */
 
+client.on('messageUpdate', async(oldMessage, message) => {
+
+    // Automod //
+
+    // Filter
+
+    let filterCheck = await automodSchema.findOne({
+        guildid: message.guild.id,
+    })
+
+    let foundInText = false
+    let { filterList } = filterCheck
+
+    for (const i in filterList) {
+        let filterRegex = new RegExp(`\\b${filterList[i]}\\b`)
+        if (filterRegex.test(message.content.toLowerCase())) {
+            foundInText = true
+        }
+    }
+    if (foundInText) {
+        var file = require('./automod/filter')
+        file.run(client, message)
+    }
+
+    // Walltext 
+
+    let walltextCheck = message.content.split('\n')
+    if (walltextCheck.length >= 6) {
+        var file = require('./automod/walltext')
+        file.run(client, message)
+    }
+
+    // Invites
+
+    let inviteCheck = new RegExp('(discord|d|dis|discordapp)(.gg|.com\/invite)/[a-zA-Z0-9]+$')
+    if (inviteCheck.test(message.content)) {
+        var file = require('./automod/invite')
+        file.run(client, message)
+    }
+
+    // Links
+
+    let linkRegex = new RegExp('[a-zA-Z0-9]\\.(com|net|co|org|io|me|xyz|wtf|tv|edu|eu|us|codes|shop|info|gov|gg|gif)')
+
+    if (linkRegex.test(message.content)) {
+        var file = require('./automod/link')
+        file.run(client, message)
+    }
+})
+
 client.on('message', async(message) => {
 
     if(message.author.bot) return;
@@ -204,15 +254,15 @@ client.on('message', async(message) => {
 
     // Filter
 
-    const filterCheck = await automodSchema.findOne({
+    let filterCheck = await automodSchema.findOne({
         guildid: message.guild.id,
     })
 
     let foundInText = false
-    const { filterList } = filterCheck
+    let { filterList } = filterCheck
 
     for(const i in filterList) {
-        const filterRegex = new RegExp(`\\b${filterList[i]}\\b`)
+        let filterRegex = new RegExp(`\\b${filterList[i]}\\b`)
         if(filterRegex.test(message.content.toLowerCase())) {
             foundInText = true
         }
@@ -224,7 +274,7 @@ client.on('message', async(message) => {
 
     // Walltext 
 
-    const walltextCheck = message.content.split('\n')
+    let walltextCheck = message.content.split('\n')
     if(walltextCheck.length >= 6) {
         var file = require('./automod/walltext')
         file.run(client, message)
@@ -257,7 +307,7 @@ client.on('message', async(message) => {
 
     // Invites
 
-    const inviteCheck = new RegExp('(discord|d|dis|discordapp)(.gg|.com\/invite)/[a-zA-Z0-9]+$')
+    let inviteCheck = new RegExp('(discord|d|dis|discordapp)(.gg|.com\/invite)/[a-zA-Z0-9]+$')
     if(inviteCheck.test(message.content)) {
         var file = require('./automod/invite')
         file.run(client, message)
@@ -265,7 +315,7 @@ client.on('message', async(message) => {
 
     // Links
 
-    const linkRegex = new RegExp('[a-zA-Z0-9]\\.(com|net|co|org|io|me|xyz|wtf|tv|edu|eu|us|codes|shop|info|gov|gg|gif)')
+    let linkRegex = new RegExp('[a-zA-Z0-9]\\.(com|net|co|org|io|me|xyz|wtf|tv|edu|eu|us|codes|shop|info|gov|gg|gif)')
 
     if(linkRegex.test(message.content)) {
         var file = require('./automod/link')

@@ -3,7 +3,7 @@ const Discord = require('discord.js')
 module.exports = {
     name: 'clear',
     description: 'Clears messages in a channel',
-    usage: 'clear <amount>',
+    usage: 'clear <amount>\nclear <user> [amoung]',
     aliases: ['purge'],
     async execute(client, message, args) {
         const missingperms = new Discord.MessageEmbed()
@@ -27,28 +27,29 @@ module.exports = {
             .setAuthor('Error', client.user.displayAvatarURL())
             .setFooter('The number must be an integer')
 
+        const error = new Discord.MessageEmbed()
+            .setColor('#FF0000')
+            .setDescription('Due to discord limiations, I cannot delete messages over 2 weeks old')
+            .setFooter('Not the error? Check if I have perms to manage manages in this channel')
+
+
 
         if (!message.member.hasPermission('MANAGE_ROLES')) return message.channel.send(accessdenied);
         if (!message.guild.me.hasPermission('MANAGE_ROLES')) return message.channel.send(missingperms);
 
-        var amount = parseFloat(args[0])
+        const amount = parseFloat(args[0])
 
-        if (amount > 100) return message.channel.send(badtime)
-        if (amount < 1) return message.channel.send(badtime)
+        if (amount > 100 || amount < 1) return message.channel.send(badtime)
         if (!amount) return message.channel.send(neednumber)
 
-        const deletedmessages = new Discord.MessageEmbed()
+        const deletedMessages = new Discord.MessageEmbed()
             .setColor('#09fff2')
             .setDescription(`Successfully deleted ${amount} messages`)
             .setAuthor('Messages Deleted', client.user.displayAvatarURL())
 
-        const error = new Discord.MessageEmbed()
-            .setColor('#FF0000')
-            .setDescription('Due to discord limiations, I cannot delete messages over 2 weeks old')
-
         try {
             message.channel.bulkDelete(amount, true)
-            let delMessage = await message.channel.send(deletedmessages)
+            let delMessage = await message.channel.send(deletedMessages)
 
             setTimeout(async () => {
                 delMessage.delete();

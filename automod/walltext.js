@@ -11,7 +11,8 @@ exports.run = async (client, message) => {
     let { walltext, duration, rawDuration } = automodGrab
 
     if (walltext == 'delete') {
-        message.reply('that word is filtered on this server!')
+        message.delete()
+        message.reply('walltext is not allowed!')
     }
 
     if (walltext == 'warn') {

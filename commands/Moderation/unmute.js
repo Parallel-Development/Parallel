@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 const punishmentSchema = require('../../schemas/punishment-schema')
-const settingsSchema = require('../../schemas/settings-schema');
+const warningSchema = require('../../schemas/warning-schema')
 const moment = require('moment')
 
 module.exports = {
@@ -92,6 +92,13 @@ module.exports = {
             userID: member.id
         })
             .catch(() => { return })
+        
+        var code = '';
+        var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+        var charsLength = chars.length
+        for (var i = 0; i < 15; i++) {
+            code += chars.charAt(Math.floor(Math.random() * charsLength))
+        }
 
         let date = new Date();
         date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
