@@ -6,7 +6,7 @@ const warningSchema = require('../../schemas/warning-schema')
 module.exports = {
     name: 'tempmute',
     description: 'Temporarily mutes the specified member in the server',
-    usage: 'tempmute <member> [time] (reason)\ntempmute <member> [time] -secret {reason}',
+    usage: 'tempmute <member> [time] (reason)\ntempmute <member> [time] -silent {reason}',
     async execute(client, message, args) {
         const roletoolower = new Discord.MessageEmbed()
             .setColor('#FF0000')
@@ -95,7 +95,10 @@ module.exports = {
         if (!reason) {
             var reason = 'Unspecified'
         }
-        if (reason.startsWith('-s') || reason.startsWith('-secret')) silent = true;
+        if (args[2] == '-s' || args[1] == '-silent') {
+            silent = true;
+            reason = args.splice(3).join(' ')
+        }
         if (silent) message.delete();
 
         var role = message.guild.roles.cache.find(x => x.name === 'Muted');

@@ -5,7 +5,7 @@ const settingsSchema = require('../../schemas/settings-schema');
 module.exports = {
     name: 'kick',
     description: 'Kicks a user from the server',
-    usage: 'kick <member> [reason]\nkick <member> -secret [reason]',
+    usage: 'kick <member> [reason]\nkick <member> -silent [reason]',
     aliases: ['boot'],
     async execute(client, message, args) {
         const roletoolower = new Discord.MessageEmbed()
@@ -74,7 +74,10 @@ module.exports = {
         if (!reason) {
             var reason = 'Unspecified'
         }
-        if (reason.startsWith('-s') || reason.startsWith('-secret')) silent = true;
+        if (args[1] == '-s' || args[1] == '-silent') {
+            silent = true;
+            reason = args.splice(2).join(' ')
+        }
         if (silent) message.delete();
 
         let date = new Date();

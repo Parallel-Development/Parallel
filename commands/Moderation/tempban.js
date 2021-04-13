@@ -8,7 +8,7 @@ const { duration } = require('moment');
 module.exports = {
     name: 'tempban',
     description: 'Temporarily bans the specified member from the server',
-    usage: 'tempban <member> <time> [reason]\ntempban <member> [time] -secret {reason}',
+    usage: 'tempban <member> <time> [reason]\ntempban <member> [time] -silent {reason}',
     aliases: ['tempbanish'],
     async execute(client, message, args) {
         const yourroletoolow = new Discord.MessageEmbed()
@@ -102,7 +102,10 @@ module.exports = {
         if (!reason) {
             var reason = 'Unspecified'
         }
-        if (reason.startsWith('-s') || reason.startsWith('-secret')) silent = true;
+        if (args[2] == '-s' || args[1] == '-silent') {
+            silent = true;
+            reason = args.splice(3).join(' ')
+        }
         if (silent) message.delete()
 
         let date = new Date();
