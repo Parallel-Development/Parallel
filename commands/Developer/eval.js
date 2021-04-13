@@ -7,13 +7,19 @@ const dev = config.developers
 module.exports = {
     name: 'eval',
     description: 'Evaluates the specified code',
-    usage: 'eval <code>',
+    usage: 'eval <code>\neval -noblock <code>',
     aliases: ['e', 'ev', 'evaluate'],
     async execute(client, message, args) {
         if (!allowed.includes(message.author.id)) return;
 
         let code = args.join(' ');
         if (!code) return message.channel.send('Please input something to run')
+
+        let noBlock = false
+        if(args[0] == '-noblock' || args[0] == '-nb') {
+            code = args.splice(1).join(' ')
+            noBlock = true
+        }
 
         let output;
 
@@ -31,6 +37,7 @@ module.exports = {
             'throw',
             'node-fetch'
         ]
+
         let foundInText = false
         for(i in filter) {
             if(code.toLowerCase().includes(filter[i])) foundInText = true
@@ -40,7 +47,9 @@ module.exports = {
         try {
             output = await eval(code)
             if(output.length >= 1024) {
-                return message.channel.send(`Output too big to be sent`)
+                if(!noBlock) {
+                    return message.channel.send(`Output too big to be sent`)
+                }
             }
         } catch (err) {
             const error = new Discord.MessageEmbed()
@@ -59,7 +68,7 @@ module.exports = {
 
         if (typeof output != 'string') output = util.inspect(output);
 
-        message.channel.send(outputembed);
+        if(!noBlock) message.channel.send(outputembed);
 
         const server = client.guilds.cache.get('747624284008218787')
         const channel = server.channels.cache.get('822853570213838849')
