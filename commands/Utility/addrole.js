@@ -55,7 +55,9 @@ module.exports = {
         }
 
         if(message.member.roles.highest.position <= role.position) {
-            return message.channel.send('You cannot grant this role as your role hierarchy is equal or below this role')
+            if(!message.guild.owner) {
+                return message.channel.send('You cannot grant this role as your role hierarchy is equal or below this role')
+            }
         } else if(message.guild.me.roles.highest.position <= role.position) {
             return message.channel.send('I do not have permission to grant this role, as it is equal or below me in hierarchy')
         } else if(member.roles.cache.has(role.id)) {
