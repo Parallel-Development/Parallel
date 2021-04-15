@@ -113,11 +113,12 @@ module.exports = {
                         message.channel.send(`Users who send words on the \`Filtered List\` will get banned for ${rawTime}`)
                         break;
                     case 'disable':
-                        automodSchema.findOneAndUpdate({
+                        await automodSchema.findOneAndUpdate({
                             guildid: message.guild.id
                         },
                             {
-                                filter: 'disabled'
+                                filter: 'disabled',
+                                duration: 0
                             })
 
                         message.channel.send('Users will no longer be punished for sending words in the `Filter list`')
