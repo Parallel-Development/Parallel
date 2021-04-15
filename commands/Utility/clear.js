@@ -3,7 +3,7 @@ const Discord = require('discord.js')
 module.exports = {
     name: 'clear',
     description: 'Clears messages in a channel',
-    usage: 'clear <amount>\nclear <user> [amoung]',
+    usage: 'clear <amount>',
     aliases: ['purge'],
     async execute(client, message, args) {
         const missingperms = new Discord.MessageEmbed()
