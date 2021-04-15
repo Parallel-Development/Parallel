@@ -15,7 +15,7 @@ const automodSchema = mongoose.Schema({
     flood: reqString,
     links: reqString,
     invites: reqString,
-    massMention: reqString,
+    massmention: reqString,
     duration: reqString,
     rawDuration: reqString
 });

@@ -25,7 +25,7 @@ module.exports = {
         .addField('duplication', 'Toggle the punishment for is someone sends repeative characters in their message', true)
         .addField('links', 'Toggle the punishment for if someone sends links in chat', true)
         .addField('invites', 'Toggle the punishment for if someone sends a Discord invite', true)
-        .addField('massmention', 'Toggle the punishment for if someone mentions 6 or more people', true)
+        .addField('massmention', 'Toggle the punishment for if someone mentions 5 or more individual users', true)
         .setAuthor(`Auto-moderation for ${message.guild.name}`, client.user.displayAvatarURL())
 
         const option = args[0]

@@ -369,7 +369,7 @@ client.on('message', async(message) => {
             flood: 'disabled',
             links: 'disabled',
             invites: 'disabled',
-            massMention: 'disabled',
+            massmention: 'disabled',
             duration: '0',
             rawDuration: '0'
         }).save();
