@@ -259,17 +259,18 @@ client.on('message', async(message) => {
     })
 
     let foundInText = false
-    let { filterList } = filterCheck
-
-    for(const i in filterList) {
-        let filterRegex = new RegExp(`\\b${filterList[i]}\\b`)
-        if(filterRegex.test(message.content.toLowerCase())) {
-            foundInText = true
+    if(filterCheck) {
+        let { filterList } = filterCheck
+        for (const i in filterList) {
+            let filterRegex = new RegExp(`\\b${filterList[i]}\\b`)
+            if (filterRegex.test(message.content.toLowerCase())) {
+                foundInText = true
+            }
         }
-    }
-    if(foundInText) {
-        var file = require('./automod/filter')
-        file.run(client, message)
+        if (foundInText) {
+            var file = require('./automod/filter')
+            file.run(client, message)
+        }
     }
 
     // Walltext 
@@ -325,6 +326,7 @@ client.on('message', async(message) => {
     // Mass Mention
 
     if (message.mentions.users.size >= 5) {
+        console.log('yes')
         var file = require('./automod/massmention')
         file.run(client, message)
     }
