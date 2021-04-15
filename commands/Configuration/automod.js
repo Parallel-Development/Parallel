@@ -22,7 +22,7 @@ module.exports = {
         .addField('filterlist', 'Add, remove, or view the list of filtered words', true)
         .addField('fast', 'Toggle the punishment for if someone sends messages too quickly', true)
         .addField('walltext', 'Toggle the puishment for if someone sends text in a wall-like form', true)
-        .addField('flood', 'Toggle the punishment for is someone sends long spammy messages, flooding the chat', true)
+        .addField('duplication', 'Toggle the punishment for is someone sends repeative characters in their message', true)
         .addField('links', 'Toggle the punishment for if someone sends links in chat', true)
         .addField('invites', 'Toggle the punishment for if someone sends a Discord invite', true)
         .addField('massmention', 'Toggle the punishment for if someone mentions 6 or more people', true)
@@ -475,7 +475,7 @@ module.exports = {
                         }
                 }
                 break;
-            case 'flood':
+            case 'duplication':
                 switch (toggle) {
                     case 'delete':
                         break;

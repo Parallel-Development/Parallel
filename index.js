@@ -325,7 +325,8 @@ client.on('message', async(message) => {
     // Mass Mention
 
     if (message.mentions.users.size >= 5) {
-        message.channel.send('Mass Mention')
+        var file = require('./automod/massmention')
+        file.run(client, message)
     }
 
     if (check) {
