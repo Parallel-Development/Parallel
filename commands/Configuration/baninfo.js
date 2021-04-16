@@ -2,9 +2,9 @@ const Discord = require('discord.js')
 const { execute } = require('./settings')
 const settingsSchema = require('../../schemas/settings-schema')
 module.exports = {
-    name: 'prefix',
+    name: 'baninfo',
     description: 'Change the bot prefix in your server',
-    usage: 'prefix (prefix)',
+    usage: 'baninfo (msg)',
     async execute(client, message, args) {
         const accessdenied = new Discord.MessageEmbed()
             .setColor('#FF0000')
