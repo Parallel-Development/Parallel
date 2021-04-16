@@ -266,7 +266,7 @@ client.on('message', async(message) => {
     const automodCheck = await automodSchema.findOne({
         guildid: message.guild.id
     }).catch(e => false)
-
+    
     // Automod //
 
     // Filter

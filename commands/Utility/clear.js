@@ -52,7 +52,7 @@ module.exports = {
             let delMessage = await message.channel.send(deletedMessages)
 
             setTimeout(async () => {
-                delMessage.delete();
+                delMessage.delete().catch(() => { return });
             }, 5000)
         } catch (err) {
             message.channel.send(error)
