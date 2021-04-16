@@ -110,7 +110,7 @@ module.exports = {
                                 filter: 'tempmute',
                                 duration: time
                         })
-                        message.channel.send(`Users who send words on the \`Filtered List\` will get banned for ${rawTime}`)
+                        message.channel.send(`Users who send words on the \`Filtered List\` will get muted for ${rawTime}`)
                         break;
                     case 'disable':
                         await automodSchema.findOneAndUpdate({
