@@ -10,15 +10,6 @@ module.exports = {
     usage: 'play <query>',
     aliases: ['p'],
     async execute(client, message, args, ops) {
-        if (!message.guild.me.hasPermission('CONNECT')) {
-            if (!message.guild.me.hasPermission('ADMINISTRATOR')) {
-                return message.channel.send('<:error:815355171537289257> I cannot play music here. I am either missing the Speak or Connect permission')
-            }
-        } else if (message.guild.me.hasPermission('SPEAK')) {
-            if (!message.guild.me.hasPermission('ADMINISTRATOR')) {
-                return message.channel.send('<:error:815355171537289257> I cannot play music here. I am either missing the Speak or Connect permission')
-            }
-        }
 
         const opts = {
             maxResults: 5,
@@ -70,7 +61,7 @@ module.exports = {
         let data = ops.active.get(message.guild.id) || {};
 
         if (!data.connection) {
-            data.connection = await message.member.voice.channel.join();
+            data.connection = await message.member.voice.channel.join().catch(() => { return message.chanenl.send('Failed to join the Voice Channel. Do I have the permission to join?') });
             message.guild.me.voice.setDeaf(true).catch(() => { return })
         }
         if (!data.queue) data.queue = [];
