@@ -13,7 +13,7 @@ module.exports = {
         if (!message.member.hasPermission('MANAGE_GUILD')) return message.channel.send(accessdenied)
 
         if (!args[0]) return message.channel.send('Please specify the custom message you wish to use. Make your message `none` to disable the custom message field\nTip: to make a hyperlink, follow this format: \`[text](link)\`')
-        const banInfoMessage = args.splice(1).join(' ')
+        const banInfoMessage = args.join(' ')
 
         await settingsSchema.updateOne({
             guildid: message.guild.id
