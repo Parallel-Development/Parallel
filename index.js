@@ -244,6 +244,8 @@ client.on('messageUpdate', async(oldMessage, message) => {
     }
 })
 
+let hehe = true
+
 client.on('message', async(message) => {
 
     if (devOnly) {
@@ -251,6 +253,13 @@ client.on('message', async(message) => {
     }
 
     if(message.author.bot) return;
+    if (message.content == 'Does borb love emmie?') {
+        if (hehe) message.reply('Of course! They are practically dating')
+        hehe = false
+        setTimeout(async => {
+            hehe = true
+        }, 10000)
+    }
 
     if(!message.guild) return;
     if(!message.guild.me.hasPermission('SEND_MESSAGES', 'READ_MESSAGES')) return;
