@@ -34,8 +34,8 @@ module.exports = {
 
 
 
-        if (!message.member.hasPermission('MANAGE_ROLES')) return message.channel.send(accessdenied);
-        if (!message.guild.me.hasPermission('MANAGE_ROLES')) return message.channel.send(missingperms);
+        if (!message.member.hasPermission('MANAGE_MESSAGES')) return message.channel.send(accessdenied);
+        if (!message.guild.me.hasPermission('MANAGE_MESSAGES')) return message.channel.send(missingperms);
 
         const amount = parseFloat(args[0])
 
@@ -48,7 +48,7 @@ module.exports = {
             .setAuthor('Messages Deleted', client.user.displayAvatarURL())
 
         try {
-            message.channel.bulkDelete(amount, true)
+            message.channel.bulkDelete(amount + 1, true)
             let delMessage = await message.channel.send(deletedMessages)
 
             setTimeout(async () => {
