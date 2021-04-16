@@ -20,8 +20,17 @@ const { request } = require('http');
 let talkedRecently = new Set();
 const userMap = new Map()
 const active = new Map()
+let devOnly = false
 
-console.log('Attempting to start the bot...')
+var terminalArguments = process.argv.slice(2)
+let startupMessage = 'Attempting to start the bot...'
+if(terminalArguments[0] == '-d') {
+    devOnly = true
+    startupMessage += ' | Developer Only mode is enabled'
+}
+
+
+console.log(startupMessage)
 
 let startUp = 0;
 const connectToMongoDB = async () => {
@@ -183,6 +192,10 @@ for (const folder of commandFolders) {
 
 client.on('messageUpdate', async(oldMessage, message) => {
 
+    if (devOnly) {
+        if (!config.developers.includes(message.author.id)) return
+    }
+
     // Automod //
 
     // Filter
@@ -232,6 +245,10 @@ client.on('messageUpdate', async(oldMessage, message) => {
 })
 
 client.on('message', async(message) => {
+
+    if (devOnly) {
+        if (!config.developers.includes(message.author.id)) return
+    }
 
     if(message.author.bot) return;
 
