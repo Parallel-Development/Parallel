@@ -4,6 +4,7 @@ module.exports = {
     name: 'decrypt',
     description: 'Decrypts hex or binary',
     usage: 'decrypt <type: hex, binary> <text>',
+    aliases: ['decode'],
     async execute(client, message, args) {
 
         const missingargtype = new Discord.MessageEmbed()
@@ -38,8 +39,8 @@ module.exports = {
             const base64output = base64outputraw.toString();
             const base64outputembed = new Discord.MessageEmbed()
             .setColor('#09fff2')
-            .addField('Input', text)
-            .addField('Encrypted (Base 64)', `\`${base64output}\``)
+            .addField('Input (Base64)', text)
+            .addField('Decrypted Text', `\`${base64output}\``)
             .setAuthor('Text Encryption', client.user.displayAvatarURL())
             message.channel.send(base64outputembed)
         } else if(type.toLowerCase() == 'binary') {

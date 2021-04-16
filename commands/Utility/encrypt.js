@@ -4,6 +4,7 @@ const { execute } = require('../Informative/serverinfo')
 module.exports = {
     name: 'encrypt',
     description: 'Encryptes text into base64, or binary (utf8)',
+    aliases: ['encode'],
     usage: 'encrypt <type: base64, binary>',
     async execute(client, message, args) {
         const missingargtype = new Discord.MessageEmbed()
