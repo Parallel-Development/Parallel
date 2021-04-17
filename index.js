@@ -244,6 +244,10 @@ client.on('messageUpdate', async(oldMessage, message) => {
     }
 })
 
+// lolol
+
+let fuckYouTrigger = true
+
 client.on('message', async(message) => {
 
     if (devOnly) {
@@ -266,6 +270,14 @@ client.on('message', async(message) => {
     const automodCheck = await automodSchema.findOne({
         guildid: message.guild.id
     }).catch(e => false)
+
+    if(message.content.includes('fuck you')) {
+        if(fuckYouTrigger) {
+            message.channel.send('Hey champ, that\'s not very kind')
+            fuckYouTrigger = false
+            setTimeout(() => { fuckYouTrigger = true }, 60000)
+        }
+    }
     
     // Automod //
 
