@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 const punishmentSchema = require('../../schemas/punishment-schema');
 const warningSchema = require('../../schemas/warning-schema')
-const settingsSchema = require('../../schemas/settings-schema');
+const moment = require('moment')
 
 module.exports = {
     name: 'mute',
