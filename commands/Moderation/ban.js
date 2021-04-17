@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 const settingsSchema = require('../../schemas/settings-schema');
 const warningSchema = require('../../schemas/warning-schema')
+const moment = require('moment')
 
 module.exports = {
     name: 'ban',

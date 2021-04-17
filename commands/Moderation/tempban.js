@@ -3,7 +3,7 @@ const ms = require('ms');
 const punishmentSchema = require('../../schemas/punishment-schema');
 const warningSchema = require('../../schemas/warning-schema')
 const settingsSchema = require('../../schemas/settings-schema');
-const { duration } = require('moment');
+const moment = require('moment')
 
 module.exports = {
     name: 'tempban',
