@@ -2,6 +2,7 @@ const Discord = require('discord.js');
 const punishmentSchema = require('../../schemas/punishment-schema');
 const warningSchema = require('../../schemas/warning-schema')
 const moment = require('moment')
+const ms = require('ms')
 
 module.exports = {
     name: 'mute',
@@ -70,9 +71,9 @@ module.exports = {
             if (member.id == message.author.id) return message.channel.send('Why tho')
         }
 
-        var reason = args.splice(1).join(' ');
+        let reason = args.splice(1).join(' ');
         if (!reason) {
-            var reason = 'Unspecified'
+            reason = 'Unspecified'
         }
 
         var role = message.guild.roles.cache.find(x => x.name === 'Muted');
@@ -97,6 +98,13 @@ module.exports = {
             } catch {
                 return message.channel.send(roletoolower)
             }
+        }
+
+        var code = '';
+        var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+        var charsLength = chars.length
+        for (var i = 0; i < 15; i++) {
+            code += chars.charAt(Math.floor(Math.random() * charsLength))
         }
 
         let date = new Date();
@@ -127,6 +135,88 @@ module.exports = {
             }
         }
 
+        // Tempmute?
+
+        const rawTime = reason.split(' ')[0]
+        const time = ms(rawTime)
+
+        if(time) {
+            reason = args.splice(2).join(' ')
+            if(!reason) reason = 'Unspecified'
+
+            const tempmutemsg = new Discord.MessageEmbed()
+                .setColor('#09fff2')
+                .setDescription(`${member} has been muted with ID \`${code}\` <a:check:800062847974375424>`)
+
+            const tempmutemsgdm = new Discord.MessageEmbed()
+                .setColor('#FF0000')
+                .setAuthor('Razor Moderation', client.user.displayAvatarURL())
+                .setTitle(`You were muted in ${message.guild.name}`)
+                .addField('Reason', reason, true)
+                .addField('Expires', rawTime, true)
+                .addField('Date', date)
+                .setFooter(`Punishment ID: ${code}`)
+
+            await new punishmentSchema({
+                guildname: message.guild.name,
+                guildid: message.guild.id,
+                type: 'mute',
+                userID: member.id,
+                duration: time,
+                reason: reason,
+                expires: new Date().getTime() + time
+            }).save();
+
+            member.send(tempmutemsgdm).catch(() => { return })
+
+            message.channel.send(tempmutemsg);
+
+            const tempMutecaseInfo = {
+                moderatorID: message.author.id,
+                type: 'Tempmute',
+                expires: new Date().getTime() + time,
+                date: date,
+                reason: reason,
+                code: code
+            }
+
+            const warningCheck2 = await warningSchema.findOne({
+                guildid: message.guild.id,
+                userid: member.id
+            })
+
+            if (!warningCheck2) {
+                await new warningSchema({
+                    userid: member.id,
+                    guildname: message.guild.name,
+                    guildid: message.guild.id,
+                    warnings: []
+                }).save()
+                await warningSchema.updateOne({
+                    guildid: message.guild.id,
+                    userid: member.id
+                },
+                    {
+                        $push: {
+                            warnings: tempMutecaseInfo
+                        }
+                    })
+            } else {
+                await warningSchema.updateOne({
+                    guildid: message.guild.id,
+                    userid: member.id
+                },
+                    {
+                        $push: {
+                            warnings: tempMutecaseInfo
+                        }
+                    })
+            }
+
+            return;
+
+        }
+
         await new punishmentSchema({
             guildname: message.guild.name,
             guildid: message.guild.id,
@@ -136,13 +226,6 @@ module.exports = {
             reason: reason,
             expires: 'never'
         }).save();
-
-        var code = '';
-        var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-        var charsLength = chars.length
-        for (var i = 0; i < 15; i++) {
-            code += chars.charAt(Math.floor(Math.random() * charsLength))
-        }
 
         const mutemsg = new Discord.MessageEmbed()
             .setColor('#09fff2')
