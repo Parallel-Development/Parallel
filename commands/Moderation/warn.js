@@ -1,7 +1,6 @@
 const Discord = require('discord.js')
 const warningSchema = require('../../schemas/warning-schema')
-const settingsSchema = require('../../schemas/settings-schema');
-const ms = require('ms')
+const moment = require('moment')
 
 module.exports = {
     name: 'warn',
@@ -71,7 +70,7 @@ module.exports = {
         if (!reason)  reason = 'Unspecified'
 
         let date = new Date();
-        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
+        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date()).format('h:mm:ss, a');
 
         var code = '';
         var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'

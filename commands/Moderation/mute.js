@@ -100,7 +100,7 @@ module.exports = {
         }
 
         let date = new Date();
-        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
+        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date()).format('h:mm:ss, a');
 
         const check = await punishmentSchema.findOne({
             guildid: message.guild.id,
