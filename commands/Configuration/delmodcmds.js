@@ -35,6 +35,8 @@ module.exports = {
                     })
                 message.channel.send('The command ran by the moderator for all moderation commands will no longer be deleted')
                 break;
+            default:
+                message.channel.send('Options: enable, disable')
         }
     }
 }
