@@ -495,8 +495,9 @@ client.on('message', async(message) => {
         if(!message.member.hasPermission(command.permissions)) {
             const missingPermissionsError = new Discord.MessageEmbed()
             .setColor('#FF0000')
-            .setDescription(`You do not have the required permission to execute the \`${command.name}\` command\nMissing Permission: \`${command.permissions.replace('_', ' ').toLowerCase()}\``)
-            
+            .setDescription(`You do not have the required permission to execute the \`${command.name}\` command\nMissing Permission: \`${command.permissions
+                .replace('_', ' ')
+                .toUpperCase()}\``)
             message.channel.send(missingPermissionsError)
             return;
         }
