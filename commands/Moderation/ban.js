@@ -71,6 +71,13 @@ module.exports = {
             if (member.roles.highest.position >= message.guild.me.roles.highest.position) return message.channel.send(roletoolower)
         }
 
+        const deleteModerationCommand = await settingsSchema.findOne({
+            guildid: message.guild.id,
+            delModCmds: true
+        })
+
+        if (deleteModerationCommand) message.delete()
+
         var reason = args.splice(1).join(' ');
         if (!reason) {
             var reason = 'Unspecified'

@@ -1,4 +1,5 @@
 const Discord = require('discord.js');
+const settingsSchema = require('../../schemas/settings-schema');
 const punishmentSchema = require('../../schemas/punishment-schema')
 const warningSchema = require('../../schemas/warning-schema')
 const moment = require('moment')
@@ -85,6 +86,13 @@ module.exports = {
         }
         if (message.guild.me.roles.highest.position <= role.position) return message.channel.send(roletoolower)
         member.roles.remove(role).catch(() => { return })
+
+        const deleteModerationCommand = await settingsSchema.findOne({
+            guildid: message.guild.id,
+            delModCmds: true
+        })
+
+        if (deleteModerationCommand) message.delete()
 
         message.channel.send(unmutemsg)
 

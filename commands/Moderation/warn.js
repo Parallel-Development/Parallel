@@ -1,5 +1,6 @@
 const Discord = require('discord.js')
 const warningSchema = require('../../schemas/warning-schema')
+const settingsSchema = require('../../schemas/settings-schema');
 const moment = require('moment')
 
 module.exports = {
@@ -65,6 +66,13 @@ module.exports = {
             }
             if (member.roles.highest.position >= message.guild.me.roles.highest.position) return message.channel.send(roletoolower)
         }
+
+        const deleteModerationCommand = await settingsSchema.findOne({
+            guildid: message.guild.id,
+            delModCmds: true
+        })
+
+        if (deleteModerationCommand) message.delete()
 
         let reason = args.splice(1).join(' ')
         if (!reason)  reason = 'Unspecified'

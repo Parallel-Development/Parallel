@@ -97,6 +97,13 @@ module.exports = {
         if (time == NaN) return message.channel.send(badtimeNaN)
         if (time < 1000) return message.channel.send(badtimetoolow)
 
+        const deleteModerationCommand = await settingsSchema.findOne({
+            guildid: message.guild.id,
+            delModCmds: true
+        })
+
+        if (deleteModerationCommand) message.delete()
+
         var reason = args.splice(2).join(' ');
         if (!reason) {
             var reason = 'Unspecified'

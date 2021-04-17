@@ -1,5 +1,6 @@
 const Discord = require('discord.js');
 const punishmentSchema = require('../../schemas/punishment-schema');
+const settingsSchema = require('../../schemas/settings-schema');
 const warningSchema = require('../../schemas/warning-schema')
 const moment = require('moment')
 const ms = require('ms')
@@ -70,6 +71,13 @@ module.exports = {
             }
             if (member.id == message.author.id) return message.channel.send('Why tho')
         }
+
+        const deleteModerationCommand = await settingsSchema.findOne({
+            guildid: message.guild.id,
+            delModCmds: true
+        })
+
+        if (deleteModerationCommand) message.delete()
 
         let reason = args.splice(1).join(' ');
         if (!reason) {

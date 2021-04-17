@@ -9,7 +9,11 @@ const settingsSchema = mongoose.Schema({
     guildname: reqString,
     guildid: reqString,
     prefix: reqString,
-    baninfo: reqString
+    baninfo: reqString,
+    delModCmds: {
+        type: Boolean,
+        required: true
+    }
 })
 
 module.exports = mongoose.model('settings', settingsSchema)

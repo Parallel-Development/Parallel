@@ -409,8 +409,8 @@ client.on('message', async(message) => {
             guildname: message.guild.name,
             guildid: message.guild.id,
             prefix: 'r!',
-            logs: 'none',
-            baninfo: 'none'
+            baninfo: 'none',
+            delModCmds: false
         }).save()
 
         if(!message.content.startsWith('r!')) return;

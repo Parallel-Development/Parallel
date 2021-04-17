@@ -69,6 +69,13 @@ module.exports = {
             if (member.id == message.author.id) return message.channel.send('Why tho')
         }
 
+        const deleteModerationCommand = await settingsSchema.findOne({
+            guildid: message.guild.id,
+            delModCmds: true
+        })
+
+        if (deleteModerationCommand) message.delete()
+
         var reason = args.splice(1).join(' ');
         if (!reason) {
             var reason = 'Unspecified'

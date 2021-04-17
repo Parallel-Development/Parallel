@@ -1,4 +1,5 @@
 const Discord = require('discord.js')
+const settingsSchema = require('../../schemas/settings-schema');
 
 module.exports = {
     name: 'unban',
@@ -43,11 +44,19 @@ module.exports = {
         const userID = args[0]
         if(!userID) return message.channel.send(missingarguser)
         if(isNaN(userID)) return message.channel.send(badinput)
+
+        const deleteModerationCommand = await settingsSchema.findOne({
+            guildid: message.guild.id,
+            delModCmds: true
+        })
     
         message.guild.fetchBans().then(bans => {
             if(bans.size == 0) return message.channel.send(nobans)
             let bannedUser = bans.find(b => b.user.id == userID)
             if(!bannedUser) return message.channel.send(notBanned)
+
+            if (deleteModerationCommand) message.delete()
+            
             message.guild.members.unban(bannedUser.user)
     
             const unbanned = new Discord.MessageEmbed()
