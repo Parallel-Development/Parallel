@@ -34,7 +34,10 @@ async function getAll(client, message) {
         let commands = new Array();
         const commandFiles = fs.readdirSync(`./commands/${folder}`).filter(file => file.endsWith('.js'))
         for(const file of commandFiles) {
-            commands.push(`\`${path.parse(file).name}\``)
+            let cmd = client.commands.get(path.parse(file).name.toLowerCase())
+            if(!cmd.depricated) {
+                commands.push(`\`${path.parse(file).name}\``)
+            }
         }
         mainHelp.addField(folder, commands.join(', '))
     }
@@ -51,7 +54,7 @@ async function getCMD(client, message, input) {
 
     const embed = new Discord.MessageEmbed()
 
-    const cmd = client.commands.get(input.toLowerCase()) || client.commands.get(client.aliases.get(input.toLowerCase()));
+    let cmd = client.commands.get(input.toLowerCase()) || client.commands.get(client.aliases.get(input.toLowerCase()));
 
     let info = `<:error:815355171537289257> No information found for command **${input.toLowerCase()}**`;
 
@@ -60,6 +63,8 @@ async function getCMD(client, message, input) {
         .setDescription(info)
         return message.channel.send(embed);
     }
+
+    if(cmd.depricated) return message.channel.send('This command is depricated and is no longer usable')
 
     embed.setColor('#09fff2')
     if(cmd.name) embed.setAuthor(`Help | ${cmd.name}`, client.user.displayAvatarURL())

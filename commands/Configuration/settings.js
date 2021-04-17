@@ -5,6 +5,7 @@ module.exports = {
     name: 'settings',
     description: 'Allows you to change server settings',
     usage: 'settings <option>',
+    depricated: true,
     async execute(client, message, args) {
         const settingsSchema = require('../../schemas/settings-schema')
 
