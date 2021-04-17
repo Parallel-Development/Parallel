@@ -271,7 +271,7 @@ client.on('message', async(message) => {
         guildid: message.guild.id
     }).catch(e => false)
 
-    if(message.content.includes('fuck you')) {
+    if(message.content.toLowerCase().includes('fuck you')) {
         if(fuckYouTrigger) {
             message.channel.send('Hey champ, that\'s not very kind')
             fuckYouTrigger = false
