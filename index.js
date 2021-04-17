@@ -196,52 +196,62 @@ client.on('messageUpdate', async(oldMessage, message) => {
         if (!config.developers.includes(message.author.id)) return
     }
 
-    // Automod //
+    if(!message.guild) return
 
-    // Filter
-
-    let filterCheck = await automodSchema.findOne({
+    let channelBypassed = await automodSchema.findOne({
         guildid: message.guild.id,
+        bypassChannels: message.channel.id
     })
 
-    let foundInText = false
-    let { filterList } = filterCheck
+    // Automod //
 
-    for (const i in filterList) {
-        let filterRegex = new RegExp(`\\b${filterList[i]}\\b`)
-        if (filterRegex.test(message.content.toLowerCase())) {
-            foundInText = true
+    if (!channelBypassed || channelBypassed.length == 0) {
+        // Filter
+
+        let filterCheck = await automodSchema.findOne({
+            guildid: message.guild.id,
+        })
+
+        let foundInText = false
+        let { filterList } = filterCheck
+
+        for (const i in filterList) {
+            let filterRegex = new RegExp(`\\b${filterList[i]}\\b`)
+            if (filterRegex.test(message.content.toLowerCase())) {
+                foundInText = true
+            }
+        }
+        if (foundInText) {
+            var file = require('./automod/filter')
+            file.run(client, message)
+        }
+
+        // Walltext 
+
+        let walltextCheck = message.content.split('\n')
+        if (walltextCheck.length >= 6) {
+            var file = require('./automod/walltext')
+            file.run(client, message)
+        }
+
+        // Invites
+
+        let inviteCheck = new RegExp('(discord|d|dis|discordapp)(.gg|.com\/invite)/[a-zA-Z0-9]+$')
+        if (inviteCheck.test(message.content)) {
+            var file = require('./automod/invite')
+            file.run(client, message)
+        }
+
+        // Links
+
+        let linkRegex = new RegExp('[a-zA-Z0-9]\\.(com|net|co|org|io|me|xyz|wtf|tv|edu|eu|us|codes|shop|info|gov|gg|gif)')
+
+        if (linkRegex.test(message.content)) {
+            var file = require('./automod/link')
+            file.run(client, message)
         }
     }
-    if (foundInText) {
-        var file = require('./automod/filter')
-        file.run(client, message)
-    }
 
-    // Walltext 
-
-    let walltextCheck = message.content.split('\n')
-    if (walltextCheck.length >= 6) {
-        var file = require('./automod/walltext')
-        file.run(client, message)
-    }
-
-    // Invites
-
-    let inviteCheck = new RegExp('(discord|d|dis|discordapp)(.gg|.com\/invite)/[a-zA-Z0-9]+$')
-    if (inviteCheck.test(message.content)) {
-        var file = require('./automod/invite')
-        file.run(client, message)
-    }
-
-    // Links
-
-    let linkRegex = new RegExp('[a-zA-Z0-9]\\.(com|net|co|org|io|me|xyz|wtf|tv|edu|eu|us|codes|shop|info|gov|gg|gif)')
-
-    if (linkRegex.test(message.content)) {
-        var file = require('./automod/link')
-        file.run(client, message)
-    }
 })
 
 // lolol
@@ -258,6 +268,11 @@ client.on('message', async(message) => {
 
     if(!message.guild) return;
     if(!message.guild.me.hasPermission('SEND_MESSAGES', 'READ_MESSAGES')) return;
+
+    let channelBypassed = await automodSchema.findOne({
+        guildid: message.guild.id,
+        bypassChannels: message.channel.id
+    })
 
     const check = await blacklistSchema.findOne({
         user: message.author.id
@@ -281,83 +296,86 @@ client.on('message', async(message) => {
     
     // Automod //
 
-    // Filter
+    if (!channelBypassed || channelBypassed.length == 0) {
+        // Filter
 
-    let filterCheck = await automodSchema.findOne({
-        guildid: message.guild.id,
-    })
+        let filterCheck = await automodSchema.findOne({
+            guildid: message.guild.id,
+        })
 
-    let foundInText = false
-    if(filterCheck) {
-        let { filterList } = filterCheck
-        for (const i in filterList) {
-            let filterRegex = new RegExp(`\\b${filterList[i]}\\b`)
-            if (filterRegex.test(message.content.toLowerCase())) {
-                foundInText = true
+        let foundInText = false
+        if (filterCheck) {
+            let { filterList } = filterCheck
+            for (const i in filterList) {
+                let filterRegex = new RegExp(`\\b${filterList[i]}\\b`)
+                if (filterRegex.test(message.content.toLowerCase())) {
+                    foundInText = true
+                }
+            }
+            if (foundInText) {
+                var file = require('./automod/filter')
+                file.run(client, message)
             }
         }
-        if (foundInText) {
-            var file = require('./automod/filter')
+
+        // Walltext 
+
+        let walltextCheck = message.content.split('\n')
+        if (walltextCheck.length >= 6) {
+            var file = require('./automod/walltext')
             file.run(client, message)
         }
-    }
 
-    // Walltext 
+        // Spam
 
-    let walltextCheck = message.content.split('\n')
-    if(walltextCheck.length >= 6) {
-        var file = require('./automod/walltext')
-        file.run(client, message)
-    }
-
-    // Spam
-
-    if(userMap.has(message.author.id)) {
-        const userData = userMap.get(message.author.id)
-        let msgCount = userData.msgCount
-        if(parseInt(msgCount) === 6) {
-            var file = require('./automod/spam')
-            file.run(client, message)
-            userMap.delete(message.author.id)
+        if (userMap.has(message.author.id)) {
+            const userData = userMap.get(message.author.id)
+            let msgCount = userData.msgCount
+            if (parseInt(msgCount) === 6) {
+                var file = require('./automod/spam')
+                file.run(client, message)
+                userMap.delete(message.author.id)
+            } else {
+                msgCount++
+                userData.msgCount = msgCount;
+                userMap.set(message.author.id, userData)
+            }
         } else {
-            msgCount++
-            userData.msgCount = msgCount;
-            userMap.set(message.author.id, userData)
+            userMap.set(message.author.id, {
+                msgCount: 1,
+                lastMessage: message,
+                timer: null
+            })
+            setTimeout(() => {
+                userMap.delete(message.author.id)
+            }, 10000)
         }
-    } else {
-        userMap.set(message.author.id, {
-            msgCount: 1,
-            lastMessage: message,
-            timer: null
-        })
-        setTimeout(() => {
-            userMap.delete(message.author.id)
-        }, 10000)
+
+        // Invites
+
+        let inviteCheck = new RegExp('(discord|d|dis|discordapp)(.gg|.com\/invite)/[a-zA-Z0-9]+$')
+        if (inviteCheck.test(message.content)) {
+            var file = require('./automod/invite')
+            file.run(client, message)
+        }
+
+        // Links
+
+        let linkRegex = new RegExp('[a-zA-Z0-9]\\.(com|net|co|org|io|me|xyz|wtf|tv|edu|eu|us|codes|shop|info|gov|gg|gif)')
+
+        if (linkRegex.test(message.content)) {
+            var file = require('./automod/link')
+            file.run(client, message)
+        }
+
+        // Mass Mention
+
+        if (message.mentions.users.size >= 5) {
+            var file = require('./automod/massmention')
+            file.run(client, message)
+        }
     }
 
-    // Invites
-
-    let inviteCheck = new RegExp('(discord|d|dis|discordapp)(.gg|.com\/invite)/[a-zA-Z0-9]+$')
-    if(inviteCheck.test(message.content)) {
-        var file = require('./automod/invite')
-        file.run(client, message)
-    }
-
-    // Links
-
-    let linkRegex = new RegExp('[a-zA-Z0-9]\\.(com|net|co|org|io|me|xyz|wtf|tv|edu|eu|us|codes|shop|info|gov|gg|gif)')
-
-    if(linkRegex.test(message.content)) {
-        var file = require('./automod/link')
-        file.run(client, message)
-    }
-
-    // Mass Mention
-
-    if (message.mentions.users.size >= 5) {
-        var file = require('./automod/massmention')
-        file.run(client, message)
-    }
 
     if (check) {
         let { reason, date, sent } = check;
@@ -400,7 +418,8 @@ client.on('message', async(message) => {
             invites: 'disabled',
             massmention: 'disabled',
             duration: '0',
-            rawDuration: '0'
+            rawDuration: '0',
+            bypassChannels: []
         }).save();
     }
     
@@ -469,6 +488,17 @@ client.on('message', async(message) => {
             setTimeout(() => {
                 talkedRecently.delete(message.author.id)
             }, 1500)
+        }
+    }
+
+    if(command.permissions) {
+        if(!message.member.hasPermission(command.permissions)) {
+            const missingPermissionsError = new Discord.MessageEmbed()
+            .setColor('#FF0000')
+            .setDescription(`You do not have the required permission to execute the \`${command.name}\` command\nMissing Permission: \`${command.permissions.replace('_', ' ').toLowerCase()}\``)
+            
+            message.channel.send(missingPermissionsError)
+            return;
         }
     }
     

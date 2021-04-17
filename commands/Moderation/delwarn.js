@@ -6,16 +6,12 @@ const punishmentSchema = require('../../schemas/punishment-schema');
 module.exports = {
     name: 'delwarn',
     description: 'Deletes a warning from a user',
+    permissions: 'MANAGE_GUILD',
+    moderationCommand: true,
     usage: 'delwarn <code>',
     aliases: ['deleteinfraction', 'delinfraction', 'rmpunish', 'deletepunish', 'removepunish', 'rmwarn', 'removewarn'],
     async execute(client, message, args) {
-        const accessdenied = new Discord.MessageEmbed()
-            .setColor('#FF0000')
-            .setDescription('You do not have the required permissions to run this command!')
-            .setAuthor('Error', client.user.displayAvatarURL());
-
-        if (!message.member.hasPermission('MANAGE_GUILD')) return message.channel.send(accessdenied)
-
+        
         let code = args[0]
         if (!code) return message.channel.send(missingargcode)
 

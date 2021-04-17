@@ -3,13 +3,11 @@ const Discord = require('discord.js')
 module.exports = {
     name: 'addrole',
     descrition: 'Adds a role to the specified user',
+    permissions: 'MANAGE_ROLES',
+    moderationCommand: true,
     aliases: ['grant', 'giverole'],
     usage: 'addrole <user> [role]',
     async execute(client, message, args) {
-        const accessdenied = new Discord.MessageEmbed()
-        .setColor('#FF0000')
-        .setDescription('You do not have permission to run this command!')
-        .setAuthor('Error', client.user.displayAvatarURL())
 
         const missingperms = new Discord.MessageEmbed()
         .setColor('#FF0000')
@@ -24,7 +22,6 @@ module.exports = {
         .setColor('#FF0000')
         .setDescription('Please specify a role to grant. You can mention the role or just specify the role name')
 
-        if(!message.member.hasPermission('MANAGE_ROLES')) return message.channel.send(accessdenied)
         if(!message.guild.me.hasPermission('MANAGE_ROLES')) return message.channel.send(missingperms)
 
         function getUserFromMention(mention) {

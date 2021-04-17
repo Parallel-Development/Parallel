@@ -7,13 +7,11 @@ const moment = require('moment')
 module.exports = {
     name: 'unmute',
     description: 'Unmutes the specified member in the server',
+    permissions: 'MANAGE_MESSAGES',
+    moderationCommand: true,
     usage: 'unmute <member>',
     aliases: ['unshut'],
     async execute(client, message, args) {
-        const accessdenied = new Discord.MessageEmbed()
-            .setColor('#FF0000')
-            .setDescription('You do not have the required permissions to execute this command')
-            .setAuthor('Error', client.user.displayAvatarURL());
 
         const missingarguser = new Discord.MessageEmbed()
             .setColor('#FF0000')
@@ -39,8 +37,7 @@ module.exports = {
             .setColor('#FF0000')
             .setDescription('This user is not currently muted!')
             .setAuthor('Error', client.user.displayAvatarURL())
-
-        if (!message.member.hasPermission('MANAGE_MESSAGES')) return message.channel.send(accessdenied)
+            
         if (!message.guild.me.hasPermission('MANAGE_ROLES')) return message.channel.send(missingperms);
 
         if (!args[0]) return message.channel.send(missingarguser);

@@ -6,6 +6,8 @@ const moment = require('moment')
 module.exports = {
     name: 'kick',
     description: 'Kicks a user from the server',
+    permissions: 'KICK_MEMBERS',
+    moderationCommand: true,
     usage: 'kick <member> [reason]',
     aliases: ['boot'],
     async execute(client, message, args) {
@@ -18,11 +20,6 @@ module.exports = {
             .setColor('#FF0000')
             .setDescription('You cannot kick this user, because your role is either the same hoist or lower than the provided member')
             .setAuthor('Error', client.user.displayAvatarURL())
-
-        const accessdenied = new Discord.MessageEmbed()
-            .setColor('#FF0000')
-            .setDescription('You do not have the required permissions to execute this command')
-            .setAuthor('Error', client.user.displayAvatarURL());
 
         const missingarguser = new Discord.MessageEmbed()
             .setColor('#FF0000')
@@ -39,7 +36,6 @@ module.exports = {
             .setDescription('I do not have the permission to kick members. Please give me the `Kick Members` permission and run again')
             .setAuthor('Error', client.user.displayAvatarURL());
 
-        if (!message.member.hasPermission('KICK_MEMBERS')) return message.channel.send(accessdenied);
         if (!message.guild.me.hasPermission('KICK_MEMBERS')) return message.channel.send(missingperms);
 
         if (!args[0]) return message.channel.send(missingarguser);

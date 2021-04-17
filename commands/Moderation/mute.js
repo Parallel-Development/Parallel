@@ -8,6 +8,8 @@ const ms = require('ms')
 module.exports = {
     name: 'mute',
     description: 'Mutes the specified member in the server',
+    permissions: 'MANAGE_MESSAGES',
+    moderationCommand: true,
     usage: 'mute <member> [reason]',
     aliases: ['silence', 'shut', 'm'],
     async execute(client, message, args) {
@@ -20,11 +22,6 @@ module.exports = {
             .setColor('#FF0000')
             .setDescription('You cannot mute this user, because your role is either the same hoist or lower than the provided member')
             .setAuthor('Error', client.user.displayAvatarURL())
-
-        const accessdenied = new Discord.MessageEmbed()
-            .setColor('#FF0000')
-            .setDescription('You do not have the required permissions to execute this command')
-            .setAuthor('Error', client.user.displayAvatarURL());
 
         const missingarguser = new Discord.MessageEmbed()
             .setColor('#FF0000')
@@ -40,8 +37,7 @@ module.exports = {
             .setColor('#FF0000')
             .setDescription('I do not have the permission to mute members. Please give me the `Manage Roles` permission and run again')
             .setAuthor('Error', client.user.displayAvatarURL());
-
-        if (!message.member.hasPermission('MANAGE_MESSAGES')) return message.channel.send(accessdenied)
+            
         if (!message.guild.me.hasPermission('MANAGE_ROLES')) return message.channel.send(missingperms);
 
         function getUserFromMention(mention) {

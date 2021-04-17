@@ -4,19 +4,15 @@ const moment = require('moment')
 module.exports = {
     name: 'punishinfo',
     description: 'Get more specific information about a punishment',
+    permissions: 'MANAGE_MESSAGES',
+    moderationCommand: true,
     usage: 'punishinfo (code)',
     async execute(client, message, args) {
-        const accessdenied = new Discord.MessageEmbed()
-            .setColor('#FF0000')
-            .setDescription('You do not have the required permissions to execute this command')
-            .setAuthor('Error', client.user.displayAvatarURL());
         
         const missingargcode = new Discord.MessageEmbed()
             .setColor('#FF0000')
             .setDescription('Please specify a punishment ID to view information about')
             .setAuthor('Error', client.user.displayAvatarURL());
-
-        if (!message.member.hasPermission('MANAGE_MESSAGES')) return message.channel.send(accessdenied);
 
         const code = args[0]
         if(!code) return message.channel.send(missingargcode)

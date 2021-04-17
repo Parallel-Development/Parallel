@@ -3,12 +3,10 @@ const Discord = require('discord.js')
 module.exports = {
     name: 'demote',
     descrition: 'Removes all staff roles (roles with `Manage Messages`) from the specified member',
+    permissions: 'ADMINISTRATOR',
+    moderationCommand: true,
     usage: 'demote <user>',
     async execute(client, message, args) {
-        const accessdenied = new Discord.MessageEmbed()
-            .setColor('#FF0000')
-            .setDescription('You do not have permission to run this command!')
-            .setAuthor('Error', client.user.displayAvatarURL())
 
         const missingperms = new Discord.MessageEmbed()
             .setColor('#FF0000')
@@ -19,7 +17,6 @@ module.exports = {
             .setDescription('User not specified')
             .setAuthor('Error', client.user.displayAvatarURL());
 
-        if (!message.member.hasPermission('ADMINISTRATOR')) return message.channel.send(accessdenied)
         if (!message.guild.me.hasPermission('MANAGE_ROLES')) return message.channel.send(missingperms)
 
         function getUserFromMention(mention) {

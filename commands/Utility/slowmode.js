@@ -4,13 +4,11 @@ const settingsSchema = require('../../schemas/settings-schema');
 module.exports = {
   name: 'slowmode',
   description: 'Set the slowmode in a designated channel',
+  permissions: 'MANAGE_MESSAGES',
+  moderationCommand: true,
   usage: 'slowmode <time> [channel]',
   aliases: ['sm', 'slow'],
   async execute(client, message, args) {
-    const accessdenied = new Discord.MessageEmbed()
-      .setAuthor('Error', client.user.displayAvatarURL())
-      .setColor('#FF0000')
-      .setDescription('You do not have the required permissions to execute this command')
 
     const currentsm = new Discord.MessageEmbed()
       .setColor('#09fff2')
@@ -20,8 +18,7 @@ module.exports = {
       .setColor('#FF0000')
       .setDescription('I do not have the permission to set the slowmode. Please give me the `Manage Channels` permission and run again')
       .setAuthor('Error', client.user.displayAvatarURL())
-
-    if (!message.member.hasPermission('MANAGE_MESSAGES')) return message.channel.send(accessdenied)
+      
     if (!message.guild.me.hasPermission('MANAGE_CHANNELS')) return message.channel.send(missingperms)
 
     let time = Math.round(parseFloat(args[0]))

@@ -6,20 +6,16 @@ const punishmentSchema = require('../../schemas/punishment-schema');
 module.exports = {
     name: 'clearwarn',
     description: 'Clears all warnings from a user',
+    permissions: 'MANAGE_GUILD',
+    moderationCommand: true,
     usage: 'clearwarn <user>',
     aliases: ['clearinfractions'],
     async execute(client, message, args) {
-        const accessdenied = new Discord.MessageEmbed()
-            .setColor('#FF0000')
-            .setDescription('You do not have the required permissions to run this command!')
-            .setAuthor('Error', client.user.displayAvatarURL());
 
         const missingarguser = new Discord.MessageEmbed()
             .setColor('#FF0000')
             .setDescription('User not specified')
             .setAuthor('Error', client.user.displayAvatarURL());
-
-        if (!message.member.hasPermission('MANAGE_GUILD')) return message.channel.send(accessdenied)
 
         if (!args[0]) return message.channel.send(missingarguser);
 

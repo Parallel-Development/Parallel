@@ -4,20 +4,16 @@ const warningSchema = require('../../schemas/warning-schema')
 module.exports = {
     name: 'warnings',
     description: 'Fetches a user\'s warnings in the server',
+    permissions: 'MANAGE_MESSAGES',
+    moderationCommand: true,
     usage: 'warnings <member>',
     aliases: ['infractions', 'modlogs', 'search', 'record'],
     async execute(client, message, args) {
-        const accessdenied = new Discord.MessageEmbed()
-        .setColor('#FF0000')
-        .setDescription('You do not have the required permissions to run this command!')
-        .setAuthor('Error', client.user.displayAvatarURL());
         
         const missingarguser = new Discord.MessageEmbed()
         .setColor('#FF0000')
         .setDescription('User not specified')
         .setAuthor('Error', client.user.displayAvatarURL());
-    
-        if(!message.member.hasPermission('MANAGE_MESSAGES')) return message.channel.send(accessdenied)
     
         if (!args[0]) return message.channel.send(missingarguser);
     

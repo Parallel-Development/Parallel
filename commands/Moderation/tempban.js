@@ -8,6 +8,8 @@ const moment = require('moment')
 module.exports = {
     name: 'tempban',
     description: 'Temporarily bans the specified member from the server',
+    permissions: 'BAN_MEMBERS',
+    moderationCommand: true,
     usage: 'tempban <member> <time> [reason]',
     aliases: ['tempbanish'],
     async execute(client, message, args) {
@@ -19,11 +21,6 @@ module.exports = {
         const roletoolower = new Discord.MessageEmbed()
             .setColor('#FF0000')
             .setDescription('I cannot ban this user, because my highest role is lower or the same than the provided members highest role')
-            .setAuthor('Error', client.user.displayAvatarURL());
-
-        const accessdenied = new Discord.MessageEmbed()
-            .setColor('#FF0000')
-            .setDescription('You do not have the required permissions to execute this command')
             .setAuthor('Error', client.user.displayAvatarURL());
 
         const missingarguser = new Discord.MessageEmbed()
@@ -56,7 +53,6 @@ module.exports = {
             .setDescription('The time you input is not valid. Must be a number\nExample: \`r!tempmute @Dummy#0000 5d Testing Purposes\`')
             .setAuthor('Error', client.user.displayAvatarURL());
 
-        if (!message.member.hasPermission('BAN_MEMBERS')) return message.channel.send(accessdenied);
         if (!message.guild.me.hasPermission('BAN_MEMBERS')) return message.channel.send(missingperms);
 
 

@@ -3,9 +3,11 @@ const Discord = require('discord.js')
 module.exports = {
     name: 'moderate',
     description: 'Changes a member\'s username to Moderated Nickname <random code>',
+    permissions: 'MANAGE_NICKNAMES',
+    moderationCommand: true,
     usage: 'moderate <member>',
     async execute(client, message, args) {
-        if (!message.member.hasPermission('MANAGE_NICKNAMES')) return message.reply('you can\'t use that!')
+        
         if (!message.guild.me.hasPermission('MANAGE_NICKNAMES')) return message.reply('I do not have the permission to manage nickanmes. Please give me the `Manage Nicknames` permission')
     
         function getUserFromMention(mention) {

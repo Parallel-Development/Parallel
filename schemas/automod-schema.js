@@ -17,7 +17,11 @@ const automodSchema = mongoose.Schema({
     invites: reqString,
     massmention: reqString,
     duration: reqString,
-    rawDuration: reqString
+    rawDuration: reqString,
+    bypassChannels: {
+        type: [String],
+        required: true
+    }
 });
 
 module.exports = mongoose.model('automod', automodSchema)

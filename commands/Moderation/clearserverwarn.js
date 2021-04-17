@@ -6,15 +6,11 @@ const punishmentSchema = require('../../schemas/punishment-schema');
 module.exports = {
     name: 'clearserverwarn',
     description: 'Clears all warnings from the server',
+    permissions: 'ADMINISTRATOR',
+    moderationCommand: true,
     usage: 'clearserverwarn',
     aliases: ['clearserverinfractions'],
     async execute(client, message, args) {
-        const accessdenied = new Discord.MessageEmbed()
-            .setColor('#FF0000')
-            .setDescription('You do not have the required permissions to run this command!')
-            .setAuthor('Error', client.user.displayAvatarURL());
-
-        if (!message.member.hasPermission('ADMINISTRATOR')) return message.channel.send(accessdenied)
 
         const confirmClearServerWarnings = new Discord.MessageEmbed()
             .setColor('#FFFF00')

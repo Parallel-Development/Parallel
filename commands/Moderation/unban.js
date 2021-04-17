@@ -4,14 +4,11 @@ const settingsSchema = require('../../schemas/settings-schema');
 module.exports = {
     name: 'unban',
     description: 'Unbans the specified member from the server',
+    permissions: 'BAN_MEMBERS',
+    moderationCommand: true,
     usage: 'unban',
     aliaes: ['pardon'],
     async execute(client, message, args) {
-        
-        const accessdenied = new Discord.MessageEmbed()
-        .setColor('#FF0000')
-        .setDescription('You do not have the required permissions to execute this command')
-        .setAuthor('Error', client.user.displayAvatarURL());
     
         const missingperms = new Discord.MessageEmbed()
         .setColor('#FF0000')
@@ -37,9 +34,6 @@ module.exports = {
         .setColor('#FF0000')
         .setDescription('This user is not currently banned!')
         .setAuthor('Error', client.user.displayAvatarURL())
-    
-        if(!message.member.hasPermission('BAN_MEMBERS')) return message.channel.send(accessdenied)
-        if(!message.guild.me.hasPermission('BAN_MEMBERS')) return message.channel.send(missingperms)
     
         const userID = args[0]
         if(!userID) return message.channel.send(missingarguser)
