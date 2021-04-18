@@ -22,6 +22,9 @@ module.exports = {
 
         collector.on('collect', async (message, col) => {
             if (message.content === message.guild.name) {
+
+                const msg = await message.channel.send('Clearing all server warnings...')
+
                 await warningSchema.deleteMany({
                     guildid: message.guild.id
                 })
@@ -33,7 +36,7 @@ module.exports = {
                     .setColor('#09fff2')
                     .setDescription('Successfully deleted all warnings from this server')
 
-                message.channel.send(deletedAllServerWarnings)
+                msg.edit(deletedAllServerWarnings)
 
                 collector.stop();
                 return;

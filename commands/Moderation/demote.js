@@ -45,6 +45,8 @@ module.exports = {
         if (message.member.roles.highest.position <= member.roles.highest.position) return message.channels.send('You cannot demote this member as their highest role has lower of equal hierarchy to your highest role')
         if (member.hasPermission('ADMINISTRATOR') && !message.guild.owner) return message.channel.send('You cannot demote another administrator')
 
+        const msg = await message.channel.send(`Removing staff roles from **${member.tag}**...`)
+
         try {
             member.roles.cache.forEach(r => {
                 if(r.permissions.has('MANAGE_MESSAGES')) {
@@ -55,10 +57,10 @@ module.exports = {
             .setColor('#ffa500')
             .setDescription(`${member} has been demoted`)
             .setAuthor('Member Demoted', client.user.displayAvatarURL())
-            message.channel.send(demoted)
+            await msg.edit(demoted)
         } catch(err) {
             console.log(err)
-            message.channel.send('An error occured whilst trying to remove roles of this member')
+            msg.edit('An error occured whilst trying to remove roles of this member')
         }
 
     }
