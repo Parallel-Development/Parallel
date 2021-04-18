@@ -512,7 +512,12 @@ client.on('message', async(message) => {
         locked: message.channel.id
     })
 
-    if(commandsDisabledInChannel && commandsDisabledInChannel.length !== 0) {
+    const commandsDisabledInCategory = await settingsSchema.findOne({
+        guildid: message.guild.id,
+        locked: message.channel.parent.id
+    })
+
+    if(commandsDisabledInChannel && commandsDisabledInChannel.length !== 0 || commandsDisabledInCategory && commandsDisabledInCategory.length !== 0) {
         if(!command.moderationCommand) {
             if(message.member.hasPermission('MANAGE_MESSAGES') && !message.member.hasPermission('ADMINISTRATOR')) {
                 const onlyModCommands = new Discord.MessageEmbed()
