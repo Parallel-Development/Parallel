@@ -42,7 +42,7 @@ module.exports = {
         } catch (err) {
             member = null
         }
-        if (!member) return message.reply('please specify a valid member. Try pinging the user if ID\'s don\'t work')
+        if (!member) message.channel.send('Please specify a valid member ID | The member must be on the server')
 
         let role = message.mentions.roles.first()
         if (!args[0]) return message.channel.send(missingargrole)
@@ -55,10 +55,10 @@ module.exports = {
             if(!message.guild.owner) {
                 return message.channel.send('You cannot remove this role as your role hierarchy is equal or below this role')
             }
-        } 
+        }
         if (message.guild.me.roles.highest.position <= role.position) {
             return message.channel.send('I do not have permission to remove this role, as it is equal or below me in hierarchy')
-        } 
+        }
         if (!member.roles.cache.has(role.id)) {
             return message.channel.send('This member does not have this role!')
         }

@@ -74,7 +74,7 @@ module.exports = {
         } catch (err) {
             member = null
         }
-        if (!member) return message.reply('There was an error catching this user. Maybe try a ping?')
+        if (!member) return message.channel.send('Please specify a valid member ID | The member must be on the server')
 
         if (member) {
             if (member.id == message.author.id) return message.channel.send('Why tho')
@@ -141,7 +141,7 @@ module.exports = {
         member.send(tempbanmsgdm).catch(() => { return })
 
         message.guild.members.ban(member, { reason: reason })
-        
+
         message.channel.send(banmsg).catch(() => { return })
 
         const caseInfo = {

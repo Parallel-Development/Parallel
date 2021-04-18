@@ -21,7 +21,7 @@ module.exports = {
         else {
             member = await message.guild.members.cache.find(member => member.id == parseInt(getUserFromMention(args[0])));
         }
-        if (!member) return message.reply('There was an error catching this member. Maybe try a ping instead?')
+        if (!member) return message.channel.send('Please specify a valid member | The member must be on the server')
 
         const avatar = new Discord.MessageEmbed()
             .setColor('#90ee90')

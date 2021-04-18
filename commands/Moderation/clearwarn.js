@@ -35,7 +35,7 @@ module.exports = {
         } catch (err) {
             member = null
         }
-        if (!member) return message.reply('There was an error catching this member. Maybe try a ping?')
+        if (!member) return message.channel.send('Please specify a valid member ID | The member must be on the server')
 
         await warningSchema.deleteMany({
             guildid: message.guild.id,

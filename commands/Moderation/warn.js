@@ -25,7 +25,7 @@ module.exports = {
             .setColor('#FF0000')
             .setDescription('This user is a moderator, therefore I cannot warn them')
             .setAuthor('Error', client.user.displayAvatarURL());
-        
+
         const yourroletoolow = new Discord.MessageEmbed()
             .setColor('#FF0000')
             .setDescription('You cannot ban this user, because your role is either the same hoist or lower than the provided member')
@@ -51,7 +51,7 @@ module.exports = {
         } catch (err) {
             member = null
         }
-        if (!member) return message.reply('There was an error catching this member. Maybe try a ping?')
+        if (!member) return message.channel.send('Please specify a valid member ID | The member must be on the server')
 
         if (member) {
             if (member.id == '745401642664460319') return message.channel.send('I-')

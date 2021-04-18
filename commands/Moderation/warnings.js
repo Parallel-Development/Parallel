@@ -9,33 +9,33 @@ module.exports = {
     usage: 'warnings <member>',
     aliases: ['infractions', 'modlogs', 'search', 'record'],
     async execute(client, message, args) {
-        
+
         const missingarguser = new Discord.MessageEmbed()
         .setColor('#FF0000')
         .setDescription('User not specified')
         .setAuthor('Error', client.user.displayAvatarURL());
-    
+
         if (!args[0]) return message.channel.send(missingarguser);
-    
+
         var member;
-    
+
         function getUserFromMention(mention) {
             if (!mention) return false;
             const matches = mention.match(/^<@!?(\d+)>$/);
             if (!matches) return mention;
             const id = matches[1];
-    
+
             return id;
         }
-    
+
         try {
             member = await message.guild.members.cache.find(member => member.id == parseInt(getUserFromMention(args[0])));
         } catch (err) {
             member = null;
         }
-        
-        if (!member) return message.reply('No such member found on this server, no such user cached')
-    
+
+        if (!member) return message.channel.send('Please specify a valid member ID | The member must be on the server')
+
         const warningsCheck = await warningSchema.findOne({
             guildid: message.guild.id,
             userid: member.id

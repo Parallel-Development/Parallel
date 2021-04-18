@@ -37,7 +37,7 @@ module.exports = {
             .setColor('#FF0000')
             .setDescription('This user is not currently muted!')
             .setAuthor('Error', client.user.displayAvatarURL())
-            
+
         if (!message.guild.me.hasPermission('MANAGE_ROLES')) return message.channel.send(missingperms);
 
         if (!args[0]) return message.channel.send(missingarguser);
@@ -58,7 +58,7 @@ module.exports = {
         } catch (err) {
             member = null
         }
-        if (!member) return message.reply('There was an error catching this member. Maybe try a ping?')
+        if (!member) return message.channel.send('Please specify a valid member ID | The member must be on the server')
 
         var reason = args.splice(1).join(' ');
         if(!reason) var reason = 'Unspecified';
@@ -97,7 +97,7 @@ module.exports = {
             userID: member.id
         })
             .catch(() => { return })
-        
+
         var code = '';
         var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
         var charsLength = chars.length
