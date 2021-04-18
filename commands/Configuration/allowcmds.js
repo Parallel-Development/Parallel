@@ -52,7 +52,7 @@ module.exports = {
                 message.channel.send(`Commands in ${enableChannel} have been enabled`)
                 break;
             case 'enablecategory':
-                const enableCategory = message.guild.channels.cache.find(c => c.name == args.splice(1).join(' '))
+                const enableCategory = message.guild.channels.cache.find(c => c.name == args.slice(1).join(' '))
                 if(!enableCategory) return message.channel.send('Please specify the category name you want to enable commands in')
                 if (enableCategory.type !== 'category') return message.channel.send('Please specify a category name only')
 
@@ -124,8 +124,8 @@ module.exports = {
                 message.channel.send(`Commands in ${disableChannel} have been disabled`)
                 break;
             case 'disablecategory':
-                const disableCategory = message.guild.channels.cache.find(c => c.name == args.splice(1).join(' '))
-                if (!disableCategory) return message.channel.send('Please specify the category name you want to enable commands in')
+                const disableCategory = message.guild.channels.cache.find(c => c.name == args.slice(1).join(' '))
+                if (!disableCategory) return message.channel.send('Please specify the category name you want to disable commands in')
                 if (disableCategory.type !== 'category') return message.channel.send('Please specify a category name only')
 
                 const alreadyDisabledCategory = await settingsSchema.findOne({
