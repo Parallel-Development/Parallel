@@ -3,17 +3,13 @@ const Discord = require('discord.js')
 module.exports = {
     name: 'clear',
     description: 'Clears messages in a channel',
+    permissions: 'MANAGE_MESSAGES',
     usage: 'clear <amount>',
     aliases: ['purge'],
     async execute(client, message, args) {
         const missingperms = new Discord.MessageEmbed()
             .setColor('#FF0000')
             .setDescription('I do not have the permission to clear messages. Please give me the `Manage Messages` permission and run again')
-            .setAuthor('Error', client.user.displayAvatarURL());
-
-        const accessdenied = new Discord.MessageEmbed()
-            .setColor('#FF0000')
-            .setDescription('You do not have the required permissions to execute this command')
             .setAuthor('Error', client.user.displayAvatarURL());
 
         const badtime = new Discord.MessageEmbed()
@@ -32,9 +28,6 @@ module.exports = {
             .setDescription('Due to discord limiations, I cannot delete messages over 2 weeks old')
             .setFooter('Not the error? Check if I have perms to manage manages in this channel')
 
-
-
-        if (!message.member.hasPermission('MANAGE_MESSAGES')) return message.channel.send(accessdenied);
         if (!message.guild.me.hasPermission('MANAGE_MESSAGES')) return message.channel.send(missingperms);
 
         const amount = parseFloat(args[0])
