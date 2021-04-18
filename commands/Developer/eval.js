@@ -8,9 +8,10 @@ module.exports = {
     name: 'eval',
     description: 'Evaluates the specified code',
     usage: 'eval <code>\neval -noblock <code>',
+    moderationCommand: true,
     aliases: ['e', 'ev', 'evaluate'],
     async execute(client, message, args) {
-        if (!allowed.includes(message.author.id)) return;
+        if (!allowed.includes(message.author.id)) return message.react('🍭').catch(() => { return })
 
         let code = args.join(' ');
         if (!code) return message.channel.send('Please input something to run')

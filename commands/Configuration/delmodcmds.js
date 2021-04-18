@@ -5,6 +5,7 @@ module.exports = {
     name: 'delmodcmds',
     description: 'Enables or disables a setting in which it deletes the command ran by the moderator for all moderation commands',
     permissions: 'ADMINISTRATOR',
+    moderationCommand: true,
     aliases: ['deletemoderationcommands'],
     usage: 'delmodcmds <option: enable, disable>',
     async execute(client, message, args) {

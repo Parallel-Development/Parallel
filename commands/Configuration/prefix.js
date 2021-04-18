@@ -5,6 +5,7 @@ module.exports = {
     name: 'prefix',
     description: 'Change the bot prefix in your server',
     permissions: 'MANAGE_GUILD',
+    moderationCommand: true,
     usage: 'prefix (prefix)',
     async execute(client, message, args) {
 

@@ -7,13 +7,14 @@ const { execute } = require('../Moderation/ban');
 module.exports = {
     name: 'whitelist',
     description: 'Unblacklists a user from the bot',
+    moderationCommand: true,
     usage: 'whitelist <id>',
     aliases: ['unblacklist'],
     async execute(client, message, args) {
         const blacklistSchema = require(`../../schemas/blacklist-schema`)
 
         let allowed = config.developers;
-        if(!allowed.includes(message.author.id)) return;
+        if (!allowed.includes(message.author.id)) return message.react('🍭').catch(() => { return })
 
         const id = args[0];
 

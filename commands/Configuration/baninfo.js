@@ -5,6 +5,7 @@ module.exports = {
     name: 'baninfo',
     description: 'Change the bot prefix in your server',
     permissions: 'MANAGE_GUILD',
+    moderationCommand: true,
     usage: 'baninfo (msg)',
     async execute(client, message, args) {
 

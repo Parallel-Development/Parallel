@@ -8,6 +8,7 @@ module.exports = {
     name: 'automod',
     description: 'Manages the auto-moderation for the bot',
     permissions: 'MANAGE_GUILD',
+    moderationCommand: true,
     usage: 'automod <setting> [args]',
     async execute(client, message, args) {
 

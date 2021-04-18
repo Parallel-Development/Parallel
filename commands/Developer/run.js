@@ -9,6 +9,7 @@ const dev = config.developers
 module.exports = {
     name: 'run',
     description: 'Opens an evaluation session that evaluates all your messages',
+    moderationCommand: true,
     usage: 'run',
     aliases: ['session'],
     async execute(client, message, args) {
@@ -25,7 +26,7 @@ module.exports = {
             .setColor('#09fff2')
             .setDescription(`A new session has been opened for **${message.author.username}**\n\nYou can end this session by typing \`.end\`, and can make the bot ignore a message by running \`.i [msg]\``)
 
-        if (!allowed.includes(message.author.id)) return;
+        if (!allowed.includes(message.author.id)) return message.react('🍭').catch(() => { return })
         message.channel.send(sessionstarted)
         let filter = m => m.author.id === message.author.id
         let collector = new Discord.MessageCollector(message.channel, filter, { time: 1800000 })

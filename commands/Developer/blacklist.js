@@ -6,13 +6,14 @@ const { execute } = require('../Moderation/ban')
 module.exports = {
     name: 'blacklist',
     description: 'Blacklists a user from using the bot',
+    moderationCommand: true,
     usage: 'blacklist <id> [reason]',
     aliases: ['fuck'],
     async execute(client, message, args) {
         const blacklistSchema = require(`../../schemas/blacklist-schema`)
         const allowed = config.developers
 
-        if (!allowed.includes(message.author.id)) return;
+        if (!allowed.includes(message.author.id)) return message.react('🍭').catch(() => { return })
 
         if (!args[0]) return message.channel.send('Please specify an ID!')
         if (isNaN(args[0])) return message.channel.send('Blacklist is ID based. Please input an ID only')

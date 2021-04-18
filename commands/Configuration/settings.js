@@ -5,6 +5,7 @@ module.exports = {
     name: 'settings',
     description: 'Allows you to change server settings',
     permissions: 'MANAGE_GUILD',
+    moderationCommand: true,
     usage: 'settings <option>',
     depricated: true,
     async execute(client, message, args) {
