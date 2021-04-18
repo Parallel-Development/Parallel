@@ -181,8 +181,7 @@ module.exports = {
 
                         const { filterList } = noWordsInFilter
                         
-                        if(filterList == null) return message.channel.send('No words are on the filter! Want to add some? `automod filterlist add (word)`')
-                        if (filterList.length == 0) return message.channel.send('No words are on the filter! Want to add some? `automod filterlist add (word)`')
+                        if(filterList == null || filterList.length == 0) return message.channel.send('No words are on the filter! Want to add some? `automod filterlist add (word)`')
                         const filterViewList = new Discord.MessageEmbed()
                         .setColor('#09fff2')
                         .setAuthor(`Filter list for ${message.guild.name}`, client.user.displayAvatarURL())
@@ -911,11 +910,12 @@ module.exports = {
                     switch(toggle) {
                         case 'add':
                             if(!bypassChannel) return message.channel.send('Please mention the channel you want to add to the bypass list')
+                            if(bypassChannel.type !== 'text') return message.channel.send('The channel must only be a text channel!')
                             const alreadyInBypassList0 = await automodSchema.findOne({
                                 guildid: message.guild.id,
                                 bypassChannels: bypassChannel.id
                             })
-                            if(alreadyInBypassList0 && alreadyInBypassList0.length !== 0)  return message.channel.send('This channel is already in the bypass list! You can view the list by running `automod bypass view`')
+                            if(alreadyInBypassList0.length !== 0)  return message.channel.send('This channel is already in the bypass list! You can view the list by running `automod bypass view`')
                             await automodSchema.updateOne({
                                 guildid: message.guild.id
                             },
@@ -959,14 +959,13 @@ module.exports = {
 
                             const { bypassChannels } = channelsBypassed
 
-                            if (bypassChannels == null) return message.channel.send('No channels are on the automod bypass list! Want to add some? `automod bypass add (channel)`')
-                            if (bypassChannels.length == 0) return message.channel.send('No channels are on the automod bypass list! Want to add some? `automod bypass add (channel)`')
+                            if (bypassChannels == null || bypassChannels.length == 0) return message.channel.send('No channels are on the automod bypass list! Want to add some? `automod bypass add (channel)`')
                             const bypassChannelsViewList = new Discord.MessageEmbed()
                                 .setColor('#09fff2')
                                 .setAuthor(`Bypassed channel list for ${message.guild.name}`, client.user.displayAvatarURL())
                                 bypassChannels2 = new Array()
                                 bypassChannels.forEach(async(channel) => {
-                                    if(!message.guild.channels.cache.get(channel)) {
+                                    if(!message.guild.channels.cache.get(channel) || message.guild.channels.cache.get(channel).type !== 'text') {
                                         await automodSchema.updateOne({
                                             guildid: message.guild.id
                                         },
@@ -980,7 +979,7 @@ module.exports = {
                                     }
                                 })
 
-                                bypassChannelsViewList.setDescription(`${bypassChannels2.join(', ')}`)
+                                bypassChannelsViewList.setDescription(bypassChannels2.join(', '))
                             message.channel.send(bypassChannelsViewList)
                             break;
                         default:

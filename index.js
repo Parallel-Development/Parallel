@@ -498,9 +498,38 @@ client.on('message', async(message) => {
             .setDescription(`You do not have the required permission to execute the \`${command.name}\` command\nMissing Permission: \`${command.permissions
                 .replace('_', ' ')
                 .toUpperCase()}\``)
-            message.channel.send(missingPermissionsError)
+            message.delete()
+            const missingPermErrMsg = await message.channel.send(missingPermissionsError)
+            setTimeout(() => {
+                missingPermErrMsg.delete()
+            }, 5000)
             return;
         }
+    }
+
+    const commandsDisabledInChannel = await settingsSchema.findOne({
+        guildid: message.guild.id,
+        locked: message.channel.id
+    })
+
+    if(commandsDisabledInChannel && commandsDisabledInChannel.length !== 0) {
+        if(!command.moderationCommand) {
+            if(message.member.hasPermission('MANAGE_MESSAGES') && !message.member.hasPermission('ADMINISTRATOR')) {
+                const onlyModCommands = new Discord.MessageEmbed()
+                .setColor('#FF0000')
+                .setDescription('You can only run moderation commands in this channel')
+                message.delete()
+                const onlyModCmdsErr = await message.channel.send(onlyModCommands)
+                setTimeout(() => {
+                    onlyModCmdsErr.delete()
+                }, 5000)
+                return
+            }  else {
+                if(!message.member.hasPermission('ADMINISTRATOR')) {
+                    return message.reply('commands are disabled in this channel')
+                }
+            }
+        } 
     }
     
     try {

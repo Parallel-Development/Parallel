@@ -13,6 +13,10 @@ const settingsSchema = mongoose.Schema({
     delModCmds: {
         type: Boolean,
         required: true
+    },
+    locked: {
+        type: [String],
+        required: true
     }
 })
 
