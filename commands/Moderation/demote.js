@@ -2,7 +2,7 @@ const Discord = require('discord.js')
 
 module.exports = {
     name: 'demote',
-    descrition: 'Removes all roles with staff permissions from the specified member',
+    description: 'Removes all roles with staff permissions from the specified member',
     permissions: 'ADMINISTRATOR',
     moderationCommand: true,
     usage: 'demote <user>',
