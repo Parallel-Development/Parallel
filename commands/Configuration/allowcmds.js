@@ -189,7 +189,7 @@ module.exports = {
                             })
                     } else {
                         if(message.guild.channels.cache.get(channel).type == 'category') {
-                            disabledCategories.push(message.guild.channels.cache.get(channel.name))
+                            disabledCategories.push(message.guild.channels.cache.get(channel).name)
                         } else {
                             disabledChannels.push(message.guild.channels.cache.get(channel))
                         }
