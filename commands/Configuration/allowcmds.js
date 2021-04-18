@@ -3,7 +3,7 @@ const settingsSchema = require('../../schemas/settings-schema')
 
 module.exports = {
     name: 'allowcmds',
-    description: 'Enable or disable commands in channels',
+    description: 'Enable or disable commands in channels | Moderation commands will still be allowed in these channels',
     permissions: 'MANAGE_GUILD',
     moderationCommand: true,
     usage: 'command [switch: enable, enablecategory, disable, disablecategory, viewdisabled] <channel: text, category (name)>',
