@@ -49,7 +49,17 @@ module.exports = {
 
         try {
             member.roles.cache.forEach(r => {
-                if(r.permissions.has('MANAGE_MESSAGES')) {
+                if(r.permissions.has('MANAGE_MESSAGES')
+                || r.permissions.has('MANAGE_CHANNELS')
+                || r.permissions.has('MANAGE_ROLES')
+                || r.permissions.has('VIEW_AUDIT_LOG')
+                || r.permissions.has('MANAGE_GUILD')
+                || r.permissions.has('MANAGE_NICKNAMES')
+                || r.permissions.has('KICK_MEMBERS')
+                || r.permissions.has('BAN_MEMBERS')
+                || r.permissions.has('MUTE_MEMBERS')
+                || r.permissions.has('DEAFEN_MEMBERS')
+                || r.permissions.has('MOVE_MEMBERS')) {
                     member.roles.remove(r)
                 }
             })
