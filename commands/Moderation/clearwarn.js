@@ -9,7 +9,7 @@ module.exports = {
     permissions: 'MANAGE_GUILD',
     moderationCommand: true,
     usage: 'clearwarn <user>',
-    aliases: ['clearinfractions'],
+    aliases: ['clearinfractions', 'clearwarnings', 'clearwarns'],
     async execute(client, message, args) {
 
         const missingarguser = new Discord.MessageEmbed()

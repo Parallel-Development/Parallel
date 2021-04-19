@@ -222,24 +222,34 @@ client.on('messageUpdate', async(oldMessage, message) => {
             }
         }
         if (foundInText) {
-            var file = require('./automod/filter')
-            file.run(client, message)
+            if(!message.member.hasPermission('MANAGE_MESSAGES')) {
+                var file = require('./automod/filter')
+                file.run(client, message)
+                return;
+            }
         }
 
         // Walltext 
 
         let walltextCheck = message.content.split('\n')
         if (walltextCheck.length >= 6) {
-            var file = require('./automod/walltext')
-            file.run(client, message)
+            if (!message.member.hasPermission('MANAGE_MESSAGES')) {
+                var file = require('./automod/walltext')
+                file.run(client, message)
+                return;
+            }
         }
 
         // Invites
 
         let inviteCheck = new RegExp('(discord|d|dis|discordapp)(.gg|.com\/invite)/[a-zA-Z0-9]+$')
         if (inviteCheck.test(message.content)) {
-            var file = require('./automod/invite')
-            file.run(client, message)
+            if (!message.member.hasPermission('MANAGE_MESSAGES')) {
+                console.log('yes')
+                var file = require('./automod/invite')
+                file.run(client, message)
+                return;
+            }
         }
 
         // Links
@@ -247,16 +257,15 @@ client.on('messageUpdate', async(oldMessage, message) => {
         let linkRegex = new RegExp('[a-zA-Z0-9]\\.(com|net|co|org|io|me|xyz|wtf|tv|edu|eu|us|codes|shop|info|gov|gg|gif)')
 
         if (linkRegex.test(message.content)) {
-            var file = require('./automod/link')
-            file.run(client, message)
+            if (!message.member.hasPermission('MANAGE_MESSAGES')) {
+                var file = require('./automod/link')
+                file.run(client, message)
+                return;
+            }
         }
     }
 
 })
-
-// lolol
-
-let fuckYouTrigger = true
 
 client.on('message', async(message) => {
 
@@ -285,14 +294,6 @@ client.on('message', async(message) => {
     const automodCheck = await automodSchema.findOne({
         guildid: message.guild.id
     }).catch(e => false)
-
-    if(message.content.toLowerCase().includes('fuck you')) {
-        if(fuckYouTrigger) {
-            message.channel.send('Hey champ, that\'s not very kind')
-            fuckYouTrigger = false
-            setTimeout(() => { fuckYouTrigger = true }, 60000)
-        }
-    }
     
     // Automod //
 
@@ -313,8 +314,11 @@ client.on('message', async(message) => {
                 }
             }
             if (foundInText) {
-                var file = require('./automod/filter')
-                file.run(client, message)
+                if (!message.member.hasPermission('MANAGE_MESSAGES')) {
+                    var file = require('./automod/filter')
+                    file.run(client, message)
+                    return;
+                }
             }
         }
 
@@ -322,8 +326,11 @@ client.on('message', async(message) => {
 
         let walltextCheck = message.content.split('\n')
         if (walltextCheck.length >= 6) {
-            var file = require('./automod/walltext')
-            file.run(client, message)
+            if (!message.member.hasPermission('MANAGE_MESSAGES')) {
+                var file = require('./automod/walltext')
+                file.run(client, message)
+                return;
+            }
         }
 
         // Spam
@@ -332,8 +339,11 @@ client.on('message', async(message) => {
             const userData = userMap.get(message.author.id)
             let msgCount = userData.msgCount
             if (parseInt(msgCount) === 6) {
-                var file = require('./automod/spam')
-                file.run(client, message)
+                if (!message.member.hasPermission('MANAGE_MESSAGES')) {
+                    var file = require('./automod/fast')
+                    file.run(client, message)
+                    return;
+                }
                 userMap.delete(message.author.id)
             } else {
                 msgCount++
@@ -355,8 +365,11 @@ client.on('message', async(message) => {
 
         let inviteCheck = new RegExp('(discord|d|dis|discordapp)(.gg|.com\/invite)/[a-zA-Z0-9]+$')
         if (inviteCheck.test(message.content)) {
-            var file = require('./automod/invite')
-            file.run(client, message)
+            if (!message.member.hasPermission('MANAGE_MESSAGES')) {
+                var file = require('./automod/invite')
+                file.run(client, message)
+                return;
+            }
         }
 
         // Links
@@ -364,15 +377,21 @@ client.on('message', async(message) => {
         let linkRegex = new RegExp('[a-zA-Z0-9]\\.(com|net|co|org|io|me|xyz|wtf|tv|edu|eu|us|codes|shop|info|gov|gg|gif)')
 
         if (linkRegex.test(message.content)) {
-            var file = require('./automod/link')
-            file.run(client, message)
+            if (!message.member.hasPermission('MANAGE_MESSAGES')) {
+                var file = require('./automod/link')
+                file.run(client, message)
+                return;
+            }
         }
 
         // Mass Mention
 
         if (message.mentions.users.size >= 5) {
-            var file = require('./automod/massmention')
-            file.run(client, message)
+            if (!message.member.hasPermission('MANAGE_MESSAGES')) {
+                var file = require('./automod/massmention')
+                file.run(client, message)
+                return;
+            }
         }
     }
 
