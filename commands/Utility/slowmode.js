@@ -1,5 +1,4 @@
 const Discord = require('discord.js')
-const settingsSchema = require('../../schemas/settings-schema');
 
 module.exports = {
   name: 'slowmode',

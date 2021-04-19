@@ -4,6 +4,7 @@ module.exports = {
     name: 'clear',
     description: 'Clears messages in a channel',
     permissions: 'MANAGE_MESSAGES',
+    moderationCommand: true,
     usage: 'clear <amount>',
     aliases: ['purge'],
     async execute(client, message, args) {

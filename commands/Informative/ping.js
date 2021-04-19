@@ -7,6 +7,6 @@ module.exports = {
     aliases: ['pong'],
     async execute(client, message, args) {    
         const msg = await message.channel.send('Pinging...')
-        msg.edit(`Pong! Websocket: \`${client.ws.ping}ms\` | Latency: \`${Math.abs(msg.createdTimestamp - new Date().getTime())}ms\``)
+        msg.edit(`Pong! Websocket: \`${client.ws.ping}ms\` | Latency: \`${msg.createdTimestamp - new Date().getTime()}ms\``)
     }
 }
