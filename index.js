@@ -22,7 +22,7 @@ const userMap = new Map()
 const active = new Map()
 let devOnly = false
 
-var terminalArguments = process.argv.slice(2)
+const terminalArguments = process.argv.slice(2)
 let startupMessage = 'Attempting to start the bot...'
 if(terminalArguments[0] == '-d') {
     devOnly = true
