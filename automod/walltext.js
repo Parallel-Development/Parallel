@@ -213,7 +213,7 @@ exports.run = async (client, message) => {
             guildname: message.guild.name,
             guildid: message.guild.id,
             type: 'mute',
-            userID: message.message.author.id,
+            userID: message.author.id,
             duration: 'permanent',
             reason: '[AUTO] Walltext',
             expires: 'never'
@@ -407,7 +407,7 @@ exports.run = async (client, message) => {
             guildname: message.guild.name,
             guildid: message.guild.id,
             type: 'ban',
-            userID: message.message.author.id,
+            userID: message.author.id,
             duration: duration,
             reason: '[AUTO] Walltext',
             expires: new Date().getTime() + parseInt(duration)

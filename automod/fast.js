@@ -228,7 +228,7 @@ exports.run = async(client, message) => {
             guildname: message.guild.name,
             guildid: message.guild.id,
             type: 'mute',
-            userID: message.message.author.id,
+            userID: message.author.id,
             duration: 'permanent',
             reason: '[AUTO] Fast Message Spam',
             expires: 'never'
@@ -422,7 +422,7 @@ exports.run = async(client, message) => {
             guildname: message.guild.name,
             guildid: message.guild.id,
             type: 'ban',
-            userID: message.message.author.id,
+            userID: message.author.id,
             duration: duration,
             reason: '[AUTO] Fast Message Spam',
             expires: new Date().getTime() + parseInt(duration)

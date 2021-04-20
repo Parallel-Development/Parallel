@@ -51,7 +51,7 @@ module.exports = {
         for(const i of warningsCheck.warnings) {
             count++
             if (i.reason.length > 20) {
-                i.reason = i.reason.substr(0, 20) + '...'
+                i.reason = i.reason.substr(0, 30) + '...'
             }
             warningsEmbed.addField(`${count}: ${i.type}`, `Reason: \`${i.reason}\`\nDate: \`${i.date}\`\nPunishment ID: \`${i.code}\``)
         }
