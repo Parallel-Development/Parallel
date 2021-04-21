@@ -279,7 +279,6 @@ exports.run = async(client, message) => {
         deleteMessages();
         let date = new Date();
         date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
-
         var code = '';
         var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
         var charsLength = chars.length
@@ -379,7 +378,7 @@ exports.run = async(client, message) => {
         const caseInfo = {
             moderatorID: message.guild.me.id,
             type: 'Tempban',
-            expires: new Date().getTime() + parseInt(duration),
+            expires: new Date().getTime() + duration,
             date: date,
             reason: '[AUTO] Fast Message Spam',
             code: code
@@ -425,7 +424,7 @@ exports.run = async(client, message) => {
             userID: message.author.id,
             duration: duration,
             reason: '[AUTO] Fast Message Spam',
-            expires: new Date().getTime() + parseInt(duration)
+            expires: new Date().getTime() + duration
         }).save();
 
         message.channel.send(usertempbanned)
@@ -483,7 +482,7 @@ exports.run = async(client, message) => {
         const caseInfo = {
             moderatorID: message.guild.me.id,
             type: 'Tempmute',
-            expires: new Date().getTime() + parseInt(duration),
+            expires: new Date().getTime() + duration,
             date: date,
             reason: '[AUTO] Fast Message Spam',
             code: code
@@ -529,7 +528,7 @@ exports.run = async(client, message) => {
             userID: message.member.id,
             duration: duration,
             reason: '[AUTO] Fast Message Spam',
-            expires: new Date().getTime() + parseInt(duration)
+            expires: new Date().getTime() + duration
         }).save();
 
         message.member.send(tempmutedm).catch(() => { return })

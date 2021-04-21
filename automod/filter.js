@@ -364,7 +364,7 @@ exports.run = async (client, message) => {
         const caseInfo = {
             moderatorID: message.guild.me.id,
             type: 'Tempban',
-            expires: new Date().getTime() + parseInt(duration),
+            expires: new Date().getTime() + duration,
             date: date,
             reason: '[AUTO] Using Filtered Words',
             code: code
@@ -410,7 +410,7 @@ exports.run = async (client, message) => {
             userID: message.author.id,
             duration: duration,
             reason: '[AUTO] Using Filtered Words',
-            expires: new Date().getTime() + parseInt(duration)
+            expires: new Date().getTime() + duration
         }).save();
 
         message.channel.send(usertempbanned)
@@ -468,7 +468,7 @@ exports.run = async (client, message) => {
         const caseInfo = {
             moderatorID: message.guild.me.id,
             type: 'Tempmute',
-            expires: new Date().getTime() + parseInt(duration),
+            expires: new Date().getTime() + duration,
             date: date,
             reason: '[AUTO] Using Filtered Words',
             code: code
@@ -514,7 +514,7 @@ exports.run = async (client, message) => {
             userID: message.member.id,
             duration: duration,
             reason: '[AUTO] Using Filtered Words',
-            expires: new Date().getTime() + parseInt(duration)
+            expires: new Date().getTime() + duration
         }).save();
 
         message.member.send(tempmutedm).catch(() => { return })

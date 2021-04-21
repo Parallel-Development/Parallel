@@ -8,7 +8,7 @@ exports.run = async(client, message) => {
     const automodGrab = await automodSchema.findOne({
         guildid: message.guild.id
     })
-    let { invites, duration, rawDuration } = automodGrab
+    let { invites, invitesTempBanDuration, invitesTempBanRawDuration, invitesTempMuteDuration, invitesTempMuteRawDuration } = automodGrab
 
     if (invites == 'delete') {
         message.delete()
@@ -158,7 +158,7 @@ exports.run = async(client, message) => {
     }
 
     if (invites == 'mute') {
-        deleteMessages();
+        message.delete()
         let date = new Date();
         date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
 
@@ -262,7 +262,7 @@ exports.run = async(client, message) => {
     }
 
     if (invites == 'ban') {
-        deleteMessages();
+        message.delete()
         let date = new Date();
         date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
 
@@ -334,7 +334,7 @@ exports.run = async(client, message) => {
     }
 
     if (invites == 'tempban') {
-        deleteMessages();
+        message.delete()
         let date = new Date();
         date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
 
@@ -354,7 +354,7 @@ exports.run = async(client, message) => {
             .setAuthor('Razor Moderation', client.user.displayAvatarURL())
             .setTitle(`You were banned from ${message.guild.name}`)
             .addField('Reason', '[AUTO] Sending Invites')
-            .addField('Expires', rawDuration, true)
+            .addField('Expires', invitesTempBanRawDuration, true)
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
 
@@ -365,7 +365,7 @@ exports.run = async(client, message) => {
         const caseInfo = {
             moderatorID: message.guild.me.id,
             type: 'Tempban',
-            expires: new Date().getTime() + parseInt(duration),
+            expires: new Date().getTime() + invitesTempBanDuration,
             date: date,
             reason: '[AUTO] Sending Invites',
             code: code
@@ -409,16 +409,16 @@ exports.run = async(client, message) => {
             guildid: message.guild.id,
             type: 'ban',
             userID: message.author.id,
-            duration: duration,
+            duration: invitesTempBanDuration,
             reason: '[AUTO] Sending Invites',
-            expires: new Date().getTime() + parseInt(duration)
+            expires: new Date().getTime() + invitesTempBanDuration
         }).save();
 
         message.channel.send(usertempbanned)
     }
 
     if (invites == 'tempmute') {
-        deleteMessages();
+        message.delete()
         let date = new Date();
         date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
 
@@ -438,7 +438,7 @@ exports.run = async(client, message) => {
             .setAuthor('Razor Moderation', client.user.displayAvatarURL())
             .setTitle(`You were muted in ${message.guild.name}`)
             .addField('Reason', '[AUTO] Sending Invites')
-            .addField('Expires', rawDuration, true)
+            .addField('Expires', invitesTempMuteRawDuration, true)
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
 
@@ -469,7 +469,7 @@ exports.run = async(client, message) => {
         const caseInfo = {
             moderatorID: message.guild.me.id,
             type: 'Tempmute',
-            expires: new Date().getTime() + parseInt(duration),
+            expires: new Date().getTime() + invitesTempMuteDuration,
             date: date,
             reason: '[AUTO] Sending Invites',
             code: code
@@ -513,9 +513,9 @@ exports.run = async(client, message) => {
             guildid: message.guild.id,
             type: 'mute',
             userID: message.member.id,
-            duration: duration,
+            duration: invitesTempMuteDuration,
             reason: '[AUTO] Sending Invites',
-            expires: new Date().getTime() + parseInt(duration)
+            expires: new Date().getTime() + invitesTempMuteDuration
         }).save();
 
         message.member.send(tempmutedm).catch(() => { return })

@@ -7,7 +7,7 @@ exports.run = async (client, message) => {
     const automodGrab = await automodSchema.findOne({
         guildid: message.guild.id
     })
-    let { massmention, duration, rawDuration } = automodGrab
+    let { massmention, massmentionTempBanDuration, massmentionTempBanRawDuration, massmentionTempMuteDuration, massmentionTempMuteRawDuration } = automodGrab
 
     if (massmention == 'delete') {
         message.delete()
@@ -353,7 +353,7 @@ exports.run = async (client, message) => {
             .setAuthor('Razor Moderation', client.user.displayAvatarURL())
             .setTitle(`You were banned from ${message.guild.name}`)
             .addField('Reason', '[AUTO] Mass Mention')
-            .addField('Expires', rawDuration, true)
+            .addField('Expires', massmentionTempBanRawDuration, true)
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
 
@@ -364,7 +364,7 @@ exports.run = async (client, message) => {
         const caseInfo = {
             moderatorID: message.guild.me.id,
             type: 'Tempban',
-            expires: new Date().getTime() + parseInt(duration),
+            expires: new Date().getTime() + massmentionTempBanDuration,
             date: date,
             reason: '[AUTO] Mass Mention',
             code: code
@@ -408,9 +408,9 @@ exports.run = async (client, message) => {
             guildid: message.guild.id,
             type: 'ban',
             userID: message.author.id,
-            duration: duration,
+            duration: massmentionTempBanDuration,
             reason: '[AUTO] Mass Mention',
-            expires: new Date().getTime() + parseInt(duration)
+            expires: new Date().getTime() + massmentionTempBanDuration
         }).save();
 
         message.channel.send(usertempbanned)
@@ -437,7 +437,7 @@ exports.run = async (client, message) => {
             .setAuthor('Razor Moderation', client.user.displayAvatarURL())
             .setTitle(`You were muted in ${message.guild.name}`)
             .addField('Reason', '[AUTO] Mass Mention')
-            .addField('Expires', rawDuration, true)
+            .addField('Expires', massmentionTempMuteRawDuration, true)
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
 
@@ -468,7 +468,7 @@ exports.run = async (client, message) => {
         const caseInfo = {
             moderatorID: message.guild.me.id,
             type: 'Tempmute',
-            expires: new Date().getTime() + parseInt(duration),
+            expires: new Date().getTime() + massmentionTempMuteDuration,
             date: date,
             reason: '[AUTO] Mass Mention',
             code: code
@@ -512,9 +512,9 @@ exports.run = async (client, message) => {
             guildid: message.guild.id,
             type: 'mute',
             userID: message.member.id,
-            duration: duration,
+            duration: massmentionTempMuteDuration,
             reason: '[AUTO] Mass Mention',
-            expires: new Date().getTime() + parseInt(duration)
+            expires: new Date().getTime() + massmentionTempMuteDuration
         }).save();
 
         message.member.send(tempmutedm).catch(() => { return })

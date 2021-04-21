@@ -8,7 +8,7 @@ exports.run = async (client, message) => {
     const automodGrab = await automodSchema.findOne({
         guildid: message.guild.id
     })
-    let { links, duration, rawDuration } = automodGrab
+    let { links, linkTempBanDuration, linkTempBanRawDuration, linkTempMuteDuration, linkTempMuteRawDuration } = automodGrab
 
     if (links == 'delete') {
         message.delete()
@@ -158,7 +158,7 @@ exports.run = async (client, message) => {
     }
 
     if (links == 'mute') {
-        deleteMessages();
+        message.delete()
         let date = new Date();
         date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
 
@@ -262,7 +262,7 @@ exports.run = async (client, message) => {
     }
 
     if (links == 'ban') {
-        deleteMessages();
+        message.delete()
         let date = new Date();
         date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
 
@@ -334,7 +334,7 @@ exports.run = async (client, message) => {
     }
 
     if (links == 'tempban') {
-        deleteMessages();
+        message.delete()
         let date = new Date();
         date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
 
@@ -354,7 +354,7 @@ exports.run = async (client, message) => {
             .setAuthor('Razor Moderation', client.user.displayAvatarURL())
             .setTitle(`You were banned from ${message.guild.name}`)
             .addField('Reason', '[AUTO] Sending Links')
-            .addField('Expires', rawDuration, true)
+            .addField('Expires', linkTempBanRawDuration, true)
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
 
@@ -365,7 +365,7 @@ exports.run = async (client, message) => {
         const caseInfo = {
             moderatorID: message.guild.me.id,
             type: 'Tempban',
-            expires: new Date().getTime() + parseInt(duration),
+            expires: new Date().getTime() + linkTempBanDuration,
             date: date,
             reason: '[AUTO] Sending Links',
             code: code
@@ -409,16 +409,16 @@ exports.run = async (client, message) => {
             guildid: message.guild.id,
             type: 'ban',
             userID: message.member.id,
-            duration: duration,
+            duration: linkTempBanDuration,
             reason: '[AUTO] Sending Links',
-            expires: new Date().getTime() + parseInt(duration)
+            expires: new Date().getTime() + linkTempBanDuration
         }).save();
 
         message.channel.send(usertempbanned)
     }
 
     if (links == 'tempmute') {
-        deleteMessages();
+        message.delete()
         let date = new Date();
         date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
 
@@ -438,7 +438,7 @@ exports.run = async (client, message) => {
             .setAuthor('Razor Moderation', client.user.displayAvatarURL())
             .setTitle(`You were muted in ${message.guild.name}`)
             .addField('Reason', '[AUTO] Sending Links')
-            .addField('Expires', rawDuration, true)
+            .addField('Expires', linkTempMuteRawDuration, true)
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
 
@@ -469,7 +469,7 @@ exports.run = async (client, message) => {
         const caseInfo = {
             moderatorID: message.guild.me.id,
             type: 'Tempmute',
-            expires: new Date().getTime() + parseInt(duration),
+            expires: new Date().getTime() + linkTempMuteDuration,
             date: date,
             reason: '[AUTO] Sending Links',
             code: code
@@ -513,9 +513,9 @@ exports.run = async (client, message) => {
             guildid: message.guild.id,
             type: 'mute',
             userID: message.member.id,
-            duration: duration,
+            duration: linkTempMuteDuration,
             reason: '[AUTO] Sending Links',
-            expires: new Date().getTime() + parseInt(duration)
+            expires: new Date().getTime() + linkTempMuteDuration
         }).save();
 
         message.member.send(tempmutedm).catch(() => { return })

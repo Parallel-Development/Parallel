@@ -5,6 +5,11 @@ const reqString = {
     required: true
 }
 
+const reqInt = {
+    type: Number,
+    required: true
+}
+
 const automodSchema = mongoose.Schema({
     guildname: reqString,
     guildid: reqString,
@@ -16,8 +21,30 @@ const automodSchema = mongoose.Schema({
     links: reqString,
     invites: reqString,
     massmention: reqString,
-    duration: reqString,
-    rawDuration: reqString,
+    filterTempMuteDuration: reqInt,
+    filterTempMuteRawDuration: reqString,
+    fastTempMuteDuration: reqInt,
+    fastTempMuteRawDuration: reqString,
+    walltextTempMuteDuration: reqInt,
+    walltextTempMuteRawDuration: reqString,
+    linksTempMuteDuration: reqInt,
+    linksTempMuteRawDuration: reqString,
+    invitesTempMuteDuration: reqInt,
+    invitesTempMuteRawDuration: reqString,
+    massmentionTempMuteDuration: reqInt,
+    massmentionTempMuteRawDuration: reqString,
+    filterTempBanDuration: reqInt,
+    filterTempBanRawDuration: reqString,
+    fastTempBanDuration: reqInt,
+    fastTempBanRawDuration: reqString,
+    walltextTempBanDuration: reqInt,
+    walltextTempBanRawDuration: reqString,
+    linksTempBanDuration: reqInt,
+    linksTempBanRawDuration: reqString,
+    invitesTempBanDuration: reqInt,
+    invitesTempBanRawDuration: reqString,
+    massmentionTempBanDuration: reqInt,
+    massmentionTempBanRawDuration: reqString,
     bypassChannels: {
         type: [String],
         required: true
