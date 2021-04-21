@@ -34,10 +34,7 @@ async function getAll(client, message) {
         let commands = new Array();
         const commandFiles = fs.readdirSync(`./commands/${folder}`).filter(file => file.endsWith('.js'))
         for(const file of commandFiles) {
-            let cmd = client.commands.get(path.parse(file).name.toLowerCase())
-            if(!cmd.depricated) {
-                commands.push(`\`${path.parse(file).name}\``)
-            }
+            commands.push(`\`${path.parse(file).name}\``)
         }
         mainHelp.addField(folder, commands.join(', '))
     }
