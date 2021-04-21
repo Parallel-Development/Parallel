@@ -25,10 +25,10 @@ module.exports = {
             member = null
         }
         if (!member) return message.channel.send('Please specify a valid member | The member must be on the server')
-        if(member.roles.highest.position <= message.guild.me.roles.highest.position) {
+        if(member.roles.highest.position >= message.guild.me.roles.highest.position) {
             return message.reply('cannot change the user\'s nickname for their highest role is above my highest role')
         }
-        if (member.roles.highest.position <= message.member.roles.highest.position) {
+        if (member.roles.highest.position >= message.member.roles.highest.position) {
             return message.reply('you cannot change the user\'s nickname for their highest role is equal or above your highest role in hierarchy')
         }
 
