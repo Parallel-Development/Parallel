@@ -19,7 +19,7 @@ module.exports = {
             return id;
         }
 
-        if (!member) return message.channel.send('Please specify a valid member | The member must be on the server')
+        if (!args[0]) return message.channel.send('Please specify a member')
 
         var member;
 
@@ -28,7 +28,7 @@ module.exports = {
         } catch (err) {
             member = null
         }
-        if (!member) return message.channel.send('Please specify a valid member ID | The member must be on the server')
+        if (!member) return message.channel.send('Please specify a valid member | The member must be on the server')
 
         if (member) {
             if (message.guild.me.roles.highest.position <= member.roles.highest.position) {
