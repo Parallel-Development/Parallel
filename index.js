@@ -24,7 +24,7 @@ let devOnly = false
 
 const terminalArguments = process.argv.slice(2)
 let startupMessage = 'Attempting to start the bot...'
-if (terminalArguments[0] == '-d') {
+if(terminalArguments[0] == '-d') {
     devOnly = true
     startupMessage += ' | Developer Only mode is enabled'
 }
@@ -34,9 +34,9 @@ console.log(startupMessage)
 
 let startUp = 0;
 const connectToMongoDB = async () => {
-    await mongo().then(async (mongoose) => {
+    await mongo().then(async(mongoose) => {
         startUp++
-        if (startUp == 1) {
+        if(startUp == 1) {
             console.log('Connected to mongoDB! (1/2) | Waiting for bot...')
         } else {
             console.log('Connected to MongoDB! (2/2) | Bot is now ready')
@@ -48,15 +48,14 @@ connectToMongoDB();
 
 client.once('ready', () => {
     startUp++
-    if (startUp == 1) {
+    if(startUp == 1) {
         console.log('Bot started (1/2) | Waiting for MongoDB...');
     } else {
         console.log('Bot started (2/2) | Bot is now ready');
     }
-    client.user.setStatus('invisible')
 })
 
-setInterval(async () => {
+setInterval(async() => {
 
     // Check for expired punishments
 
@@ -64,14 +63,14 @@ setInterval(async () => {
     const expiredDate = await punishmentSchema.find({
         expires: { $lte: currentDate },
     })
-        .catch(e => false)
+   .catch(e => false)
 
-    if (expiredDate.length < 1) return;
+   if(expiredDate.length < 1) return;
 
-    expiredDate.forEach(async (expiredDate) => {
-        let { type, userID, guildid, _id } = expiredDate
+   expiredDate.forEach(async(expiredDate) => {
+       let {type, userID, guildid, _id} = expiredDate
 
-        if (type === 'mute') {
+       if(type === 'mute') {
             await punishmentSchema.deleteOne({
                 _id: _id,
             })
@@ -79,11 +78,11 @@ setInterval(async () => {
             var server = client.guilds.cache.get(guildid)
 
             var role = server.roles.cache.find(r => r.name === 'Muted')
-            if (!role) return;
+            if(!role) return;
 
-            var member = await server.members.fetch(userID).catch(() => member = null)
+            var member = await server.members.fetch(userID).catch(() =>  member = null)
 
-            member.roles.remove(role).catch(() => { return })
+            member.roles.remove(role).catch(() =>  { return })
 
             const unmutedm = new Discord.MessageEmbed()
                 .setColor('#09fff2')
@@ -95,7 +94,7 @@ setInterval(async () => {
 
         }
 
-        if (type === 'ban') {
+        if(type === 'ban') {
             await punishmentSchema.deleteOne({
                 _id: _id
             })
@@ -104,30 +103,30 @@ setInterval(async () => {
 
             var server = await client.guilds.fetch(guildid)
 
-            server.members.unban(userID).catch(() => { return })
+            server.members.unban(userID).catch(() =>  { return })
         }
 
-    }).catch(() => { console.log('Failed to check for expired punishments. If mongo has not connected yet, ignore this error') })
+    })
 
 }, 5000)
 
 client.on('voiceStateUpdate', (oldState, newState) => {
-    if (oldState.member.id !== client.user.id) return
+    if(oldState.member.id !== client.user.id) return
 
-    if (newState.channel == null) {
+    if(newState.channel == null) {
         active.delete(oldState.guild.id)
         return;
     }
 
-    if (!newState.member.selfDeaf) {
-        if (newState.channel == null) return;
+    if(!newState.member.selfDeaf) {
+        if(newState.channel == null) return;
         newState.guild.me.voice.setDeaf(true).catch(() => { return })
         return;
     }
 
 })
 
-client.on('guildMemberAdd', async (member) => {
+client.on('guildMemberAdd', async(member) => {
 
     const joinCheck = await punishmentSchema.findOne({
         userID: member.id,
@@ -135,16 +134,16 @@ client.on('guildMemberAdd', async (member) => {
         type: 'mute'
     })
 
-    if (joinCheck) {
+    if(joinCheck) {
         let role = member.guild.roles.cache.find(r => r.name === 'Muted')
-        if (!role) return;
+        if(!role) return;
         member.roles.add(role).catch(() => { return })
     }
 
     const blacklistCheck = await blacklistSchema.findOne({
         user: member.id
     })
-    if (blacklistCheck) {
+    if(blacklistCheck) {
         if (member.guild.id == '747624284008218787') {
             const blacklistRole = member.guild.roles.cache.find(r => r.name == 'Blacklisted')
             member.roles.add(blacklistRole)
@@ -153,7 +152,7 @@ client.on('guildMemberAdd', async (member) => {
 
 })
 
-client.on('guildDelete', async (guild) => {
+client.on('guildDelete', async(guild) => {
     await settingsSchema.deleteMany({
         guildid: guild.id
     })
@@ -191,13 +190,13 @@ for (const folder of commandFolders) {
 }
 */
 
-client.on('messageUpdate', async (oldMessage, message) => {
+client.on('messageUpdate', async(oldMessage, message) => {
 
     if (devOnly) {
         if (!config.developers.includes(message.author.id)) return
     }
 
-    if (!message.guild) return
+    if(!message.guild) return
 
     let channelBypassed = await automodSchema.findOne({
         guildid: message.guild.id,
@@ -223,14 +222,14 @@ client.on('messageUpdate', async (oldMessage, message) => {
             }
         }
         if (foundInText) {
-            if (!message.member.hasPermission('MANAGE_MESSAGES')) {
+            if(!message.member.hasPermission('MANAGE_MESSAGES')) {
                 var file = require('./automod/filter')
                 file.run(client, message)
                 return;
             }
         }
 
-        // Walltext 
+        // Walltext
 
         let walltextCheck = message.content.split('\n')
         if (walltextCheck.length >= 6) {
@@ -246,6 +245,7 @@ client.on('messageUpdate', async (oldMessage, message) => {
         let inviteCheck = new RegExp('(discord|d|dis|discordapp)(.gg|.com\/invite)/[a-zA-Z0-9]+$')
         if (inviteCheck.test(message.content)) {
             if (!message.member.hasPermission('MANAGE_MESSAGES')) {
+                console.log('yes')
                 var file = require('./automod/invite')
                 file.run(client, message)
                 return;
@@ -267,16 +267,16 @@ client.on('messageUpdate', async (oldMessage, message) => {
 
 })
 
-client.on('message', async (message) => {
+client.on('message', async(message) => {
 
     if (devOnly) {
         if (!config.developers.includes(message.author.id)) return
     }
 
-    if (message.author.bot) return;
+    if(message.author.bot) return;
 
-    if (!message.guild) return;
-    if (!message.guild.me.hasPermission('SEND_MESSAGES', 'READ_MESSAGES')) return;
+    if(!message.guild) return;
+    if(!message.guild.me.hasPermission('SEND_MESSAGES', 'READ_MESSAGES')) return;
 
     let channelBypassed = await automodSchema.findOne({
         guildid: message.guild.id,
@@ -322,7 +322,7 @@ client.on('message', async (message) => {
             }
         }
 
-        // Walltext 
+        // Walltext
 
         let walltextCheck = message.content.split('\n')
         if (walltextCheck.length >= 6) {
@@ -402,9 +402,9 @@ client.on('message', async (message) => {
         if (sent == 'true') return;
 
         const blacklistEmbed = new Discord.MessageEmbed()
-            .setColor('#FF0000')
-            .setDescription(`Unfortunately, you were blacklisted from this bot. These means you may no longer use this bot\n\n> Blacklist reason: ${reason}\n> Blacklisted on: ${date}\n\nYou can submit an appeal [here](https://docs.google.com/document/d/15EwKPOPvlIO5iSZj-qQyBjmQ5X7yKHlijW9wCiDfffM/edit)`)
-            .setAuthor('You were blacklisted!', client.user.displayAvatarURL());
+        .setColor('#FF0000')
+        .setDescription(`Unfortunately, you were blacklisted from this bot. These means you may no longer use this bot\n\n> Blacklist reason: ${reason}\n> Blacklisted on: ${date}\n\nYou can submit an appeal [here](https://docs.google.com/document/d/15EwKPOPvlIO5iSZj-qQyBjmQ5X7yKHlijW9wCiDfffM/edit)`)
+        .setAuthor('You were blacklisted!', client.user.displayAvatarURL());
         message.author.send(blacklistEmbed).catch(() => { return message.react('🛑') }).catch(() => { return })
         await blacklistSchema.updateMany({
             user: message.author.id,
@@ -413,18 +413,18 @@ client.on('message', async (message) => {
         return;
     }
 
-    if (message.content.startsWith('<@!833792285120528394>')) {
+    if (message.content.startsWith('<@!745401642664460319>')) {
         try {
             var { prefix } = prefixSetting
         } catch (err) {
             var prefix = 'r!'
         }
-        message.channel.send(`Hello! The current prefix for <@!745401642664460319> is \`${prefix}\`, however the prefix for me is hard coded as \`=\`. For a list of commands, run =help`)
+        message.channel.send(`Hello! My current prefix is \`${prefix}\`. For a list of commands, run ${prefix}help`)
     }
 
     // Automatic setup if there are no settings for the server found
 
-    if (!automodCheck) {
+    if(!automodCheck) {
         await new automodSchema({
             guildname: message.guild.name,
             guildid: message.guild.id,
@@ -436,7 +436,6 @@ client.on('message', async (message) => {
             links: 'disabled',
             invites: 'disabled',
             massmention: 'disabled',
-            bypassChannels: [],
             filterTempMuteDuration: 0,
             filterTempMuteRawDuration: '0',
             fastTempMuteDuration: 0,
@@ -461,10 +460,11 @@ client.on('message', async (message) => {
             invitesTempBanRawDuration: '0',
             massmentionTempBanDuration: 0,
             massmentionTempBanRawDuration: '0',
+            bypassChannels: []
         }).save();
     }
 
-    if (!prefixSetting) {
+    if(!prefixSetting) {
         await new settingsSchema({
             guildname: message.guild.name,
             guildid: message.guild.id,
@@ -473,10 +473,11 @@ client.on('message', async (message) => {
             delModCmds: false
         }).save()
 
-        if (!message.content.startsWith('=')) return;
+        if(!message.content.startsWith('r!')) return;
 
-    } else {
-        if (!message.content.startsWith('=')) return;
+    }  else {
+        let { prefix } = prefixSetting
+        if(!message.content.startsWith(prefix)) return;
     }
 
     // Run
@@ -486,13 +487,18 @@ client.on('message', async (message) => {
     }
 
     var args = message.content.split(' ')
-    var prefix = '='
-    var cmd = args.shift().slice(prefix.length).toLowerCase();
+    if(prefixSetting) {
+        var { prefix } = prefixSetting
+        var cmd = args.shift().slice(prefix.length).toLowerCase();
+    } else {
+        var prefix = 'r!'
+        var cmd = args.shift().slice(prefix.length).toLowerCase();
+    }
 
     const cooldown = new Set()
 
     const command = client.commands.get(cmd) || client.commands.get(client.aliases.get(cmd));
-    if (!command) return;
+    if(!command) return;
 
     // Blacklist Check
 
@@ -526,13 +532,13 @@ client.on('message', async (message) => {
         }
     }
 
-    if (command.permissions) {
-        if (!message.member.hasPermission(command.permissions)) {
+    if(command.permissions) {
+        if(!message.member.hasPermission(command.permissions)) {
             const missingPermissionsError = new Discord.MessageEmbed()
-                .setColor('#FF0000')
-                .setDescription(`You do not have the required permission to execute the \`${command.name}\` command\nMissing Permission: \`${command.permissions
-                    .replace('_', ' ')
-                    .toUpperCase()}\``)
+            .setColor('#FF0000')
+            .setDescription(`You do not have the required permission to execute the \`${command.name}\` command\nMissing Permission: \`${command.permissions
+                .replace('_', ' ')
+                .toUpperCase()}\``)
             message.delete()
             const missingPermErrMsg = await message.channel.send(missingPermissionsError)
             setTimeout(() => {
@@ -552,20 +558,20 @@ client.on('message', async (message) => {
         locked: message.channel.parent.id
     })
 
-    if (commandsDisabledInChannel && commandsDisabledInChannel.length !== 0 || commandsDisabledInCategory && commandsDisabledInCategory.length !== 0) {
-        if (!command.moderationCommand) {
-            if (message.member.hasPermission('MANAGE_MESSAGES') && !message.member.hasPermission('ADMINISTRATOR')) {
+    if(commandsDisabledInChannel && commandsDisabledInChannel.length !== 0 || commandsDisabledInCategory && commandsDisabledInCategory.length !== 0) {
+        if(!command.moderationCommand) {
+            if(message.member.hasPermission('MANAGE_MESSAGES') && !message.member.hasPermission('ADMINISTRATOR')) {
                 const onlyModCommands = new Discord.MessageEmbed()
-                    .setColor('#FF0000')
-                    .setDescription('You can only run moderation commands in this channel')
+                .setColor('#FF0000')
+                .setDescription('You can only run moderation commands in this channel')
                 message.delete()
                 const onlyModCmdsErr = await message.channel.send(onlyModCommands)
                 setTimeout(() => {
                     onlyModCmdsErr.delete()
                 }, 5000)
                 return
-            } else {
-                if (!message.member.hasPermission('ADMINISTRATOR')) {
+            }  else {
+                if(!message.member.hasPermission('ADMINISTRATOR')) {
                     return message.reply('commands are disabled in this channel')
                 }
             }
