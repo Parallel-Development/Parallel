@@ -37,7 +37,7 @@ module.exports = {
         } catch (err) {
             member = null
         }
-        if (!member) return message.channel.send('Please specify a valid member ID | The member must be on the server')
+        if (!member) return message.channel.send('Please specify a valid member | The member must be on the server')
 
         // Checks
 

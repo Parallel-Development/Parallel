@@ -61,7 +61,7 @@ module.exports = {
         if (!member) return message.channel.send('Please specify a valid member ID | The member must be on the server')
 
         var reason = args.splice(1).join(' ');
-        if(!reason) var reason = 'Unspecified';
+        if (!reason) var reason = 'Unspecified';
 
         const unmutemsg = new Discord.MessageEmbed()
             .setColor('#90fff2')
@@ -75,11 +75,11 @@ module.exports = {
         })
 
         if (!role) return message.channel.send(rolereq)
-        if(!member.roles.cache.get(role.id)) {
-            if(!isMuted) return message.channel.send(notmuted)
+        if (!member.roles.cache.get(role.id)) {
+            if (!isMuted) return message.channel.send(notmuted)
         }
-        if(!isMuted) {
-            if(!member.roles.cache.get(role.id)) return message.channel.send(notmuted)
+        if (!isMuted) {
+            if (!member.roles.cache.get(role.id)) return message.channel.send(notmuted)
         }
         if (message.guild.me.roles.highest.position <= role.position) return message.channel.send(roletoolower)
         member.roles.remove(role).catch(() => { return })
@@ -93,7 +93,7 @@ module.exports = {
 
         message.channel.send(unmutemsg)
 
-        await punishmentSchema.deleteOne({
+        await punishmentSchema.deleteMany({
             userID: member.id
         })
             .catch(() => { return })
@@ -109,11 +109,11 @@ module.exports = {
         date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date()).format('h:mm:ss, a');
 
         const unmutedm = new Discord.MessageEmbed()
-        .setColor('#09fff2')
-        .setAuthor('You were unmuted', client.user.displayAvatarURL())
-        .setTitle(`You were unmuted in ${message.guild.name}`)
-        .addField('Reason', reason)
-        .setFooter(moment(message.createdtimeStamp).format('MMMM Do YYYY'))
+            .setColor('#09fff2')
+            .setAuthor('You were unmuted', client.user.displayAvatarURL())
+            .setTitle(`You were unmuted in ${message.guild.name}`)
+            .addField('Reason', reason)
+            .setFooter(moment(message.createdtimeStamp).format('MMMM Do YYYY'))
         member.send(unmutedm).catch(() => { return })
 
         const caseInfo = {

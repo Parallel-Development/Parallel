@@ -51,21 +51,40 @@ module.exports = {
 
         var member;
 
+        let userNotMember = false
+
         try {
             member = await message.guild.members.cache.find(member => member.id == parseInt(getUserFromMention(args[0])));
         } catch (err) {
             member = null
         }
-        if (!member) return message.channel.send('Please specify a valid member ID | The member must be on the server')
+        if (!member) {
+            try {
+                member = await client.users.fetch(args[0])
+                userNotMember = true
+            } catch {
+                return message.channel.send('Please specify a valid member')
+            }
+        }
 
         if (member) {
             if (member.id == '745401642664460319') return message.channel.send('I-')
             if (member.id == message.author.id) return message.channel.send('Why tho')
-            if (member.hasPermission('MANAGE_MESSAGES')) return message.channel.send(moderator);
-            if (message.member.roles.highest.position < member.roles.highest.position) {
+            if (!userNotMember) if (member.hasPermission('MANAGE_MESSAGES')) return message.channel.send(moderator);
+            if (!userNotMember) if (message.member.roles.highest.position < member.roles.highest.position) {
                 return message.channel.send(yourroletoolow)
             }
-            if (member.roles.highest.position >= message.guild.me.roles.highest.position) return message.channel.send(roletoolower)
+            if (!userNotMember) if (member.roles.highest.position >= message.guild.me.roles.highest.position) return message.channel.send(roletoolower)
+        }
+
+        if(userNotMember) {
+            message.guild.fetchBans().then(bans => {
+                let bannedUser = bans.find(b => b.id == member.id)
+                if (bannedUser) {
+                    return message.channel.send(`**${member.tag}** is already banned`)
+                }
+
+            })
         }
 
         const deleteModerationCommand = await settingsSchema.findOne({
@@ -92,24 +111,27 @@ module.exports = {
 
         const banmsg = new Discord.MessageEmbed()
             .setColor('#09fff2')
-            .setDescription(`${member} has been banned with ID \`${code}\` <a:check:800062847974375424>`)
+        if (!userNotMember) banmsg.setDescription(`${member} has been banned with ID \`${code}\` <a:check:800062847974375424>`)
+        if (userNotMember) banmsg.setDescription(`**${member.tag}** has been banned with ID \`${code}\` <a:check:800062847974375424>`)
 
         const baninfoCheck = await settingsSchema.findOne({
             guildid: message.guild.id,
         })
 
-        const banmsgdm = new Discord.MessageEmbed()
-        .setColor('#FF0000')
-        .setAuthor('Razor Moderation', client.user.displayAvatarURL())
-        .setTitle(`You were banned from ${message.guild.name}`)
-        .addField('Reason', reason, true)
-        .addField('Expires', 'never', true)
-        .addField('Date', date)
-        let { baninfo } = baninfoCheck
-        if(baninfo !== 'none') banmsgdm.addField('Additional Information', baninfo, true)
-        banmsgdm.setFooter(`Punishment ID: ${code}`)
+        if (!userNotMember) {
+            const banmsgdm = new Discord.MessageEmbed()
+                .setColor('#FF0000')
+                .setAuthor('Razor Moderation', client.user.displayAvatarURL())
+                .setTitle(`You were banned from ${message.guild.name}`)
+                .addField('Reason', reason, true)
+                .addField('Expires', 'never', true)
+                .addField('Date', date)
+            let { baninfo } = baninfoCheck
+            if (baninfo !== 'none') banmsgdm.addField('Additional Information', baninfo, true)
+            banmsgdm.setFooter(`Punishment ID: ${code}`)
 
-        member.send(banmsgdm).catch(() => { return })
+            member.send(banmsgdm).catch(() => { return })
+        }
 
         message.guild.members.ban(member, { reason: reason })
 

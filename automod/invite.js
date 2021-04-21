@@ -2,6 +2,7 @@ const Discord = require('discord.js')
 const automodSchema = require('../schemas/automod-schema')
 const warningSchema = require('../schemas/warning-schema')
 const punishmentSchema = require('../schemas/punishment-schema')
+const moment = require('moment')
 
 exports.run = async(client, message) => {
 
@@ -18,7 +19,7 @@ exports.run = async(client, message) => {
     if (invites == 'warn') {
         message.delete()
         let date = new Date();
-        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
+        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date()).format('h:mm:ss, a');
 
         var code = '';
         var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
@@ -88,7 +89,7 @@ exports.run = async(client, message) => {
     if (invites == 'kick') {
         message.delete()
         let date = new Date();
-        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
+        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date()).format('h:mm:ss, a');
 
         var code = '';
         var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
@@ -160,7 +161,7 @@ exports.run = async(client, message) => {
     if (invites == 'mute') {
         message.delete()
         let date = new Date();
-        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
+        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date()).format('h:mm:ss, a');
 
         var code = '';
         var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
@@ -264,7 +265,7 @@ exports.run = async(client, message) => {
     if (invites == 'ban') {
         message.delete()
         let date = new Date();
-        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
+        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date()).format('h:mm:ss, a');
 
         var code = '';
         var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
@@ -336,7 +337,7 @@ exports.run = async(client, message) => {
     if (invites == 'tempban') {
         message.delete()
         let date = new Date();
-        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
+        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date()).format('h:mm:ss, a');
 
         var code = '';
         var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
@@ -420,7 +421,7 @@ exports.run = async(client, message) => {
     if (invites == 'tempmute') {
         message.delete()
         let date = new Date();
-        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
+        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date()).format('h:mm:ss, a');
 
         var code = '';
         var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'

@@ -19,7 +19,7 @@ module.exports = {
             return id;
         }
 
-        if (!args[0]) return message.channel.send('I like moderating actual accounts')
+        if (!member) return message.channel.send('Please specify a valid member | The member must be on the server')
 
         var member;
 

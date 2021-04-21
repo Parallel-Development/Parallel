@@ -4,51 +4,56 @@ const settingsSchema = require('../../schemas/settings-schema');
 const punishmentSchema = require('../../schemas/punishment-schema');
 
 module.exports = {
-    name: 'clearserverwarn',
-    description: 'Clears all warnings from the server',
-    permissions: 'ADMINISTRATOR',
+    name: 'clearwarn',
+    description: 'Clears all warnings from a user',
+    permissions: 'MANAGE_GUILD',
     moderationCommand: true,
-    usage: 'clearserverwarn',
-    aliases: ['clearserverinfractions'],
+    usage: 'clearwarn <user>',
+    aliases: ['clearinfractions', 'clearwarnings', 'clearwarns'],
     async execute(client, message, args) {
 
-        const confirmClearServerWarnings = new Discord.MessageEmbed()
-            .setColor('#FFFF00')
-            .setDescription('You are about to delete all the warnings from every user on this server. To confirm this action, type in the server name. (You have 30 seconds)')
+        const missingarguser = new Discord.MessageEmbed()
+            .setColor('#FF0000')
+            .setDescription('User not specified')
+            .setAuthor('Error', client.user.displayAvatarURL());
 
-        message.channel.send(confirmClearServerWarnings)
-        let filter = m => m.author.id === message.author.id
-        let collector = new Discord.MessageCollector(message.channel, filter, { max: 1, time: 30000 })
+        if (!args[0]) return message.channel.send(missingarguser);
 
-        collector.on('collect', async (message, col) => {
-            if (message.content === message.guild.name) {
+        var member;
 
-                const msg = await message.channel.send('Clearing all server warnings...')
+        function getUserFromMention(mention) {
+            if (!mention) return false;
+            const matches = mention.match(/^<@!?(\d+)>$/);
+            if (!matches) return mention;
+            const id = matches[1];
 
-                await warningSchema.deleteMany({
-                    guildid: message.guild.id
-                })
+            return id;
+        }
 
-                let date = new Date();
-                date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
+        try {
+            member = await message.guild.members.cache.find(member => member.id == parseInt(getUserFromMention(args[0])));
+        } catch (err) {
+            member = null
+        }
 
-                const deletedAllServerWarnings = new Discord.MessageEmbed()
-                    .setColor('#09fff2')
-                    .setDescription('Successfully deleted all warnings from this server')
-
-                msg.edit(deletedAllServerWarnings)
-
-                collector.stop();
-                return;
-            } else {
-                const cancelled = new Discord.MessageEmbed()
-                    .setColor('#FF0000')
-                    .setDescription('This action has been cancelled, because you input the wrong server name!')
-
-                message.channel.send(cancelled)
-                collector.stop();
-                return;
+        if (!member) {
+            try {
+                member = await client.users.fetch(args[0])
+            } catch {
+                return message.channel.send('Please specify a valid member')
             }
+        }
+
+        await warningSchema.deleteMany({
+            guildid: message.guild.id,
+            userid: member.id
         })
+
+        const clearwarnembed = new Discord.MessageEmbed()
+            .setColor('#09fff2')
+            .setDescription(`Successfully deleted all warnings from ${member}`)
+
+        message.channel.send(clearwarnembed)
+
     }
 }
