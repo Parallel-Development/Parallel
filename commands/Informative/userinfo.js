@@ -57,9 +57,12 @@ module.exports = {
             status = 'Offline'
         }
 
+        let description = `User information for ${member}`;
+        if(member.user.username !== member.displayName) description += ` (${member.user.username})`
+
         const userinfo = new Discord.MessageEmbed()
             .setColor('#09fff2')
-            .setDescription(`User information for ${member.user} (${member.user.username})`)
+            .setDescription(description)
             .setThumbnail(member.user.displayAvatarURL({ dynamic: true }))
             .addField('User ID', member.id, false)
             .addField('Bot Account?', bot, true)
@@ -67,7 +70,7 @@ module.exports = {
             .addField('Joined', moment(member.joinedAt).format('dddd, MMMM Do YYYY, h:mm:ss a'), false)
             .addField('Created', moment(member.user.createdAt).format('dddd, MMMM Do YYYY, h:mm:ss a'), false)
             .addField(`Roles [${member.roles.cache.size - 1}]`, memberRoles, false)
-            .setFooter(`Information requested by ${message.author.tag}`)
+            .setFooter(`Information requested by ${message.author.tag}`, message.member.user.displayAvatarURL())
 
         message.channel.send(userinfo);
     }

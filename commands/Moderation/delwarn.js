@@ -11,6 +11,10 @@ module.exports = {
     usage: 'delwarn <code>',
     aliases: ['deleteinfraction', 'delinfraction', 'rmpunish', 'deletepunish', 'removepunish', 'rmwarn', 'removewarn'],
     async execute(client, message, args) {
+
+        const missingargcode = new Discord.MessageEmbed()
+        .setColor('#FF0000')
+        .setDescription('Please specify a punishment to delete')
         
         let code = args[0]
         if (!code) return message.channel.send(missingargcode)
