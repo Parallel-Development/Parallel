@@ -31,10 +31,10 @@ module.exports = {
         .setAuthor('Country Information', client.user.displayAvatarURL())
         .setTitle(getCode.name)
         .addField('Country Name', getCode.name, true)
-        .addField('Calling Code(s)', getCode.countryCallingCodes.join(' | '), true)
-        .addField('Currencies', getCode.currencies.join(', '), true)
-        .addField('Spoken Languages', languages.join(', '), true)
-        .addField('Country Flag', getCode.emoji, true)
+        if(getCode.countryCallingCodes.length > 0) countryInformation.addField('Calling Code(s)', getCode.countryCallingCodes.join(' | '), true)
+        if(getCode.currencies.length > 0) countryInformation.addField('Currencies', getCode.currencies.join(', '), true)
+        if(getCode.languages.length > 0) countryInformation.addField('Spoken Languages', languages.join(', '), true)
+        if(getCode.emoji) countryInformation.addField('Country Flag', getCode.emoji, true)
         
         message.channel.send(countryInformation)
 

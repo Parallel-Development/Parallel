@@ -71,7 +71,7 @@ exports.run = async (client, message) => {
 
         const userwarned = new Discord.MessageEmbed()
             .setColor('#09fff2')
-            .setDescription(`${message.member} has been warned with ID \`${code}\` <a:check:800062847974375424> for sending links`)
+            .setDescription(`${message.member} has been warned with ID \`${code}\` for sending links <a:check:800062847974375424>`)
 
         const warndm = new Discord.MessageEmbed()
             .setColor('#FF0000')
@@ -100,7 +100,7 @@ exports.run = async (client, message) => {
 
         const userkicked = new Discord.MessageEmbed()
             .setColor('#09fff2')
-            .setDescription(`${message.member} has been kicked with ID \`${code}\` <a:check:800062847974375424> for sending links`)
+            .setDescription(`${message.member} has been kicked with ID \`${code}\` for sending links <a:check:800062847974375424>`)
 
         const kickdm = new Discord.MessageEmbed()
             .setColor('#FF0000')
@@ -247,7 +247,7 @@ exports.run = async (client, message) => {
 
         const usermuted = new Discord.MessageEmbed()
             .setColor('#09fff2')
-            .setDescription(`${message.member} has been muted with ID \`${code}\` <a:check:800062847974375424> for sending links`)
+            .setDescription(`${message.member} has been muted with ID \`${code}\` for sending links <a:check:800062847974375424>`)
 
         const mutedm = new Discord.MessageEmbed()
             .setColor('#FF0000')
@@ -317,7 +317,7 @@ exports.run = async (client, message) => {
 
         const userbanned = new Discord.MessageEmbed()
             .setColor('#09fff2')
-            .setDescription(`${message.member} has been banned with ID \`${code}\` <a:check:800062847974375424> for sending links`)
+            .setDescription(`${message.member} has been banned with ID \`${code}\` for sending links <a:check:800062847974375424>`)
 
         const bandm = new Discord.MessageEmbed()
             .setColor('#FF0000')
@@ -348,7 +348,7 @@ exports.run = async (client, message) => {
 
         const usertempbanned = new Discord.MessageEmbed()
             .setColor('#09fff2')
-            .setDescription(`${message.member} has been banned with ID \`${code}\` <a:check:800062847974375424> for sending links`)
+            .setDescription(`${message.member} has been banned with ID \`${code}\` for sending links <a:check:800062847974375424>`)
 
         const tempbandm = new Discord.MessageEmbed()
             .setColor('#FF0000')
@@ -432,7 +432,7 @@ exports.run = async (client, message) => {
 
         const usertempmuted = new Discord.MessageEmbed()
             .setColor('#09fff2')
-            .setDescription(`${message.member} has been muted   \`${code}\` <a:check:800062847974375424> for sending links`)
+            .setDescription(`${message.member} has been muted   \`${code}\` for sending links <a:check:800062847974375424>`)
 
         const tempmutedm = new Discord.MessageEmbed()
             .setColor('#FF0000')
