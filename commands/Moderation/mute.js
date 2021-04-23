@@ -145,7 +145,7 @@ module.exports = {
         const time = ms(rawTime)
 
         if(time) {
-            reason = args.slice(2).join(' ')
+            reason = reason.split(' ').slice(1).join(' ')
             if(!reason) reason = 'Unspecified'
 
             const tempmutemsg = new Discord.MessageEmbed()
