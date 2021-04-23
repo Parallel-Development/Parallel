@@ -9,7 +9,7 @@ exports.run = async (client, message) => {
     const automodGrab = await automodSchema.findOne({
         guildid: message.guild.id
     })
-    let { filter, duration, rawDuration } = automodGrab
+    let { filter, filterTempBanDuration, filterTempBanRawDuration, filterTempMuteDuration, filterTempMuteRawDuration } = automodGrab
 
     if (filter == 'delete') {
         message.delete()
@@ -355,7 +355,7 @@ exports.run = async (client, message) => {
             .setAuthor('Razor Moderation', client.user.displayAvatarURL())
             .setTitle(`You were banned from ${message.guild.name}`)
             .addField('Reason', '[AUTO] Using Filtered Words')
-            .addField('Expires', rawDuration, true)
+            .addField('Expires', filterTempBanDuration, true)
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
 
@@ -366,7 +366,7 @@ exports.run = async (client, message) => {
         const caseInfo = {
             moderatorID: message.guild.me.id,
             type: 'Tempban',
-            expires: new Date().getTime() + duration,
+            expires: new Date().getTime() + filterTempBanDuration,
             date: date,
             reason: '[AUTO] Using Filtered Words',
             code: code
@@ -410,9 +410,9 @@ exports.run = async (client, message) => {
             guildid: message.guild.id,
             type: 'ban',
             userID: message.author.id,
-            duration: duration,
+            duration: filterTempBanDuration,
             reason: '[AUTO] Using Filtered Words',
-            expires: new Date().getTime() + duration
+            expires: new Date().getTime() + filterTempBanDuration
         }).save();
 
         message.channel.send(usertempbanned)
@@ -439,7 +439,7 @@ exports.run = async (client, message) => {
             .setAuthor('Razor Moderation', client.user.displayAvatarURL())
             .setTitle(`You were muted in ${message.guild.name}`)
             .addField('Reason', '[AUTO] Using Filtered Words')
-            .addField('Expires', rawDuration, true)
+            .addField('Expires', filterTempMuteDuration, true)
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
 
@@ -470,7 +470,7 @@ exports.run = async (client, message) => {
         const caseInfo = {
             moderatorID: message.guild.me.id,
             type: 'Tempmute',
-            expires: new Date().getTime() + duration,
+            expires: new Date().getTime() + filterTempMuteDuration,
             date: date,
             reason: '[AUTO] Using Filtered Words',
             code: code
@@ -514,9 +514,9 @@ exports.run = async (client, message) => {
             guildid: message.guild.id,
             type: 'mute',
             userID: message.member.id,
-            duration: duration,
+            duration: filterTempMuteDuration,
             reason: '[AUTO] Using Filtered Words',
-            expires: new Date().getTime() + duration
+            expires: new Date().getTime() + filterTempMuteDuration
         }).save();
 
         message.member.send(tempmutedm).catch(() => { return })

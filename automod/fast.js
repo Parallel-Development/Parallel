@@ -9,7 +9,7 @@ exports.run = async(client, message) => {
     const automodGrab = await automodSchema.findOne({
         guildid: message.guild.id
     })
-    let { fast, duration, rawDuration } = automodGrab
+    let { fast, fastTempBanDuration, fastTempBanRawDuration, fastTempMuteDuration, fastTempMuteRawDuration } = automodGrab
 
 
     async function deleteMessages() {
@@ -369,7 +369,7 @@ exports.run = async(client, message) => {
             .setAuthor('Razor Moderation', client.user.displayAvatarURL())
             .setTitle(`You were banned from ${message.guild.name}`)
             .addField('Reason', '[AUTO] Fast Message Spam')
-            .addField('Expires', rawDuration, true)
+            .addField('Expires', fastTempBanRawDuration, true)
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
 
@@ -380,7 +380,7 @@ exports.run = async(client, message) => {
         const caseInfo = {
             moderatorID: message.guild.me.id,
             type: 'Tempban',
-            expires: new Date().getTime() + duration,
+            expires: new Date().getTime() + fastTempBanDuration,
             date: date,
             reason: '[AUTO] Fast Message Spam',
             code: code
@@ -424,9 +424,9 @@ exports.run = async(client, message) => {
             guildid: message.guild.id,
             type: 'ban',
             userID: message.author.id,
-            duration: duration,
+            duration: fastTempBanDuration,
             reason: '[AUTO] Fast Message Spam',
-            expires: new Date().getTime() + duration
+            expires: new Date().getTime() + fastTempBanDuration
         }).save();
 
         message.channel.send(usertempbanned)
@@ -453,7 +453,7 @@ exports.run = async(client, message) => {
             .setAuthor('Razor Moderation', client.user.displayAvatarURL())
             .setTitle(`You were muted in ${message.guild.name}`)
             .addField('Reason', '[AUTO] Fast Message Spam')
-            .addField('Expires', rawDuration, true)
+            .addField('Expires', fastTempMuteRawDuration, true)
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
 
@@ -484,7 +484,7 @@ exports.run = async(client, message) => {
         const caseInfo = {
             moderatorID: message.guild.me.id,
             type: 'Tempmute',
-            expires: new Date().getTime() + duration,
+            expires: new Date().getTime() + fastTempMuteDuration,
             date: date,
             reason: '[AUTO] Fast Message Spam',
             code: code
@@ -528,9 +528,9 @@ exports.run = async(client, message) => {
             guildid: message.guild.id,
             type: 'mute',
             userID: message.member.id,
-            duration: duration,
+            duration: fastTempMuteDuration,
             reason: '[AUTO] Fast Message Spam',
-            expires: new Date().getTime() + duration
+            expires: new Date().getTime() + fastTempMuteDuration
         }).save();
 
         message.member.send(tempmutedm).catch(() => { return })

@@ -49,8 +49,9 @@ module.exports = {
         .setColor('#09fff2')
         .setDescription('Evaluating... <a:loading:834973811735658548>')
 
-        if(!noBlock) const msg = await message.channel.send(tryingToEval)
-
+        const msg = await message.channel.send(tryingToEval)
+        if(noBlock) msg.delete()
+            
         try {
             output = await eval(code)
             if(output.length >= 1024) {
@@ -58,7 +59,7 @@ module.exports = {
                     const tooBigOutput = new Discord.MessageEmbed()
                     .setColor('#09fff2')
                     .setDescription(`Output was too big to be sent (${output.length} characters)`)
-                    return msg.edit(`Output too big to be sent | You can use the -noblock flag to send no output`)
+                    return msg.edit(tooBigOutput)
                 }
             }
         } catch (err) {
@@ -68,7 +69,10 @@ module.exports = {
                 .setAuthor(`Evaluation`, client.user.displayAvatarURL())
                 .setTitle(`Completed in ${Math.abs(new Date().getTime() - msg.createdTimestamp)}ms`)
                 .setFooter(`Type: error`)
-            return msg.edit(error);
+            if(noBlock) return message.channel.send(error)
+            else {
+                return msg.edit(error);
+            }
         }
 
         const outputembed = new Discord.MessageEmbed()
