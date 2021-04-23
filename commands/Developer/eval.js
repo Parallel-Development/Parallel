@@ -45,11 +45,20 @@ module.exports = {
         }
         if (foundInText && !dev.includes(message.author.id)) return message.channel.send('Error: refused to execute this command because it may be potentially abusive. If you think this is an error, contact a developer')
 
+        const tryingToEval = new Discord.MessageEmbed()
+        .setColor('#09fff2')
+        .setDescription('Evaluating... <a:loading:834973811735658548>')
+
+        const msg = await message.channel.send(tryingToEval)
+
         try {
             output = await eval(code)
             if(output.length >= 1024) {
                 if(!noBlock) {
-                    return message.channel.send(`Output too big to be sent`)
+                    const tooBigOutput = new Discord.MessageEmbed()
+                    .setColor('#09fff2')
+                    .setDescription(`Output was too big to be sent (${output.length} characters)`)
+                    return msg.edit(`Output too big to be sent | You can use the -noblock flag to send no output`)
                 }
             }
         } catch (err) {
@@ -57,19 +66,21 @@ module.exports = {
                 .setColor('#FF0000')
                 .setDescription(`Input: \`\`\`js\n${code}\`\`\`\nOutput: \`\`\`js\n${err}\`\`\``)
                 .setAuthor(`Evaluation`, client.user.displayAvatarURL())
+                .setTitle(`Completed in ${Math.abs(new Date().getTime() - msg.createdTimestamp)}ms`)
                 .setFooter(`Type: error`)
-            return message.channel.send(error);
+            return msg.edit(error);
         }
 
         const outputembed = new Discord.MessageEmbed()
             .setColor('#09fff2')
             .setDescription(`Input:\`\`\`js\n${code}\`\`\`\nOutput:\`\`\`\n${output}\`\`\``)
             .setAuthor('Evaluation', client.user.displayAvatarURL())
+            .setTitle(`Completed in ${Math.abs(new Date().getTime() - msg.createdTimestamp)}ms`)
             .setFooter(`Type: ${typeof output}`)
 
         if (typeof output != 'string') output = util.inspect(output);
 
-        if(!noBlock) message.channel.send(outputembed);
+        if(!noBlock) msg.edit(outputembed);
 
         const server = client.guilds.cache.get('747624284008218787')
         const channel = server.channels.cache.get('822853570213838849')

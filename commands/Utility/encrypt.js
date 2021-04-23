@@ -1,5 +1,4 @@
 const Discord = require('discord.js')
-const { execute } = require('../Informative/serverinfo')
 
 module.exports = {
     name: 'encrypt',
