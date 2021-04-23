@@ -12,7 +12,7 @@ module.exports = {
 
         const searching = new Discord.MessageEmbed()
         .setColor('#09fff2')
-        .setDescription('Searching up word... <a:loading:834903569865375795>')
+        .setDescription('Searching up word... <a:loading:834973811735658548>')
 
         const msg = await message.channel.send(searching)
 

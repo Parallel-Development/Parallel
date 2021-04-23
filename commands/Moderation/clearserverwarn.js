@@ -23,7 +23,11 @@ module.exports = {
         collector.on('collect', async (message, col) => {
             if (message.content === message.guild.name) {
 
-                const msg = await message.channel.send('Clearing all server warnings...')
+                const tryingToDelete = new Discord.MessageEmbed()
+                .setColor('#09fff2')
+                .setDescription('Clearing all server warnings... <a:loading:834973811735658548>')
+
+                const msg = await message.channel.send(tryingToDelete)
 
                 await warningSchema.deleteMany({
                     guildid: message.guild.id
@@ -42,8 +46,8 @@ module.exports = {
                 return;
             } else {
                 const cancelled = new Discord.MessageEmbed()
-                    .setColor('#FF0000')
-                    .setDescription('This action has been cancelled, because you input the wrong server name!')
+                .setColor('#FF0000')
+                .setDescription('This action has been cancelled, because you input the wrong server name!')
 
                 message.channel.send(cancelled)
                 collector.stop();
