@@ -49,7 +49,7 @@ module.exports = {
         .setColor('#09fff2')
         .setDescription('Evaluating... <a:loading:834973811735658548>')
 
-        const msg = await message.channel.send(tryingToEval)
+        if(!noBlock) const msg = await message.channel.send(tryingToEval)
 
         try {
             output = await eval(code)
