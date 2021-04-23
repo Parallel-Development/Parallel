@@ -254,7 +254,7 @@ client.on('messageUpdate', async(oldMessage, message) => {
 
         // Links
 
-        let linkRegex = new RegExp('[a-zA-Z0-9]\\.(com|net|co|org|io|me|xyz|wtf|tv|edu|eu|us|codes|shop|info|gov|gg|gif)')
+        let linkRegex = new RegExp('[a-zA-Z0-9]\\.(com|net|co|org|io|me|xyz|wtf|tv|edu|eu|us|codes|shop|info|gov|gg|gif)\\b')
 
         if (linkRegex.test(message.content)) {
             if (!message.member.hasPermission('MANAGE_MESSAGES')) {
@@ -374,7 +374,7 @@ client.on('message', async(message) => {
 
         // Links
 
-        let linkRegex = new RegExp('[a-zA-Z0-9]\\.(com|net|co|org|io|me|xyz|wtf|tv|edu|eu|us|codes|shop|info|gov|gg|gif)')
+        let linkRegex = new RegExp('[a-zA-Z0-9]\\.(com|net|co|org|io|me|xyz|wtf|tv|edu|eu|us|codes|shop|info|gov|gg|gif)\\b')
 
         if (linkRegex.test(message.content)) {
             if (!message.member.hasPermission('MANAGE_MESSAGES')) {

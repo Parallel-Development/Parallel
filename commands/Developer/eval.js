@@ -14,13 +14,14 @@ module.exports = {
         if (!allowed.includes(message.author.id)) return message.react('🍭').catch(() => { return })
 
         let code = args.join(' ');
-        if (!code) return message.channel.send('Please input something to run')
 
         let noBlock = false
         if(args[0] == '-noblock' || args[0] == '-nb') {
             code = args.splice(1).join(' ')
             noBlock = true
         }
+
+        if (!code) return message.channel.send('Please input something to run')
 
         let output;
 

@@ -3,11 +3,16 @@ const googleDictionaryApi = require('google-dictionary-api')
 
 module.exports = {
     name: 'define',
-    description: 'Get\'s the definition of the specified word. Only supports english words',
+    description: 'Get\'s the definition of the specified word.',
     usage: 'define (word)',
     aliases: ['dictionary', 'word'],
     async execute(client, message, args) {
-        const word = args.join(' ')
+        let word = args.join(' ')
+        let urban = false;
+        if(args[0] == '-urban' || args[0] == '-u') {
+            word = args.slice(1).join(' ')
+            urban = true
+        }
         if(!word) return message.channel.send('Please specify a word to look up')
 
         const searching = new Discord.MessageEmbed()
@@ -19,6 +24,7 @@ module.exports = {
         let failed = false
         let description = []
         let count = 0
+
         await googleDictionaryApi.search(word)
         .then(results => {
             for(i in results[0].meaning) {
