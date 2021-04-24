@@ -931,7 +931,7 @@ module.exports = {
                                 guildid: message.guild.id,
                                 bypassChannels: bypassChannel.id
                             })
-                            if(alreadyInBypassList0.length !== 0)  return message.channel.send('This channel is already in the bypass list! You can view the list by running `automod bypass view`')
+                            if(alreadyInBypassList0 && alreadyInBypassList0.length !== 0)  return message.channel.send('This channel is already in the bypass list! You can view the list by running `automod bypass view`')
                             await automodSchema.updateOne({
                                 guildid: message.guild.id
                             },
