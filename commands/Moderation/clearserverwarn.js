@@ -9,7 +9,7 @@ module.exports = {
     permissions: 'ADMINISTRATOR',
     moderationCommand: true,
     usage: 'clearserverwarn',
-    aliases: ['clearserverinfractions', 'clearserverwarnings'],
+    aliases: ['clearserverinfractions', 'clearserverwarnings', 'clearserverwarns'],
     async execute(client, message, args) {
 
         const confirmClearServerWarnings = new Discord.MessageEmbed()

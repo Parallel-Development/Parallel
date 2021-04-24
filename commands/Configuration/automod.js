@@ -23,7 +23,7 @@ module.exports = {
         .addField('links', 'Toggle the punishment for if someone sends links in chat', true)
         .addField('invites', 'Toggle the punishment for if someone sends a Discord invite', true)
         .addField('bypass', 'Add or remove channels from the automod bypass list')
-        .addField('massmention', 'Toggle the punishment for if someone mentions 5 or more individual users', true)
+        .addField('massmention', 'Toggle the punishment for if someone mentions 5 or more **individual** users', true)
         .setAuthor(`Auto-moderation for ${message.guild.name}`, client.user.displayAvatarURL())
 
         const option = args[0]
@@ -34,6 +34,21 @@ module.exports = {
             guildid: message.guild.id
         })
 
+        const {
+            fastTempMuteDuration,
+            fastTempBanDuration,
+            filterTempMuteDuration,
+            filterTempBanDuration,
+            invitesTempMuteDuration,
+            invitesTempBanDuration,
+            linksTempMuteDuration,
+            linksTempBanDuration,
+            massmentionTempMuteDuration,
+            massmentionTempBanDuration,
+            walltextTempMuteDuration,
+            walltextTempBanDuration
+        } = automodGrab
+
         switch(option) {
             case 'filter':
                 switch(toggle) {
@@ -42,7 +57,7 @@ module.exports = {
                             guildid: message.guild.id
                         },
                         {
-                            filter: 'delete'   
+                            filter: 'delete'
                         })
                         message.channel.send(`Users who send words on the \`Filtered List\` will get their message deleted`)
                         break;
@@ -92,7 +107,7 @@ module.exports = {
                         },
                         {
                             filter: 'tempban',
-                            duration: time
+                            filterTempBanDuration: time
                         })
                         message.channel.send(`Users who send words on the \`Filtered List\` will get banned for ${rawTime}`)
                         break;
@@ -106,7 +121,7 @@ module.exports = {
                         },
                         {
                                 filter: 'tempmute',
-                                duration: time
+                                filterTempMuteDuration: time
                         })
                         message.channel.send(`Users who send words on the \`Filtered List\` will get muted for ${rawTime}`)
                         break;
@@ -116,7 +131,7 @@ module.exports = {
                         },
                             {
                                 filter: 'disabled',
-                                duration: 0
+                                
                             })
 
                         message.channel.send('Users will no longer be punished for sending words in the `Filter list`')
@@ -129,7 +144,7 @@ module.exports = {
                         }
                 }
                 break;
-            
+
             case 'filterlist':
                 switch (toggle) {
                     case 'add':
@@ -139,7 +154,7 @@ module.exports = {
                             guildid: message.guild.id,
                             filterList: word
                         })
-    
+
                         if(wordAlreadyInFilter && wordAlreadyInFilter.length != 0) return message.channel.send('This word is already in the filter! Run `automod filter view` to view the current list of filtered words')
                         await automodSchema.updateOne({
                             guildid: message.guild.id
@@ -181,7 +196,7 @@ module.exports = {
                         })
 
                         const { filterList } = noWordsInFilter
-                        
+
                         if(filterList == null || filterList.length == 0) return message.channel.send('No words are on the filter! Want to add some? `automod filterlist add (word)`')
                         const filterViewList = new Discord.MessageEmbed()
                         .setColor('#09fff2')
@@ -205,8 +220,8 @@ module.exports = {
                         },
                         {
                             fast: 'delete',
-                            duration: 0,
-                            rawDuration: 0
+
+
                         })
                         var success = new Discord.MessageEmbed()
                         .setColor('#09fff2')
@@ -220,8 +235,8 @@ module.exports = {
                         },
                             {
                                 fast: 'warn',
-                                duration: 0,
-                                rawDuration: 0
+
+
                             })
                         var success = new Discord.MessageEmbed()
                          .setColor('#09fff2')
@@ -235,8 +250,8 @@ module.exports = {
                         },
                             {
                                 fast: 'kick',
-                                duration: 0,
-                                rawDuration: 0
+
+
                             })
                         var success = new Discord.MessageEmbed()
                         .setColor('#09fff2')
@@ -250,8 +265,8 @@ module.exports = {
                         },
                             {
                                 fast: 'mute',
-                                duration: 0,
-                                rawDuration: 0
+
+
                             })
                         var success = new Discord.MessageEmbed()
                         .setColor('#09fff2')
@@ -265,8 +280,8 @@ module.exports = {
                         },
                             {
                                 fast: 'ban',
-                                duration: 0,
-                                rawDuration: 0
+
+
                             })
                         var success = new Discord.MessageEmbed()
                         .setColor('#09fff2')
@@ -284,8 +299,8 @@ module.exports = {
                         },
                             {
                                 fast: 'tempban',
-                                duration: time,
-                                rawDuration: rawTime
+                                fastTempBanDuration: time,
+
                             })
                         var success = new Discord.MessageEmbed()
                         .setColor('#09fff2')
@@ -303,8 +318,8 @@ module.exports = {
                         },
                             {
                                 fast: 'tempmute',
-                                duration: time,
-                                rawDuration: rawTime
+                                fastTempMuteDuration: time,
+
                             })
                         var success = new Discord.MessageEmbed()
                         .setColor('#09fff2')
@@ -318,8 +333,8 @@ module.exports = {
                         },
                             {
                                 fast: 'disbaled',
-                                duration: 0,
-                                rawDuration: 0
+
+
                             })
                         var success = new Discord.MessageEmbed()
                             .setColor('#09fff2')
@@ -343,8 +358,8 @@ module.exports = {
                         },
                             {
                                 walltext: 'delete',
-                                duration: 0,
-                                rawDuration: 0
+
+
                             })
                         var success = new Discord.MessageEmbed()
                             .setColor('#09fff2')
@@ -358,8 +373,8 @@ module.exports = {
                         },
                             {
                                 walltext: 'warn',
-                                duration: 0,
-                                rawDuration: 0
+
+
                             })
                         var success = new Discord.MessageEmbed()
                             .setColor('#09fff2')
@@ -373,8 +388,8 @@ module.exports = {
                         },
                             {
                                 walltext: 'kick',
-                                duration: 0,
-                                rawDuration: 0
+
+
                             })
                         var success = new Discord.MessageEmbed()
                             .setColor('#09fff2')
@@ -388,8 +403,8 @@ module.exports = {
                         },
                             {
                                 walltext: 'mute',
-                                duration: 0,
-                                rawDuration: 0
+
+
                             })
                         var success = new Discord.MessageEmbed()
                             .setColor('#09fff2')
@@ -403,8 +418,8 @@ module.exports = {
                         },
                             {
                                 walltext: 'ban',
-                                duration: 0,
-                                rawDuration: 0
+
+
                             })
                         var success = new Discord.MessageEmbed()
                             .setColor('#09fff2')
@@ -422,8 +437,8 @@ module.exports = {
                         },
                             {
                                 walltext: 'tempban',
-                                duration: time,
-                                rawDuration: rawTime
+                                walltextTempBanDuration: time,
+
                             })
                         var success = new Discord.MessageEmbed()
                             .setColor('#09fff2')
@@ -441,8 +456,8 @@ module.exports = {
                         },
                             {
                                 walltext: 'tempmute',
-                                duration: time,
-                                rawDuration: rawTime
+                                walltextTempMuteDuration: time,
+
                             })
                         var success = new Discord.MessageEmbed()
                             .setColor('#09fff2')
@@ -456,8 +471,8 @@ module.exports = {
                         },
                             {
                                 walltext: 'disbaled',
-                                duration: 0,
-                                rawDuration: 0
+
+
                             })
                         var success = new Discord.MessageEmbed()
                             .setColor('#09fff2')
@@ -499,8 +514,8 @@ module.exports = {
                         },
                             {
                                 links: 'delete',
-                                duration: 0,
-                                rawDuration: 0
+
+
                             })
                         var success = new Discord.MessageEmbed()
                             .setColor('#09fff2')
@@ -514,8 +529,8 @@ module.exports = {
                         },
                             {
                                 links: 'warn',
-                                duration: 0,
-                                rawDuration: 0
+
+
                             })
                         var success = new Discord.MessageEmbed()
                             .setColor('#09fff2')
@@ -529,8 +544,8 @@ module.exports = {
                         },
                             {
                                 links: 'kick',
-                                duration: 0,
-                                rawDuration: 0
+
+
                             })
                         var success = new Discord.MessageEmbed()
                             .setColor('#09fff2')
@@ -544,8 +559,8 @@ module.exports = {
                         },
                             {
                                 links: 'mute',
-                                duration: 0,
-                                rawDuration: 0
+
+
                             })
                         var success = new Discord.MessageEmbed()
                             .setColor('#09fff2')
@@ -559,8 +574,8 @@ module.exports = {
                         },
                             {
                                 links: 'ban',
-                                duration: 0,
-                                rawDuration: 0
+
+
                             })
                         var success = new Discord.MessageEmbed()
                             .setColor('#09fff2')
@@ -578,8 +593,8 @@ module.exports = {
                         },
                             {
                                 links: 'tempban',
-                                duration: time,
-                                rawDuration: rawTime
+                                linksTempBanDuration: time,
+
                             })
                         var success = new Discord.MessageEmbed()
                             .setColor('#09fff2')
@@ -597,8 +612,8 @@ module.exports = {
                         },
                             {
                                 links: 'tempmute',
-                                duration: time,
-                                rawDuration: rawTime
+                                linksTempMuteDuration: time,
+
                             })
                         var success = new Discord.MessageEmbed()
                             .setColor('#09fff2')
@@ -612,8 +627,8 @@ module.exports = {
                         },
                             {
                                 links: 'disbaled',
-                                duration: 0,
-                                rawDuration: 0
+
+
                             })
                         var success = new Discord.MessageEmbed()
                             .setColor('#09fff2')
@@ -637,8 +652,8 @@ module.exports = {
                         },
                             {
                                 invites: 'delete',
-                                duration: 0,
-                                rawDuration: 0
+
+
                             })
                         var success = new Discord.MessageEmbed()
                         .setColor('#09fff2')
@@ -652,8 +667,8 @@ module.exports = {
                         },
                             {
                                 invites: 'warn',
-                                duration: 0,
-                                rawDuration: 0
+
+
                             })
                         var success = new Discord.MessageEmbed()
                         .setColor('#09fff2')
@@ -667,8 +682,8 @@ module.exports = {
                         },
                             {
                                 invites: 'kick',
-                                duration: 0,
-                                rawDuration: 0
+
+
                             })
                         var success = new Discord.MessageEmbed()
                         .setColor('#09fff2')
@@ -682,8 +697,8 @@ module.exports = {
                         },
                             {
                                 invites: 'mute',
-                                duration: 0,
-                                rawDuration: 0
+
+
                             })
                         var success = new Discord.MessageEmbed()
                         .setColor('#09fff2')
@@ -697,8 +712,8 @@ module.exports = {
                         },
                             {
                                 invites: 'ban',
-                                duration: 0,
-                                rawDuration: 0
+
+
                             })
                         var success = new Discord.MessageEmbed()
                         .setColor('#09fff2')
@@ -716,8 +731,8 @@ module.exports = {
                         },
                             {
                                 invites: 'tempban',
-                                duration: time,
-                                rawDuration: rawTime
+                                invitesTempBanDuration: time,
+
                             })
                         var success = new Discord.MessageEmbed()
                             .setColor('#09fff2')
@@ -735,8 +750,8 @@ module.exports = {
                         },
                             {
                                 invites: 'tempmute',
-                                duration: time,
-                                rawDuration: rawTime
+                                invitesTempMuteDuration: time,
+
                             })
                         var success = new Discord.MessageEmbed()
                         .setColor('#09fff2')
@@ -750,8 +765,8 @@ module.exports = {
                         },
                         {
                             invites: 'disbaled',
-                            duration: 0,
-                            rawDuration: 0
+
+
                         })
                         var success = new Discord.MessageEmbed()
                         .setColor('#09fff2')
@@ -775,8 +790,8 @@ module.exports = {
                         },
                             {
                                 massmention: 'delete',
-                                duration: 0,
-                                rawDuration: 0
+
+
                             })
                         var success = new Discord.MessageEmbed()
                             .setColor('#09fff2')
@@ -790,8 +805,8 @@ module.exports = {
                         },
                             {
                                 massmention: 'warn',
-                                duration: 0,
-                                rawDuration: 0
+
+
                             })
                         var success = new Discord.MessageEmbed()
                             .setColor('#09fff2')
@@ -805,8 +820,8 @@ module.exports = {
                         },
                             {
                                 massmention: 'kick',
-                                duration: 0,
-                                rawDuration: 0
+
+
                             })
                         var success = new Discord.MessageEmbed()
                             .setColor('#09fff2')
@@ -820,8 +835,8 @@ module.exports = {
                         },
                             {
                                 massmention: 'mute',
-                                duration: 0,
-                                rawDuration: 0
+
+
                             })
                         var success = new Discord.MessageEmbed()
                             .setColor('#09fff2')
@@ -835,8 +850,8 @@ module.exports = {
                         },
                             {
                                 massmention: 'ban',
-                                duration: 0,
-                                rawDuration: 0
+
+
                             })
                         var success = new Discord.MessageEmbed()
                             .setColor('#09fff2')
@@ -854,8 +869,8 @@ module.exports = {
                         },
                             {
                                 massmention: 'tempban',
-                                duration: time,
-                                rawDuration: rawTime
+                                massmentionTempBanDuration: time,
+
                             })
                         var success = new Discord.MessageEmbed()
                             .setColor('#09fff2')
@@ -873,8 +888,8 @@ module.exports = {
                         },
                             {
                                 massmention: 'tempmute',
-                                duration: time,
-                                rawDuration: rawTime
+                                massmentionTempMuteDuration: time,
+
                             })
                         var success = new Discord.MessageEmbed()
                             .setColor('#09fff2')
@@ -888,8 +903,8 @@ module.exports = {
                         },
                             {
                                 massmention: 'disbaled',
-                                duration: 0,
-                                rawDuration: 0
+
+
                             })
                         var success = new Discord.MessageEmbed()
                             .setColor('#09fff2')
@@ -996,4 +1011,27 @@ module.exports = {
                 return message.channel.send('Invalid setting!')
         }
     }
+}
+
+function cleanTime(amount) {
+    let days = 0;
+    let hours = 0;
+    let minutes = 0;
+    let seconds = amount;
+
+    while (seconds >= 60) {
+        seconds -= 60;
+        minutes++
+    }
+
+    while (minutes >= 60) {
+        minutes -= 60;
+        hours++
+    }
+
+    while (hours >= 24) {
+        hours -= 24;
+        days++
+    }
+
 }

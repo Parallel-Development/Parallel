@@ -5,18 +5,10 @@ const warningSchema = require('../../schemas/warning-schema')
 module.exports = {
     name: 'warnings',
     description: 'Fetches a user\'s warnings in the server',
-    permissions: 'MANAGE_MESSAGES',
     moderationCommand: true,
     usage: 'warnings <member>',
-    aliases: ['infractions', 'modlogs', 'search', 'record'],
+    aliases: ['infractions', 'modlogs', 'search', 'record', 'warns'],
     async execute(client, message, args) {
-
-        const missingarguser = new Discord.MessageEmbed()
-            .setColor('#FF0000')
-            .setDescription('User not specified')
-            .setAuthor('Error', client.user.displayAvatarURL());
-
-        if (!args[0]) return message.channel.send(missingarguser);
 
         var member;
 
@@ -33,6 +25,16 @@ module.exports = {
             member = await message.guild.members.cache.find(member => member.id == parseInt(getUserFromMention(args[0])));
         } catch (err) {
             member = null
+        }
+
+        if(!args[0]) member = message.member;
+
+        if(!message.member.hasPermission('MANAGE_MESSAGES') && member !== message.member) {
+            const onlyYourWarnings = new Discord.MessageEmbed()
+            .setColor('#FF0000')
+            .setDescription('You can only view your warnings and not the warnings of anyone else. To view warnings of other users, you need the `MANAGE MESSAGES` permission')
+
+            return message.channel.send(onlyYourWarnings)
         }
 
         if (!member) {

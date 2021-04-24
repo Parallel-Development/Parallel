@@ -1,3 +1,4 @@
+const { string } = require('mathjs');
 const mongoose = require('mongoose')
 
 const reqString = {
@@ -22,29 +23,17 @@ const automodSchema = mongoose.Schema({
     invites: reqString,
     massmention: reqString,
     filterTempMuteDuration: reqInt,
-    filterTempMuteRawDuration: reqString,
     fastTempMuteDuration: reqInt,
-    fastTempMuteRawDuration: reqString,
     walltextTempMuteDuration: reqInt,
-    walltextTempMuteRawDuration: reqString,
     linksTempMuteDuration: reqInt,
-    linksTempMuteRawDuration: reqString,
     invitesTempMuteDuration: reqInt,
-    invitesTempMuteRawDuration: reqString,
     massmentionTempMuteDuration: reqInt,
-    massmentionTempMuteRawDuration: reqString,
     filterTempBanDuration: reqInt,
-    filterTempBanRawDuration: reqString,
     fastTempBanDuration: reqInt,
-    fastTempBanRawDuration: reqString,
     walltextTempBanDuration: reqInt,
-    walltextTempBanRawDuration: reqString,
     linksTempBanDuration: reqInt,
-    linksTempBanRawDuration: reqString,
     invitesTempBanDuration: reqInt,
-    invitesTempBanRawDuration: reqString,
     massmentionTempBanDuration: reqInt,
-    massmentionTempBanRawDuration: reqString,
     bypassChannels: {
         type: [String],
         required: true

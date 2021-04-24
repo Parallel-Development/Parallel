@@ -9,7 +9,7 @@ exports.run = async (client, message) => {
     const automodGrab = await automodSchema.findOne({
         guildid: message.guild.id
     })
-    let { walltext, walltextTempBanDuration, walltextTempBanRawDuration, walltextTempMuteDuration, walltextTempMuteRawDuration } = automodGrab
+    let { walltext, walltextTempBanDuration,  walltextTempMuteDuration } = automodGrab
 
     if (walltext == 'delete') {
         message.delete()
@@ -355,7 +355,7 @@ exports.run = async (client, message) => {
             .setAuthor('Razor Moderation', client.user.displayAvatarURL())
             .setTitle(`You were banned from ${message.guild.name}`)
             .addField('Reason', '[AUTO] Walltext')
-            .addField('Expires', walltextTempBanRawDuration, true)
+            .addField('Expires', cleanTime(walltextTempBanDuration), true)
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
 
@@ -439,7 +439,7 @@ exports.run = async (client, message) => {
             .setAuthor('Razor Moderation', client.user.displayAvatarURL())
             .setTitle(`You were muted in ${message.guild.name}`)
             .addField('Reason', '[AUTO] Walltext')
-            .addField('Expires', walltextTempMuteRawDuration, true)
+            .addField('Expires', cleanTime(walltextTempMuteDuration), true)
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
 
@@ -523,4 +523,35 @@ exports.run = async (client, message) => {
 
         message.channel.send(usertempmuted)
     }
+}
+
+function cleanTime(amount) {
+    let days = 0;
+    let hours = 0;
+    let minutes = 0;
+    let seconds = amount / 1000;
+
+    while (seconds >= 60) {
+        seconds -= 60;
+        minutes++
+    }
+
+    while (minutes >= 60) {
+        minutes -= 60;
+        hours++
+    }
+
+    while (hours >= 24) {
+        hours -= 24;
+        days++
+    }
+
+    let product = [];
+    if (days > 0) product.push(`${Math.round(days)} days`)
+    if (hours > 0) product.push(`${Math.round(hours)} hours`)
+    if (minutes > 0) product.push(`${Math.round(minutes)} minutes`)
+    if (seconds > 0) product.push(`${Math.round(seconds)} seconds`)
+
+    return product.join(', ')
+
 }
