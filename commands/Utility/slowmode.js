@@ -34,7 +34,9 @@ module.exports = {
       return;
     }
     if (!time) return message.channel.send(currentsm)
-    if (time > 21600) return message.channel.send('I can only set the slowmode to a value between 1 and 21600 seconds.')
+    if (time > 21600) return message.channel.send('I can only set the slowmode to a value between 1 and 21600 seconds')
+
+    if(!message.channel.permissionsFor(message.guild.me).toArray().includes('MANAGE_CHANNELS')) return message.channel.send('I cannot manage this specific channel. Please give me the `Manage Channel` permission in the specified channel and run again')
 
     channel.setRateLimitPerUser(time).catch(() => { return })
 

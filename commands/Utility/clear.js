@@ -15,12 +15,12 @@ module.exports = {
 
         const badtime = new Discord.MessageEmbed()
             .setColor('#FF0000')
-            .setDescription('Please choose a number between 1-100')
+            .setDescription('Please choose a number between 0-99')
             .setAuthor('Error', client.user.displayAvatarURL());
 
         const neednumber = new Discord.MessageEmbed()
             .setColor('#FF0000')
-            .setDescription('Please specify a number between 1 and 100')
+            .setDescription('Please specify a number between 1 and 99')
             .setAuthor('Error', client.user.displayAvatarURL())
             .setFooter('The number must be an integer')
 
@@ -33,7 +33,7 @@ module.exports = {
 
         const amount = parseFloat(args[0])
 
-        if (amount > 100 || amount < 1) return message.channel.send(badtime)
+        if (amount > 99 || amount < 1) return message.channel.send(badtime)
         if (!amount) return message.channel.send(neednumber)
 
         const deletedMessages = new Discord.MessageEmbed()

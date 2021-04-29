@@ -9,7 +9,7 @@ module.exports = {
     description: 'Temporarily mutes the specified member in the server',
     moderationCommand: true,
     usage: 'tempmute <member> [time] (reason)',
-    depricated: true,
+    deprecated: true,
     async execute(client, message, args) {
         message.channel.send('Tempmute is no longer a command! Specify a duration in the mute command to tempmute. Example: `r!mute (user) {time} [reason]`')
     }

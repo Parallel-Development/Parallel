@@ -3,7 +3,7 @@ const { execute } = require('./settings')
 const settingsSchema = require('../../schemas/settings-schema')
 module.exports = {
     name: 'baninfo',
-    description: 'Change the bot prefix in your server',
+    description: 'Add an extra field to the DM users get on ban, or whatever message you specify, such as a ban appeal link',
     permissions: 'MANAGE_GUILD',
     moderationCommand: true,
     usage: 'baninfo (msg)',

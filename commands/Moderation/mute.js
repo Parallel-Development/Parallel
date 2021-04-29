@@ -90,7 +90,8 @@ module.exports = {
             })
 
             message.guild.channels.cache.forEach(channel => {
-                channel.updateOverwrite(createRole, { SEND_MESSAGES: false })
+                channel.updateOverwrite(createRole, { SEND_MESSAGES: false})
+                channel.updateOverwrite(createRole, { ADD_REACTIONS: false })
             })
         }
         try {
@@ -112,7 +113,7 @@ module.exports = {
         }
 
         let date = new Date();
-        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date()).format('h:mm:ss, a');
+        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date().getTime() * 4).format('h:mm:ss A');
 
         const check = await punishmentSchema.findOne({
             guildid: message.guild.id,

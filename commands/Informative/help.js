@@ -35,7 +35,7 @@ async function getAll(client, message) {
         const commandFiles = fs.readdirSync(`./commands/${folder}`).filter(file => file.endsWith('.js'))
         for(const file of commandFiles) {
             let cmd = client.commands.get(path.parse(file).name)
-            if(!cmd.depricated) commands.push(`\`${path.parse(file).name}\``)
+            if(!cmd.deprecated) commands.push(`\`${path.parse(file).name}\``)
         }
         mainHelp.addField(folder, commands.join(', '))
     }
@@ -62,7 +62,7 @@ async function getCMD(client, message, input) {
         return message.channel.send(embed);
     }
 
-    if(cmd.depricated) return message.channel.send('This command is depricated and is no longer usable')
+    if(cmd.deprecated) return message.channel.send('This command is depricated and is no longer usable')
 
     embed.setColor('#09fff2')
     if(cmd.name) embed.setAuthor(`Help | ${cmd.name}`, client.user.displayAvatarURL())

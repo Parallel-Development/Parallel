@@ -58,7 +58,7 @@ module.exports = {
         } catch (err) {
             member = null
         }
-        if (!member) return message.channel.send('Please specify a valid member ID | The member must be on the server')
+        if (!member) return message.channel.send('Please specify a valid member | The member must be on the server')
 
         var reason = args.splice(1).join(' ');
         if (!reason) var reason = 'Unspecified';
@@ -106,7 +106,7 @@ module.exports = {
         }
 
         let date = new Date();
-        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date()).format('h:mm:ss, a');
+        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date().getTime() * 4).format('h:mm:ss A');
 
         const unmutedm = new Discord.MessageEmbed()
             .setColor('#09fff2')

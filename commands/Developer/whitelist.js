@@ -13,8 +13,8 @@ module.exports = {
     async execute(client, message, args) {
         const blacklistSchema = require(`../../schemas/blacklist-schema`)
 
-        let allowed = config.developers;
-        if (!allowed.includes(message.author.id)) return message.react('🍭').catch(() => { return })
+        let allowed = config.blacklist;
+        if (!allowed.includes(message.author.id)) return message.channel.send('You are not authorized to execute this command | 401')
 
         const id = args[0];
 
@@ -59,7 +59,7 @@ module.exports = {
 
         // Removes the role "Blacklisted" from the user in the developmental server
 
-        member.roles.remove(role).catch(() => { return })
+        if (server.members.cache.get(member.id)) member.roles.remove(role).catch(() => { return })
     }
 }
     

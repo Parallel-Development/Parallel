@@ -5,7 +5,6 @@ const warningSchema = require('../../schemas/warning-schema')
 module.exports = {
     name: 'warnings',
     description: 'Fetches a user\'s warnings in the server',
-    moderationCommand: true,
     usage: 'warnings <member>',
     aliases: ['infractions', 'modlogs', 'search', 'record', 'warns'],
     async execute(client, message, args) {
@@ -66,7 +65,7 @@ module.exports = {
             warningsEmbed.addField(`${count}: ${i.type}`, `Reason: \`${i.reason}\`\nDate: \`${i.date}\`\nPunishment ID: \`${i.code}\``)
         }
 
-        if (count = 0) return message.channel.send('This user has no infractions!')
+        if (count == 0 || warningsCheck.warnings.length == 0) return message.channel.send('This user has no infractions!')
 
         message.channel.send(warningsEmbed)
     }

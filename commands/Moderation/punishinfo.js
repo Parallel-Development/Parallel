@@ -6,6 +6,7 @@ module.exports = {
     description: 'Get more specific information about a punishment',
     permissions: 'MANAGE_MESSAGES',
     moderationCommand: true,
+    aliases: ['case', 'punishment'],
     usage: 'punishinfo (code)',
     async execute(client, message, args) {
         

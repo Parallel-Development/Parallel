@@ -16,6 +16,6 @@ module.exports = {
         }, {
             prefix: args[0]
         })
-        message.channel.send(`The server prefix for razor is now \`${args[0]}\`. You can ping me if you ever forget the prefix`)
+        message.channel.send(`The server prefix for razor is now \`${args[0]}\`. Remember this prefix, for currently you cannot fetch the prefix from pinging me`)
     }
 }

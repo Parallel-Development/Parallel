@@ -3,6 +3,7 @@ const automodSchema = require('../schemas/automod-schema')
 const warningSchema = require('../schemas/warning-schema')
 const punishmentSchema = require('../schemas/punishment-schema')
 const moment = require('moment')
+const preventDoubleIDS = new Set();
 
 exports.run = async(client, message) => {
 
@@ -35,8 +36,15 @@ exports.run = async(client, message) => {
 
     if (fast == 'warn') {
         deleteMessages();
+        if (preventDoubleIDS.has(message.author.id)) return;
+        else {
+            preventDoubleIDS.add(message.author.id);
+            setTimeout(() => {
+                preventDoubleIDS.delete(message.author.id)
+            }, 3000)
+        }
         let date = new Date();
-        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date()).format('h:mm:ss, a');
+        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date().getTime() * 4).format('h:mm:ss A');
 
         var code = '';
         var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
@@ -105,8 +113,15 @@ exports.run = async(client, message) => {
 
     if(fast == 'kick') {
         deleteMessages();
+        if(preventDoubleIDS.has(message.author.id)) return;
+        else {
+            preventDoubleIDS.add(message.author.id);
+            setTimeout(() => {
+                preventDoubleIDS.delete(message.author.id)
+            }, 3000)
+        }
         let date = new Date();
-        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date()).format('h:mm:ss, a');
+        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date().getTime() * 4).format('h:mm:ss A');
 
         var code = '';
         var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
@@ -177,8 +192,15 @@ exports.run = async(client, message) => {
 
     if(fast == 'mute') {
         deleteMessages();
+        if (preventDoubleIDS.has(message.author.id)) return;
+        else {
+            preventDoubleIDS.add(message.author.id);
+            setTimeout(() => {
+                preventDoubleIDS.delete(message.author.id)
+            }, 3000)
+        }
         let date = new Date();
-        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date()).format('h:mm:ss, a');
+        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date().getTime() * 4).format('h:mm:ss A');
 
         var code = '';
         var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
@@ -281,8 +303,15 @@ exports.run = async(client, message) => {
 
     if(fast == 'ban') {
         deleteMessages();
+        if (preventDoubleIDS.has(message.author.id)) return;
+        else {
+            preventDoubleIDS.add(message.author.id);
+            setTimeout(() => {
+                preventDoubleIDS.delete(message.author.id)
+            }, 3000)
+        }
         let date = new Date();
-        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date()).format('h:mm:ss, a');
+        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date().getTime() * 4).format('h:mm:ss A');
         var code = '';
         var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
         var charsLength = chars.length
@@ -352,8 +381,15 @@ exports.run = async(client, message) => {
 
     if(fast == 'tempban') {
         deleteMessages();
+        if (preventDoubleIDS.has(message.author.id)) return;
+        else {
+            preventDoubleIDS.add(message.author.id);
+            setTimeout(() => {
+                preventDoubleIDS.delete(message.author.id)
+            }, 3000)
+        }
         let date = new Date();
-        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date()).format('h:mm:ss, a');
+        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date().getTime() * 4).format('h:mm:ss A');
 
         var code = '';
         var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
@@ -436,8 +472,15 @@ exports.run = async(client, message) => {
 
     if(fast == 'tempmute') {
         deleteMessages();
+        if (preventDoubleIDS.has(message.author.id)) return;
+        else {
+            preventDoubleIDS.add(message.author.id);
+            setTimeout(() => {
+                preventDoubleIDS.delete(message.author.id)
+            }, 3000)
+        }
         let date = new Date();
-        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date()).format('h:mm:ss, a');
+        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date().getTime() * 4).format('h:mm:ss A');
 
         var code = '';
         var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'

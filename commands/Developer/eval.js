@@ -7,18 +7,25 @@ const dev = config.developers
 module.exports = {
     name: 'eval',
     description: 'Evaluates the specified code',
-    usage: 'eval <code>\neval -noblock <code>',
+    usage: 'eval <code>\neval -hideoutput <code>',
     moderationCommand: true,
     aliases: ['e', 'ev', 'evaluate'],
     async execute(client, message, args) {
-        if (!allowed.includes(message.author.id)) return message.react('🍭').catch(() => { return })
+        if (!allowed.includes(message.author.id)) return message.channel.send('You are not authorized to execute this command | 401')
 
         let code = args.join(' ');
 
         let noBlock = false
-        if(args[0] == '-noblock' || args[0] == '-nb') {
+        if(args[0] == '-hideoutput' || args[0] == '-ho') {
             code = args.splice(1).join(' ')
             noBlock = true
+        }
+        if(args[0] == '-nb' || args[0] == '-noblock') {
+            code = args.splice(1).join(' ');
+            noBlock = true
+            message.author.send('The flags `-nb` and `-noblock` are deprecated, please use the new flags `-ho` and `-hideoutput` | Support for `-nb` and `-noblock` will be dropped soon').catch(() => {
+                message.channel.send('The flags `-nb` and `-noblock` are deprecated, please use the new flags `-ho` and `-hideoutput` | Support for `-nb` and `-noblock` will be dropped soon')
+            })
         }
 
         if (!code) return message.channel.send('Please input something to run')

@@ -60,7 +60,7 @@ module.exports = {
             if (message.member.roles.highest.position < member.roles.highest.position) {
                 return message.channel.send(yourroletoolow)
             }
-            if (member.roles.highest.position >= message.guild.me.roles.highest.position) return message.channel.send(roletoolower)
+            if (member.roles.highest.position >= message.guild.me.roles.highest.position) return message.channel.send('I cannot mute this member, as their highest role is above or equal to me in hierarchy')
         }
 
         const deleteModerationCommand = await settingsSchema.findOne({
@@ -74,7 +74,7 @@ module.exports = {
         if (!reason)  reason = 'Unspecified'
 
         let date = new Date();
-        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date()).format('h:mm:ss, a');
+        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date().getTime() * 4).format('h:mm:ss A');
 
         var code = '';
         var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
