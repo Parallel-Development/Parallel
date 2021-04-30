@@ -28,7 +28,7 @@ module.exports = {
 
         const moderator = new Discord.MessageEmbed()
             .setColor('#FF0000')
-            .setDescription('This user is a moderator, therefore I cannot kick them')
+            .setDescription('This user is an administrator, therefore I cannot kick them')
             .setAuthor('Error', client.user.displayAvatarURL());
 
         const missingperms = new Discord.MessageEmbed()
@@ -59,7 +59,7 @@ module.exports = {
         if (!member) return message.channel.send('Please specify a valid member | The member must be on the server')
 
         if (member) {
-            if (member.hasPermission('MANAGE_MESSAGES')) return message.channel.send(moderator);
+            if (member.hasPermission('ADMINISTRATOR')) return message.channel.send(moderator);
             if (message.member.roles.highest.position < member.roles.highest.position) {
                 return message.channel.send(yourroletoolow)
             }

@@ -4,8 +4,17 @@ module.exports = {
     name: 'nick',
     description: 'Changes the nickname of the specified member to the specified nickname',
     permissions: 'MANAGE_NICKNAMES',
+    moderationCommand: true,
     usage: 'nick <user> [New Nickname]',
     async execute(clinet, message, args) {
+
+        const missingperms = new Discord.MessageEmbed()
+            .setColor('#FF0000')
+            .setDescription('I do not have the permission to moderate member nicknames. Please give me the `Manage Nicknames` permission and run again')
+            .setAuthor('Error', client.user.displayAvatarURL());
+
+        if(!message.guild.me.hasPermission('MANAGE_NICKANMES')) return message.channel.send()
+
         function getUserFromMention(mention) {
             if (!mention) return false;
             const matches = mention.match(/^<@!?(\d+)>$/);

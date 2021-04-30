@@ -28,7 +28,7 @@ module.exports = {
 
         const moderator = new Discord.MessageEmbed()
             .setColor('#FF0000')
-            .setDescription('This user is a moderator, therefore I cannot ban them')
+            .setDescription('This user is an administrator, therefore I cannot ban them')
             .setAuthor('Error', client.user.displayAvatarURL());
 
         const missingperms = new Discord.MessageEmbed()
@@ -70,7 +70,7 @@ module.exports = {
         if (member) {
             if (member.id == '745401642664460319') return message.channel.send('I-')
             if (member.id == message.author.id) return message.channel.send('Why tho')
-            if (!userNotMember) if (member.hasPermission('MANAGE_MESSAGES')) return message.channel.send(moderator);
+            if (!userNotMember) if (member.hasPermission('ADMINISTRATOR')) return message.channel.send(moderator);
             if (!userNotMember) if (message.member.roles.highest.position < member.roles.highest.position) {
                 return message.channel.send(yourroletoolow)
             }

@@ -2,13 +2,18 @@ const Discord = require('discord.js')
 
 module.exports = {
     name: 'moderate',
-    description: 'Changes a member\'s username to Moderated Nickname <random code>',
+    description: 'Changes a member\'s username to Moderated_<random code>',
     permissions: 'MANAGE_NICKNAMES',
     moderationCommand: true,
     usage: 'moderate <member>',
     async execute(client, message, args) {
 
-        if (!message.guild.me.hasPermission('MANAGE_NICKNAMES')) return message.reply('I do not have the permission to manage nickanmes. Please give me the `Manage Nicknames` permission')
+        const missingperms = new Discord.MessageEmbed()
+            .setColor('#FF0000')
+            .setDescription('I do not have the permission to moderate member nicknames. Please give me the `Manage Nicknames` permission and run again')
+            .setAuthor('Error', client.user.displayAvatarURL());
+
+        if (!message.guild.me.hasPermission('MANAGE_NICKNAMES')) return message.channel.send()
 
         function getUserFromMention(mention) {
             if (!mention) return false;
@@ -32,8 +37,11 @@ module.exports = {
 
         if (member) {
             if (message.guild.me.roles.highest.position <= member.roles.highest.position) {
-                message.channel.send('I cannot moderate this user\'s nickname, as their highest role is hoisted above me')
+                message.channel.send('I cannot moderate this user\'s nickname, as their highest role is equal or higher to me in hierarchy ')
                 return;
+            }
+            if(message.member.roles.highest.position <= member.roles.highest.position) {
+                return message.reply('you cannot moderate the user for their highest role is equal or above your highest role in hierarchy')
             }
         }
 
@@ -42,7 +50,7 @@ module.exports = {
         for (i = 0; i < 6; i++) {
             nick += chars.charAt(Math.floor(Math.random() * chars.length))
         }
-        member.setNickname(`Moderated Nickname ${nick}`)
-        message.reply('user has successfully been moderated!')
+        member.setNickname(`Moderated_${nick}`)
+        message.reply(`user has been moderated with code \`${nick}\``)
     }
 }
