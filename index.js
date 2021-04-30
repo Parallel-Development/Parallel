@@ -335,10 +335,12 @@ client.on('message', async(message) => {
 
         // Spam
 
+        // 7 messages in 10 seconds
+
         if (userMap.has(message.author.id)) {
             const userData = userMap.get(message.author.id)
             let msgCount = userData.msgCount
-            if (parseInt(msgCount) === 6) {
+            if (parseInt(msgCount) === 5) {
                 if (!message.member.hasPermission('MANAGE_MESSAGES')) {
                     var file = require('./automod/fast')
                     file.run(client, message)
@@ -358,8 +360,10 @@ client.on('message', async(message) => {
             })
             setTimeout(() => {
                 userMap.delete(message.author.id)
-            }, 10000)
+            }, 4000)
         }
+
+        // 10 messages in 15 seconds
 
         // Invites
 

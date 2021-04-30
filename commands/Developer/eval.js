@@ -65,8 +65,8 @@ module.exports = {
             if(output.length >= 1024) {
                 if(!noBlock) {
                     const tooBigOutput = new Discord.MessageEmbed()
-                    .setColor('#09fff2')
-                    .setDescription(`Output was too big to be sent (${output.length} characters)`)
+                    .setColor('#FF0000')
+                    .setDescription(`Output was too big to be sent, evaluation cancelled (${output.length} characters)`)
                     return msg.edit(tooBigOutput).catch(() =>{ return })
                 }
             }
