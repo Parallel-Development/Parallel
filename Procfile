@@ -1,2 +1,2 @@
 worker: node index.js
-heroku config: add TZ="EST"
+heroku config:add TZ="EST"
