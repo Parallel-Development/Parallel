@@ -62,7 +62,7 @@ async function getCMD(client, message, input) {
         return message.channel.send(embed);
     }
 
-    if(cmd.deprecated) return message.channel.send('This command is depricated and is no longer usable')
+    if(cmd.deprecated) return message.channel.send('This command is deprecated and is no longer usable')
 
     embed.setColor('#09fff2')
     if(cmd.name) embed.setAuthor(`Help | ${cmd.name}`, client.user.displayAvatarURL())

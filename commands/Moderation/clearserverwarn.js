@@ -14,7 +14,7 @@ module.exports = {
 
         const confirmClearServerWarnings = new Discord.MessageEmbed()
             .setColor('#FFFF00')
-            .setDescription('You are about to delete all the warnings from every user on this server. To confirm this action, type in the server name. (You have 30 seconds)')
+            .setDescription('You are about to delete all the warnings from every user on this server. To confirm this action, respond with the server name. (You have 30 seconds)')
 
         message.channel.send(confirmClearServerWarnings)
         let filter = m => m.author.id === message.author.id
@@ -47,11 +47,17 @@ module.exports = {
             } else {
                 const cancelled = new Discord.MessageEmbed()
                 .setColor('#FF0000')
-                .setDescription('This action has been cancelled, because you input the wrong server name!')
+                .setDescription('This action has been cancelled because you input the wrong server name')
 
                 message.channel.send(cancelled)
                 collector.stop();
                 return;
+            }
+        })
+
+        collector.on('end', (col, reason) => {
+            if(reason == 'time') {
+                return message.channel.send('No response for more than 30 seconds, action cancelled')
             }
         })
     }

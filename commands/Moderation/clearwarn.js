@@ -44,16 +44,45 @@ module.exports = {
             }
         }
 
-        await warningSchema.deleteMany({
-            guildid: message.guild.id,
-            userid: member.id
+        const confirmClearUserWarnings = new Discord.MessageEmbed()
+        .setColor('#FFFF00')
+        .setDescription('You are about to delete all the warnings from this user. To confirm this action, respond with `confirm` (You have 30 seconds)')
+
+        message.channel.send(confirmClearUserWarnings)
+
+        let filter = m => m.author.id == message.author.id;
+        const collector = new Discord.MessageCollector(message.channel, filter, { time: 30000 })
+        collector.on('collect', async(message) => {
+            if(message.content == 'confirm') {
+                await warningSchema.deleteMany({
+                    guildid: message.guild.id,
+                    userid: member.id
+                })
+
+                const clearwarnembed = new Discord.MessageEmbed()
+                    .setColor('#09fff2')
+                    .setDescription(`Successfully deleted all warnings from ${member}`)
+
+                message.channel.send(clearwarnembed)
+            } else {
+                const cancelled = new Discord.MessageEmbed()
+                    .setColor('#FF0000')
+                    .setDescription('This action has been cancelled because you did not input the correct confirmation keyword')
+
+                message.channel.send(cancelled)
+                collector.stop();
+                return;
+            }
+
+            collector.on('end', (col, reason) => {
+                if (reason == 'time') {
+                    return message.channel.send('No response for more than 30 seconds, action cancelled')
+                }
+            })
+        
         })
 
-        const clearwarnembed = new Discord.MessageEmbed()
-            .setColor('#09fff2')
-            .setDescription(`Successfully deleted all warnings from ${member}`)
 
-        message.channel.send(clearwarnembed)
 
     }
 }

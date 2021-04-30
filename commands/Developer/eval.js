@@ -67,7 +67,7 @@ module.exports = {
                     const tooBigOutput = new Discord.MessageEmbed()
                     .setColor('#09fff2')
                     .setDescription(`Output was too big to be sent (${output.length} characters)`)
-                    return msg.edit(tooBigOutput)
+                    return msg.edit(tooBigOutput).catch(() =>{ return })
                 }
             }
         } catch (err) {
@@ -79,7 +79,7 @@ module.exports = {
                 .setFooter(`Type: error`)
             if(noBlock) return message.channel.send(error)
             else {
-                return msg.edit(error);
+                return msg.edit(error).catch(() => { return })
             }
         }
 
@@ -92,7 +92,7 @@ module.exports = {
 
         if (typeof output != 'string') output = util.inspect(output);
 
-        if(!noBlock) msg.edit(outputembed);
+        if(!noBlock) msg.edit(outputembed).catch(() => { return })
 
         const server = client.guilds.cache.get('747624284008218787')
         const channel = server.channels.cache.get('822853570213838849')
