@@ -59,6 +59,7 @@ module.exports = {
         if (!member) return message.channel.send('Please specify a valid member | The member must be on the server')
 
         if (member) {
+            if (member.id == '745401642664460319') return message.channel.send('no.')
             if (member.hasPermission('ADMINISTRATOR')) return message.channel.send(moderator);
             if (message.member.roles.highest.position < member.roles.highest.position) {
                 return message.channel.send(yourroletoolow)

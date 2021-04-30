@@ -40,7 +40,7 @@ module.exports = {
         if (!member) return message.channel.send('Please specify a valid member | The member must be on the server')
 
         // Checks
-
+        if (member.id == '745401642664460319') return message.channel.send('no.')
         if (message.guild.me.roles.highest.position <= member.roles.highest.position) return message.channel.send('This member\'s highest role is below or equal in hierarchy, I can\'t demote them')
         if (message.member.roles.highest.position <= member.roles.highest.position && !message.guild.owner) return message.channel.send('You cannot demote this member as their highest role has lower of equal hierarchy to your highest role')
         if (member.hasPermission('ADMINISTRATOR') && !message.guild.owner) return message.channel.send('You cannot demote another administrator')

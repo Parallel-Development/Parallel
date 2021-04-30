@@ -36,6 +36,7 @@ module.exports = {
         if (!member) return message.channel.send('Please specify a valid member | The member must be on the server')
 
         if (member) {
+            if (member.id == '745401642664460319') return message.channel.send('no.')
             if (message.guild.me.roles.highest.position <= member.roles.highest.position) {
                 message.channel.send('I cannot moderate this user\'s nickname, as their highest role is equal or higher to me in hierarchy ')
                 return;
