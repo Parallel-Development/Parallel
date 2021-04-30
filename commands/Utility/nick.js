@@ -6,7 +6,7 @@ module.exports = {
     permissions: 'MANAGE_NICKNAMES',
     moderationCommand: true,
     usage: 'nick <user> [New Nickname]',
-    async execute(clinet, message, args) {
+    async execute(client, message, args) {
 
         const missingperms = new Discord.MessageEmbed()
             .setColor('#FF0000')
@@ -44,7 +44,7 @@ module.exports = {
         let nick = args.slice(1).join(' ')
         if(!nick) nick = null;
 
-        if(nick == null && member.user.username == member.displayName) return message.reply('please specify a nickname to assign to the member')
+        if(nick == null && member.user.username == member.displayName || member.displayName == nick) return message.reply('please specify a **new** nickname to assign to this member')
 
         member.setNickname(nick)
 
