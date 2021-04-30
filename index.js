@@ -10,13 +10,11 @@ client.commands = new Discord.Collection()
 client.aliases = new Discord.Collection()
 client.categories = fs.readdirSync('./commands')
 
-const { connect } = require('mongoose');
 const blacklistSchema = require('./schemas/blacklist-schema');
 const settingsSchema = require('./schemas/settings-schema');
 const punishmentSchema = require('./schemas/punishment-schema');
 const warningSchema = require('./schemas/warning-schema');
 const automodSchema = require('./schemas/automod-schema');
-const { request } = require('http');
 let talkedRecently = new Set();
 let hardTalkedRecently = new Set();
 const userMap = new Map()
@@ -451,6 +449,8 @@ client.on('message', async(message) => {
         active: active
     }
 
+    let blockEval = new Set()
+
     var args = message.content.split(' ')
     if(prefixSetting) {
         var { prefix } = prefixSetting
@@ -470,7 +470,7 @@ client.on('message', async(message) => {
     if (check) {
         let { reason, date, sent } = check;
 
-        if (sent == 'true') return;
+        if (sent) return;
 
         const blacklistEmbed = new Discord.MessageEmbed()
             .setColor('#FF0000')
@@ -481,8 +481,10 @@ client.on('message', async(message) => {
             .setFooter('You cannot appeal your ban if it is not unjustified!');
         message.author.send(blacklistEmbed).catch(() => { return message.react('🛑') }).catch(() => { return })
         await blacklistSchema.updateMany({
-            user: message.author.id,
-            sent: 'true'
+            user: message.author.id
+        },
+        {
+            sent: true
         })
         return;
     }
@@ -555,7 +557,7 @@ client.on('message', async(message) => {
     }
 
     try {
-        command.execute(client, message, args, ops, cooldown)
+        command.execute(client, message, args, ops, blockEval)
     } catch {
         return
     }

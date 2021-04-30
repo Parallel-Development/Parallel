@@ -28,7 +28,7 @@ module.exports = {
 
         const yourroletoolow = new Discord.MessageEmbed()
             .setColor('#FF0000')
-            .setDescription('You cannot ban this user, because your role is either the same hoist or lower than the provided member')
+            .setDescription('You cannot warn this user, because your role is either the same hoist or lower than the provided member')
             .setAuthor('Error', client.user.displayAvatarURL())
 
         if (!message.guild.me.hasPermission('MANAGE_MESSAGES')) return message.channel.send(missingperms)

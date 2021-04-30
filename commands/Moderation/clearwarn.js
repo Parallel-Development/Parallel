@@ -64,6 +64,8 @@ module.exports = {
                     .setDescription(`Successfully deleted all warnings from ${member}`)
 
                 message.channel.send(clearwarnembed)
+                collector.stop();
+                return
             } else {
                 const cancelled = new Discord.MessageEmbed()
                     .setColor('#FF0000')

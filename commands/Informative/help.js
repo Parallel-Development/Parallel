@@ -3,7 +3,8 @@ const Discord = require('discord.js')
 const fs = require('fs')
 const path = require('path')
 const commandFolders = fs.readdirSync('./commands')
-const settingsSchema = require('../../schemas/settings-schema')
+const settingsSchema = require('../../schemas/settings-schema');
+const config  = require("../../config.json");
 
 module.exports = {
     name: 'help',
@@ -35,9 +36,15 @@ async function getAll(client, message) {
         const commandFiles = fs.readdirSync(`./commands/${folder}`).filter(file => file.endsWith('.js'))
         for(const file of commandFiles) {
             let cmd = client.commands.get(path.parse(file).name)
-            if(!cmd.deprecated) commands.push(`\`${path.parse(file).name}\``)
+            if(cmd.developer && config.developers.includes(message.author.id) 
+            || cmd.eval && config.eval.includes(message.author.id)
+            || cmd.developer && config.blacklist.includes(message.author.id)) {
+                commands.push(`\`${path.parse(file).name}\``)
+            } else  {
+                if(!cmd.deprecated && !cmd.developer && !cmd.eval) commands.push(`\`${path.parse(file).name}\``)
+            }
         }
-        mainHelp.addField(folder, commands.join(', '))
+        if (commands.length !== 0) mainHelp.addField(folder, commands.join(', '))
     }
     mainHelp.addField('Links', `[Invite Link](https://discord.com/oauth2/authorize?client_id=745401642664460319&permissions=8&scope=bot) | [Support/Development Server](https://discord.gg/DcmVMPx8bn) | [Bot Guidelines](https://docs.google.com/document/d/1u0Z6WVS0V8D72E8cU5gUw2OwGeqW3g1OvwSkzG7odOw/edit)`)
     message.channel.send(mainHelp)

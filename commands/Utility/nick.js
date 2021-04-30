@@ -13,7 +13,7 @@ module.exports = {
             .setDescription('I do not have the permission to moderate member nicknames. Please give me the `Manage Nicknames` permission and run again')
             .setAuthor('Error', client.user.displayAvatarURL());
 
-        if(!message.guild.me.hasPermission('MANAGE_NICKANMES')) return message.channel.send()
+        if(!message.guild.me.hasPermission('MANAGE_NICKNAMES')) return message.channel.send(missingperms)
 
         function getUserFromMention(mention) {
             if (!mention) return false;

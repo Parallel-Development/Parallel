@@ -1,13 +1,19 @@
 const Discord = require('discord.js');
 const { isInteger } = require('mathjs');
 const warningSchema = require('../../schemas/warning-schema')
+const settingsSchema = require('../../schemas/settings-schema')
 
 module.exports = {
     name: 'warnings',
     description: 'Fetches a user\'s warnings in the server',
-    usage: 'warnings <member>',
+    usage: 'warnings <member> (page number)',
     aliases: ['infractions', 'modlogs', 'search', 'record', 'warns'],
     async execute(client, message, args) {
+
+        const prefixSetting = await settingsSchema.findOne({
+            guildid: message.guild.id
+        })
+        const { prefix } = prefixSetting
 
         var member;
 
@@ -49,23 +55,43 @@ module.exports = {
             userid: member.id
         })
 
-        if (!warningsCheck) return message.channel.send('This user has no infractions!')
+        if (!warningsCheck || warningsCheck.warnings.length == 0) return message.channel.send('This user has no infractions!')
+
+        let pageNumber = args[1];
+        if (!pageNumber) pageNumber = 1;
+        if(!pageNumber.isInteger && typeof(pageNumber) == 'number') {
+            let testPageNumber = Math.round(pageNumber);
+            if(testPageNumber < pageNumber) pageNumber++
+        }
+
+        let amountOfPages = Math.round(warningsCheck.warnings.length / 7);
+        if(amountOfPages < warningsCheck.warnings.length / 7) amountOfPages++
+
+        if (pageNumber > amountOfPages) {
+            return message.channel.send(`Please specify a page number between \`1\` and \`${warningsCheck.warnings.length / 7}\``)
+        } else if (!isInteger(pageNumber)) {
+            return message.channel.send('Page number must be an integer!')
+        } else if(pageNumber < 1) {
+            pageNumber = 1
+        }
         const u = await client.users.fetch(member.id)
         const warningsEmbed = new Discord.MessageEmbed()
             .setColor('#09fff2')
             .setAuthor(`Warnings for ${u.tag}`, client.user.displayAvatarURL())
             .setDescription(`All times are in GMT | Run \`punishinfo (code)\` to get more information about a punishment`)
+            .setFooter(`Page ${pageNumber}/${amountOfPages} | ${prefix}warnings (user) <page number> to access a certain page`)
 
+        let i = (pageNumber - 1) * 7;
         let count = 0
-        for (const i of warningsCheck.warnings) {
+        while(i < warningsCheck.warnings.length && count < 7) {
+            let x = warningsCheck.warnings[i]
             count++
-            if (i.reason.length > 20) {
-                i.reason = i.reason.substr(0, 30) + '...'
+            if (x.reason.length > 30) {
+                x.reason = x.reason.substr(0, 30) + '...'
             }
-            warningsEmbed.addField(`${count}: ${i.type}`, `Reason: \`${i.reason}\`\nDate: \`${i.date}\`\nPunishment ID: \`${i.code}\``)
+            warningsEmbed.addField(`${i + 1}: ${x.type}`, `Reason: \`${x.reason}\`\nDate: \`${x.date}\`\nPunishment ID: \`${x.code}\``)
+            i += 1
         }
-
-        if (count == 0 || warningsCheck.warnings.length == 0) return message.channel.send('This user has no infractions!')
 
         message.channel.send(warningsEmbed)
     }

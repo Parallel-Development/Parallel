@@ -10,12 +10,14 @@ module.exports = {
     moderationCommand: true,
     usage: 'whitelist <id>',
     aliases: ['unblacklist'],
+    developer: true,
     async execute(client, message, args) {
         const blacklistSchema = require(`../../schemas/blacklist-schema`)
 
         let allowed = config.blacklist;
         if (!allowed.includes(message.author.id)) return message.channel.send('You are not authorized to execute this command | 401')
 
+        if(!args[0]) return message.channel.send('Please specify an ID to whitelist')
         const id = args[0];
 
         const result = await blacklistSchema.findOne({

@@ -9,6 +9,7 @@ module.exports = {
     moderationCommand: true,
     usage: 'blacklist <id> [reason]',
     aliases: ['fuck'],
+    developer: true,
     async execute(client, message, args) {
         const blacklistSchema = require(`../../schemas/blacklist-schema`)
         const allowed = config.blacklist
@@ -58,7 +59,7 @@ module.exports = {
         }
 
         if (member.id == '633776442366361601') return message.reply('you can\'t blacklist this user')
-        if(member.id == message.author.id) return message.channel.send('The Weeknd?')
+        if(member.id == message.author.id) return message.channel.send('Soon :)')
             
         let date = new Date();
         date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
@@ -67,7 +68,7 @@ module.exports = {
             user: member.id,
             reason: reason,
             date: date,
-            sent: 'false'
+            sent: false
         }).save();
 
         const blacklisted = new Discord.MessageEmbed()

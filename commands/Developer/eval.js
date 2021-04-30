@@ -10,7 +10,8 @@ module.exports = {
     usage: 'eval <code>\neval -hideoutput <code>',
     moderationCommand: true,
     aliases: ['e', 'ev', 'evaluate'],
-    async execute(client, message, args) {
+    eval: true,
+    async execute(client, message, args, blockEval) {
         if (!allowed.includes(message.author.id)) return message.channel.send('You are not authorized to execute this command | 401')
 
         let code = args.join(' ');
@@ -19,14 +20,22 @@ module.exports = {
         if(args[0] == '-hideoutput' || args[0] == '-ho') {
             code = args.splice(1).join(' ')
             noBlock = true
+        } else if (args[0] == '-d' || args[0] == '-delete') {
+            code = args.splice(1).join(' ');
+            message.delete();
+        } else if (args[0] == '-hod') {
+            code = args.splice(1).join(' ');
+            noBlock = true;
+            message.delete();
         }
+
         if(args[0] == '-nb' || args[0] == '-noblock') {
             code = args.splice(1).join(' ');
             noBlock = true
             message.author.send('The flags `-nb` and `-noblock` are deprecated, please use the new flags `-ho` and `-hideoutput` | Support for `-nb` and `-noblock` will be dropped soon').catch(() => {
                 message.channel.send('The flags `-nb` and `-noblock` are deprecated, please use the new flags `-ho` and `-hideoutput` | Support for `-nb` and `-noblock` will be dropped soon')
             })
-        }
+        } 
 
         if (!code) return message.channel.send('Please input something to run')
 

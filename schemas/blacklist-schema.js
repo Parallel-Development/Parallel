@@ -9,7 +9,10 @@ const blacklistSchema = mongoose.Schema({
     user: reqString,
     reason: reqString,
     date: reqString,
-    sent: reqString
+    sent: {
+        type: Boolean,
+        required: true
+    }
 })
 
 module.exports = mongoose.model('blacklist', blacklistSchema)
