@@ -37,7 +37,7 @@ module.exports = {
         if(!message.member.hasPermission('MANAGE_MESSAGES') && member !== message.member) {
             const onlyYourWarnings = new Discord.MessageEmbed()
             .setColor('#FF0000')
-            .setDescription('You can only view your warnings and not the warnings of anyone else. To view warnings of other users, you need the `MANAGE MESSAGES` permission')
+            .setDescription('You can only view your warnings and not the warnings of anyone else. To view warnings of other users, you need the `MANAGE MESSAGES` permission | If you are trying to view your page number, mention yourself then specify the page number')
 
             return message.channel.send(onlyYourWarnings)
         }
@@ -46,7 +46,7 @@ module.exports = {
             try {
                 member = await client.users.fetch(args[0])
             } catch {
-                return message.channel.send('Please specify a valid member')
+                return message.channel.send('Please specify a valid member | If you specified a page number trying to view your own warnings, you\'ll have to mention yourself first')
             }
         }
 
