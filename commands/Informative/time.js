@@ -7,7 +7,7 @@ module.exports = {
     usage: 'time',
     async execute(client, message, args) {
         const time = moment(new Date().getTime() + 3600000 * 4).format('dddd, MMMM Do YYYY, h:mm:ss A ');
-        const time24 = moment(new Date().getTime() + 3600000 * 4).format('dddd, MMMM Do YYYY, H:mm:ss A ');
+        const time24 = moment(new Date().getTime() + 3600000 * 4).format('dddd, MMMM Do YYYY, H:mm:ss');
 
         const currentTime = new Discord.MessageEmbed()
         .setColor('#09fff2')

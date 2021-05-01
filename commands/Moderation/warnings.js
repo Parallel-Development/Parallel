@@ -37,7 +37,7 @@ module.exports = {
         if(!message.member.hasPermission('MANAGE_MESSAGES') && member !== message.member) {
             const onlyYourWarnings = new Discord.MessageEmbed()
             .setColor('#FF0000')
-            .setDescription('You can only view your warnings and not the warnings of anyone else. To view warnings of other users, you need the `MANAGE MESSAGES` permission | If you are trying to view your page number, mention yourself then specify the page number')
+            .setDescription('You can only view your warnings and not the warnings of anyone else. To view warnings of other users, you need the `MANAGE MESSAGES` permission\n\nIf you are trying to view a page number of your own warnings, mention yourself, then specify the page number')
 
             return message.channel.send(onlyYourWarnings)
         }
@@ -68,7 +68,7 @@ module.exports = {
         if(amountOfPages < warningsCheck.warnings.length / 7) amountOfPages++
 
         if (pageNumber > amountOfPages) {
-            return message.channel.send(`Please specify a page number between \`1\` and \`${warningsCheck.warnings.length / 7}\``)
+            return message.channel.send(`Please specify a page number between \`1\` and \`${amountOfPages}\``)
         } else if (!isInteger(pageNumber)) {
             return message.channel.send('Page number must be an integer!')
         } else if(pageNumber < 1) {
