@@ -60,7 +60,7 @@ module.exports = {
             if (message.member.roles.highest.position < member.roles.highest.position) {
                 return message.channel.send(yourroletoolow)
             }
-            if (member.roles.highest.position >= message.guild.me.roles.highest.position) return message.channel.send('I cannot mute this member, as their highest role is above or equal to me in hierarchy')
+            if (member.roles.highest.position >= message.guild.me.roles.highest.position) return message.channel.send('I cannot warn this member, as their highest role is above or equal to me in hierarchy')
         }
 
         const deleteModerationCommand = await settingsSchema.findOne({
