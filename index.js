@@ -45,7 +45,7 @@ const connectToMongoDB = async () => {
 
 connectToMongoDB();
 
-client.once('ready', () => {
+client.once('ready', async() => {
     startUp++
     if(startUp == 1) {
         console.log('Bot started (1/2) | Waiting for MongoDB...');

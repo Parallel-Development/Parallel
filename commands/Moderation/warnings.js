@@ -59,9 +59,12 @@ module.exports = {
 
         let pageNumber = args[1];
         if (!pageNumber) pageNumber = 1;
-        if(!pageNumber.isInteger && typeof(pageNumber) == 'number') {
-            let testPageNumber = Math.round(pageNumber);
-            if(testPageNumber < pageNumber) pageNumber++
+        if (typeof(parseInt(pageNumber)) !== 'number') {
+            return message.channel.send('Please specify a valid page **number**')
+        } 
+        pageNumber = Math.round(pageNumber)
+        if(isNaN(pageNumber)) {
+            return message.channel.send('The page number must be a **number**')
         }
 
         let amountOfPages = Math.round(warningsCheck.warnings.length / 7);
@@ -69,11 +72,10 @@ module.exports = {
 
         if (pageNumber > amountOfPages) {
             return message.channel.send(`Please specify a page number between \`1\` and \`${amountOfPages}\``)
-        } else if (!isInteger(pageNumber)) {
-            return message.channel.send('Page number must be an integer!')
         } else if(pageNumber < 1) {
             pageNumber = 1
         }
+
         const u = await client.users.fetch(member.id)
         const warningsEmbed = new Discord.MessageEmbed()
             .setColor('#09fff2')
