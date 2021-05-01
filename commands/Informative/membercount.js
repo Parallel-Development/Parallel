@@ -9,7 +9,7 @@ module.exports = {
         const membercount = new Discord.MessageEmbed()
         .setColor('#09fff2')
         .setTitle('Member Count')
-        .setDescription(`There are **${message.guild.memberCount}** users on this server, **${message.guild.members.cache.filter(member => member.user.bot).size}** bots, **${message.guild.members.cache.filter(member => !member.user.bot).size}** humans`)
+        .setDescription(`There are **${message.guild.memberCount}** users in this server, **${message.guild.members.cache.filter(member => member.user.bot).size}** bots, **${message.guild.members.cache.filter(member => !member.user.bot).size}** humans`)
     
         message.channel.send(membercount)}
 }
