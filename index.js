@@ -429,11 +429,6 @@ client.on('message', async(message) => {
 
     // Check for if the message starts with pinging Razor, if it does, give the prefix;
 
-    const getPrefix = await await settingsSchema.findOne({
-        guildid: message.guild.id
-    })
-    let { prefix } = getPrefix
-
     if (message.mentions.members.find(m => m.id === '745401642664460319')) {
 
         if(check) return;
@@ -455,7 +450,9 @@ client.on('message', async(message) => {
             }
         }
 
-        message.channel.send(`Hello! My prefix is \`${prefix}\` | Run ${prefix}help for a list of commands`)
+        var { prefix } = prefixSetting
+
+        message.channel.send(`Hello! My prefix is \`${prefix}\` | Run \ ${prefix}help\` for a list of commands`)
     }
 
     if(!prefixSetting) {
