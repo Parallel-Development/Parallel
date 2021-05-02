@@ -28,13 +28,13 @@ module.exports = {
 
         const sessionstarted = new Discord.MessageEmbed()
             .setColor('#09fff2')
-            .setDescription(`A new session has been opened for **${message.author.username}**\n\nYou can end this session by typing \`.end\`, and can make the bot ignore a message by running \`.i [msg]\``)
+            .setDescription(`A new session has been opened for **${message.author.username}**\n\nYou can end this session by typing \`.exit\`, and can make the bot ignore a message by running \`.i [msg]\``)
 
         message.channel.send(sessionstarted)
         let filter = m => m.author.id === message.author.id
         let collector = new Discord.MessageCollector(message.channel, filter, { time: 1800000 })
         collector.on('collect', (message, col) => {
-            if (message.content.startsWith('.end')) {
+            if (message.content.startsWith('.exit')) {
                 collector.stop();
                 message.channel.send(`Session ended for **${message.author.username}**!`)
                 return;
