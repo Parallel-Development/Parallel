@@ -29,14 +29,6 @@ module.exports = {
             message.delete();
         }
 
-        if(args[0] == '-nb' || args[0] == '-noblock') {
-            code = args.splice(1).join(' ');
-            noBlock = true
-            message.author.send('The flags `-nb` and `-noblock` are deprecated, please use the new flags `-ho` and `-hideoutput` | Support for `-nb` and `-noblock` will be dropped soon').catch(() => {
-                message.channel.send('The flags `-nb` and `-noblock` are deprecated, please use the new flags `-ho` and `-hideoutput` | Support for `-nb` and `-noblock` will be dropped soon')
-            })
-        } 
-
         if (!code) return message.channel.send('Please input something to run')
 
         let output;
