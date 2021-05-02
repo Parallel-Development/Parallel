@@ -435,6 +435,26 @@ client.on('message', async(message) => {
     let { prefix } = getPrefix
 
     if (message.mentions.members.find(m => m.id === '745401642664460319')) {
+
+        if(check) return;
+
+        if (talkedRecently.has(message.author.id)) {
+            if (hardTalkedRecently.has(message.author.id)) return;
+            hardTalkedRecently.add(message.author.id)
+            setTimeout(() => {
+                hardTalkedRecently.delete(message.author.id)
+            }, 2000)
+            return message.react('🕑')
+        } else {
+            const cooldownWhitelist = config.developers;
+            if (!cooldownWhitelist.includes(message.author.id)) {
+                talkedRecently.add(message.author.id);
+                setTimeout(() => {
+                    talkedRecently.delete(message.author.id)
+                }, 1500)
+            }
+        }
+
         message.channel.send(`Hello! My prefix is \`${prefix}\` | Run ${prefix}help for a list of commands`)
     }
 
