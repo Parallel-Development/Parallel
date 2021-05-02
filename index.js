@@ -452,7 +452,7 @@ client.on('message', async(message) => {
 
         var { prefix } = prefixSetting
 
-        message.channel.send(`Hello! My prefix is \`${prefix}\` | Run \ ${prefix}help\` for a list of commands`)
+        message.channel.send(`Hello! My prefix is \`${prefix}\` | Run \`${prefix}help\` for a list of commands`)
     }
 
     if(!prefixSetting) {
