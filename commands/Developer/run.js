@@ -13,7 +13,7 @@ module.exports = {
     usage: 'run',
     aliases: ['session'],
     eval: true,
-    async execute(client, message, args, blockEval) {
+    async execute(client, message, args) {
 
         if (!allowed.includes(message.author.id)) return message.channel.send('You are not authorized to execute this command | 401')
 

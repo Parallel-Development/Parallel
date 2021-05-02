@@ -11,7 +11,7 @@ module.exports = {
     moderationCommand: true,
     aliases: ['e', 'ev', 'evaluate'],
     eval: true,
-    async execute(client, message, args, blockEval) {
+    async execute(client, message, args) {
         if (!allowed.includes(message.author.id)) return message.channel.send('You are not authorized to execute this command | 401')
 
         let code = args.join(' ');
