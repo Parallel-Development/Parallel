@@ -41,12 +41,16 @@ module.exports = {
         let expires;
         let date;
         let reason;
+        let duration
 
         for(const i of check.warnings) {
             if(i.code == code) {
                 if (i.type) type = i.type
                 if (i.moderatorID) moderatorID = i.moderatorID
-                if (i.expires) expires = i.expires
+                if (i.expires) {
+                    expires = i.expires
+                    duration = i.expires
+                }
                 if (i.date) date = i.date
                 if (i.reason) reason = i.reason
             }
@@ -68,7 +72,7 @@ module.exports = {
         if(expires - parseInt(new Date().getTime()) <= 0) {
             timeTillExpires = 'This punishment has expired'
         } else {
-            timeTillExpires = `${moment(expires).format('dddd, MMMM Do YYYY, h:mm:ss, a')} | Around ${Math.round(((expires - parseInt(new Date().getTime()))/1000)/60)} minutes from now`
+            timeTillExpires = `${moment(expires).format('dddd, MMMM Do YYYY, h:mm:ss, a')} |  ${cleanTime(expires - parseInt(new Date().getTime()))} from now`
         }
 
         const punishmentInformation = new Discord.MessageEmbed()
@@ -85,4 +89,35 @@ module.exports = {
 
         message.channel.send(punishmentInformation)
     }
+}
+
+function cleanTime(amount) {
+    let days = 0;
+    let hours = 0;
+    let minutes = 0;
+    let seconds = amount / 1000;
+
+    while (seconds >= 60) {
+        seconds -= 60;
+        minutes++
+    }
+
+    while (minutes >= 60) {
+        minutes -= 60;
+        hours++
+    }
+
+    while (hours >= 24) {
+        hours -= 24;
+        days++
+    }
+
+    let product = [];
+    if (days > 0) product.push(`${Math.round(days)} days`)
+    if (hours > 0) product.push(`${Math.round(hours)} hours`)
+    if (minutes > 0) product.push(`${Math.round(minutes)} minutes`)
+    if (seconds > 0) product.push(`${Math.round(seconds)} seconds`)
+
+    return product.join(', ')
+
 }
