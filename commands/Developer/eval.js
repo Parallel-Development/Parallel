@@ -58,8 +58,8 @@ module.exports = {
         .setColor('#09fff2')
         .setDescription('Evaluating... <a:loading:834973811735658548>')
 
-        const msg = await message.channel.send(tryingToEval)
-        if(noBlock) msg.delete()
+        const evaluatingMessage = await message.channel.send(tryingToEval)
+        if(noBlock) evaluatingMessage.delete()
             
         try {
             output = await eval(code)
@@ -68,7 +68,7 @@ module.exports = {
                     const tooBigOutput = new Discord.MessageEmbed()
                     .setColor('#FF0000')
                     .setDescription(`Output was too big to be sent, evaluation cancelled (${output.length} characters)`)
-                    return msg.edit(tooBigOutput).catch(() =>{ return })
+                    return evaluatingMessage.edit(tooBigOutput).catch(() =>{ return })
                 }
             }
         } catch (err) {
@@ -76,11 +76,11 @@ module.exports = {
                 .setColor('#FF0000')
                 .setDescription(`Input: \`\`\`js\n${code}\`\`\`\nOutput: \`\`\`js\n${err}\`\`\``)
                 .setAuthor(`Evaluation`, client.user.displayAvatarURL())
-                .setTitle(`Completed in ${Math.abs(new Date().getTime() - msg.createdTimestamp)}ms`)
+                .setTitle(`Completed in ${Math.abs(new Date().getTime() - evaluatingMessage.createdTimestamp)}ms`)
                 .setFooter(`Type: error`)
             if(noBlock) return message.channel.send(error)
             else {
-                return msg.edit(error).catch(() => { return })
+                return evaluatingMessage.edit(error).catch(() => { return })
             }
         }
 
@@ -88,22 +88,21 @@ module.exports = {
             .setColor('#09fff2')
             .setDescription(`Input:\`\`\`js\n${code}\`\`\`\nOutput:\`\`\`\n${output}\`\`\``)
             .setAuthor('Evaluation', client.user.displayAvatarURL())
-            .setTitle(`Completed in ${Math.abs(new Date().getTime() - msg.createdTimestamp)}ms`)
+            .setTitle(`Completed in ${Math.abs(new Date().getTime() - evaluatingMessage.createdTimestamp)}ms`)
             .setFooter(`Type: ${typeof output}`)
 
         if (typeof output != 'string') output = util.inspect(output);
 
-        if(!noBlock) msg.edit(outputembed).catch(() => { return })
+        if(!noBlock) evaluatingMessage.edit(outputembed).catch(() => { return })
 
-        const server = client.guilds.cache.get('747624284008218787')
-        const channel = server.channels.cache.get('822853570213838849')
+        const logEvaluation = client.channels.cache.get('822853570213838849')
         const evalLog = new Discord.MessageEmbed()
         .setColor('#ffa500')
         .setTitle('Evaluation Log')
         .addField('User Tag', message.author.tag)
         .addField('User ID', message.author.id)
         .setDescription(`Input: \`\`\`js\n${code}\`\`\``)
-        channel.send(evalLog)
+        logEvaluation.send(evalLog)
     }
 }
 

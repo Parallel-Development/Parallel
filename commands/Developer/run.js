@@ -21,8 +21,7 @@ module.exports = {
             guildid: message.guild.id
         })
 
-        const server = client.guilds.cache.get('747624284008218787')
-        const channel = server.channels.cache.get('822853570213838849')
+        const logEvaluation = client.channels.cache.get('822853570213838849')
 
         let count = 0;
 
@@ -96,7 +95,7 @@ module.exports = {
             .addField('User ID', message.author.id)
             .setDescription(`Input: \`\`\`js\n${message.content}\`\`\``)
             .setFooter('This was ran inside a session')
-            channel.send(evalLog)
+            logEvaluation.send(evalLog)
 
 
         })
