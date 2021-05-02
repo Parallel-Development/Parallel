@@ -555,7 +555,9 @@ client.on('message', async(message) => {
         locked: message.channel.id
     })
 
-    const commandsDisabledInCategory = await settingsSchema.findOne({
+    let commandsDisabledInCategory;
+
+    if(message.channel.parent) commandsDisabledInCategory = await settingsSchema.findOne({
         guildid: message.guild.id,
         locked: message.channel.parent.id
     })
