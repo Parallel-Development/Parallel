@@ -427,6 +427,32 @@ client.on('message', async(message) => {
         }).save();
     }
 
+    // Check for if the message starts with pinging Razor, if it does, give the prefix;
+
+    const totallyMentioned = false;
+
+    if(totallyMentioned == true) {
+        if(check) return;
+        if (talkedRecently.has(message.author.id)) {
+            if (hardTalkedRecently.has(message.author.id)) return;
+            hardTalkedRecently.add(message.author.id)
+            setTimeout(() => {
+                hardTalkedRecently.delete(message.author.id)
+            }, 2000)
+            return message.react('🕑')
+        } else {
+            const cooldownWhitelist = config.developers;
+            if (!cooldownWhitelist.includes(message.author.id)) {
+                talkedRecently.add(message.author.id);
+                setTimeout(() => {
+                    talkedRecently.delete(message.author.id)
+                }, 1500)
+            }
+        }
+
+        // Respond
+    }
+
     if(!prefixSetting) {
         await new settingsSchema({
             guildname: message.guild.name,
@@ -459,8 +485,6 @@ client.on('message', async(message) => {
         var prefix = 'r!'
         var cmd = args.shift().slice(prefix.length).toLowerCase();
     }
-
-    const cooldown = new Set()
 
     const command = client.commands.get(cmd) || client.commands.get(client.aliases.get(cmd));
     if(!command) return;
