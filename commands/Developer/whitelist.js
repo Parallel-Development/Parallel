@@ -29,7 +29,7 @@ module.exports = {
             return;
         }
 
-        let reason = args[1];
+        let reason = args.slice(1).join(' ');
         if(!reason) reason = 'Unspecified'
 
 
