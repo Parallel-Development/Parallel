@@ -587,15 +587,7 @@ client.on('message', async(message) => {
     if(commandsDisabledInChannel && commandsDisabledInChannel.length !== 0 || commandsDisabledInCategory && commandsDisabledInCategory.length !== 0) {
         if(!command.moderationCommand) {
             if(message.member.hasPermission('MANAGE_MESSAGES') && !message.member.hasPermission('ADMINISTRATOR')) {
-                const onlyModCommands = new Discord.MessageEmbed()
-                .setColor('#FF0000')
-                .setDescription('You can only run moderation commands in this channel')
-                message.delete()
-                const onlyModCmdsErr = await message.channel.send(onlyModCommands)
-                setTimeout(() => {
-                    onlyModCmdsErr.delete()
-                }, 5000)
-                return
+                return message.reply('commands are disabled in this channel | you can still run moderation commands')
             }  else {
                 if(!message.member.hasPermission('ADMINISTRATOR')) {
                     return message.reply('commands are disabled in this channel')
