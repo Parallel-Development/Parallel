@@ -73,7 +73,6 @@ module.exports = {
 
                 message.channel.send(cancelled)
                 collector.stop();
-                return;
             }
 
             collector.on('end', (col, reason) => {
