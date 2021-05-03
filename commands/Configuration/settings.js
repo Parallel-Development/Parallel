@@ -16,8 +16,8 @@ module.exports = {
             .setAuthor(`Server Settings - ${message.guild.name}`, client.user.displayAvatarURL())
             .addField('Allow Commands', '__allowcmds__\n\nEnable or disable commands in certain channels')
             .addField('Ban Information', '__baninfo__\n\nAdd a field to the DM sent to a banned user of whatever you like')
-            .addField('Delete Moderation Commands', '__del-mod-cmd-triggers__\n\nDeletes all triggers to a moderation command that punishes a user')
-            .addField('Remove Roles on Mute', '__remove-roles-on-mute__\n\nRemoves all user roles when muted, and adds them back when unmuted')
+            .addField('Delete Moderation Commands', '__del-mod-cmd-triggers__\n\nDeletes all triggers moderation commands that punishes a user')
+            .addField('Remove Roles on Mute', '__remove-roles-on-mute__\n\nRemoves all roles from the muted user, and adds them back when unmuted')
             return message.channel.send(settingsPannel);
         }
 
