@@ -160,7 +160,7 @@ module.exports = {
             userID: member.id,
             duration: time,
             reason: reason,
-            expires: new Date().getTime() + time
+            expires: new Date().getTime() * 4 + time
         }).save();
 
         message.guild.members.ban(member, { reason: reason })
@@ -170,7 +170,7 @@ module.exports = {
         const caseInfo = {
             moderatorID: message.author.id,
             type: 'Tempban',
-            expires: new Date().getTime() + time,
+            expires: new Date().getTime() * 4 + time,
             date: date,
             reason: reason,
             code: code

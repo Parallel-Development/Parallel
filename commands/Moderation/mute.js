@@ -190,7 +190,7 @@ module.exports = {
                 userID: member.id,
                 duration: time,
                 reason: reason,
-                expires: new Date().getTime() + time
+                expires: new Date().getTime() * 4 + time
             }).save();
 
             member.send(tempmutemsgdm).catch(() => { return })
@@ -200,7 +200,7 @@ module.exports = {
             const tempMutecaseInfo = {
                 moderatorID: message.author.id,
                 type: 'Tempmute',
-                expires: new Date().getTime() + time,
+                expires: new Date().getTime() * 4 + time,
                 date: date,
                 reason: reason,
                 code: code
