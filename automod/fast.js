@@ -439,7 +439,7 @@ exports.run = async(client, message) => {
         const caseInfo = {
             moderatorID: message.guild.me.id,
             type: 'Tempban',
-            expires: new Date().getTime() * 4 + fastTempBanDuration,
+            expires: new Date().getTime() +  fastTempBanDuration,
             date: date,
             reason: '[AUTO] Fast Message Spam',
             code: code
@@ -485,7 +485,7 @@ exports.run = async(client, message) => {
             userID: message.author.id,
             duration: fastTempBanDuration,
             reason: '[AUTO] Fast Message Spam',
-            expires: new Date().getTime() * 4 + fastTempBanDuration
+            expires: new Date().getTime() +  fastTempBanDuration
         }).save();
 
         message.channel.send(usertempbanned)
@@ -570,7 +570,7 @@ exports.run = async(client, message) => {
         const caseInfo = {
             moderatorID: message.guild.me.id,
             type: 'Tempmute',
-            expires: new Date().getTime() * 4 + fastTempMuteDuration,
+            expires: new Date().getTime() +  fastTempMuteDuration,
             date: date,
             reason: '[AUTO] Fast Message Spam',
             code: code
@@ -616,7 +616,7 @@ exports.run = async(client, message) => {
             userID: message.member.id,
             duration: fastTempMuteDuration,
             reason: '[AUTO] Fast Message Spam',
-            expires: new Date().getTime() * 4 + fastTempMuteDuration
+            expires: new Date().getTime() +  fastTempMuteDuration
         }).save();
 
         message.member.send(tempmutedm).catch(() => { return })

@@ -72,7 +72,7 @@ module.exports = {
         if(expires - parseInt(new Date().getTime()) <= 0) {
             timeTillExpires = 'This punishment has expired'
         } else {
-            timeTillExpires = `${moment(expires).format('dddd, MMMM Do YYYY, h:mm:ss, a')} |  ${cleanTime(expires - parseInt(new Date().getTime()))} from now`
+            timeTillExpires = `${moment(expires + 14400000).format('dddd, MMMM Do YYYY, h:mm:ss A')} |  ${cleanTime(expires - parseInt(new Date().getTime()))} from now`
         }
 
         const punishmentInformation = new Discord.MessageEmbed()
