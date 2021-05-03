@@ -92,10 +92,12 @@ setInterval(async() => {
                 let getMemberRoles = await muteSchema.findOne({
                     guildid: server.id
                 })
-                let { roles } = getMemberRoles;
-                roles.forEach(r => {
-                    member.roles.add(server.roles.cache.get(r)).catch(() => { return })
-                })
+                if(getMemberRoles) {
+                    let { roles } = getMemberRoles;
+                    roles.forEach(r => {
+                        member.roles.add(server.roles.cache.get(r)).catch(() => { return })
+                    })
+                }
             } 
 
            await muteSchema.deleteOne({

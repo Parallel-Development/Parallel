@@ -94,14 +94,16 @@ module.exports = {
             let getRolesToRemove = await muteSchema.findOne({
                 guildid: message.guild.id,
             })
-            var { roles } = getRolesToRemove;
-            for(r of roles) {
-                member.roles.add(message.guild.roles.cache.get(r)).catch(() => { return })
+            if(getRolesToRemove) {
+                var { roles } = getRolesToRemove;
+                for (r of roles) {
+                    member.roles.add(message.guild.roles.cache.get(r)).catch(() => { return })
+                }
+                await muteSchema.deleteOne({
+                    guildid: message.guild.id,
+                    userid: member.id
+                })
             }
-            await muteSchema.deleteOne({
-                guildid: message.guild.id,
-                userid: member.id
-            })
         }
 
         const deleteModerationCommand = await settingsSchema.findOne({
