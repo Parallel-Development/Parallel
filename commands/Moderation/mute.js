@@ -69,52 +69,7 @@ module.exports = {
             if (member.id == message.author.id) return message.channel.send('Why tho')
         }
 
-        const deleteModerationCommand = await settingsSchema.findOne({
-            guildid: message.guild.id,
-            delModCmds: true
-        })
-
-        if (deleteModerationCommand) message.delete()
-
-        let reason = args.splice(1).join(' ');
-        if (!reason) {
-            reason = 'Unspecified'
-        }
-
         var role = message.guild.roles.cache.find(x => x.name === 'Muted');
-
-        if (!role) {
-            const createRole = await message.guild.roles.create({
-                data: {
-                    name: 'Muted'
-                }
-            })
-
-            message.guild.channels.cache.forEach(channel => {
-                channel.updateOverwrite(createRole, { SEND_MESSAGES: false})
-                channel.updateOverwrite(createRole, { ADD_REACTIONS: false })
-            })
-        }
-        try {
-            await member.roles.add(role)
-        } catch (err) {
-            try {
-                var role = message.guild.roles.cache.find(r => r.name == 'Muted')
-                await member.roles.add(role)
-            } catch {
-                return message.channel.send(roletoolower)
-            }
-        }
-
-        var code = '';
-        var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-        var charsLength = chars.length
-        for (var i = 0; i < 15; i++) {
-            code += chars.charAt(Math.floor(Math.random() * charsLength))
-        }
-
-        let date = new Date();
-        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date().getTime() * 4).format('h:mm:ss A');
 
         const check = await punishmentSchema.findOne({
             guildid: message.guild.id,
@@ -140,6 +95,71 @@ module.exports = {
 
             }
         }
+
+        const deleteModerationCommand = await settingsSchema.findOne({
+            guildid: message.guild.id,
+            delModCmds: true
+        })
+
+        if (deleteModerationCommand) message.delete()
+
+        let reason = args.splice(1).join(' ');
+        if (!reason) {
+            reason = 'Unspecified'
+        }
+
+        if (!role) {
+            const createRole = await message.guild.roles.create({
+                data: {
+                    name: 'Muted'
+                }
+            })
+
+            message.guild.channels.cache.forEach(channel => {
+                channel.updateOverwrite(createRole, { SEND_MESSAGES: false})
+                channel.updateOverwrite(createRole, { ADD_REACTIONS: false })
+            })
+        }
+
+        let rmrolesonmute = await settingsSchema.findOne({
+            guildid: message.guild.id,
+            rmrolesonmute: true
+        })
+        if (rmrolesonmute) {
+            const muteSchema = require('../../schemas/mute-schema')
+            const memberRoles = [];
+            member.roles.cache.forEach(r => {
+                memberRoles.push(r.id)
+                member.roles.remove(r).catch(() => { return })
+            })
+            await new muteSchema({
+                guildname: message.guild.name,
+                guildid: message.guild.id,
+                userid: member.id,
+                roles: memberRoles
+            }).save();
+        }
+
+        try {
+            await member.roles.add(role)
+        } catch (err) {
+            try {
+                var role = message.guild.roles.cache.find(r => r.name == 'Muted')
+                await member.roles.add(role)
+            } catch {
+                return message.channel.send(roletoolower)
+            }
+        }
+
+        var code = '';
+        var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+        var charsLength = chars.length
+        for (var i = 0; i < 15; i++) {
+            code += chars.charAt(Math.floor(Math.random() * charsLength))
+        }
+
+        let date = new Date();
+        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date().getTime() * 4).format('h:mm:ss A');
 
         // Tempmute?
 
@@ -322,5 +342,6 @@ module.exports = {
                     }
                 })
         }
+
     }
 }

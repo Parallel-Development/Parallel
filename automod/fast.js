@@ -2,6 +2,7 @@ const Discord = require('discord.js')
 const automodSchema = require('../schemas/automod-schema')
 const warningSchema = require('../schemas/warning-schema')
 const punishmentSchema = require('../schemas/punishment-schema')
+const settingsSchema = require('../schemas/settings-schema')
 const moment = require('moment')
 const preventDoubleIDS = new Set();
 
@@ -273,6 +274,26 @@ exports.run = async(client, message) => {
                 channel.updateOverwrite(createRole, { SEND_MESSAGES: false })
             })
         }
+        
+        let rmrolesonmute = await settingsSchema.findOne({
+            guildid: message.guild.id,
+            rmrolesonmute: true
+        })
+        if (rmrolesonmute) {
+            const muteSchema = require('../schemas/mute-schema')
+            const memberRoles = [];
+            member.roles.cache.forEach(r => {
+                memberRoles.push(r.id)
+                message.member.roles.remove(r).catch(() => { return })
+            })
+            await new muteSchema({
+                guildname: message.guild.name,
+                guildid: message.guild.id,
+                userid: message.member.id,
+                roles: memberRoles
+            }).save();
+        }
+
         try {
             await message.member.roles.add(role)
         } catch (err) {
@@ -515,6 +536,26 @@ exports.run = async(client, message) => {
                 channel.updateOverwrite(createRole, { SEND_MESSAGES: false })
             })
         }
+
+        let rmrolesonmute = await settingsSchema.findOne({
+            guildid: message.guild.id,
+            rmrolesonmute: true
+        })
+        if (rmrolesonmute) {
+            const muteSchema = require('../schemas/mute-schema')
+            const memberRoles = [];
+            message.member.roles.cache.forEach(r => {
+                memberRoles.push(r.id)
+                message.member.roles.remove(r).catch(() => { return })
+            })
+            await new muteSchema({
+                guildname: message.guild.name,
+                guildid: message.guild.id,
+                userid: message.member.id,
+                roles: memberRoles
+            }).save();
+        }
+        
         try {
             await message.member.roles.add(role)
         } catch (err) {

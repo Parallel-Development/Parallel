@@ -3,6 +3,7 @@ const settingsSchema = require('../../schemas/settings-schema');
 const punishmentSchema = require('../../schemas/punishment-schema')
 const warningSchema = require('../../schemas/warning-schema')
 const moment = require('moment')
+const muteSchema = require('../../schemas/mute-schema')
 
 module.exports = {
     name: 'unmute',
@@ -82,7 +83,26 @@ module.exports = {
             if (!member.roles.cache.get(role.id)) return message.channel.send(notmuted)
         }
         if (message.guild.me.roles.highest.position <= role.position) return message.channel.send(roletoolower)
+
         member.roles.remove(role).catch(() => { return })
+
+        let rmrolesonmute = await settingsSchema.findOne({
+            guildid: message.guild.id,
+            rmrolesonmute: true
+        })
+        if (rmrolesonmute) {
+            let getRolesToRemove = await muteSchema.findOne({
+                guildid: message.guild.id,
+            })
+            var { roles } = getRolesToRemove;
+            for(r of roles) {
+                member.roles.add(message.guild.roles.cache.get(r)).catch(() => { return })
+            }
+            await muteSchema.deleteOne({
+                guildid: message.guild.id,
+                userid: member.id
+            })
+        }
 
         const deleteModerationCommand = await settingsSchema.findOne({
             guildid: message.guild.id,

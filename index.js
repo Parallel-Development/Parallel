@@ -15,6 +15,7 @@ const settingsSchema = require('./schemas/settings-schema');
 const punishmentSchema = require('./schemas/punishment-schema');
 const warningSchema = require('./schemas/warning-schema');
 const automodSchema = require('./schemas/automod-schema');
+const muteSchema = require('./schemas/mute-schema');
 let talkedRecently = new Set();
 let hardTalkedRecently = new Set();
 const userMap = new Map()
@@ -82,6 +83,25 @@ setInterval(async() => {
             var member = await server.members.fetch(userID).catch(() =>  member = null)
 
             member.roles.remove(role).catch(() =>  { return })
+
+           let rmrolesonmute = await settingsSchema.findOne({
+               guildid: server.id,
+               rmrolesonmute: true
+           })
+            if(rmrolesonmute) {
+                let getMemberRoles = await muteSchema.findOne({
+                    guildid: server.id
+                })
+                let { roles } = getMemberRoles;
+                roles.forEach(r => {
+                    member.roles.add(server.roles.cache.get(r)).catch(() => { return })
+                })
+            } 
+
+           await muteSchema.deleteOne({
+               guildid: server.id,
+               userid: member.id
+           })
 
             const unmutedm = new Discord.MessageEmbed()
                 .setColor('#09fff2')

@@ -5,19 +5,22 @@ const reqString = {
     required: true
 }
 
+const reqBool = {
+    type: Boolean,
+    required: true
+}
+
 const settingsSchema = mongoose.Schema({
     guildname: reqString,
     guildid: reqString,
     prefix: reqString,
     baninfo: reqString,
-    delModCmds: {
-        type: Boolean,
-        required: true
-    },
+    delModCmds: reqBool,
     locked: {
         type: [String],
         required: true
-    }
+    },
+    rmrolesonmute: reqBool
 })
 
 module.exports = mongoose.model('settings', settingsSchema)
