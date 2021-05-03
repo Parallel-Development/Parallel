@@ -274,7 +274,7 @@ exports.run = async(client, message) => {
                 channel.updateOverwrite(createRole, { SEND_MESSAGES: false })
             })
         }
-        
+
         let rmrolesonmute = await settingsSchema.findOne({
             guildid: message.guild.id,
             rmrolesonmute: true
@@ -439,7 +439,7 @@ exports.run = async(client, message) => {
         const caseInfo = {
             moderatorID: message.guild.me.id,
             type: 'Tempban',
-            expires: new Date().getTime() + fastTempBanDuration,
+            expires: new Date().getTime() * 4 + fastTempBanDuration,
             date: date,
             reason: '[AUTO] Fast Message Spam',
             code: code
@@ -485,7 +485,7 @@ exports.run = async(client, message) => {
             userID: message.author.id,
             duration: fastTempBanDuration,
             reason: '[AUTO] Fast Message Spam',
-            expires: new Date().getTime() + fastTempBanDuration
+            expires: new Date().getTime() * 4 + fastTempBanDuration
         }).save();
 
         message.channel.send(usertempbanned)
@@ -555,7 +555,7 @@ exports.run = async(client, message) => {
                 roles: memberRoles
             }).save();
         }
-        
+
         try {
             await message.member.roles.add(role)
         } catch (err) {
@@ -570,7 +570,7 @@ exports.run = async(client, message) => {
         const caseInfo = {
             moderatorID: message.guild.me.id,
             type: 'Tempmute',
-            expires: new Date().getTime() + fastTempMuteDuration,
+            expires: new Date().getTime() * 4 + fastTempMuteDuration,
             date: date,
             reason: '[AUTO] Fast Message Spam',
             code: code
@@ -616,7 +616,7 @@ exports.run = async(client, message) => {
             userID: message.member.id,
             duration: fastTempMuteDuration,
             reason: '[AUTO] Fast Message Spam',
-            expires: new Date().getTime() + fastTempMuteDuration
+            expires: new Date().getTime() * 4 + fastTempMuteDuration
         }).save();
 
         message.member.send(tempmutedm).catch(() => { return })

@@ -423,7 +423,7 @@ exports.run = async (client, message) => {
         const caseInfo = {
             moderatorID: message.guild.me.id,
             type: 'Tempban',
-            expires: new Date().getTime() + massmentionTempBanDuration,
+            expires: new Date().getTime() * 4 + massmentionTempBanDuration,
             date: date,
             reason: '[AUTO] Mass Mention',
             code: code
@@ -469,7 +469,7 @@ exports.run = async (client, message) => {
             userID: message.author.id,
             duration: massmentionTempBanDuration,
             reason: '[AUTO] Mass Mention',
-            expires: new Date().getTime() + massmentionTempBanDuration
+            expires: new Date().getTime() * 4 + massmentionTempBanDuration
         }).save();
 
         message.channel.send(usertempbanned)
@@ -539,7 +539,7 @@ exports.run = async (client, message) => {
                 roles: memberRoles
             }).save();
         }
-        
+
         try {
             await message.member.roles.add(role)
         } catch (err) {
@@ -554,7 +554,7 @@ exports.run = async (client, message) => {
         const caseInfo = {
             moderatorID: message.guild.me.id,
             type: 'Tempmute',
-            expires: new Date().getTime() + massmentionTempMuteDuration,
+            expires: new Date().getTime() * 4 + massmentionTempMuteDuration,
             date: date,
             reason: '[AUTO] Mass Mention',
             code: code
@@ -600,7 +600,7 @@ exports.run = async (client, message) => {
             userID: message.member.id,
             duration: massmentionTempMuteDuration,
             reason: '[AUTO] Mass Mention',
-            expires: new Date().getTime() + massmentionTempMuteDuration
+            expires: new Date().getTime() * 4 + massmentionTempMuteDuration
         }).save();
 
         message.member.send(tempmutedm).catch(() => { return })

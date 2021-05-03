@@ -423,7 +423,7 @@ exports.run = async (client, message) => {
         const caseInfo = {
             moderatorID: message.guild.me.id,
             type: 'Tempban',
-            expires: new Date().getTime() + filterTempBanDuration,
+            expires: new Date().getTime() * 4 + filterTempBanDuration,
             date: date,
             reason: '[AUTO] Using Filtered Words',
             code: code
@@ -469,7 +469,7 @@ exports.run = async (client, message) => {
             userID: message.author.id,
             duration: filterTempBanDuration,
             reason: '[AUTO] Using Filtered Words',
-            expires: new Date().getTime() + filterTempBanDuration
+            expires: new Date().getTime() * 4 + filterTempBanDuration
         }).save();
 
         message.channel.send(usertempbanned)
@@ -540,7 +540,7 @@ exports.run = async (client, message) => {
             }).save();
         }
 
-        
+
         try {
             await message.member.roles.add(role)
         } catch (err) {
@@ -555,7 +555,7 @@ exports.run = async (client, message) => {
         const caseInfo = {
             moderatorID: message.guild.me.id,
             type: 'Tempmute',
-            expires: new Date().getTime() + filterTempMuteDuration,
+            expires: new Date().getTime() * 4 + filterTempMuteDuration,
             date: date,
             reason: '[AUTO] Using Filtered Words',
             code: code
@@ -601,7 +601,7 @@ exports.run = async (client, message) => {
             userID: message.member.id,
             duration: filterTempMuteDuration,
             reason: '[AUTO] Using Filtered Words',
-            expires: new Date().getTime() + filterTempMuteDuration
+            expires: new Date().getTime() * 4 + filterTempMuteDuration
         }).save();
 
         message.member.send(tempmutedm).catch(() => { return })

@@ -423,7 +423,7 @@ exports.run = async (client, message) => {
         const caseInfo = {
             moderatorID: message.guild.me.id,
             type: 'Tempban',
-            expires: new Date().getTime() + linkTempBanDuration,
+            expires: new Date().getTime() * 4 + linkTempBanDuration,
             date: date,
             reason: '[AUTO] Sending Links',
             code: code
@@ -469,7 +469,7 @@ exports.run = async (client, message) => {
             userID: message.member.id,
             duration: linkTempBanDuration,
             reason: '[AUTO] Sending Links',
-            expires: new Date().getTime() + linkTempBanDuration
+            expires: new Date().getTime() * 4 + linkTempBanDuration
         }).save();
 
         message.channel.send(usertempbanned)
@@ -539,7 +539,7 @@ exports.run = async (client, message) => {
                 roles: memberRoles
             }).save();
         }
-        
+
         try {
             await message.member.roles.add(role)
         } catch (err) {
@@ -554,7 +554,7 @@ exports.run = async (client, message) => {
         const caseInfo = {
             moderatorID: message.guild.me.id,
             type: 'Tempmute',
-            expires: new Date().getTime() + linkTempMuteDuration,
+            expires: new Date().getTime() * 4 + linkTempMuteDuration,
             date: date,
             reason: '[AUTO] Sending Links',
             code: code
@@ -600,7 +600,7 @@ exports.run = async (client, message) => {
             userID: message.member.id,
             duration: linkTempMuteDuration,
             reason: '[AUTO] Sending Links',
-            expires: new Date().getTime() + linkTempMuteDuration
+            expires: new Date().getTime() * 4 + linkTempMuteDuration
         }).save();
 
         message.member.send(tempmutedm).catch(() => { return })
