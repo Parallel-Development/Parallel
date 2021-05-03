@@ -73,17 +73,16 @@ module.exports = {
 
                 message.channel.send(cancelled)
                 collector.stop();
+                return;
             }
-
-            collector.on('end', (col, reason) => {
-                if (reason == 'time') {
-                    return message.channel.send('No response for more than 30 seconds, action cancelled')
-                }
-            })
         
         })
 
-
+        collector.on('end', (col, reason) => {
+            if (reason == 'time') {
+                return message.channel.send('No response for more than 30 seconds, action cancelled')
+            }
+        })
 
     }
 }
