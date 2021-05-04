@@ -18,9 +18,7 @@ exports.run = async(client, message, args) => {
 
         return message.channel.send(disableSuccess)
 
-    } else if(!args[1]) {
-        return message.channel.send('Please specify a duration. Input `disable` to make all automod warnings permanent | This will set an expiration date for all automod warnings');
-    }
+    } 
 
     let duration = ms(args[1]);
     if(!duration) return message.channel.send('Invalid time!')

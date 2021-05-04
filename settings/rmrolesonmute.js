@@ -3,7 +3,6 @@ const settingsSchema = require('../schemas/settings-schema');
 
 exports.run = async(client, message, args) => {
     const toggle = args[1];
-    if(!toggle) return message.channel.send('Options: enable, disable')
 
     if(toggle == 'enable') {
         await settingsSchema.updateOne({

@@ -24,22 +24,37 @@ module.exports = {
 
         switch (setting) {
             case 'allowcmds':
+                if (!args[1]) if (!args[1]) return message.channel.send(settingsHelp('Allow Commands', 
+                'allowcmds <enable, enablecategory, disable, disablecategory, enableall, view> [channel, category name]',
+                'Enable or disable commands in the specified channel. Moderation commands will still work in disabled channels'))
                 var file = require('../../settings/allowcmds')
                 file.run(client, message, args)
                 break;
             case 'baninfo':
+                if (!args[1]) if (!args[1]) return message.channel.send(settingsHelp('Ban Info', 
+                'baninfo <message, current: gets the current ban info message>',
+                'Adds an additional embed to the DM sent to a user when banned of whatever you like\nTip: you can make a hyperlink by formatting your text as the following: `[text](link)`'))
                 var file = require('../../settings/baninfo')
                 file.run(client, message, args)
                 break;
             case 'del-mod-cmd-triggers':
+                if (!args[1]) if (!args[1]) return message.channel.send(settingsHelp('Delete Moderation Command Triggers', 
+                'del-mod-cmd-triggers <enable, disable>',
+                'Deletes the trigger of all moderation commands that punish a user'))
                 var file = require('../../settings/delmodcmds')
                 file.run(client, message, args)
                 break;
             case 'remove-roles-on-mute':
+                if (!args[1]) if (!args[1]) return message.channel.send(settingsHelp('Remove Roles on Mute', 
+                'remove-roles-on-mute <enable, disable>',
+                'Removes all roles from a member when muted, and adds them back when unmuted'))
                 var file = require('../../settings/rmrolesonmute');
                 file.run(client, message, args)
                 break;
             case 'automod-warning-expiration':
+                if (!args[1]) return message.channel.send(settingsHelp('Automod Warning Expiration', 
+                'automod-warning-expiration <duration>',
+                'Sets an expiration date for all automod warnings'))
                 var file = require('../../settings/autowarnexpire');
                 file.run(client, message, args)
                 break;
@@ -48,5 +63,15 @@ module.exports = {
         }
 
     }
+}
+
+function settingsHelp(title, usage, description) {
+    let embed = new Discord.MessageEmbed()
+    .setColor('#09ff2')
+    .addField('Description', description)
+    .addField('Usage', `settings ${usage}`)
+    .setTitle(`Settings - ${title}`)
+
+    return embed;
 }
 
