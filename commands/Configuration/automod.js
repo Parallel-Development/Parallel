@@ -923,93 +923,93 @@ module.exports = {
                             return message.channel.send('Please specify a punishment')
                         }
                 }
+                break;
+            case 'bypass':
+                const bypassChannel = message.mentions.channels.first()
 
-                case 'bypass':
-                    const bypassChannel = message.mentions.channels.first()
-
-                    switch(toggle) {
-                        case 'add':
-                            if(!bypassChannel) return message.channel.send('Please mention the channel you want to add to the bypass list')
-                            if(bypassChannel.type !== 'text') return message.channel.send('The channel must only be a text channel!')
-                            const alreadyInBypassList0 = await automodSchema.findOne({
-                                guildid: message.guild.id,
-                                bypassChannels: bypassChannel.id
-                            })
-                            if(alreadyInBypassList0 && alreadyInBypassList0.length !== 0)  return message.channel.send('This channel is already in the bypass list! You can view the list by running `automod bypass view`')
-                            await automodSchema.updateOne({
-                                guildid: message.guild.id
-                            },
+                switch (toggle) {
+                    case 'add':
+                        if (!bypassChannel) return message.channel.send('Please mention the channel you want to add to the bypass list')
+                        if (bypassChannel.type !== 'text') return message.channel.send('The channel must only be a text channel!')
+                        const alreadyInBypassList0 = await automodSchema.findOne({
+                            guildid: message.guild.id,
+                            bypassChannels: bypassChannel.id
+                        })
+                        if (alreadyInBypassList0 && alreadyInBypassList0.length !== 0) return message.channel.send('This channel is already in the bypass list! You can view the list by running `automod bypass view`')
+                        await automodSchema.updateOne({
+                            guildid: message.guild.id
+                        },
                             {
                                 $push: {
                                     bypassChannels: bypassChannel.id
                                 }
                             })
-                            await message.channel.send(`${bypassChannel} has been added to the automod bypass list`)
-                            break;
-                        case 'remove':
-                            if (!bypassChannel) return message.channel.send('Please mention the channel you want to add to the bypass list')
-                            const alreadyInBypassList1 = await automodSchema.findOne({
-                                guildid: message.guild.id,
-                                bypassChannels: bypassChannel.id
+                        await message.channel.send(`${bypassChannel} has been added to the automod bypass list`)
+                        break;
+                    case 'remove':
+                        if (!bypassChannel) return message.channel.send('Please mention the channel you want to add to the bypass list')
+                        const alreadyInBypassList1 = await automodSchema.findOne({
+                            guildid: message.guild.id,
+                            bypassChannels: bypassChannel.id
+                        })
+                        if (!alreadyInBypassList1 || alreadyInBypassList1.length == 0) return message.channel.send('This channel is not in the bypass list! You can view the list by running `automod bypass view`')
+                        await automodSchema.updateOne({
+                            guildid: message.guild.id
+                        },
+                            {
+                                $pull: {
+                                    bypassChannels: bypassChannel.id
+                                }
                             })
-                            if (!alreadyInBypassList1 || alreadyInBypassList1.length == 0) return message.channel.send('This channel is not in the bypass list! You can view the list by running `automod bypass view`')
-                            await automodSchema.updateOne({
-                                guildid: message.guild.id
-                            },
-                                {
-                                    $pull: {
-                                        bypassChannels: bypassChannel.id
-                                    }
-                                })
-                            await message.channel.send(`${bypassChannel} has been removed from the automod bypass list`)
-                            break;
-                        case 'removeall':
-                            await automodSchema.updateOne({
-                                guildid: message.guild.id
-                            },
-                                {
-                                    bypassChannels: []
-                                })
-                            await message.channel.send(`All channels have been removed from the automod bypass list`)
-                            break;
-                        case 'view':
-                            const channelsBypassed = await automodSchema.findOne({
-                                guildid: message.guild.id,
+                        await message.channel.send(`${bypassChannel} has been removed from the automod bypass list`)
+                        break;
+                    case 'removeall':
+                        await automodSchema.updateOne({
+                            guildid: message.guild.id
+                        },
+                            {
+                                bypassChannels: []
                             })
+                        await message.channel.send(`All channels have been removed from the automod bypass list`)
+                        break;
+                    case 'view':
+                        const channelsBypassed = await automodSchema.findOne({
+                            guildid: message.guild.id,
+                        })
 
-                            const { bypassChannels } = channelsBypassed
+                        const { bypassChannels } = channelsBypassed
 
-                            if (bypassChannels == null || bypassChannels.length == 0) return message.channel.send('No channels are on the automod bypass list! Want to add some? `automod bypass add (channel)`')
-                            const bypassChannelsViewList = new Discord.MessageEmbed()
-                                .setColor('#09fff2')
-                                .setAuthor(`Bypassed channel list for ${message.guild.name}`, client.user.displayAvatarURL())
-                                bypassChannels2 = new Array()
-                                bypassChannels.forEach(async(channel) => {
-                                    if(!message.guild.channels.cache.get(channel) || message.guild.channels.cache.get(channel).type !== 'text') {
-                                        await automodSchema.updateOne({
-                                            guildid: message.guild.id
-                                        },
-                                        {
-                                            $pull: {
-                                                bypassChannels: channel
-                                            }
-                                        })
-                                    } else {
-                                        bypassChannels2.push(message.guild.channels.cache.get(channel))
-                                    }
-                                })
-
-                                bypassChannelsViewList.setDescription(bypassChannels2.join(', '))
-                            message.channel.send(bypassChannelsViewList)
-                            break;
-                        default:
-                            if (!args[0]) {
-                                return message.channel.send('Invalid option!')
+                        if (bypassChannels == null || bypassChannels.length == 0) return message.channel.send('No channels are on the automod bypass list! Want to add some? `automod bypass add (channel)`')
+                        const bypassChannelsViewList = new Discord.MessageEmbed()
+                            .setColor('#09fff2')
+                            .setAuthor(`Bypassed channel list for ${message.guild.name}`, client.user.displayAvatarURL())
+                        bypassChannels2 = new Array()
+                        bypassChannels.forEach(async (channel) => {
+                            if (!message.guild.channels.cache.get(channel) || message.guild.channels.cache.get(channel).type !== 'text') {
+                                await automodSchema.updateOne({
+                                    guildid: message.guild.id
+                                },
+                                    {
+                                        $pull: {
+                                            bypassChannels: channel
+                                        }
+                                    })
                             } else {
-                                return message.channel.send('Options: add, addcategory, remove, removecategory, removeall, view')
+                                bypassChannels2.push(message.guild.channels.cache.get(channel))
                             }
+                        })
 
-                    }
+                        bypassChannelsViewList.setDescription(bypassChannels2.join(', '))
+                        message.channel.send(bypassChannelsViewList)
+                        break;
+                    default:
+                        if (!args[0]) {
+                            return message.channel.send('Invalid option!')
+                        } else {
+                            return message.channel.send('Options: add, addcategory, remove, removecategory, removeall, view')
+                        }
+
+                }
                 break;
             default:
                 return message.channel.send('Invalid setting!')
