@@ -13,6 +13,11 @@ module.exports = {
             .setDescription('I do not have the permission to moderate member nicknames. Please give me the `Manage Nicknames` permission and run again')
             .setAuthor('Error', client.user.displayAvatarURL());
 
+        const missingarguser = new Discord.MessageEmbed()
+            .setColor('#FF0000')
+            .setDescription('User not specified')
+            .setAuthor('Error', client.user.displayAvatarURL());
+
         if(!message.guild.me.hasPermission('MANAGE_NICKNAMES')) return message.channel.send(missingperms)
 
         function getUserFromMention(mention) {
