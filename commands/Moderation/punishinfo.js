@@ -41,7 +41,6 @@ module.exports = {
         let expires;
         let date;
         let reason;
-        let duration
 
         for(const i of check.warnings) {
             if(i.code == code) {
@@ -49,7 +48,6 @@ module.exports = {
                 if (i.moderatorID) moderatorID = i.moderatorID
                 if (i.expires) {
                     expires = i.expires
-                    duration = i.expires
                 }
                 if (i.date) date = i.date
                 if (i.reason) reason = i.reason

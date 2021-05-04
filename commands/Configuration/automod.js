@@ -1,8 +1,6 @@
 const Discord = require('discord.js')
 const automodSchema = require('../../schemas/automod-schema')
 const ms = require('ms')
-const { execute } = require('./settings')
-const { filterDependencies } = require('mathjs')
 
 module.exports = {
     name: 'automod',
@@ -12,25 +10,7 @@ module.exports = {
     usage: 'automod <setting> [args]',
     async execute(client, message, args) {
 
-        const automodList = new Discord.MessageEmbed()
-        .setColor('#09fff2')
-        .setDescription('You are able to toggle what punishment a user will be given. The punishments are:\n> delete\n> warn\n> kick\n> mute\n> ban\n> tempban\n> tempmute\n\n\nYou can disable any trigger by inputting `disable`\n\n\nSyntax: \`automod (setting) [punishment]\`')
-        .addField('filter', 'Toggle the punishment for if someone sends a word in the `Filter List`', true)
-        .addField('filterlist', 'Add, remove, or view the list of filtered words', true)
-        .addField('fast', 'Toggle the punishment for if someone sends messages too quickly', true)
-        .addField('walltext', 'Toggle the puishment for if someone sends text in a wall-like form', true)
-        .addField('duplication', 'Toggle the punishment for is someone sends repeative characters in their message', true)
-        .addField('links', 'Toggle the punishment for if someone sends links in chat', true)
-        .addField('invites', 'Toggle the punishment for if someone sends a Discord invite', true)
-        .addField('bypass', 'Add or remove channels from the automod bypass list')
-        .addField('massmention', 'Toggle the punishment for if someone mentions 5 or more **individual** users', true)
-        .setAuthor(`Auto-moderation for ${message.guild.name}`, client.user.displayAvatarURL())
-
-        const option = args[0]
-        const toggle = args[1]
-        if(!option) return message.channel.send(automodList)
-
-        const automodGrab = await automodSchema.find({
+        const automodGrab = await automodSchema.findOne({
             guildid: message.guild.id
         })
 
@@ -46,8 +26,32 @@ module.exports = {
             massmentionTempMuteDuration,
             massmentionTempBanDuration,
             walltextTempMuteDuration,
-            walltextTempBanDuration
+            walltextTempBanDuration,
+            fast,
+            filter,
+            invites,
+            links,
+            massmention,
+            walltext
         } = automodGrab
+
+        const automodList = new Discord.MessageEmbed()
+        .setColor('#09fff2')
+        .setDescription('You are able to toggle what punishment a user will be given. The punishments are:\n\n> delete\n> warn\n> kick\n> mute\n> ban\n> tempban\n> tempmute\n\n\nYou can disable any trigger by inputting `disable`\n\n\nSyntax: \`automod (setting) [punishment]\`')
+        .addField('filter', `Toggled: \`${filter}\``, true)
+        .addField('filterlist', 'Add, remove, or view the list of filtered words', true)
+        .addField('fast', `Toggled: \`${fast}\``, true)
+        .addField('walltext', `Toggled: \`${walltext}\``, true)
+        .addField('duplication', 'Not out yet', true)
+        .addField('links', `Toggled: \`${links}\``, true)
+        .addField('invites', `\`${invites}\``, true)
+        .addField('bypass', 'Add or remove channels from the automod bypass list')
+        .addField('massmention', `Toggled: \`${massmention}\``, true)
+        .setAuthor(`Auto-moderation for ${message.guild.name}`, client.user.displayAvatarURL())
+
+        const option = args[0]
+        const toggle = args[1]
+        if(!option) return message.channel.send(automodList)
 
         switch(option) {
             case 'filter':

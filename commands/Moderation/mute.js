@@ -3,7 +3,8 @@ const punishmentSchema = require('../../schemas/punishment-schema');
 const settingsSchema = require('../../schemas/settings-schema');
 const warningSchema = require('../../schemas/warning-schema')
 const moment = require('moment')
-const ms = require('ms')
+const ms = require('ms');
+const { isInteger } = require('mathjs');
 
 module.exports = {
     name: 'mute',
@@ -159,12 +160,12 @@ module.exports = {
         }
 
         let date = new Date();
-        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date().getTime() * 4).format('h:mm:ss A');
+        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date().getTime() + 14400000).format('h:mm:ss A');
 
         // Tempmute?
 
         const rawTime = reason.split(' ')[0]
-        const time = ms(rawTime)
+        let time = ms(rawTime)
 
         if(time) {
             reason = reason.split(' ').slice(1).join(' ')

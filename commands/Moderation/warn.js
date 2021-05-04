@@ -2,6 +2,7 @@ const Discord = require('discord.js')
 const warningSchema = require('../../schemas/warning-schema')
 const settingsSchema = require('../../schemas/settings-schema');
 const moment = require('moment')
+const ms = require('ms')
 
 module.exports = {
     name: 'warn',
@@ -74,7 +75,7 @@ module.exports = {
         if (!reason)  reason = 'Unspecified'
 
         let date = new Date();
-        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date().getTime() * 4).format('h:mm:ss A');
+        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date().getTime() + 14400000).format('h:mm:ss A');
 
         var code = '';
         var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
@@ -83,7 +84,112 @@ module.exports = {
             code += chars.charAt(Math.floor(Math.random() * charsLength))
         }
 
-        const caseInfo = {
+        let caseInfo;
+
+        // Make the warning have an expirtion date?
+
+        const rawTime = reason.split(' ')[0]
+        let time = ms(rawTime)
+
+        if(time) {
+            reason = reason.split(' ').slice(1).join(' ')
+            if (!reason) reason = 'Unspecified'
+
+            caseInfo = {
+                moderatorID: message.author.id,
+                type: 'Warn',
+                date: date,
+                reason: reason,
+                code: code,
+                expires: new Date().getTime() + time
+            }
+
+            const warningCheck2 = await warningSchema.findOne({
+                guildid: message.guild.id,
+                userid: member.id
+            })
+
+            if (!warningCheck2) {
+                await new warningSchema({
+                    userid: member.id,
+                    guildname: message.guild.name,
+                    guildid: message.guild.id,
+                    warnings: []
+                }).save()
+                await warningSchema.updateOne({
+                    guildid: message.guild.id,
+                    userid: member.id
+                },
+                    {
+                        $push: {
+                            warnings: caseInfo
+                        }
+                    })
+            } else {
+                await warningSchema.updateOne({
+                    guildid: message.guild.id,
+                    userid: member.id
+                },
+                    {
+                        $push: {
+                            warnings: caseInfo
+                        }
+                    })
+            }
+
+            const tempuserwarned = new Discord.MessageEmbed()
+                .setColor('#09fff2')
+                .setDescription(`${member} has been warned with ID \`${code}\` <a:check:800062847974375424>`)
+
+            const tempwarndm = new Discord.MessageEmbed()
+                .setColor('#FF0000')
+                .setAuthor('Razor Moderation', client.user.displayAvatarURL())
+                .setTitle(`You were warned in ${message.guild.name}`)
+                .addField('Reason', reason)
+                .addField('Date', date, true)
+                .addField('Expires', cleanTime(time))
+                .setFooter(`Punishment ID: ${code}`)
+
+            message.channel.send(tempuserwarned)
+
+            member.send(tempwarndm).catch(() => { return })
+
+            function cleanTime(amount) {
+                let days = 0;
+                let hours = 0;
+                let minutes = 0;
+                let seconds = amount / 1000;
+
+                while (seconds >= 60) {
+                    seconds -= 60;
+                    minutes++
+                }
+
+                while (minutes >= 60) {
+                    minutes -= 60;
+                    hours++
+                }
+
+                while (hours >= 24) {
+                    hours -= 24;
+                    days++
+                }
+
+                let product = [];
+                if (days > 0) product.push(`${Math.round(days)} days`)
+                if (hours > 0) product.push(`${Math.round(hours)} hours`)
+                if (minutes > 0) product.push(`${Math.round(minutes)} minutes`)
+                if (seconds > 0) product.push(`${Math.round(seconds)} seconds`)
+
+                return product.join(', ')
+
+            }
+
+            return;
+
+        }
+
+        caseInfo = {
             moderatorID: message.author.id,
             type: 'Warn',
             date: date,

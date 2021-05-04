@@ -65,8 +65,6 @@ setInterval(async() => {
     })
    .catch(e => false)
 
-   if(expiredDate.length < 1) return;
-
    expiredDate.forEach(async(expiredDate) => {
        let {type, userID, guildid, _id} = expiredDate
 
@@ -127,6 +125,34 @@ setInterval(async() => {
             server.members.unban(userID).catch(() =>  { return })
         }
 
+    })
+
+    // Check for expired warnings
+
+    const expiredWarningDate = await warningSchema.find({
+        warnings: {
+            $elemMatch: {
+                expires: { $lte: currentDate }
+            }
+        }
+    }).catch(e => false)
+
+    expiredWarningDate.forEach(async(expiredWarningDate) => {
+        let { _id  } = expiredWarningDate
+
+        let code = 
+        await warningSchema.updateOne({
+            _id: _id
+        },
+        {
+            $pull: {
+                warnings: { 
+                    expires: {
+                        $lte: currentDate
+                    }
+                }
+            }
+        })
     })
 
 }, 5000)
@@ -218,6 +244,7 @@ client.on('messageUpdate', async(oldMessage, message) => {
     }
 
     if(!message.guild) return
+    if (message.author.bot) return;
 
     let channelBypassed = await automodSchema.findOne({
         guildid: message.guild.id,
@@ -294,8 +321,8 @@ client.on('message', async(message) => {
     }
 
     if(message.author.bot) return;
-
     if(!message.guild) return;
+
     if(!message.guild.me.hasPermission('SEND_MESSAGES', 'READ_MESSAGES')) return;
 
     let channelBypassed = await automodSchema.findOne({
@@ -483,7 +510,10 @@ client.on('message', async(message) => {
             guildid: message.guild.id,
             prefix: 'r!',
             baninfo: 'none',
-            delModCmds: false
+            delModCmds: false,
+            locked: [],
+            rmrolesonmute: false,
+            autowarnexpire: 'disabled'
         }).save()
 
         if(!message.content.startsWith('r!')) return;

@@ -15,6 +15,10 @@ exports.run = async(client, message) => {
     })
     let { fast, fastTempBanDuration, fastTempMuteDuration } = automodGrab
 
+    const grabSettings = await settingsSchema.findOne({
+        guildid: message.guild.id
+    })
+    let { autowarnexpire } = grabSettings
 
     async function deleteMessages() {
         try {
@@ -45,7 +49,7 @@ exports.run = async(client, message) => {
             }, 3000)
         }
         let date = new Date();
-        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date().getTime() * 4).format('h:mm:ss A');
+        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date().getTime() + 14400000).format('h:mm:ss A');
 
         var code = '';
         var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
@@ -54,12 +58,25 @@ exports.run = async(client, message) => {
             code += chars.charAt(Math.floor(Math.random() * charsLength))
         }
 
-        const caseInfo = {
-            moderatorID: message.guild.me.id,
-            type: 'Warn',
-            date: date,
-            reason: '[AUTO] Fast Message Spam',
-            code: code
+        let caseInfo;
+
+        if(autowarnexpire !== 'disable') {
+            caseInfo = {
+                moderatorID: message.guild.me.id,
+                type: 'Warn',
+                date: date,
+                reason: '[AUTO] Fast Message Spam',
+                code: code,
+                expires: new Date().getTime() + parseInt(autowarnexpire)
+            }
+        } else {
+            caseInfo = {
+                moderatorID: message.guild.me.id,
+                type: 'Warn',
+                date: date,
+                reason: '[AUTO] Fast Message Spam',
+                code: code
+            }
         }
 
         const warningCheck = await warningSchema.findOne({
@@ -106,6 +123,7 @@ exports.run = async(client, message) => {
             .addField('Reason', '[AUTO] Fast Message Spam')
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
+        if (autowarnexpire !== 'disabled') warndm.addField('Expires', cleanTime(autowarnexpire))
 
         message.channel.send(userwarned)
 
@@ -122,7 +140,7 @@ exports.run = async(client, message) => {
             }, 3000)
         }
         let date = new Date();
-        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date().getTime() * 4).format('h:mm:ss A');
+        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date().getTime() + 14400000).format('h:mm:ss A');
 
         var code = '';
         var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
@@ -201,7 +219,7 @@ exports.run = async(client, message) => {
             }, 3000)
         }
         let date = new Date();
-        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date().getTime() * 4).format('h:mm:ss A');
+        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date().getTime() + 14400000).format('h:mm:ss A');
 
         var code = '';
         var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
@@ -332,7 +350,7 @@ exports.run = async(client, message) => {
             }, 3000)
         }
         let date = new Date();
-        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date().getTime() * 4).format('h:mm:ss A');
+        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date().getTime() + 14400000).format('h:mm:ss A');
         var code = '';
         var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
         var charsLength = chars.length
@@ -410,7 +428,7 @@ exports.run = async(client, message) => {
             }, 3000)
         }
         let date = new Date();
-        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date().getTime() * 4).format('h:mm:ss A');
+        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date().getTime() + 14400000).format('h:mm:ss A');
 
         var code = '';
         var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
@@ -501,7 +519,7 @@ exports.run = async(client, message) => {
             }, 3000)
         }
         let date = new Date();
-        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date().getTime() * 4).format('h:mm:ss A');
+        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date().getTime() + 14400000).format('h:mm:ss A');
 
         var code = '';
         var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
