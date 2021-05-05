@@ -210,7 +210,7 @@ client.on('guildDelete', async(guild) => {
         guildid: guild.id
     })
     await automodSchema.deleteMany({
-        guildid: message.guild.id
+        guildid: guild.id
     })
 })
 
