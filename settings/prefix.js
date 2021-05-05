@@ -1,3 +1,5 @@
+const settingsSchema = require('../schemas/settings-schema')
+
 exports.run = async(client, message, args) => {
     if (!args[1]) return message.channel.send('Please specify a prefix')
 

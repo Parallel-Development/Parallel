@@ -64,6 +64,7 @@ module.exports = {
                 'Changes the prefix for the server'))
                 var file = require('../../settings/prefix')
                 file.run(client, message, args)
+                break;
             default:
                 return message.channel.send('Invalid option | Run `settings` to get the list of settings')
         }
