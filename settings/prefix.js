@@ -6,7 +6,7 @@ exports.run = async(client, message, args) => {
     await settingsSchema.updateOne({
         guildid: message.guild.id
     }, {
-        prefix: args[0]
+        prefix: args[1]
     })
     message.channel.send(`The server prefix for razor is now \`${args[1]}\`. You can ping me for the prefix if you ever forget`)
 }
