@@ -212,6 +212,7 @@ module.exports = {
 }
 
 function cleanTime(amount) {
+    
     let days = 0;
     let hours = 0;
     let minutes = 0;

@@ -529,8 +529,6 @@ client.on('message', async(message) => {
         active: active
     }
 
-    let blockEval = new Set()
-
     var args = message.content.split(' ')
     if(prefixSetting) {
         var { prefix } = prefixSetting
@@ -629,7 +627,7 @@ client.on('message', async(message) => {
     }
 
     try {
-        command.execute(client, message, args, ops, blockEval)
+        command.execute(client, message, args, ops)
     } catch {
         return
     }
