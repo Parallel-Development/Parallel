@@ -132,15 +132,15 @@ setInterval(async() => {
     const expiredWarningDate = await warningSchema.find({
         warnings: {
             $elemMatch: {
-                expires: { $lte: currentDate }
+                expires: { $lte: currentDate },
+                type: 'Warn'
             }
         }
     }).catch(e => false)
 
     expiredWarningDate.forEach(async(expiredWarningDate) => {
-        let { _id  } = expiredWarningDate
+        let { _id} = expiredWarningDate
 
-        let code = 
         await warningSchema.updateOne({
             _id: _id
         },

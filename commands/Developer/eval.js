@@ -58,6 +58,8 @@ module.exports = {
         .setColor('#09fff2')
         .setDescription('Evaluating... <a:loading:834973811735658548>')
 
+        let completed = false;
+
         const evaluatingMessage = await message.channel.send(tryingToEval)
         if(noBlock) evaluatingMessage.delete()
             
@@ -67,10 +69,11 @@ module.exports = {
                 if(!noBlock) {
                     const tooBigOutput = new Discord.MessageEmbed()
                     .setColor('#FF0000')
-                    .setDescription(`Output was too big to be sent, evaluation cancelled (${output.length} characters)`)
+                    .setDescription(`Output was too big to be sent!`)
                     return evaluatingMessage.edit(tooBigOutput).catch(() =>{ return })
                 }
             }
+            completed = true;
         } catch (err) {
             const error = new Discord.MessageEmbed()
                 .setColor('#FF0000')
@@ -82,6 +85,7 @@ module.exports = {
             else {
                 return evaluatingMessage.edit(error).catch(() => { return })
             }
+            completed = true;
         }
 
         const outputembed = new Discord.MessageEmbed()
