@@ -131,6 +131,11 @@ module.exports = {
             if(member.roles.cache.size >= 10) message.channel.send('Muting the member... | this may take a while due to having many roles')
             const muteSchema = require('../../schemas/mute-schema')
             const memberRoles = [];
+
+            await muteSchema.deleteMany({
+                guildid: message.guild.id,
+                userid: member.id
+            })
             
             member.roles.cache.forEach(r => {
                 memberRoles.push(r.id)
