@@ -336,7 +336,7 @@ module.exports = {
                             guildid: message.guild.id
                         },
                             {
-                                fast: 'disbaled',
+                                fast: 'disabled',
 
 
                             })
@@ -474,7 +474,7 @@ module.exports = {
                             guildid: message.guild.id
                         },
                             {
-                                walltext: 'disbaled',
+                                walltext: 'disabled',
 
 
                             })
@@ -630,7 +630,7 @@ module.exports = {
                             guildid: message.guild.id
                         },
                             {
-                                links: 'disbaled',
+                                links: 'disabled',
 
 
                             })
@@ -768,7 +768,7 @@ module.exports = {
                             guildid: message.guild.id
                         },
                         {
-                            invites: 'disbaled',
+                            invites: 'disabled',
 
 
                         })
@@ -906,7 +906,7 @@ module.exports = {
                             guildid: message.guild.id
                         },
                             {
-                                massmention: 'disbaled',
+                                massmention: 'disabled',
 
 
                             })
