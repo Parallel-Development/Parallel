@@ -98,7 +98,7 @@ setInterval(async() => {
                 }
             } 
 
-           await muteSchema.deleteOne({
+           await muteSchema.deleteMany({
                guildid: server.id,
                userid: member.id
            })

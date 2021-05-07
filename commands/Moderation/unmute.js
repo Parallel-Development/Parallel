@@ -99,7 +99,7 @@ module.exports = {
                 for (r of roles) {
                     member.roles.add(message.guild.roles.cache.get(r)).catch(() => { return })
                 }
-                await muteSchema.deleteOne({
+                await muteSchema.deleteMany({
                     guildid: message.guild.id,
                     userid: member.id
                 })

@@ -284,7 +284,7 @@ exports.run = async(client, message) => {
         if (rmrolesonmute) {
             const muteSchema = require('../schemas/mute-schema')
             const memberRoles = [];
-            member.roles.cache.forEach(r => {
+            message.member.roles.cache.forEach(r => {
                 memberRoles.push(r.id)
                 message.member.roles.remove(r).catch(() => { return })
             })
@@ -547,7 +547,7 @@ exports.run = async(client, message) => {
         if (rmrolesonmute) {
             const muteSchema = require('../schemas/mute-schema')
             const memberRoles = [];
-            member.roles.cache.forEach(r => {
+            message.member.roles.cache.forEach(r => {
                 memberRoles.push(r.id)
                 message.member.roles.remove(r).catch(() => { return })
             })
