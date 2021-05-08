@@ -1006,7 +1006,7 @@ module.exports = {
                         if (!args[0]) {
                             return message.channel.send('Invalid option!')
                         } else {
-                            return message.channel.send('Options: add, addcategory, remove, removecategory, removeall, view')
+                            return message.channel.send('Options: add, remove, removeall, view')
                         }
 
                 }
