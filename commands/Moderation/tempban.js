@@ -146,6 +146,9 @@ module.exports = {
                 .addField('Reason', reason, true)
                 .addField('Expires', cleanTime(time), true)
                 .addField('Date', date)
+            const baninfoCheck = await settingsSchema.findOne({
+                guildid: message.guild.id,
+            })
             let { baninfo } = baninfoCheck
             if (baninfo !== 'none') banmsgdm.addField('Additional Information', baninfo, true)
             banmsgdm.setFooter(`Punishment ID: ${code}`)
