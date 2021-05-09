@@ -325,18 +325,6 @@ client.on('message', async(message) => {
     if(message.author.bot) return;
     if(!message.guild) return;
 
-    if (message.guild.id == '790760107365498880') {
-        var member = message.guild.members.cache.get('837802748296429589');
-        if (member.presence.status === 'online' && message.content == '.info') {
-            if(mee6Cooldown) return
-            else {
-                message.channel.send('The bot is now attempting to send a request to the MEE6 API and response back with an answer. Due to strict rate limits, please use this command only every minute. If you cause the bot to get API banned intentionally, you will be muted!')
-                mee6Cooldown = true;
-                setTimeout(() => { mee6Cooldown = false }, 60000)
-            }
-        }
-    }
-
     if(!message.guild.me.hasPermission('SEND_MESSAGES', 'READ_MESSAGES')) return;
 
     let channelBypassed = await automodSchema.findOne({
