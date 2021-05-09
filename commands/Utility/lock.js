@@ -1,4 +1,5 @@
 const Discord = require('discord.js')
+const lockSchema = require('../../schemas/lock-schema')
 
 module.exports = {
     name: 'lock',
@@ -7,6 +8,57 @@ module.exports = {
     moderationCommand: true,
     permission: 'MANAGE_CHANNELS',
     async execute(client, message, args) {
-        
+
+        /*const missingperms = new Discord.MessageEmbed()
+            .setColor('#FF0000')
+            .setDescription('I do not have the permission to lock channels. Please give me the `Manage Channels` permission and run again')
+            .setAuthor('Error', client.user.displayAvatarURL());
+
+        let channel = message.mentions.channels.first();
+
+        let reason = args.slice(1).join(' ');
+
+        if(!channel) {
+            channel = message.channel;
+            reason = args.join(' ')
+        }
+
+        if(!reason) reason = 'Unspecified';
+
+        const locking = new Discord.MessageEmbed()
+            .setColor('#ffa500')
+            .setDescription(`Now attempting to lock ${channel}...`)
+
+        if(!message.guild.me.hasPermission('MANAGE_CHANNELS')) return message.channel.send(missingperms);
+        if(!message.channel.permissionsFor(message.guild.me).toArray().includes('MANAGE_CHANNELS')) return message.channel.send('I cannot manage this channel. Please give me permission to manage this channel and run again')
+
+        const msg = await message.channel.send(locking)
+
+        channel.permissionOverwrites.forEach(r => {
+            if (r.type == 'role' && !channel.permissionsFor(message.guild.roles.cache.get(r.id)).toArray().includes('MANAGE_MESSAGES')) {
+                channel.updateOverwrite(message.guild.roles.cache.get(r.id), {
+                    SEND_MESSAGES: false,
+                    ADD_REACTIONS: false,
+                })
+
+                
+            }
+        })
+
+        locked = new Discord.MessageEmbed()
+        .setColor('#ffa500')
+        .setAuthor('Channel Locked', client.user.displayAvatarURL())
+        .setDescription('This channel is currently locked | This means you cannot send messages in this channel')
+        .addField('Lock Reason', reason)
+
+        if(channel == message.channel) {
+            msg.edit(locked)
+        } else {
+            msg.edit(new Discord.MessageEmbed()
+            .setColor('#ffa500')
+            .setDescription(`Successfully locked ${channel}`))
+
+            channel.send(locked).catch(() => { return });
+        }*/
     }
 }

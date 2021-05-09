@@ -132,7 +132,7 @@ module.exports = {
 
         const unmutedm = new Discord.MessageEmbed()
             .setColor('#09fff2')
-            .setAuthor('You were unmuted', client.user.displayAvatarURL())
+            .setAuthor('Razor Moderation', client.user.displayAvatarURL())
             .setTitle(`You were unmuted in ${message.guild.name}`)
             .addField('Reason', reason)
             .setFooter(moment(message.createdtimeStamp).format('MMMM Do YYYY'))

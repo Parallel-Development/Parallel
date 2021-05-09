@@ -110,7 +110,7 @@ module.exports = {
         }
 
         const banmsg = new Discord.MessageEmbed()
-            .setColor('#09fff2')
+            .setColor('#FF0000')
         if (!userNotMember) banmsg.setDescription(`${member} has been banned with ID \`${code}\` <a:check:800062847974375424>`)
         if (userNotMember) banmsg.setDescription(`**${member.tag}** has been banned with ID \`${code}\` <a:check:800062847974375424>`)
 

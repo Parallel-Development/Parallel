@@ -100,7 +100,7 @@ module.exports = {
         member.send(kickmsgdm).catch(() => { return })
 
         const kickmsg = new Discord.MessageEmbed()
-            .setColor('#09fff2')
+            .setColor('#ff6f00')
             .setDescription(`${member} has been kicked with ID \`${code}\` <a:check:800062847974375424>`)
 
         member.kick(reason).catch(() => {

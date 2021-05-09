@@ -138,7 +138,7 @@ module.exports = {
             }
 
             const tempuserwarned = new Discord.MessageEmbed()
-                .setColor('#09fff2')
+                .setColor('#ffec00')
                 .setDescription(`${member} has been warned with ID \`${code}\` <a:check:800062847974375424>`)
 
             const tempwarndm = new Discord.MessageEmbed()
