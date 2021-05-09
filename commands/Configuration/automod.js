@@ -130,7 +130,7 @@ module.exports = {
                         message.channel.send(`Users who send words on the \`Filtered List\` will get muted for ${rawTime}`)
                         break;
                     case 'disable':
-                        await automodSchema.findOneAndUpdate({
+                        await automodSchema.updateOne({
                             guildid: message.guild.id
                         },
                             {
