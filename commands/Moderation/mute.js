@@ -295,7 +295,7 @@ module.exports = {
         }).save();
 
         const mutemsg = new Discord.MessageEmbed()
-            .setColor('#09fff2')
+            .setColor('#ffec00')
             .setDescription(`${member} has been muted with ID \`${code}\` <a:check:800062847974375424>`)
 
 

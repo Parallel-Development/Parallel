@@ -231,7 +231,7 @@ module.exports = {
         }
 
         const userwarned = new Discord.MessageEmbed()
-            .setColor('#09fff2')
+            .setColor('#ffec00')
             .setDescription(`${member} has been warned with ID \`${code}\` <a:check:800062847974375424>`)
 
         const warndm = new Discord.MessageEmbed()
