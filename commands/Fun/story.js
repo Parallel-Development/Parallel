@@ -5,6 +5,14 @@ module.exports = {
     name: 'story',
     deprecated: true,
     async execute(client, message, args) {
+
+        if(!cooldown) return
+        else {
+            cooldown = true;
+            setTimeout(() => { 
+                cooldown = false;
+            }, 3600000)
+        }
     
 
         message.channel.send(`The Fall - A story by Piyeris
