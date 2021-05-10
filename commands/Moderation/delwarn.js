@@ -6,7 +6,7 @@ const punishmentSchema = require('../../schemas/punishment-schema');
 module.exports = {
     name: 'delwarn',
     description: 'Deletes a warning from a user',
-    permissions: 'MANAGE_GUILD',
+    permissions: 'MANAGE_MESSAGES',
     moderationCommand: true,
     usage: 'delwarn <code>',
     aliases: ['deleteinfraction', 'delinfraction', 'rmpunish', 'deletepunish', 'removepunish', 'rmwarn', 'removewarn'],
@@ -29,7 +29,11 @@ module.exports = {
         })
         if (check) {
 
-            const { userid } = check
+            const { userid, moderatorID } = check
+
+            if(moderatorID !== message.author.id && !message.member.hasPermission('ADMINISTRATOR')) {
+                return message.channel.send('You can only delete warnings that you gave. You need the `Administrator` permission to delete other warnings')
+            }
 
             await warningSchema.updateOne({
                 guildid: message.guild.id,

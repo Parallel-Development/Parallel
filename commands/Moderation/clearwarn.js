@@ -6,7 +6,7 @@ const punishmentSchema = require('../../schemas/punishment-schema');
 module.exports = {
     name: 'clearwarn',
     description: 'Clears all warnings from a user',
-    permissions: 'MANAGE_GUILD',
+    permissions: 'ADMINISTRATOR',
     moderationCommand: true,
     usage: 'clearwarn <user>',
     aliases: ['clearinfractions', 'clearwarnings', 'clearwarns'],
