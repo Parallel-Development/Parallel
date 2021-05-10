@@ -32,7 +32,7 @@ module.exports = {
             const { userid, moderatorID } = check
 
             if(moderatorID !== message.author.id && !message.member.hasPermission('MANAGE_GUILD')) {
-                return message.channel.send('You can only delete warnings that you gave. You need the `Administrator` permission to delete other warnings')
+                return message.channel.send('You can only delete warnings that you gave. You need the `Manage Guild` permission to delete other warnings')
             }
 
             await warningSchema.updateOne({
