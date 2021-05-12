@@ -71,10 +71,10 @@ module.exports = {
             if (member.id == '745401642664460319') return message.channel.send('no.')
             if (member.id == message.author.id) return message.channel.send('Why tho')
             if (!userNotMember) if (member.hasPermission('ADMINISTRATOR')) return message.channel.send(moderator);
-            if (!userNotMember) if (message.member.roles.highest.position < member.roles.highest.position) {
+            if (!userNotMember) if (message.member.roles.highest.position <= member.roles.highest.position) {
                 return message.channel.send(yourroletoolow)
             }
-            if (userNotMember) if (member.roles.highest.position >= message.guild.me.roles.highest.position) return message.channel.send(roletoolower)
+            if(!userNotMember) if (member.roles.highest.position >= message.guild.me.roles.highest.position) return message.channel.send(roletoolower)
         }
 
         if(userNotMember) {
