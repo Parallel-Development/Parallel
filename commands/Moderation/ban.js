@@ -74,7 +74,7 @@ module.exports = {
             if (!userNotMember) if (message.member.roles.highest.position < member.roles.highest.position) {
                 return message.channel.send(yourroletoolow)
             }
-            if (!userNotMember) if (member.roles.highest.position >= message.guild.me.roles.highest.position) return message.channel.send(roletoolower)
+            if (userNotMember) if (member.roles.highest.position >= message.guild.me.roles.highest.position) return message.channel.send(roletoolower)
         }
 
         if(userNotMember) {

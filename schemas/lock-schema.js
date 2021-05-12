@@ -5,7 +5,7 @@ const reqString = {
     required: true
 }
 
-const reqObject = {
+const reqArray = {
     type: [String],
     required: true
 }
@@ -13,8 +13,9 @@ const reqObject = {
 const lockSchema = mongoose.Schema({
     guildname: reqString,
     guildid: reqString,
-    neutralOverwrites: reqObject,
-    enabledOverwrites: reqObject
+    channelid: reqString,
+    neutralOverwrites: reqArray,
+    enabledOverwrites: reqArray,
 })
 
 module.exports = mongoose.model('locks', lockSchema)

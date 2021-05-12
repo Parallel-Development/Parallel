@@ -25,23 +25,67 @@ module.exports = {
 
         if(!reason) reason = 'Unspecified';
 
+        const alreadyLocked = await lockSchema.findOne({
+            guildid: message.guild.id,
+            channelid: channel.id
+        })
+
+        if(alreadyLocked) return message.channel.send('This channel is already locked! (If you manually unlocked, just run the unlock command to register this channel as unlocked)')
+
         const locking = new Discord.MessageEmbed()
             .setColor('#ffa500')
             .setDescription(`Now attempting to lock ${channel}...`)
 
         if(!message.guild.me.hasPermission('MANAGE_CHANNELS')) return message.channel.send(missingperms);
-        if(!message.channel.permissionsFor(message.guild.me).toArray().includes('MANAGE_CHANNELS')) return message.channel.send('I cannot manage this channel. Please give me permission to manage this channel and run again')
+        if(!channel.permissionsFor(message.guild.me).toArray().includes('MANAGE_CHANNELS')) return message.channel.send('I cannot manage this channel. Please give me permission to manage this channel and run again')
 
         const msg = await message.channel.send(locking)
 
-        channel.permissionOverwrites.forEach(r => {
-            if (r.type == 'role' && !channel.permissionsFor(message.guild.roles.cache.get(r.id)).toArray().includes('MANAGE_MESSAGES')) {
-                channel.updateOverwrite(message.guild.roles.cache.get(r.id), {
-                    SEND_MESSAGES: false,
-                    ADD_REACTIONS: false,
-                })
+        await new lockSchema({
+            guildid: message.guild.id,
+            guildname: message.guild.name,
+            channelid: channel.id,
+            enabledOverwrites: [],
+            neutralOverwrites: []
+        }).save()
 
-                
+        const lockedChannel = await lockSchema.findOne({
+            guildid: message.guild.id,
+            channelid: channel.id
+        })
+
+        channel.permissionOverwrites.forEach(async(r) => {
+            if (r.type == 'role' && !channel.permissionsFor(message.guild.roles.cache.get(r.id)).toArray().includes('MANAGE_MESSAGES')) {
+                if(!r.allow.toArray().includes('MANAGE_MESSAGES')
+                || !channel.permissionsFor(message.guild.roles.cache.get(r.id)).toArray().includes('MANAGE_MESSAGES')
+                || !channel.permissionsFor(message.guild.roles.cache.get(r.id)).toArray().includes('ADMINISTRATOR'))
+                {
+                    channel.updateOverwrite(message.guild.roles.cache.get(r.id), {
+                        SEND_MESSAGES: false,
+                    }).catch(e => false)
+
+                   if(r.allow.toArray().includes('SEND_MESSAGES')) {
+                       await lockedChannel.updateOne({
+                           guildid: message.guild.id,
+                           channelid: channel.id
+                       },
+                       {
+                           $push: {
+                               enabledOverwrites: r.id
+                           }
+                       })
+                   } else if(!r.deny.toArray().includes('SEND_MESSAGES')) {
+                       await lockedChannel.updateOne({
+                           guildid: message.guild.id,
+                           channelid: channel.id
+                       },
+                        {
+                            $push: {
+                                neutralOverwrites: r.id
+                            }
+                        })
+                   }
+                }
             }
         })
 
