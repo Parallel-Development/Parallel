@@ -523,7 +523,7 @@ module.exports = {
                             })
                         var success = new Discord.MessageEmbed()
                             .setColor('#09fff2')
-                            .setDescription('Users who send links will get there message deleted <a:check:800062847974375424>')
+                            .setDescription('Users who send links will get their message deleted <a:check:800062847974375424>')
                             .setAuthor('Automod Update', client.user.displayAvatarURL())
                         message.channel.send(success)
                         break;
@@ -661,7 +661,7 @@ module.exports = {
                             })
                         var success = new Discord.MessageEmbed()
                         .setColor('#09fff2')
-                        .setDescription('Users who send discord invites will get there message deleted <a:check:800062847974375424>')
+                        .setDescription('Users who send discord invites will get their message deleted <a:check:800062847974375424>')
                         .setAuthor('Automod Update', client.user.displayAvatarURL())
                         message.channel.send(success)
                         break;
@@ -799,7 +799,7 @@ module.exports = {
                             })
                         var success = new Discord.MessageEmbed()
                             .setColor('#09fff2')
-                            .setDescription('Users who ping 5+ people will get there message deleted <a:check:800062847974375424>')
+                            .setDescription('Users who ping 5+ people will get their message deleted <a:check:800062847974375424>')
                             .setAuthor('Automod Update', client.user.displayAvatarURL())
                         message.channel.send(success)
                         break;

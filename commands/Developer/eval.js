@@ -58,26 +58,15 @@ module.exports = {
         .setColor('#09fff2')
         .setDescription('Evaluating... <a:loading:834973811735658548>')
 
-        let completed = false;
-
         const evaluatingMessage = await message.channel.send(tryingToEval)
         if(noBlock) evaluatingMessage.delete()
             
         try {
             output = await eval(code)
-            if(output.length >= 1024) {
-                if(!noBlock) {
-                    const tooBigOutput = new Discord.MessageEmbed()
-                    .setColor('#FF0000')
-                    .setDescription(`Output was too big to be sent!`)
-                    return evaluatingMessage.edit(tooBigOutput).catch(() =>{ return })
-                }
-            }
-            completed = true;
         } catch (err) {
             const error = new Discord.MessageEmbed()
                 .setColor('#FF0000')
-                .setDescription(`Input: \`\`\`js\n${code}\`\`\`\nOutput: \`\`\`js\n${err}\`\`\``)
+                .setDescription(`Input: \`\`\`js\n${code}\`\`\`\nOutput: \`\`\`js\n` + err + `\`\`\``)
                 .setAuthor(`Evaluation`, client.user.displayAvatarURL())
                 .setTitle(`Completed in ${Math.abs(new Date().getTime() - evaluatingMessage.createdTimestamp)}ms`)
                 .setFooter(`Type: error`)
@@ -85,17 +74,24 @@ module.exports = {
             else {
                 return evaluatingMessage.edit(error).catch(() => { return })
             }
-            completed = true;
+        }
+
+        if (typeof output !== 'string') output = util.inspect(output, { depth: 0 });
+        if (output.length >= 1024) {
+            if (!noBlock) {
+                const tooBigOutput = new Discord.MessageEmbed()
+                    .setColor('#FF0000')
+                    .setDescription(`Output was too big to be sent!`)
+                return evaluatingMessage.edit(tooBigOutput).catch(() => { return })
+            }
         }
 
         const outputembed = new Discord.MessageEmbed()
             .setColor('#09fff2')
-            .setDescription(`Input:\`\`\`js\n${code}\`\`\`\nOutput:\`\`\`\n${output}\`\`\``)
+            .setDescription(`Input:\`\`\`js\n${code}\`\`\`\nOutput:\`\`\`js\n` + output + `\`\`\``)
             .setAuthor('Evaluation', client.user.displayAvatarURL())
             .setTitle(`Completed in ${Math.abs(new Date().getTime() - evaluatingMessage.createdTimestamp)}ms`)
             .setFooter(`Type: ${typeof output}`)
-
-        if (typeof output != 'string') output = util.inspect(output);
 
         if(!noBlock) evaluatingMessage.edit(outputembed).catch(() => { return })
 
