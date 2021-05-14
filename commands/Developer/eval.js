@@ -77,14 +77,6 @@ module.exports = {
         }
 
         if (typeof output !== 'string') output = util.inspect(output, { depth: 0 });
-        if (output.length >= 1024) {
-            if (!noBlock) {
-                const tooBigOutput = new Discord.MessageEmbed()
-                    .setColor('#FF0000')
-                    .setDescription(`Output was too big to be sent!`)
-                evaluatingMessage.edit(tooBigOutput).catch(() => { return })
-            }
-        }
 
         const outputembed = new Discord.MessageEmbed()
             .setColor('#09fff2')
@@ -93,7 +85,7 @@ module.exports = {
             .setTitle(`Completed in ${Math.abs(new Date().getTime() - evaluatingMessage.createdTimestamp)}ms`)
             .setFooter(`Type: ${typeof output}`)
 
-        if(!noBlock) evaluatingMessage.edit(outputembed).catch(() => { return })
+        if(!noBlock) evaluatingMessage.edit(outputembed).catch(() => { return message.channel.send('Output was too big to be sent') })
 
         const logEvaluation = client.channels.cache.get('822853570213838849')
         const evalLog = new Discord.MessageEmbed()
