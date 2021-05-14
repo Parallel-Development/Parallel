@@ -63,6 +63,7 @@ module.exports = {
             
         try {
             output = await eval(code)
+            type = typeof(output);
         } catch (err) {
             const error = new Discord.MessageEmbed()
                 .setColor('#FF0000')
@@ -83,7 +84,7 @@ module.exports = {
             .setDescription(`Input:\`\`\`js\n${code}\`\`\`\nOutput:\`\`\`js\n` + output + `\`\`\``)
             .setAuthor('Evaluation', client.user.displayAvatarURL())
             .setTitle(`Completed in ${Math.abs(new Date().getTime() - evaluatingMessage.createdTimestamp)}ms`)
-            .setFooter(`Type: ${typeof output}`)
+            .setFooter(`Type: ${type}`)
 
         if(!noBlock) evaluatingMessage.edit(outputembed).catch(() => { return message.channel.send('Output was too big to be sent') })
 
