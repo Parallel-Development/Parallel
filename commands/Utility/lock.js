@@ -9,7 +9,7 @@ module.exports = {
     permission: 'MANAGE_CHANNELS',
     async execute(client, message, args) {
 
-        /*const missingperms = new Discord.MessageEmbed()
+        const missingperms = new Discord.MessageEmbed()
             .setColor('#FF0000')
             .setDescription('I do not have the permission to lock channels. Please give me the `Manage Channels` permission and run again')
             .setAuthor('Error', client.user.displayAvatarURL());
@@ -41,18 +41,8 @@ module.exports = {
 
         const msg = await message.channel.send(locking)
 
-        await new lockSchema({
-            guildid: message.guild.id,
-            guildname: message.guild.name,
-            channelid: channel.id,
-            enabledOverwrites: [],
-            neutralOverwrites: []
-        }).save()
-
-        const lockedChannel = await lockSchema.findOne({
-            guildid: message.guild.id,
-            channelid: channel.id
-        })
+        let enabledOverwrites = new Array();
+        let neutralOverwrites = new Array();
 
         channel.permissionOverwrites.forEach(async(r) => {
             if (r.type == 'role' && !channel.permissionsFor(message.guild.roles.cache.get(r.id)).toArray().includes('MANAGE_MESSAGES')) {
@@ -64,30 +54,22 @@ module.exports = {
                         SEND_MESSAGES: false,
                     }).catch(e => false)
 
-                   if(r.allow.toArray().includes('SEND_MESSAGES')) {
-                       await lockedChannel.updateOne({
-                           guildid: message.guild.id,
-                           channelid: channel.id
-                       },
-                       {
-                           $push: {
-                               enabledOverwrites: r.id
-                           }
-                       })
-                   } else if(!r.deny.toArray().includes('SEND_MESSAGES')) {
-                       await lockedChannel.updateOne({
-                           guildid: message.guild.id,
-                           channelid: channel.id
-                       },
-                        {
-                            $push: {
-                                neutralOverwrites: r.id
-                            }
-                        })
-                   }
+                    if(r.allow.toArray().includes('SEND_MESSAGES')) {
+                        enabledOverwrites.push(r.id)
+                    } else if(!r.deny.toArray().includes('SEND_MESSAGES')) {
+                        neutralOverwrites.push(r.id)
+                    }
                 }
             }
         })
+
+        await new lockSchema({
+            guildid: message.guild.id,
+            guildname: message.guild.name,
+            channelid: channel.id,
+            enabledOverwrites: enabledOverwrites,
+            neutralOverwrites: neutralOverwrites
+        }).save()
 
         locked = new Discord.MessageEmbed()
         .setColor('#ffa500')
@@ -103,6 +85,6 @@ module.exports = {
             .setDescription(`Successfully locked ${channel}`))
 
             channel.send(locked).catch(() => { return });
-        }*/
+        }
     }
 }

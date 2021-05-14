@@ -9,7 +9,7 @@ module.exports = {
     permission: 'MANAGE_CHANNELS',
     async execute(client, message, args) {
 
-        /*const missingperms = new Discord.MessageEmbed()
+        const missingperms = new Discord.MessageEmbed()
             .setColor('#FF0000')
             .setDescription('I do not have the permission to unlock channels. Please give me the `Manage Channels` permission and run again')
             .setAuthor('Error', client.user.displayAvatarURL());
@@ -33,6 +33,7 @@ module.exports = {
         if (!getLockSchema) return message.channel.send('This channel is already unlocked! (If you manually locked, just run the lock command to register this channel as locked)')
 
         const { enabledOverwrites, neutralOverwrites } = getLockSchema;
+        console.log(enabledOverwrites, neutralOverwrites)
 
         const unlocking = new Discord.MessageEmbed()
             .setColor('#FF000')
@@ -44,12 +45,14 @@ module.exports = {
         const msg = await message.channel.send(unlocking)
 
         enabledOverwrites.forEach(overwrite => {
+            console.log('test1')
             channel.updateOverwrite(message.guild.roles.cache.get(overwrite), { 
                 SEND_MESSAGES: true
             }).catch(e => false)
         })
 
         neutralOverwrites.forEach(overwrite => {
+            console.log('test')
             channel.updateOverwrite(message.guild.roles.cache.get(overwrite), {
                 SEND_MESSAGES: null
             }).catch(e => false)
@@ -61,8 +64,8 @@ module.exports = {
         })
 
         unlocked = new Discord.MessageEmbed()
-            .setColor('#ffa500')
-            .setAuthor('Channel Locked', client.user.displayAvatarURL())
+            .setColor('#FF000')
+            .setAuthor('Channel Unlocked', client.user.displayAvatarURL())
             .setDescription('This channel has been unlocked | This means you can now send messages in this channel')
             .addField('Unlock Reason', reason)
 
@@ -74,6 +77,6 @@ module.exports = {
                 .setDescription(`Successfully unlocked ${channel}`))
 
             channel.send(unlocked).catch(() => { return });
-        }*/
+        }
     }
 }
