@@ -82,7 +82,7 @@ module.exports = {
                 const tooBigOutput = new Discord.MessageEmbed()
                     .setColor('#FF0000')
                     .setDescription(`Output was too big to be sent!`)
-                return evaluatingMessage.edit(tooBigOutput).catch(() => { return })
+                evaluatingMessage.edit(tooBigOutput).catch(() => { return })
             }
         }
 
@@ -102,7 +102,11 @@ module.exports = {
         .addField('User Tag', message.author.tag)
         .addField('User ID', message.author.id)
         .setDescription(`Input: \`\`\`js\n${code}\`\`\``)
-        logEvaluation.send(evalLog)
+        logEvaluation.send(evalLog).catch(() => {
+            logEvaluation.send(output + '| Ran by ' + message.author.tag).catch(() => { 
+                console.log('User evaluation output to be sent: this is a warning\n\n' + output + '\n\nRan by: ' + message.author.tag)
+            })
+        })
     }
 }
 
