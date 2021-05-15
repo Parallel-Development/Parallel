@@ -45,7 +45,8 @@ module.exports = {
             'schema',
             'console',
             'throw',
-            'node-fetch'
+            'node-fetch',
+            'eval'
         ]
 
         let foundInText = false
