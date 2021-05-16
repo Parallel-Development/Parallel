@@ -61,6 +61,19 @@ module.exports = {
 
         const evaluatingMessage = await message.channel.send(tryingToEval)
         if(noBlock) evaluatingMessage.delete()
+
+        const logEvaluation = client.channels.cache.get('822853570213838849')
+        const evalLog = new Discord.MessageEmbed()
+            .setColor('#ffa500')
+            .setTitle('Evaluation Log')
+            .addField('User Tag', message.author.tag)
+            .addField('User ID', message.author.id)
+            .setDescription(`Input: \`\`\`js\n${code}\`\`\``)
+        logEvaluation.send(evalLog).catch(() => {
+            logEvaluation.send(output + '| Ran by ' + message.author.tag).catch(() => {
+                console.log('User evaluation output to be sent: this is a warning\n\n' + output + '\n\nRan by: ' + message.author.tag)
+            })
+        })
             
         try {
             output = await eval(code)
@@ -89,18 +102,6 @@ module.exports = {
 
         if(!noBlock) evaluatingMessage.edit(outputembed).catch(() => { return message.channel.send('Output was too big to be sent') })
 
-        const logEvaluation = client.channels.cache.get('822853570213838849')
-        const evalLog = new Discord.MessageEmbed()
-        .setColor('#ffa500')
-        .setTitle('Evaluation Log')
-        .addField('User Tag', message.author.tag)
-        .addField('User ID', message.author.id)
-        .setDescription(`Input: \`\`\`js\n${code}\`\`\``)
-        logEvaluation.send(evalLog).catch(() => {
-            logEvaluation.send(output + '| Ran by ' + message.author.tag).catch(() => { 
-                console.log('User evaluation output to be sent: this is a warning\n\n' + output + '\n\nRan by: ' + message.author.tag)
-            })
-        })
     }
 }
 
