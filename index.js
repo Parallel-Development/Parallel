@@ -78,9 +78,9 @@ setInterval(async() => {
             var role = server.roles.cache.find(r => r.name === 'Muted')
             if(!role) return;
 
-            var member = await server.members.fetch(userID).catch(() =>  member = null)
+            var member = await server.members.fetch(userID).catch(() => member = null)
 
-            member.roles.remove(role).catch(() =>  { return })
+            member.roles.remove(role).catch(() => { return })
 
            let rmrolesonmute = await settingsSchema.findOne({
                guildid: server.id,

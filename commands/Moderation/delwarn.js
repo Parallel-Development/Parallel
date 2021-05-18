@@ -1,7 +1,5 @@
 const Discord = require('discord.js')
 const warningSchema = require('../../schemas/warning-schema')
-const settingsSchema = require('../../schemas/settings-schema');
-const punishmentSchema = require('../../schemas/punishment-schema');
 
 module.exports = {
     name: 'delwarn',
@@ -13,9 +11,9 @@ module.exports = {
     async execute(client, message, args) {
 
         const missingargcode = new Discord.MessageEmbed()
-        .setColor('#FF0000')
-        .setDescription('Please specify a punishment to delete')
-        
+            .setColor('#FF0000')
+            .setDescription('Please specify a punishment to delete')
+
         let code = args[0]
         if (!code) return message.channel.send(missingargcode)
 
@@ -29,15 +27,22 @@ module.exports = {
         })
         if (check) {
 
-            const { userid, moderatorID } = check
+            let moderatorID;
+            let userid;
 
-            if(moderatorID !== message.author.id && !message.member.hasPermission('MANAGE_GUILD')) {
+            for (const i of check.warnings) {
+                if (i.code == code) {
+                    moderatorID = i.moderatorID;
+                    userid = i.userid
+                }
+            }
+            console.log(moderatorID)
+            if (moderatorID !== message.author.id && !message.member.hasPermission('MANAGE_GUILD')) {
                 return message.channel.send('You can only delete warnings that you gave. You need the `Manage Guild` permission to delete other warnings')
             }
 
             await warningSchema.updateOne({
                 guildid: message.guild.id,
-                userid: userid,
                 warnings: {
                     $elemMatch: {
                         code: code
@@ -45,13 +50,13 @@ module.exports = {
                 }
 
             },
-            {
-                $pull: {
-                    warnings: {
-                        code: code
+                {
+                    $pull: {
+                        warnings: {
+                            code: code
+                        }
                     }
-                }
-            })
+                })
 
             const delwarnembed = new Discord.MessageEmbed()
                 .setColor('#09fff2')

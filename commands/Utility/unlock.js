@@ -60,7 +60,7 @@ module.exports = {
 
         await lockSchema.deleteOne({
             guildid: message.guild.id,
-            channelid: message.channel.id
+            channelid: channel.id
         })
 
         unlocked = new Discord.MessageEmbed()
