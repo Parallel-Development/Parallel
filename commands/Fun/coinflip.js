@@ -11,7 +11,7 @@ module.exports = {
         const result = flip[Math.floor(Math.random() * flip.length)];
 
         const resultEmbed = new Discord.MessageEmbed()
-            .setColor('#09fff2')
+            .setColor('#09ff2')
             .setDescription(`Coin was flipped! It landed on... ${result}`)
             .setAuthor('Coinflip', client.user.displayAvatarURL())
 
