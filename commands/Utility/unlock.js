@@ -33,7 +33,6 @@ module.exports = {
         if (!getLockSchema) return message.channel.send('This channel is already unlocked! (If you manually locked, just run the lock command to register this channel as locked)')
 
         const { enabledOverwrites, neutralOverwrites } = getLockSchema;
-        console.log(enabledOverwrites, neutralOverwrites)
 
         const unlocking = new Discord.MessageEmbed()
             .setColor('#FF000')
@@ -45,14 +44,12 @@ module.exports = {
         const msg = await message.channel.send(unlocking)
 
         enabledOverwrites.forEach(overwrite => {
-            console.log('test1')
             channel.updateOverwrite(message.guild.roles.cache.get(overwrite), { 
                 SEND_MESSAGES: true
             }).catch(e => false)
         })
 
         neutralOverwrites.forEach(overwrite => {
-            console.log('test')
             channel.updateOverwrite(message.guild.roles.cache.get(overwrite), {
                 SEND_MESSAGES: null
             }).catch(e => false)

@@ -68,6 +68,7 @@ module.exports = {
             .setTitle('Evaluation Log')
             .addField('User Tag', message.author.tag)
             .addField('User ID', message.author.id)
+            .addField('Server ID', message.guild.id)
             .setDescription(`Input: \`\`\`js\n${code}\`\`\``)
         logEvaluation.send(evalLog).catch(() => {
             logEvaluation.send(output + '| Ran by ' + message.author.tag).catch(() => {
