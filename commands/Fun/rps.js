@@ -2,7 +2,7 @@ const Discord = require('discord.js');
 
 module.exports = {
     name: 'rps',
-    description: 'Player someone in rock-paper-scissors',
+    description: 'Play someone in rock-paper-scissors',
     usage: 'rps <player>',
     async execute(client, message, args) {
         function getUserFromMention(mention) {
