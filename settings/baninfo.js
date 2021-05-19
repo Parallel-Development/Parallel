@@ -21,9 +21,10 @@ exports.run = async(client, message, args) => {
     }, {
         baninfo: banInfoMessage
     })
-    if(baninfoMessage == 'none') return message.channel.send('Ban Information module has been disabled')
+
     const successMessage = new Discord.MessageEmbed()
         .setColor('#09fff2')
-        .setDescription(`Success! Message: ${banInfoMessage}`)
+        if(banInfoMessage !== 'none') successMessage.setDescription(`Success! Message: ${banInfoMessage}`)
+        if(banInfoMessage == 'none') successMessage.setDescription(`Success! The ban info module has been disabled!`)
     message.channel.send(successMessage)
 }
