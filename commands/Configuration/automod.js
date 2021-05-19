@@ -1016,26 +1016,3 @@ module.exports = {
         }
     }
 }
-
-function cleanTime(amount) {
-    let days = 0;
-    let hours = 0;
-    let minutes = 0;
-    let seconds = amount;
-
-    while (seconds >= 60) {
-        seconds -= 60;
-        minutes++
-    }
-
-    while (minutes >= 60) {
-        minutes -= 60;
-        hours++
-    }
-
-    while (hours >= 24) {
-        hours -= 24;
-        days++
-    }
-
-}

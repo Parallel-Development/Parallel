@@ -1,12 +1,10 @@
 const Discord = require('discord.js')
 
 module.exports = {
-    name: 'decrypt',
-    description: 'Decrypts hex or binary',
-    usage: 'decrypt <type: hex, binary> <text>',
-    aliases: ['decode'],
+    name: 'encode',
+    description: 'Encryptes text into base64, or binary (utf8)',
+    usage: 'encrypt <type: base64, binary>',
     async execute(client, message, args) {
-
         const missingargtype = new Discord.MessageEmbed()
         .setColor('#FF0000')
         .setDescription('Please specify a type: \`base64\` or \`binary\`')
@@ -22,11 +20,11 @@ module.exports = {
         .setDescription('Please input text to encrypt!')
         .setAuthor('Error', client.user.displayAvatarURL())
 
-        const type = args[0]
-        if(!type) return message.channel.send(missingargtype);
 
-        const text = args.splice(1).join(' ');
-        if(!text) return message.channel.send(notext)
+        const type = args[0]
+        if(!type) return message.channel.send(missingargtype)
+
+        const text = args.splice(1).join(' ')
         const toolarge = new Discord.MessageEmbed()
         .setColor('#FF0000')
         .setDescription(`This input is too large! Please keep it at a max of 500 characters (You attempted to encrypt \`${text.length}\` characters`)
@@ -35,16 +33,27 @@ module.exports = {
         if(text.length > 500) return message.channel.send(toolarge)
 
         if(type.toLowerCase() == 'base64') {
-            const base64outputraw = new Buffer.from(text, 'base64')
-            const base64output = base64outputraw.toString();
+            const base64outputraw = new Buffer.from(text)
+            const base64output = base64outputraw.toString('base64')
+            if(base64output.length > 1024) return message.channel.send('Error: output was too long (above 1024 characters)')
             const base64outputembed = new Discord.MessageEmbed()
             .setColor('#09fff2')
-            .addField('Input (Base64)', text)
-            .addField('Decrypted Text', `\`${base64output}\``)
+            .addField('Input', text)
+            .addField('Encrypted (Base 64)', `\`${base64output}\``)
             .setAuthor('Text Encryption', client.user.displayAvatarURL())
             message.channel.send(base64outputembed)
         } else if(type.toLowerCase() == 'binary') {
-            message.channel.send('Binary is not supported yet')
+            let output = '';
+            for(i = 0; i < text.length; i++) {
+                output += text[i].charCodeAt(0).toString(2) + " ";
+            }
+            if(output.length > 1024) return message.channel.send('Error: output was too long (above 1024 characters)')
+            const binaryoutputembed = new Discord.MessageEmbed()
+            .setColor('#09fff2')
+            .addField('Input', text)
+            .addField('Encrypted (Binary)', `\`${output}\``)
+            .setAuthor('Text Encryption', client.user.displayAvatarURL())
+            message.channel.send(binaryoutputembed)
         } else {
             return message.channel.send(invalidtype)
         }

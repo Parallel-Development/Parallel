@@ -46,14 +46,14 @@ module.exports = {
             'console',
             'throw',
             'node-fetch',
-            'eval'
+            'eval',
         ]
 
         let foundInText = false
         for(i in filter) {
             if(code.toLowerCase().includes(filter[i])) foundInText = true
         }
-        if (foundInText && !dev.includes(message.author.id)) return message.channel.send('Error: refused to execute this command because it may be potentially abusive. If you think this is an error, contact a developer')
+        if (foundInText && !dev.includes(message.author.id)) return message.channel.send('Ayo I don\'t think I should run this, just me?');
 
         const tryingToEval = new Discord.MessageEmbed()
         .setColor('#09fff2')

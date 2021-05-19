@@ -1,7 +1,6 @@
 const Discord = require('discord.js')
 const config = require('../../config.json')
 const moment = require('moment')
-const { execute } = require('../Moderation/ban')
 
 module.exports = {
     name: 'blacklist',
