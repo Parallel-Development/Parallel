@@ -20,6 +20,9 @@ module.exports = {
             .setDescription(`Randomly generated codes are not saved anywhere, or shown to anyone else. **Only you can see this code**\n\n\`${randomCode}\``)
             .setFooter('Note: it is unsuggested to use these codes as passwords, as sending passwords via Discord is not secure')
             message.author.send(output)
+            .catch(() => {
+                return message.channel.send('Failed to send code to your DM\'s. Are your DM\'s on?')
+            })
             message.channel.send('Random code sent via DM\'s <a:check:800062978899836958>')
             return;
         } else {

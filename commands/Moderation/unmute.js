@@ -95,10 +95,11 @@ module.exports = {
                 guildid: message.guild.id,
             })
             if(getRolesToRemove) {
-                var { roles } = getRolesToRemove;
-                for (r of roles) {
-                    member.roles.add(message.guild.roles.cache.get(r)).catch(() => { return })
-                }
+                let { roles } = getRolesToRemove;
+                roles.forEach(r => {
+                    var role2 = message.guild.roles.cache.get(r);
+                    if(role2) member.roles.add(role2).catch(() => { })
+                })
                 await muteSchema.deleteMany({
                     guildid: message.guild.id,
                     userid: member.id
