@@ -199,21 +199,6 @@ client.on('guildMemberAdd', async(member) => {
 
 })
 
-client.on('guildDelete', async(guild) => {
-    await settingsSchema.deleteMany({
-        guildid: guild.id
-    })
-    await warningSchema.deleteMany({
-        guildid: guild.id
-    })
-    await punishmentSchema.deleteMany({
-        guildid: guild.id
-    })
-    await automodSchema.deleteMany({
-        guildid: guild.id
-    })
-})
-
 ////////////////////////////////////
 ////////////// Main ////////////////
 ////////////////////////////////////

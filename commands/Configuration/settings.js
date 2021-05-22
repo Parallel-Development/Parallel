@@ -18,6 +18,7 @@ module.exports = {
             .addField('Delete Moderation Commands', '__del-mod-cmd-triggers__\n\nDeletes all triggers moderation commands that punishes a user')
             .addField('Remove Roles on Mute', '__remove-roles-on-mute__\n\nRemoves all roles from the muted user, and adds them back when unmuted')
             .addField('Automod Warning Expiration', '__automod-warning-expiration__\n\nSet an expiration date for all automod warnings')
+            .addField('Mute Role', '__muterole__\n\nChange the role given to users when muted');
             return message.channel.send(settingsPannel);
         }
 
@@ -62,6 +63,13 @@ module.exports = {
                 'prefix <prefix>',
                 'Changes the prefix for the server'))
                 var file = require('../../settings/prefix')
+                file.run(client, message, args)
+                break;
+            case 'muterole':
+                if(!args[1]) return message.channel.send(`Mute Role`,
+                'muterole <role: mention, name, or ID>',
+                'Changes the role given to users when muted');
+                var file = require('../../settings/muterole');
                 file.run(client, message, args)
                 break;
             default:

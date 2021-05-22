@@ -51,6 +51,8 @@ module.exports = {
             if(!role) return message.channel.send(missingargrole)
         }
 
+        if(role.managable) return message.channel.send('You cannot add a bot role to a user!')
+
         if(message.member.roles.highest.position <= role.position) {
             if(!message.guild.owner) {
                 return message.channel.send('You cannot grant this role as your role hierarchy is equal or below this role')
