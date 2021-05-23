@@ -65,13 +65,6 @@ module.exports = {
                 var file = require('../../settings/prefix')
                 file.run(client, message, args)
                 break;
-            case 'muterole':
-                if(!args[1]) return message.channel.send(`Mute Role`,
-                'muterole <role: mention, name, or ID>',
-                'Changes the role given to users when muted');
-                var file = require('../../settings/muterole');
-                file.run(client, message, args)
-                break;
             default:
                 return message.channel.send('Invalid option | Run `settings` to get the list of settings')
         }

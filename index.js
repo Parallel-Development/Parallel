@@ -500,7 +500,10 @@ client.on('message', async(message) => {
             delModCmds: false,
             locked: [],
             rmrolesonmute: false,
-            autowarnexpire: 'disabled'
+            autowarnexpire: 'disabled',
+            messageLogChannel: 'none',
+            moderationLogChannel: 'none',
+            automodLogChannel: 'none'
         }).save()
 
         if(!message.content.startsWith('r!')) return;

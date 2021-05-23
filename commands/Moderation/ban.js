@@ -1,7 +1,9 @@
 const Discord = require('discord.js');
 const settingsSchema = require('../../schemas/settings-schema');
 const warningSchema = require('../../schemas/warning-schema')
+const punishmentSchema = require('../../schemas/punishment-schema')
 const moment = require('moment')
+const ms = require('ms')
 
 module.exports = {
     name: 'ban',
@@ -118,6 +120,88 @@ module.exports = {
             guildid: message.guild.id,
         })
 
+        // Tempban?
+
+        const rawTime = reason.split(' ')[0]
+        let time = ms(rawTime)
+
+        if(time) {
+            reason = reason.split(' ').slice(1).join(' ')
+            if (!userNotMember) {
+                const banmsgdm = new Discord.MessageEmbed()
+                    .setColor('#FF0000')
+                    .setAuthor('Razor Moderation', client.user.displayAvatarURL())
+                    .setTitle(`You were banned from ${message.guild.name}`)
+                    .addField('Reason', reason, true)
+                    .addField('Expires', cleanTime(time), true)
+                    .addField('Date', date)
+                let { baninfo } = baninfoCheck
+                if (baninfo !== 'none') banmsgdm.addField('Additional Information', baninfo, true)
+                banmsgdm.setFooter(`Punishment ID: ${code}`)
+
+                member.send(banmsgdm).catch(() => { return })
+            }
+
+            await new punishmentSchema({
+                guildname: message.guild.name,
+                guildid: message.guild.id,
+                type: 'ban',
+                userID: member.id,
+                duration: time,
+                reason: reason,
+                expires: new Date().getTime() + time
+            }).save();
+
+            message.guild.members.ban(member, { reason: reason })
+
+            message.channel.send(banmsg);
+
+            const caseInfo = {
+                moderatorID: message.author.id,
+                type: 'Tempban',
+                expires: new Date().getTime() + time,
+                date: date,
+                reason: reason,
+                code: code
+            }
+
+            const warningCheck = await warningSchema.findOne({
+                guildid: message.guild.id,
+                userid: member.id
+            })
+
+            if (!warningCheck) {
+                await new warningSchema({
+                    userid: member.id,
+                    guildname: message.guild.name,
+                    guildid: message.guild.id,
+                    warnings: []
+                }).save()
+                await warningSchema.updateOne({
+                    guildid: message.guild.id,
+                    userid: member.id
+                },
+                    {
+                        $push: {
+                            warnings: caseInfo
+                        }
+                    })
+            } else {
+                await warningSchema.updateOne({
+                    guildid: message.guild.id,
+                    userid: member.id
+                },
+                    {
+                        $push: {
+                            warnings: caseInfo
+                        }
+                    })
+            }
+
+            return;
+
+        }
+
         if (!userNotMember) {
             const banmsgdm = new Discord.MessageEmbed()
                 .setColor('#FF0000')
@@ -179,3 +263,36 @@ module.exports = {
         }
     }
 }
+
+function cleanTime(amount) {
+
+    let days = 0;
+    let hours = 0;
+    let minutes = 0;
+    let seconds = amount / 1000;
+
+    while (seconds >= 60) {
+        seconds -= 60;
+        minutes++
+    }
+
+    while (minutes >= 60) {
+        minutes -= 60;
+        hours++
+    }
+
+    while (hours >= 24) {
+        hours -= 24;
+        days++
+    }
+
+    let product = [];
+    if (days > 0) product.push(`${Math.round(days)} days`)
+    if (hours > 0) product.push(`${Math.round(hours)} hours`)
+    if (minutes > 0) product.push(`${Math.round(minutes)} minutes`)
+    if (seconds > 0) product.push(`${Math.round(seconds)} seconds`)
+
+    return product.join(', ')
+
+}
+

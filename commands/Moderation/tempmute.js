@@ -14,4 +14,4 @@ module.exports = {
         message.channel.send('Tempmute is no longer a command! Specify a duration in the mute command to tempmute. Example: `r!mute (user) {time} [reason]`')
     }
 
-}
+} 

@@ -2,7 +2,6 @@ const Discord = require('discord.js')
 const ytdl = require('ytdl-core')
 const search = require('youtube-search')
 const config = require('../../config.json')
-const { finished } = require('snekfetch')
 
 module.exports = {
     name: 'play',
