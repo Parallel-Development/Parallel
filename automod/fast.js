@@ -23,7 +23,7 @@ exports.run = async(client, message) => {
     async function deleteMessages() {
         try {
             message.channel.messages.fetch({
-                limit: 7
+                limit: 4
             }).then(messages => {
                 let userMessages = []
                 messages.filter(m => m.author.id == message.author.id).forEach(msg => userMessages.push(msg))
