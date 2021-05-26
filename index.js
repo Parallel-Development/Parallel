@@ -538,7 +538,7 @@ client.on('message', async(message) => {
 
     // Check for if the message starts with pinging Razor, if it does, give the prefix;
 
-    if (message.content.startsWith(message.mentions.members.find(m => m.id === '745401642664460319'))) {
+    if (message.content.startsWith('<@!745401642664460319>') || message.content.startsWith('<@745401642664460319>')) {
 
         if(check) return;
 
