@@ -3,6 +3,19 @@ const settingsSchema = require('../schemas/settings-schema');
 
 exports.run = async(client, message, args) => { 
     const channel = message.mentions.channels.first();
+    if(args[1] == 'none') {
+        await settingsSchema.updateOne({
+            guildid: message.guild.id,
+        },
+        {
+             messageLogging: 'none'
+        })
+
+        message.channel.send(`Success! Messages updates will no longer be logged`)
+
+        return;
+
+    }
     if(!channel) return message.channel.send('Please specify a channel')
 
     if(!channel.permissionsFor(message.guild.me).toArray().includes('SEND_MESSAGES')) {
