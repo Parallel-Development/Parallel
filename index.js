@@ -328,7 +328,7 @@ client.on('messageUpdate', async(oldMessage, message) => {
             .addField('New Message', `\`\`\`${message.content}\`\`\``)
             .addField('Edited in', message.channel)
             .setFooter(`ID: ${message.id}`)
-            messageLogChannel.send(messageLogEmbed)
+            messageLogChannel.send(messageLogEmbed).catch(() => { return })
         }
     }
 
@@ -373,7 +373,7 @@ client.on('messageDelete', async(message) => {
         .addField('Message', `\`\`\`${message.content}\`\`\``)
         .addField('Deleted in', message.channel)
         .setFooter(`ID: ${message.id}`)
-        messageLogChannel.send(messageLogEmbed)
+        messageLogChannel.send(messageLogEmbed).catch(() => { return })
         
     }
 })
