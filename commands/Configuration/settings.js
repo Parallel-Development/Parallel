@@ -18,6 +18,7 @@ module.exports = {
             .addField('Delete Moderation Commands', '__del-mod-cmd-triggers__\n\nDeletes all triggers moderation commands that punishes a user')
             .addField('Remove Roles on Mute', '__remove-roles-on-mute__\n\nRemoves all roles from the muted user, and adds them back when unmuted')
             .addField('Automod Warning Expiration', '__automod-warning-expiration__\n\nSet an expiration date for all automod warnings')
+            .addField('Message Log Channel', '__message-log-channel__\n\nSets the channel in which message updates will be logged')
             return message.channel.send(settingsPannel);
         }
 
@@ -62,6 +63,13 @@ module.exports = {
                 'prefix <prefix>',
                 'Changes the prefix for the server'))
                 var file = require('../../settings/prefix')
+                file.run(client, message, args)
+                break;
+            case 'message-log-channel':
+                if(!args[1]) return message.channel.send(settingsHelp('Message Log Channel',
+                'message-log-channel <channel | none>',
+                'Sets the channel for which message updates will be logged'))
+                var file = require('../../settings/msglogchannel')
                 file.run(client, message, args)
                 break;
             default:

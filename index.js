@@ -295,11 +295,88 @@ client.on('messageUpdate', async(oldMessage, message) => {
                 return;
             }
         }
+
+        let isMessageLogChannel = await settingsSchema.findOne({
+            guildid: message.guild.id,
+        })
+
+        let { messageLogging } = isMessageLogChannel
+
+        if(messageLogging !== 'none') {
+
+            if (!message.guild.channels.cache.get(messageLogging)) {
+
+                await settingsSchema.updateOne({
+                    guildid: message.guild.id
+                },
+                {
+                    messageLogging: 'none'
+                })
+
+                return;
+            }
+
+            let messageLogChannel = message.guild.channels.cache.get(messageLogging);
+
+            let messageLogEmbed = new Discord.MessageEmbed()
+            .setColor('#FFFF00')
+            .setAuthor('Razor Logging', client.user.displayAvatarURL())
+            .setTitle('Message Update')
+            .setDescription(`__[Jump to Message](${message.url})__`)  
+            .addField('User', `**${oldMessage.author.tag}** - \`${oldMessage.author.id}\``) 
+            .addField('Old Message', `\`\`\`${oldMessage.content}\`\`\``)
+            .addField('New Message', `\`\`\`${message.content}\`\`\``)
+            .addField('Edited in', message.channel)
+            .setFooter(`ID: ${message.id}`)
+            messageLogChannel.send(messageLogEmbed)
+        }
     }
 
-})
+});
 
-let mee6Cooldown = false;
+client.on('messageDelete', async(message) => {
+    if(!message.guild) return;
+    
+    if(devOnly) {
+        if(!config.developers.includes(message.author.id)) return;
+    }
+
+    if(message.bot) return;
+
+    let isMessageLogChannel = await settingsSchema.findOne({
+        guildid: message.guild.id
+    })
+
+    let { messageLogging } = isMessageLogChannel
+
+    if(messageLogging !== 'none') {
+
+        if (!message.guild.channels.cache.get(messageLogging)) {
+
+            await settingsSchema.updateOne({
+                guildid: message.guild.id
+            },
+                {
+                    messageLogging: 'none'
+                })
+
+            return;
+        }
+
+        let messageLogChannel = message.guild.channels.cache.get(messageLogging);
+        
+        let messageLogEmbed = new Discord.MessageEmbed()
+        .setColor('#FFFF00')
+        .setAuthor('Razor Logging', client.user.displayAvatarURL())
+        .setTitle('Message Deleted')
+        .addField('User', `**${message.author.tag}** - \`${message.author.id}\``)
+        .addField('Message', `\`\`\`${message.content}\`\`\``)
+        .addField('Deleted in', message.channel)
+        .setFooter(`ID: ${message.id}`)
+        messageLogChannel.send(messageLogEmbed)
+        
+    }
+})
 
 client.on('message', async(message) => {
 
@@ -369,8 +446,6 @@ client.on('message', async(message) => {
 
         // Spam
 
-        // 7 messages in 10 seconds
-
         if (userMap.has(message.author.id)) {
             const userData = userMap.get(message.author.id)
             let msgCount = userData.msgCount
@@ -396,8 +471,6 @@ client.on('message', async(message) => {
                 userMap.delete(message.author.id)
             }, 4000)
         }
-
-        // 10 messages in 15 seconds
 
         // Invites
 
@@ -503,7 +576,8 @@ client.on('message', async(message) => {
             autowarnexpire: 'disabled',
             messageLogChannel: 'none',
             moderationLogChannel: 'none',
-            automodLogChannel: 'none'
+            automodLogChannel: 'none',
+            messageLogging: 'none'
         }).save()
 
         if(!message.content.startsWith('r!')) return;
@@ -624,4 +698,4 @@ client.on('message', async(message) => {
 
 });
 
-client.login(config.token)
+client.login(config.token);
