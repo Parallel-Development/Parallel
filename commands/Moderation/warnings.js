@@ -88,8 +88,8 @@ module.exports = {
         while(i < warningsCheck.warnings.length && count < 7) {
             let x = warningsCheck.warnings[i]
             count++
-            if (x.reason.length > 30) {
-                x.reason = x.reason.substr(0, 30) + '...'
+            if (x.reason.length > 60) {
+                x.reason = x.reason.substr(0, 60) + '...'
             }
             warningsEmbed.addField(`${i + 1}: ${x.type}`, `Reason: \`${x.reason}\`\nDate: \`${x.date}\`\nPunishment ID: \`${x.code}\``)
             i += 1

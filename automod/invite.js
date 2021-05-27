@@ -49,7 +49,7 @@ exports.run = async(client, message) => {
                 moderatorID: message.guild.me.id,
                 type: 'Warn',
                 date: date,
-                reason: '[AUTO] Sending Invites',
+                reason: '[RAZOR INVITE DETECTION] Sending Invites',
                 code: code,
                 expires: new Date().getTime() + parseInt(autowarnexpire)
             }
@@ -58,7 +58,7 @@ exports.run = async(client, message) => {
                 moderatorID: message.guild.me.id,
                 type: 'Warn',
                 date: date,
-                reason: '[AUTO] Sending Invites',
+                reason: '[RAZOR INVITE DETECTION] Sending Invites',
                 code: code
             }
         }
@@ -104,7 +104,7 @@ exports.run = async(client, message) => {
             .setColor('#FF0000')
             .setAuthor('Razor Moderation', client.user.displayAvatarURL())
             .setTitle(`You were warned in ${message.guild.name}`)
-            .addField('Reason', '[AUTO] Sending Invites')
+            .addField('Reason', '[RAZOR INVITE DETECTION] Sending Invites')
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
         if (autowarnexpire !== 'disabled') warndm.addField('Expires', cleanTime(autowarnexpire))
@@ -141,19 +141,19 @@ exports.run = async(client, message) => {
             .setColor('#FF0000')
             .setAuthor('Razor Moderation', client.user.displayAvatarURL())
             .setTitle(`You were kicked from ${message.guild.name}`)
-            .addField('Reason', '[AUTO] Sending Invites')
+            .addField('Reason', '[RAZOR INVITE DETECTION] Sending Invites')
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
 
         message.member.send(kickdm).catch(() => { return })
 
-        message.member.kick('[AUTO] Sending Invites').catch(() => { return })
+        message.member.kick('[RAZOR INVITE DETECTION] Sending Invites').catch(() => { return })
 
         const caseInfo = {
             moderatorID: message.guild.me.id,
             type: 'Kick',
             date: date,
-            reason: '[AUTO] Sending Invites',
+            reason: '[RAZOR INVITE DETECTION] Sending Invites',
             code: code
         }
 
@@ -216,7 +216,7 @@ exports.run = async(client, message) => {
             moderatorID: message.guild.me.id,
             type: 'Mute',
             date: date,
-            reason: '[AUTO] Sending Invites',
+            reason: '[RAZOR INVITE DETECTION] Sending Invites',
             code: code
         }
 
@@ -259,7 +259,7 @@ exports.run = async(client, message) => {
             type: 'mute',
             userID: message.author.id,
             duration: 'permanent',
-            reason: '[AUTO] Sending Invites',
+            reason: '[RAZOR INVITE DETECTION] Sending Invites',
             expires: 'never'
         }).save();
 
@@ -315,7 +315,7 @@ exports.run = async(client, message) => {
             .setColor('#FF0000')
             .setAuthor('Razor Moderation', client.user.displayAvatarURL())
             .setTitle(`You were muted in ${message.guild.name}`)
-            .addField('Reason', '[AUTO] Sending Invites')
+            .addField('Reason', '[RAZOR INVITE DETECTION] Sending Invites')
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
 
@@ -347,7 +347,7 @@ exports.run = async(client, message) => {
             moderatorID: message.guild.me.id,
             type: 'Ban',
             date: date,
-            reason: '[AUTO] Sending Invites',
+            reason: '[RAZOR INVITE DETECTION] Sending Invites',
             code: code
         }
 
@@ -392,13 +392,13 @@ exports.run = async(client, message) => {
             .setColor('#FF0000')
             .setAuthor('Razor Moderation', client.user.displayAvatarURL())
             .setTitle(`You were banned from ${message.guild.name}`)
-            .addField('Reason', '[AUTO] Sending Invites')
+            .addField('Reason', '[RAZOR INVITE DETECTION] Sending Invites')
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
 
         message.member.send(bandm).catch(() => { return })
 
-        message.guild.members.ban(message.member, { reason: '[AUTO] Sending Invites' }).catch(() => { return })
+        message.guild.members.ban(message.member, { reason: '[RAZOR INVITE DETECTION] Sending Invites' }).catch(() => { return })
 
         message.channel.send(userbanned)
     }
@@ -430,21 +430,21 @@ exports.run = async(client, message) => {
             .setColor('#FF0000')
             .setAuthor('Razor Moderation', client.user.displayAvatarURL())
             .setTitle(`You were banned from ${message.guild.name}`)
-            .addField('Reason', '[AUTO] Sending Invites')
+            .addField('Reason', '[RAZOR INVITE DETECTION] Sending Invites')
             .addField('Expires', cleanTime(invitesTempBanDuration), true)
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
 
         message.member.send(tempbandm).catch(() => { return })
 
-        message.guild.members.ban(message.member, { reason: '[AUTO] Sending Invites' }).catch(() => { return })
+        message.guild.members.ban(message.member, { reason: '[RAZOR INVITE DETECTION] Sending Invites' }).catch(() => { return })
 
         const caseInfo = {
             moderatorID: message.guild.me.id,
             type: 'Tempban',
             expires: new Date().getTime() +  invitesTempBanDuration,
             date: date,
-            reason: '[AUTO] Sending Invites',
+            reason: '[RAZOR INVITE DETECTION] Sending Invites',
             code: code
         }
 
@@ -487,7 +487,7 @@ exports.run = async(client, message) => {
             type: 'ban',
             userID: message.author.id,
             duration: invitesTempBanDuration,
-            reason: '[AUTO] Sending Invites',
+            reason: '[RAZOR INVITE DETECTION] Sending Invites',
             expires: new Date().getTime() +  invitesTempBanDuration
         }).save();
 
@@ -521,7 +521,7 @@ exports.run = async(client, message) => {
             .setColor('#FF0000')
             .setAuthor('Razor Moderation', client.user.displayAvatarURL())
             .setTitle(`You were muted in ${message.guild.name}`)
-            .addField('Reason', '[AUTO] Sending Invites')
+            .addField('Reason', '[RAZOR INVITE DETECTION] Sending Invites')
             .addField('Expires', cleanTime(invitesTempMuteDuration), true)
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
@@ -575,7 +575,7 @@ exports.run = async(client, message) => {
             type: 'Tempmute',
             expires: new Date().getTime() +  invitesTempMuteDuration,
             date: date,
-            reason: '[AUTO] Sending Invites',
+            reason: '[RAZOR INVITE DETECTION] Sending Invites',
             code: code
         }
 
@@ -618,7 +618,7 @@ exports.run = async(client, message) => {
             type: 'mute',
             userID: message.member.id,
             duration: invitesTempMuteDuration,
-            reason: '[AUTO] Sending Invites',
+            reason: '[RAZOR INVITE DETECTION] Sending Invites',
             expires: new Date().getTime() +  invitesTempMuteDuration
         }).save();
 

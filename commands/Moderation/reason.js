@@ -58,6 +58,5 @@ module.exports = {
         .setDescription(`Successfully changed the reason for punishment \`${code}\``)
 
         message.channel.send(updatedReason)
-
     }
 }

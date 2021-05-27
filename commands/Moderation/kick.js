@@ -92,7 +92,7 @@ module.exports = {
         const kickmsgdm = new Discord.MessageEmbed()
             .setColor('#FF0000')
             .setAuthor('Razor Moderation', client.user.displayAvatarURL())
-            .setTitle(`You were kicked from ${message.guild.name}`)
+            .setTitle(`You were kicked from ${message.guild.name}!`)
             .addField('Reason', reason, true)
             .addField('Date', date)
             .setFooter(`Punishment ID: ${code}`)

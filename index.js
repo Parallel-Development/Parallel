@@ -436,7 +436,7 @@ client.on('message', async(message) => {
         // Walltext
 
         let walltextCheck = message.content.split('\n')
-        if (walltextCheck.length >= 6) {
+        if (walltextCheck.length >= 9 || message.content.length >= 700) {
             if (!message.member.hasPermission('MANAGE_MESSAGES')) {
                 var file = require('./automod/walltext')
                 file.run(client, message)
