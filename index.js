@@ -342,6 +342,7 @@ client.on('messageDelete', async(message) => {
     }
 
     if(message.bot) return;
+    if (!message.content) return;
 
     let isMessageLogChannel = await settingsSchema.findOne({
         guildid: message.guild.id
