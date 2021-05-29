@@ -11,7 +11,7 @@ module.exports = {
     permissions: 'BAN_MEMBERS',
     moderationCommand: true,
     usage: 'ban <member> [reason]',
-    aliases: ['b', 'banish'],
+    aliases: ['b', 'banish', 'gtfo'],
     async execute(client, message, args) {
         const roletoolower = new Discord.MessageEmbed()
             .setColor('#FF0000')

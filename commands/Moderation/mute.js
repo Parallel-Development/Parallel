@@ -12,7 +12,7 @@ module.exports = {
     permissions: 'MANAGE_MESSAGES',
     moderationCommand: true,
     usage: 'mute <member> [reason]',
-    aliases: ['silence', 'shut', 'm'],
+    aliases: ['silence', 'shut', 'm', 'stfu'],
     async execute(client, message, args) {
         const roletoolower = new Discord.MessageEmbed()
             .setColor('#FF0000')
@@ -181,7 +181,7 @@ module.exports = {
             if(!reason) reason = 'Unspecified'
 
             const tempmutemsg = new Discord.MessageEmbed()
-                .setColor('#09fff2')
+                .setColor('#ffec00')
                 .setDescription(`${member} has been muted with ID \`${code}\` <a:check:800062847974375424>`)
 
             const tempmutemsgdm = new Discord.MessageEmbed()

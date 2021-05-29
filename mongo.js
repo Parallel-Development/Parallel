@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const mongoPath = 'mongodb+srv://Piyeris:dsqZ5xx34CVXWtb@razor.ghfnk.mongodb.net/Razor?retryWrites=true&w=majority'
+const mongoPath = 'mongodb+srv://Piyeris:UjmRwPjLiD3ILl6d@razor.ghfnk.mongodb.net/Razor?retryWrites=true&w=majority'
 
 module.exports = async () => {
     await mongoose.connect(mongoPath, {

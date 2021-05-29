@@ -1,7 +1,6 @@
 const config = require('./config.json');
 const Discord = require('discord.js');
 const client = new Discord.Client();
-const moment = require('moment');
 const mongo = require('./mongo');
 
 const fs = require('fs')
@@ -154,6 +153,8 @@ setInterval(async() => {
             }
         })
     })
+
+    // Check for if a user reached X warnings and should be punished
 
 }, 5000)
 
@@ -507,7 +508,7 @@ client.on('message', async(message) => {
         }
     }
 
-    // Automatic setup if there are no settings for the server found
+    // Automatic setup if there are no automod settings for the server found
 
     if(!automodCheck) {
         await new automodSchema({
@@ -651,6 +652,10 @@ client.on('message', async(message) => {
         } 
     }
 
+    if (command.developing) {
+        if (!config.developers.includes(message.author.id)) return message.channel.send('This command is currently under development and not open to the public!')
+    }
+
     if(command.permissions) {
         if(!message.member.hasPermission(command.permissions)) {
             const missingPermissionsError = new Discord.MessageEmbed()
@@ -658,11 +663,7 @@ client.on('message', async(message) => {
             .setDescription(`You do not have the required permission to execute the \`${command.name}\` command\nMissing Permission: \`${command.permissions
                 .replace('_', ' ')
                 .toUpperCase()}\``)
-            message.delete()
-            const missingPermErrMsg = await message.channel.send(missingPermissionsError)
-            setTimeout(() => {
-                missingPermErrMsg.delete()
-            }, 5000)
+            message.channel.send(missingPermissionsError)
             return;
         }
     }

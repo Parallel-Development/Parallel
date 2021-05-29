@@ -79,7 +79,7 @@ module.exports = {
         const u = await client.users.fetch(member.id)
         const warningsEmbed = new Discord.MessageEmbed()
             .setColor('#09fff2')
-            .setAuthor(`Warnings for ${u.tag}`, client.user.displayAvatarURL())
+            .setAuthor(`Warnings for ${u.tag} - ${warningsCheck.warnings.length}`, client.user.displayAvatarURL())
             .setDescription(`All times are in GMT | Run \`punishinfo (code)\` to get more information about a punishment`)
             .setFooter(`Page ${pageNumber}/${amountOfPages} | ${prefix}warnings (user) <page number> to access a certain page`)
 

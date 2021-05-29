@@ -5,7 +5,7 @@ module.exports = {
     name: 'pause',
     description: 'Pauses the current playing song',
     usage: 'pause',
-    aliases: ['stop', 'stfu'],
+    aliases: ['stop'],
     async execute(client, message, args, ops) {
         let fetched = ops.active.get(message.guild.id)
         if (!fetched) return message.channel.send('There is no music currently playing')

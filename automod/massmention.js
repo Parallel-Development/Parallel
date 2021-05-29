@@ -51,7 +51,8 @@ exports.run = async (client, message) => {
                 date: date,
                 reason: '[RAZOR MASS-MENTION DETECTION] Mass Mention',
                 code: code,
-                expires: new Date().getTime() + parseInt(autowarnexpire)
+                expires: new Date().getTime() + parseInt(autowarnexpire),
+                auto: true
             }
         } else {
             caseInfo = {
@@ -59,7 +60,8 @@ exports.run = async (client, message) => {
                 type: 'Warn',
                 date: date,
                 reason: '[RAZOR MASS-MENTION DETECTION] Mass Mention',
-                code: code
+                code: code,
+                auto: true
             }
         }
 
@@ -112,6 +114,9 @@ exports.run = async (client, message) => {
         message.channel.send(userwarned)
 
         message.member.send(warndm).catch(() => { return })
+
+        var file = require('./psystem');
+        file.run(client, message)
     }
 
     if (massmention == 'kick') {
@@ -154,7 +159,8 @@ exports.run = async (client, message) => {
             type: 'Kick',
             date: date,
             reason: '[RAZOR MASS-MENTION DETECTION] Mass Mention',
-            code: code
+            code: code,
+            auto: true
         }
 
         const warningCheck = await warningSchema.findOne({
@@ -217,7 +223,8 @@ exports.run = async (client, message) => {
             type: 'Mute',
             date: date,
             reason: '[RAZOR MASS-MENTION DETECTION] Mass Mention',
-            code: code
+            code: code,
+            auto: true
         }
 
         const warningCheck = await warningSchema.findOne({
@@ -348,7 +355,8 @@ exports.run = async (client, message) => {
             type: 'Ban',
             date: date,
             reason: '[RAZOR MASS-MENTION DETECTION] Mass Mention',
-            code: code
+            code: code,
+            auto: true
         }
 
         const warningCheck = await warningSchema.findOne({
@@ -445,7 +453,8 @@ exports.run = async (client, message) => {
             expires: new Date().getTime() +  massmentionTempBanDuration,
             date: date,
             reason: '[RAZOR MASS-MENTION DETECTION] Mass Mention',
-            code: code
+            code: code,
+            auto: true
         }
 
         const warningCheck = await warningSchema.findOne({
@@ -576,7 +585,8 @@ exports.run = async (client, message) => {
             expires: new Date().getTime() +  massmentionTempMuteDuration,
             date: date,
             reason: '[RAZOR MASS-MENTION DETECTION] Mass Mention',
-            code: code
+            code: code,
+            auto: true
         }
 
         const warningCheck = await warningSchema.findOne({

@@ -2,7 +2,7 @@ const Discord = require('discord.js')
 
 module.exports = {
     name: 'addrole',
-    descrition: 'Adds a role to the specified user',
+    description: 'Adds a role to the specified user',
     permissions: 'MANAGE_ROLES',
     moderationCommand: true,
     aliases: ['grant', 'giverole'],
