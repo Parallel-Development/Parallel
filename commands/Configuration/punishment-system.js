@@ -9,7 +9,6 @@ module.exports = {
     moderationCommand: true,
     permissions: 'MANAGE_GUILD',
     aliases: ['punishmentsystem', 'system'],
-    developing: true,
     async execute(client, message, args) {
 
         const systemCheck = await systemSchema.findOne({
