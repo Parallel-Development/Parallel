@@ -1,5 +1,4 @@
 const Discord = require('discord.js')
-const config = require('../../config.json')
 
 module.exports = {
     name: 'settings',
@@ -75,7 +74,6 @@ module.exports = {
                 file.run(client, message, args)
                 break;
             case 'modrole':
-                if(!config.developers.includes(message.author.id)) return message.channel.send('This command is currently under development and is not available to the public')
                 if(!args[1]) return message.channel.send(settingsHelp('Mod Role',
                 'modrole <option: add, remove, removeall, view> [role]',
                 'Gives users with the moderator permissions to run moderation commands'))
