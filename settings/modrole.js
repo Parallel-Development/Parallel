@@ -16,9 +16,7 @@ exports.run = async(client, message, args) => {
         getModRoles.modRoles.forEach(async(modRole) => {
             descriptionArr.push(message.guild.roles.cache.get(modRole))
         })
-        let description;
-        description += descriptionArr.join(', ');
-        viewModRoles.setDescription(description);
+        viewModRoles.setDescription(descriptionArr.join(', '));
         return message.channel.send(viewModRoles)
 
     } else if(option == 'removeall') {
