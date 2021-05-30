@@ -3,36 +3,28 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "engines": {
-    "node": "12.x",
-    "npm": "*"
+  "dependencies": {
+    "discord.js": "^12.5.3",
+    "google-dictionary-api": "^1.0.8",
+    "mathjs": "^9.4.1",
+    "moment": "^2.29.1",
+    "mongoose": "^5.12.12",
+    "ms": "^2.1.3",
+    "youtube-search": "^1.1.6",
+    "ytdl-core": "^4.8.2"
   },
+  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Piyeris",
-  "license": "ISC",
-  "dependencies": {
-    "countries-information": "^0.9.3",
-    "discord.js": "^12.5.1",
-    "ffmpeg-static": "^4.2.7",
-    "google-dictionary-api": "^1.0.8",
-    "iso-639-1": "^2.1.9",
-    "mathjs": "^8.1.1",
-    "moment": "^2.29.1",
-    "mongoose": "^5.11.10",
-    "ms": "^2.1.3",
-    "opusscript": "0.0.7",
-    "youtube-search": "^1.1.4",
-    "yt-search": "^2.6.0",
-    "ytdl-core": "^4.8.0"
-  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/synicalsyntax/discord.js-heroku.git"
+    "url": "git+https://github.com/Piyerik/Razor.git"
   },
-  "keywords": [
-    "heroku",
-    "discord.js"
-  ]
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Piyerik/Razor/issues"
+  },
+  "homepage": "https://github.com/Piyerik/Razor#readme"
 }

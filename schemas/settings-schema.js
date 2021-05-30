@@ -22,7 +22,11 @@ const settingsSchema = mongoose.Schema({
     },
     rmrolesonmute: reqBool,
     autowarnexpire: reqString,
-    messageLogging: reqString
+    messageLogging: reqString,
+    verification: {
+        type: Object,
+        required: false
+    }
 })
 
 module.exports = mongoose.model('settings', settingsSchema)

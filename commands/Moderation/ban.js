@@ -123,7 +123,8 @@ module.exports = {
         // Tempban?
 
         const rawTime = reason.split(' ')[0]
-        let time = ms(rawTime)
+        let time;
+        if (rawTime !== '') time = ms(rawTime)
 
         if(time) {
             reason = reason.split(' ').slice(1).join(' ')

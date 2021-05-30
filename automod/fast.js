@@ -116,7 +116,7 @@ exports.run = async(client, message) => {
 
         const userwarned = new Discord.MessageEmbed()
             .setColor('#09fff2')
-            .setDescription(`${message.member} has been warned with ID \`${code}\` <a:check:800062847974375424>`)
+            .setDescription(`${message.member} has been warned with ID \`${code}\` for displaying fast message spam <a:check:800062847974375424>`)
 
         const warndm = new Discord.MessageEmbed()
             .setColor('#FF0000')

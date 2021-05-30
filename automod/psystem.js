@@ -54,7 +54,7 @@ exports.run = async(client, message) => {
                 if(!message.guild.me.hasPermission('KICK_MEMBERS')) return;
                 const kickmsg = new Discord.MessageEmbed()
                 .setColor('#ff6f00')
-                .setDescription(`${message.member} has been kicked with ID \`${code}\` <a:check:800062847974375424>`)
+                .setDescription(`[SYSTEM] ${message.member} has been kicked with ID \`${code}\` <a:check:800062847974375424>`)
 
                 const kickmsgdm = new Discord.MessageEmbed()
                 .setColor('#FF0000')
@@ -185,7 +185,7 @@ exports.run = async(client, message) => {
 
                 const mutemsg = new Discord.MessageEmbed()
                     .setColor('#ffec00')
-                    .setDescription(`${message.member} has been muted with ID \`${code}\` <a:check:800062847974375424>`)
+                    .setDescription(`[SYSTEM] ${message.member} has been muted with ID \`${code}\` <a:check:800062847974375424>`)
 
                 const mutemsgdm = new Discord.MessageEmbed()
                     .setColor('#FF0000')
@@ -253,7 +253,7 @@ exports.run = async(client, message) => {
 
                 const banmsg = new Discord.MessageEmbed()
                 .setColor('#FF0000')
-                .setDescription(`${message.member} has been banned with ID \`${code}\` <a:check:800062847974375424>`)
+                .setDescription(`[SYSTEM] ${message.member} has been banned with ID \`${code}\` <a:check:800062847974375424>`)
 
                 const baninfoCheck = await settingsSchema.findOne({
                     guildid: message.guild.id,
@@ -329,7 +329,6 @@ exports.run = async(client, message) => {
                 }
 
                 let muteRole_ = message.guild.roles.cache.find(r => r.name == 'Muted');
-                if (!message.guild.me.hasPermission('ADD_ROLES') || !message.guild.me.hasPermission('REMOVE_ROLES')) return;
 
                 if (!muteRole_) {
                     const createRole_ = await message.guild.roles.create({
@@ -390,7 +389,7 @@ exports.run = async(client, message) => {
 
                 const tempmutemsg = new Discord.MessageEmbed()
                     .setColor('#ffec00')
-                    .setDescription(`${message.member} has been muted with ID \`${code}\` <a:check:800062847974375424>`)
+                    .setDescription(`[SYSTEM] ${message.member} has been muted with ID \`${code}\` <a:check:800062847974375424>`)
 
                 const tempmutemsgdm = new Discord.MessageEmbed()
                     .setColor('#FF0000')
@@ -408,7 +407,7 @@ exports.run = async(client, message) => {
                 const caseInfoTempMute = {
                     moderatorID: message.author.id,
                     type: 'Tempute',
-                    expires: new Date().getTime(),
+                    expires: new Date().getTime() + duration,
                     date: date,
                     reason: reason,
                     code: code
@@ -460,7 +459,7 @@ exports.run = async(client, message) => {
 
                 const banmsg_ = new Discord.MessageEmbed()
                     .setColor('#FF0000')
-                    .setDescription(`${message.member} has been banned with ID \`${code}\` <a:check:800062847974375424>`)
+                    .setDescription(`[SYSTEM] ${message.member} has been banned with ID \`${code}\` <a:check:800062847974375424>`)
 
                 const baninfoCheck_ = await settingsSchema.findOne({
                     guildid: message.guild.id,

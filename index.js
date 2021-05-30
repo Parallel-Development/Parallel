@@ -579,7 +579,11 @@ client.on('message', async(message) => {
             messageLogChannel: 'none',
             moderationLogChannel: 'none',
             automodLogChannel: 'none',
-            messageLogging: 'none'
+            messageLogging: 'none',
+            verification: { 
+                difficulty: 'none', 
+                role: 'none' 
+            }
         }).save()
 
         if(!message.content.startsWith('r!')) return;
