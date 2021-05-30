@@ -1,4 +1,5 @@
 const Discord = require('discord.js')
+const config = require('../../config.json')
 
 module.exports = {
     name: 'settings',
@@ -19,6 +20,7 @@ module.exports = {
             .addField('Remove Roles on Mute', '__remove-roles-on-mute__\n\nRemoves all roles from the muted user, and adds them back when unmuted')
             .addField('Automod Warning Expiration', '__automod-warning-expiration__\n\nSet an expiration date for all automod warnings')
             .addField('Message Log Channel', '__message-log-channel__\n\nSets the channel in which message updates will be logged')
+            .addField('Moderation Role', '__modrole__', 'Gives users with the moderator permissions to run moderation commands')
             return message.channel.send(settingsPannel);
         }
 
@@ -70,6 +72,14 @@ module.exports = {
                 'message-log-channel <channel | none>',
                 'Sets the channel for which message updates will be logged'))
                 var file = require('../../settings/msglogchannel')
+                file.run(client, message, args)
+                break;
+            case 'modrole':
+                if(!config.developers.includes(message.author.id)) return message.channel.send('This command is currently under development and is not available to the public')
+                if(!args[1]) return message.channel.send(settingsHelp('Mod Role',
+                'modrole <option: add, remove, removeall, view> [role]',
+                'Gives users with the moderator permissions to run moderation commands'))
+                var file = require('../../settings/modrole');
                 file.run(client, message, args)
                 break;
             default:

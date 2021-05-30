@@ -232,6 +232,14 @@ client.on('messageUpdate', async(oldMessage, message) => {
     if(!message.guild) return
     if (message.author.bot) return;
 
+    let getModerators = await settingsSchema.findOne({
+        guildid: message.guild.id
+    })
+    let isModerator = false;
+    message.member.roles.cache.forEach(role => {
+        if (getModerators.modRoles.includes(role.id)) isModerator = true;
+    })
+
     let channelBypassed = await automodSchema.findOne({
         guildid: message.guild.id,
         bypassChannels: message.channel.id
@@ -257,9 +265,11 @@ client.on('messageUpdate', async(oldMessage, message) => {
         }
         if (foundInText) {
             if(!message.member.hasPermission('MANAGE_MESSAGES')) {
-                var file = require('./automod/filter')
-                file.run(client, message)
-                return;
+                if(!isModerator) {
+                    var file = require('./automod/filter')
+                    file.run(client, message)
+                    return;
+                }
             }
         }
 
@@ -268,9 +278,11 @@ client.on('messageUpdate', async(oldMessage, message) => {
         let walltextCheck = message.content.split('\n')
         if (walltextCheck.length >= 6) {
             if (!message.member.hasPermission('MANAGE_MESSAGES')) {
-                var file = require('./automod/walltext')
-                file.run(client, message)
-                return;
+                if (!isModerator) {
+                    var file = require('./automod/walltext')
+                    file.run(client, message)
+                    return;
+                }
             }
         }
 
@@ -279,9 +291,11 @@ client.on('messageUpdate', async(oldMessage, message) => {
         let inviteCheck = new RegExp('(discord|d|dis|discordapp)(.gg|.com\/invite)/[a-zA-Z0-9]+$')
         if (inviteCheck.test(message.content)) {
             if (!message.member.hasPermission('MANAGE_MESSAGES')) {
-                var file = require('./automod/invite')
-                file.run(client, message)
-                return;
+                if (!isModerator) {
+                    var file = require('./automod/invite')
+                    file.run(client, message)
+                    return;
+                }
             }
         }
 
@@ -291,9 +305,11 @@ client.on('messageUpdate', async(oldMessage, message) => {
 
         if (linkRegex.test(message.content)) {
             if (!message.member.hasPermission('MANAGE_MESSAGES')) {
-                var file = require('./automod/link')
-                file.run(client, message)
-                return;
+                if (!isModerator) {
+                    var file = require('./automod/link')
+                    file.run(client, message)
+                    return;
+                }
             }
         }
 
@@ -336,6 +352,7 @@ client.on('messageUpdate', async(oldMessage, message) => {
 });
 
 client.on('messageDelete', async(message) => {
+
     if(!message.guild) return;
     
     if(devOnly) {
@@ -411,6 +428,14 @@ client.on('message', async(message) => {
     // Automod //
 
     if (!channelBypassed || channelBypassed.length == 0) {
+
+        let getModerators = await settingsSchema.findOne({
+            guildid: message.guild.id
+        })
+        let isModerator = false;
+        message.member.roles.cache.forEach(role => {
+            if(getModerators.modRoles.includes(role.id)) isModerator = true;
+        })
         // Filter
 
         let filterCheck = await automodSchema.findOne({
@@ -428,9 +453,11 @@ client.on('message', async(message) => {
             }
             if (foundInText) {
                 if (!message.member.hasPermission('MANAGE_MESSAGES')) {
-                    var file = require('./automod/filter')
-                    file.run(client, message)
-                    return;
+                    if(!isModerator) {
+                        var file = require('./automod/filter')
+                        file.run(client, message)
+                        return;
+                    }
                 }
             }
         }
@@ -440,9 +467,11 @@ client.on('message', async(message) => {
         let walltextCheck = message.content.split('\n')
         if (walltextCheck.length >= 9 || message.content.length >= 700) {
             if (!message.member.hasPermission('MANAGE_MESSAGES')) {
-                var file = require('./automod/walltext')
-                file.run(client, message)
-                return;
+                if (!isModerator) {
+                    var file = require('./automod/walltext')
+                    file.run(client, message)
+                    return;
+                }
             }
         }
 
@@ -453,9 +482,11 @@ client.on('message', async(message) => {
             let msgCount = userData.msgCount
             if (parseInt(msgCount) === 5) {
                 if (!message.member.hasPermission('MANAGE_MESSAGES')) {
-                    var file = require('./automod/fast')
-                    file.run(client, message)
-                    return;
+                    if (!isModerator) {
+                        var file = require('./automod/fast')
+                        file.run(client, message)
+                        return;
+                    }
                 }
                 userMap.delete(message.author.id)
             } else {
@@ -479,9 +510,11 @@ client.on('message', async(message) => {
         let inviteCheck = new RegExp('(discord|d|dis|discordapp)(.gg|.com\/invite)/[a-zA-Z0-9]+$')
         if (inviteCheck.test(message.content)) {
             if (!message.member.hasPermission('MANAGE_MESSAGES')) {
-                var file = require('./automod/invite')
-                file.run(client, message)
-                return;
+                if (!isModerator) {
+                    var file = require('./automod/invite')
+                    file.run(client, message)
+                    return;
+                }
             }
         }
 
@@ -491,9 +524,11 @@ client.on('message', async(message) => {
 
         if (linkRegex.test(message.content)) {
             if (!message.member.hasPermission('MANAGE_MESSAGES')) {
-                var file = require('./automod/link')
-                file.run(client, message)
-                return;
+                if (!isModerator) {
+                    var file = require('./automod/link')
+                    file.run(client, message)
+                    return;
+                }
             }
         }
 
@@ -501,9 +536,11 @@ client.on('message', async(message) => {
 
         if (message.mentions.users.size >= 5) {
             if (!message.member.hasPermission('MANAGE_MESSAGES')) {
-                var file = require('./automod/massmention')
-                file.run(client, message)
-                return;
+                if (!isModerator) {
+                    var file = require('./automod/massmention')
+                    file.run(client, message)
+                    return;
+                }
             }
         }
     }
@@ -580,10 +617,7 @@ client.on('message', async(message) => {
             moderationLogChannel: 'none',
             automodLogChannel: 'none',
             messageLogging: 'none',
-            verification: { 
-                difficulty: 'none', 
-                role: 'none' 
-            }
+            modRoles: [],
         }).save()
 
         if(!message.content.startsWith('r!')) return;
@@ -661,14 +695,37 @@ client.on('message', async(message) => {
     }
 
     if(command.permissions) {
-        if(!message.member.hasPermission(command.permissions)) {
+
+        function denyAccess() {
             const missingPermissionsError = new Discord.MessageEmbed()
-            .setColor('#FF0000')
-            .setDescription(`You do not have the required permission to execute the \`${command.name}\` command\nMissing Permission: \`${command.permissions
-                .replace('_', ' ')
-                .toUpperCase()}\``)
-            message.channel.send(missingPermissionsError)
-            return;
+                .setColor('#FF0000')
+                .setDescription(`You do not have the required permission to execute the \`${command.name}\` command\nMissing Permission: \`${command.permissions
+                    .replace('_', ' ')
+                    .toUpperCase()}\``)
+            return message.channel.send(missingPermissionsError)
+        }
+
+        const userHasModRole = await settingsSchema.findOne({
+            guildid: message.guild.id
+        })
+        let isModerator = false;
+        if(userHasModRole.modRoles.length > 0) {
+            message.member.roles.cache.forEach(role => {
+                if(userHasModRole.modRoles.includes(role.id)) isModerator = true;
+            })
+        }
+        if(!message.member.hasPermission(command.permissions)) {
+            if(command.permissions == 'MANAGE_MESSAGES'
+            || command.permissions == 'BAN_MEMBERS'
+            || command.permissions == 'KICK_MEMBERS'
+            || command.permissions == 'MANAGE_NICKNAMES'
+            || command.permissions == 'MANAGE_ROLES') {
+                if(!isModerator) {
+                    return denyAccess();
+                }
+            } else {
+                return denyAccess();
+            }
         }
     }
 

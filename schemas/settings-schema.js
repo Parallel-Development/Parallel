@@ -10,23 +10,22 @@ const reqBool = {
     required: true
 }
 
+const reqStringArray = {
+    type: [String],
+    required: true
+}
+
 const settingsSchema = mongoose.Schema({
     guildname: reqString,
     guildid: reqString,
     prefix: reqString,
     baninfo: reqString,
     delModCmds: reqBool,
-    locked: {
-        type: [String],
-        required: true
-    },
+    locked: reqStringArray,
     rmrolesonmute: reqBool,
     autowarnexpire: reqString,
     messageLogging: reqString,
-    verification: {
-        type: Object,
-        required: false
-    }
+    modRoles: reqStringArray,
 })
 
 module.exports = mongoose.model('settings', settingsSchema)
