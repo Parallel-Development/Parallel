@@ -185,6 +185,9 @@ module.exports = {
 
             }
 
+            var file = require('../../structures/moderationLogging');
+            file.run(client, 'Warned', message.author, member, message.channel, reason, cleanTime(time), code)
+
             return;
 
         }
@@ -245,6 +248,9 @@ module.exports = {
         message.channel.send(userwarned)
 
         member.send(warndm).catch(() => { return })
+
+        var file = require('../../structures/moderationLogging');
+        file.run(client, 'Warned', message.author, member, message.channel, reason, null, code)
 
     }
 }

@@ -199,6 +199,9 @@ module.exports = {
                     })
             }
 
+            var file = require('../../structures/moderationLogging');
+            file.run(client, 'Banned', message.author, member, message.channel, reason, cleanTime(time), code)
+
             return;
 
         }
@@ -261,7 +264,12 @@ module.exports = {
                     }
                 })
         }
+
+        var file = require('../../structures/moderationLogging');
+        file.run(client, 'Banned', message.author, member, message.channel, reason, null, code)
     }
+
+
 }
 
 function cleanTime(amount) {

@@ -28,8 +28,15 @@ exports.run = async(client, message, args) => {
         })
         return message.channel.send('Successfully removed all moderation roles')
     } else if(option == 'add') {
-        let role = message.mentions.roles.first() || message.guild.roles.cache.find(r => r.name == args[2]);
+        let role = message.mentions.roles.first() || message.guild.roles.cache.find(r => r.name == args.slice(2).join(' '));
         if(!role) return message.channel.send('Please mention the moderator role or specify its name');
+
+        const isThisAlreadyOnTheList = await settingsSchema.findOne({
+            guildid: message.guild.id,
+            modRoles: role.id
+        })
+
+        if (isThisAlreadyOnTheList) return message.channel.send('This role is already on the list!')
 
         await settingsSchema.updateOne({
             guildid: message.guild.id
@@ -41,8 +48,15 @@ exports.run = async(client, message, args) => {
         })
         return message.channel.send(`\`${role.name}\` has been added to the moderator role list!`)
     } else if(option == 'remove') {
-        let role = message.mentions.roles.first() || message.guild.roles.cache.find(r => r.name == args[2]);
+        let role = message.mentions.roles.first() || message.guild.roles.cache.find(r => r.name == args.slice(2).join(' '));
         if (!role) return message.channel.send('Please mention the moderator role or specify its name');
+
+        const isThisEvenOnTheList = await settingsSchema.findOne({
+            guildid: message.guild.id,
+            modRoles: role.id
+        })
+
+        if(!isThisEvenOnTheList) return message.channel.send('This role is not even on the list!')
 
         await settingsSchema.updateOne({
             guildid: message.guild.id

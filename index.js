@@ -617,6 +617,7 @@ client.on('message', async(message) => {
             moderationLogChannel: 'none',
             automodLogChannel: 'none',
             messageLogging: 'none',
+            moderationLogging: 'none',
             modRoles: [],
         }).save()
 

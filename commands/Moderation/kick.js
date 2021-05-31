@@ -150,5 +150,8 @@ module.exports = {
                 })
         }
 
+        var file = require('../../structures/moderationLogging');
+        file.run(client, 'Kicked', message.author, member, message.channel, reason, null, code)
+
     }
 }
