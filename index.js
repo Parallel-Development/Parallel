@@ -421,6 +421,25 @@ client.on('message', async(message) => {
         guildid: message.guild.id
     }).catch(e => false)
 
+    if(!prefixSetting) {
+        await new settingsSchema({
+            guildname: message.guild.name,
+            guildid: message.guild.id,
+            prefix: 'r!',
+            baninfo: 'none',
+            delModCmds: false,
+            locked: [],
+            rmrolesonmute: false,
+            autowarnexpire: 'disabled',
+            messageLogChannel: 'none',
+            moderationLogChannel: 'none',
+            automodLogChannel: 'none',
+            messageLogging: 'none',
+            moderationLogging: 'none',
+            modRoles: [],
+        }).save()
+    }
+
     const automodCheck = await automodSchema.findOne({
         guildid: message.guild.id
     }).catch(e => false)
@@ -458,6 +477,18 @@ client.on('message', async(message) => {
                         file.run(client, message)
                         return;
                     }
+                }
+            }
+        }
+
+        // Mass Mention
+
+        if (message.mentions.users.size >= 5) {
+            if (!message.member.hasPermission('MANAGE_MESSAGES')) {
+                if (!isModerator) {
+                    var file = require('./automod/massmention')
+                    file.run(client, message)
+                    return;
                 }
             }
         }
@@ -532,17 +563,6 @@ client.on('message', async(message) => {
             }
         }
 
-        // Mass Mention
-
-        if (message.mentions.users.size >= 5) {
-            if (!message.member.hasPermission('MANAGE_MESSAGES')) {
-                if (!isModerator) {
-                    var file = require('./automod/massmention')
-                    file.run(client, message)
-                    return;
-                }
-            }
-        }
     }
 
     // Automatic setup if there are no automod settings for the server found
@@ -598,35 +618,13 @@ client.on('message', async(message) => {
             }
         }
 
-        var { prefix } = prefixSetting
+        var { prefix_ } = prefixSetting
 
-        message.channel.send(`Hello! My prefix is \`${prefix}\` | Run \`${prefix}help\` for a list of commands`)
+        message.channel.send(`Hello! My prefix is \`${prefix_}\` | Run \`${prefix}help\` for a list of commands`)
     }
 
-    if(!prefixSetting) {
-        await new settingsSchema({
-            guildname: message.guild.name,
-            guildid: message.guild.id,
-            prefix: 'r!',
-            baninfo: 'none',
-            delModCmds: false,
-            locked: [],
-            rmrolesonmute: false,
-            autowarnexpire: 'disabled',
-            messageLogChannel: 'none',
-            moderationLogChannel: 'none',
-            automodLogChannel: 'none',
-            messageLogging: 'none',
-            moderationLogging: 'none',
-            modRoles: [],
-        }).save()
-
-        if(!message.content.startsWith('r!')) return;
-
-    }  else {
-        let { prefix } = prefixSetting
-        if(!message.content.startsWith(prefix)) return;
-    }
+    let { prefix } = prefixSetting
+    if (!message.content.startsWith(prefix)) return;
 
     // Run
 
@@ -636,7 +634,6 @@ client.on('message', async(message) => {
 
     var args = message.content.split(' ')
     if(prefixSetting) {
-        var { prefix } = prefixSetting
         var cmd = args.shift().slice(prefix.length).toLowerCase();
     } else {
         var prefix = 'r!'

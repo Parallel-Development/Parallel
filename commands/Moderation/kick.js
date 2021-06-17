@@ -103,6 +103,9 @@ module.exports = {
             .setColor('#ff6f00')
             .setDescription(`${member} has been kicked with ID \`${code}\` <a:check:800062847974375424>`)
 
+        var file = require('../../structures/moderationLogging');
+        file.run(client, 'Kicked', message.author, member, message.channel, reason, null, code)
+
         member.kick(reason).catch(() => {
             return message.channel.send(roletoolower)
         })
@@ -149,9 +152,6 @@ module.exports = {
                     }
                 })
         }
-
-        var file = require('../../structures/moderationLogging');
-        file.run(client, 'Kicked', message.author, member, message.channel, reason, null, code)
 
     }
 }

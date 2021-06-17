@@ -153,6 +153,9 @@ module.exports = {
                 expires: new Date().getTime() + time
             }).save();
 
+            var file = require('../../structures/moderationLogging');
+            file.run(client, 'Banned', message.author, member, message.channel, reason, cleanTime(time), code)
+
             message.guild.members.ban(member, { reason: reason })
 
             message.channel.send(banmsg);
@@ -199,9 +202,6 @@ module.exports = {
                     })
             }
 
-            var file = require('../../structures/moderationLogging');
-            file.run(client, 'Banned', message.author, member, message.channel, reason, cleanTime(time), code)
-
             return;
 
         }
@@ -219,6 +219,9 @@ module.exports = {
 
             member.send(banmsgdm).catch(() => { return })
         }
+
+        var file = require('../../structures/moderationLogging');
+        file.run(client, 'Banned', message.author, member, message.channel, reason, null, code)
 
         message.guild.members.ban(member, { reason: reason })
 
@@ -265,8 +268,6 @@ module.exports = {
                 })
         }
 
-        var file = require('../../structures/moderationLogging');
-        file.run(client, 'Banned', message.author, member, message.channel, reason, null, code)
     }
 
 
