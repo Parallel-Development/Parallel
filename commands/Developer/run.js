@@ -15,7 +15,7 @@ module.exports = {
     eval: true,
     async execute(client, message, args) {
 
-        if (!allowed.includes(message.author.id)) return message.channel.send('You are not authorized to execute this command | 401')
+        if (!allowed.includes(message.author.id)) return message.channel.send('Sorry, you can\'t run that!')
 
         const prefixSetting = await settingsSchema.findOne({
             guildid: message.guild.id

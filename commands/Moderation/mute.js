@@ -281,7 +281,7 @@ module.exports = {
             }
 
             var file = require('../../structures/moderationLogging');
-            file.run(client, 'Muted', message.author, member, message.channel, reason, cleanTime(time), code)
+            file.run(client, 'Muted', message.member, member, message.channel, reason, cleanTime(time), code)
 
             return;
 
@@ -356,7 +356,7 @@ module.exports = {
         }
 
         var file = require('../../structures/moderationLogging');
-        file.run(client, 'Muted', message.author, member, message.channel, reason, null, code)
+        file.run(client, 'Muted', message.member, member, message.channel, reason, null, code)
 
     }
 }

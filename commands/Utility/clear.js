@@ -31,15 +31,61 @@ module.exports = {
 
         if (!message.guild.me.hasPermission('MANAGE_MESSAGES')) return message.channel.send(missingperms);
 
-        const amount = parseFloat(args[0])
+        function getUserFromMention(mention) {
+            if (!mention) return false;
+            const matches = mention.match(/^<@!?(\d+)>$/);
+            if (!matches) return mention;
+            const id = matches[1];
 
-        if (amount > 99 || amount < 1) return message.channel.send(badtime)
-        if (!amount) return message.channel.send(neednumber)
+            return id;
+        }
 
-        const deletedMessages = new Discord.MessageEmbed()
+        if (!args[0]) return message.channel.send('Please specify how many messages you want to delete')
+
+        var member;
+        try {
+            member = await message.guild.members.cache.find(member => member.id == parseInt(getUserFromMention(args[0])));
+        } catch (err) {
+            member = null
+        }
+        let amount = false;
+        if(!member) amount = parseInt(args[0])
+
+        if(member) {
+            amount = parseInt(args[1])
+
+            let deletedMessages = new Discord.MessageEmbed()
             .setColor('#09fff2')
             .setDescription(`Successfully deleted ${amount} messages`)
             .setAuthor('Messages Deleted', client.user.displayAvatarURL())
+
+            if (amount > 99 || amount < 1) return message.channel.send(badtime)
+            if (!amount) return message.channel.send(neednumber)
+            message.channel.messages.fetch({
+                limit: amount + 1
+            }).then(async(messages) => {
+                let userMessages = []
+                messages.filter(m => m.author.id == member.id).forEach(m => userMessages.push(m))
+                message.channel.bulkDelete(userMessages)
+                .catch(() => { return message.channel.send(error); })
+                let delMessage = await message.channel.send(deletedMessages)
+
+                setTimeout(async () => {
+                    delMessage.delete().catch(() => { return });
+                }, 5000)
+            })
+            return;
+        }
+
+        amount = parseInt(args[0])
+
+        let deletedMessages = new Discord.MessageEmbed()
+            .setColor('#09fff2')
+            .setDescription(`Successfully deleted ${amount} messages`)
+            .setAuthor('Messages Deleted', client.user.displayAvatarURL())
+
+        if (amount > 99 || amount < 1) return message.channel.send(badtime)
+        if (!amount) return message.channel.send(neednumber)
 
         try {
             message.channel.bulkDelete(amount + 1, true)

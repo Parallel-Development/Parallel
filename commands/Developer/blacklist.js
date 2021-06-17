@@ -13,7 +13,7 @@ module.exports = {
         const blacklistSchema = require(`../../schemas/blacklist-schema`)
         const allowed = config.blacklist
 
-        if (!allowed.includes(message.author.id)) return message.channel.send('You are not authorized to execute this command | 401')
+        if (!allowed.includes(message.author.id)) return message.channel.send('Sorry, you can\'t run that!')
 
         if(!args[0]) return message.channel.send('Please specify a member')
 

@@ -81,13 +81,19 @@ module.exports = {
 
         if(userNotMember) {
             message.guild.fetchBans().then(bans => {
-                let bannedUser = bans.find(b => b.id == member.id)
+                let bannedUser = bans.find(b => b.user.id == member.id)
                 if (bannedUser) {
                     return message.channel.send(`**${member.tag}** is already banned`)
+                } else {
+                    return banUser();
                 }
 
             })
         }
+
+        return banUser();
+
+        async function banUser() {
 
         const deleteModerationCommand = await settingsSchema.findOne({
             guildid: message.guild.id,
@@ -128,6 +134,7 @@ module.exports = {
 
         if(time) {
             reason = reason.split(' ').slice(1).join(' ')
+            if(!reason) reason = "Unspecified"
             if (!userNotMember) {
                 const banmsgdm = new Discord.MessageEmbed()
                     .setColor('#FF0000')
@@ -154,7 +161,7 @@ module.exports = {
             }).save();
 
             var file = require('../../structures/moderationLogging');
-            file.run(client, 'Banned', message.author, member, message.channel, reason, cleanTime(time), code)
+            file.run(client, 'Banned', message.member, member, message.channel, reason, cleanTime(time), code)
 
             message.guild.members.ban(member, { reason: reason })
 
@@ -203,7 +210,7 @@ module.exports = {
             }
 
             return;
-
+  
         }
 
         if (!userNotMember) {
@@ -221,7 +228,7 @@ module.exports = {
         }
 
         var file = require('../../structures/moderationLogging');
-        file.run(client, 'Banned', message.author, member, message.channel, reason, null, code)
+        file.run(client, 'Banned', message.member, member, message.channel, reason, cleanTime(time), code)
 
         message.guild.members.ban(member, { reason: reason })
 
@@ -266,6 +273,7 @@ module.exports = {
                         warnings: caseInfo
                     }
                 })
+        }
         }
 
     }

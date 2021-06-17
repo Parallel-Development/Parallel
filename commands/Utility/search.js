@@ -18,11 +18,11 @@ module.exports = {
                 .setColor('#09fff2')
                 .setDescription('Searching the server for the specified username... <a:loading:834973811735658548>')
                 const findingUsername = await message.channel.send(findingUsernameEmbed);
-                const usernameOutput = await message.guild.members.cache.filter(member => member.user.username == args[1])
+                const usernameOutput = await message.guild.members.cache.filter(member => member.user.username == args.slice(1).join(' '))
                 if(usernameOutput.size == 0) return findingUsername.edit(new Discord.MessageEmbed().setColor('#09fff2').setDescription('No users found with the specified username'));
                 const usernamesEmbed = new Discord.MessageEmbed()
                 .setColor('#09fff2')
-                .setTitle(`Search for username - \`${args[1]}\``)
+                .setTitle(`Search for username - \`${args.slice(1).join(' ')}\``)
                 usernameOutput.forEach(async(user) => {
                     usernamesEmbed.addField(`${user.user.tag}`, `Username: \`${user.user.username}\`\nUser ID: \`${user.user.id}\`\nJoined server: \`${moment(user.joinedAt).format('dddd, MMMM Do YYYY, h:mm:ss A')}\``)
                 })
@@ -35,11 +35,11 @@ module.exports = {
                 .setColor('#09fff2')
                 .setDescription('Searching the server for the specified nickname... <a:loading:834973811735658548>')
                 const findingNickname = await message.channel.send(findingNicknameEmbed);
-                const nicknameOutput = await message.guild.members.cache.filter(member => member.displayName == args[1])
+                const nicknameOutput = await message.guild.members.cache.filter(member => member.displayName == args.slice(1).join(' '))
                 if (nicknameOutput.size == 0) return findingNickname.edit(new Discord.MessageEmbed().setColor('#09fff2').setDescription('No users found with the specified nickname'));
                 const nicknamesEmbed = new Discord.MessageEmbed()
                 .setColor('#09fff2')
-                .setTitle(`Search for nickname - \`${args[1]}\``)
+                .setTitle(`Search for nickname - \`${args.slice(1).join(' ')}\``)
                 nicknameOutput.forEach(async (user) => {
                     nicknamesEmbed.addField(`${user.user.tag}`, `Username: \`${user.user.username}\`\nUser ID: \`${user.user.id}\`\nJoined server: \`${moment(user.joinedAt).format('dddd, MMMM Do YYYY, h:mm:ss A')}\``)
                 })

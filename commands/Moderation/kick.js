@@ -61,10 +61,11 @@ module.exports = {
         if (member) {
             if (member.id == '745401642664460319') return message.channel.send('no.')
             if (member.hasPermission('ADMINISTRATOR')) return message.channel.send(moderator);
-            if (message.member.roles.highest.position < member.roles.highest.position) {
+            if (message.member.roles.highest.position <= member.roles.highest.position) {
                 return message.channel.send(yourroletoolow)
             }
             if (member.id == message.author.id) return message.channel.send('Why tho')
+            if(member.roles.highest.position >= message.guild.me.roles.highest.position) return message.channel.send(roletoolower);
         }
 
         const deleteModerationCommand = await settingsSchema.findOne({
@@ -78,7 +79,6 @@ module.exports = {
         if (!reason) {
             var reason = 'Unspecified'
         }
-
         let date = new Date();
         date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date().getTime() + 14400000).format('h:mm:ss A');
 
@@ -104,11 +104,9 @@ module.exports = {
             .setDescription(`${member} has been kicked with ID \`${code}\` <a:check:800062847974375424>`)
 
         var file = require('../../structures/moderationLogging');
-        file.run(client, 'Kicked', message.author, member, message.channel, reason, null, code)
+        file.run(client, 'Kicked', message.member, member, message.channel, reason, null, code)
 
-        member.kick(reason).catch(() => {
-            return message.channel.send(roletoolower)
-        })
+        member.kick(reason)
 
         message.channel.send(kickmsg)
 

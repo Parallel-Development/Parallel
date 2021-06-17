@@ -181,7 +181,7 @@ module.exports = {
         }
 
         var file = require('../../structures/moderationLogging');
-        file.run(client, 'Unmuted', message.author, member, message.channel, reason, null, code)
+        file.run(client, 'Unmuted', message.member, member, message.channel, reason, null, code)
 
     }
 

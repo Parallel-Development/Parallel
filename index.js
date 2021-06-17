@@ -9,6 +9,8 @@ client.commands = new Discord.Collection()
 client.aliases = new Discord.Collection()
 client.categories = fs.readdirSync('./commands')
 
+const Statcord = require("statcord.js");
+
 const blacklistSchema = require('./schemas/blacklist-schema');
 const settingsSchema = require('./schemas/settings-schema');
 const punishmentSchema = require('./schemas/punishment-schema');
@@ -45,6 +47,15 @@ const connectToMongoDB = async () => {
 
 connectToMongoDB();
 
+// Create statcord client
+const statcord = new Statcord.Client({
+    client,
+    key: config.statcordkey,
+    postCpuStatistics: true, /* Whether to post memory statistics or not, defaults to true */
+    postMemStatistics: true, /* Whether to post memory statistics or not, defaults to true */
+    postNetworkStatistics: true, /* Whether to post memory statistics or not, defaults to true */
+  });
+
 client.once('ready', async() => {
     startUp++
     if(startUp == 1) {
@@ -52,6 +63,8 @@ client.once('ready', async() => {
     } else {
         console.log('Bot started (2/2) | Bot is now ready');
     }
+  // Start statcord auto posting
+  statcord.autopost();
 })
 
 setInterval(async() => {
@@ -360,8 +373,13 @@ client.on('messageDelete', async(message) => {
     }
 
     if(message.bot) return;
-    if (!message.content) return;
-
+    if (!message.content && message.embeds.length > 0) return;
+    let attachments = [];
+    if(message.attachments.size > 0) {
+        message.attachments.forEach(attachment => {
+            attachments.push(attachment.url)
+        })
+    }
     let isMessageLogChannel = await settingsSchema.findOne({
         guildid: message.guild.id
     })
@@ -389,9 +407,10 @@ client.on('messageDelete', async(message) => {
         .setAuthor('Razor Logging', client.user.displayAvatarURL())
         .setTitle('Message Deleted')
         .addField('User', `**${message.author.tag}** - \`${message.author.id}\``)
-        .addField('Message', `\`\`\`${message.content}\`\`\``)
-        .addField('Deleted in', message.channel)
-        .setFooter(`ID: ${message.id}`)
+        if(message.content) messageLogEmbed.addField('Message', `\`\`\`${message.content}\`\`\``)
+        if(attachments.length > 0) messageLogEmbed.addField('Attachments', attachments.join('\n'))
+        messageLogEmbed.addField('Deleted in', message.channel)
+        messageLogEmbed.setFooter(`ID: ${message.id}`)
         messageLogChannel.send(messageLogEmbed).catch(() => { return })
         
     }
@@ -438,7 +457,14 @@ client.on('message', async(message) => {
             moderationLogging: 'none',
             modRoles: [],
         }).save()
+
     }
+
+    const getPrefix = await settingsSchema.findOne({
+        guildid: message.guild.id
+    })
+
+    const { prefix } = getPrefix;
 
     const automodCheck = await automodSchema.findOne({
         guildid: message.guild.id
@@ -481,7 +507,7 @@ client.on('message', async(message) => {
             }
         }
 
-        // Mass Mention
+         // Mass Mention
 
         if (message.mentions.users.size >= 5) {
             if (!message.member.hasPermission('MANAGE_MESSAGES')) {
@@ -562,7 +588,6 @@ client.on('message', async(message) => {
                 }
             }
         }
-
     }
 
     // Automatic setup if there are no automod settings for the server found
@@ -618,13 +643,10 @@ client.on('message', async(message) => {
             }
         }
 
-        var { prefix_ } = prefixSetting
-
-        message.channel.send(`Hello! My prefix is \`${prefix_}\` | Run \`${prefix}help\` for a list of commands`)
+        message.channel.send(`Hello! My prefix is \`${prefix}\` | Run \`${prefix}help\` for a list of commands`)
     }
-
-    let { prefix } = prefixSetting
-    if (!message.content.startsWith(prefix)) return;
+    
+    if(!message.content.startsWith(prefix)) return;
 
     // Run
 
@@ -633,12 +655,7 @@ client.on('message', async(message) => {
     }
 
     var args = message.content.split(' ')
-    if(prefixSetting) {
-        var cmd = args.shift().slice(prefix.length).toLowerCase();
-    } else {
-        var prefix = 'r!'
-        var cmd = args.shift().slice(prefix.length).toLowerCase();
-    }
+    var cmd = args.shift().slice(prefix.length).toLowerCase();
 
     const command = client.commands.get(cmd) || client.commands.get(client.aliases.get(cmd));
     if(!command) return;
@@ -649,6 +666,7 @@ client.on('message', async(message) => {
         let { reason, date, sent } = check;
 
         if (sent) return;
+        message.channel.send('Your command request was denied: your account ID has been added to the command blacklist')
 
         const blacklistEmbed = new Discord.MessageEmbed()
             .setColor('#FF0000')
@@ -672,12 +690,18 @@ client.on('message', async(message) => {
     // Cooldown Check
 
     if (talkedRecently.has(message.author.id)) {
+
         if(hardTalkedRecently.has(message.author.id)) return;
         hardTalkedRecently.add(message.author.id)
         setTimeout(() => {
             hardTalkedRecently.delete(message.author.id)
         }, 2000)
-        return message.react('🕑')
+        let msg = await message.channel.send('Your command request was cancelled: you are currently on command cooldown')
+        setTimeout(() => { 
+             msg.delete();
+             message.delete().catch(() => { return } )
+        }, 3000)
+        return;
     } else {
         const cooldownWhitelist = config.developers;
         if (!cooldownWhitelist.includes(message.author.id)) {
@@ -703,7 +727,7 @@ client.on('message', async(message) => {
             return message.channel.send(missingPermissionsError)
         }
 
-        const userHasModRole = await settingsSchema.findOne({
+        let userHasModRole = await settingsSchema.findOne({
             guildid: message.guild.id
         })
         let isModerator = false;
@@ -740,23 +764,47 @@ client.on('message', async(message) => {
     })
 
     if(commandsDisabledInChannel && commandsDisabledInChannel.length !== 0 || commandsDisabledInCategory && commandsDisabledInCategory.length !== 0) {
+        let userHasModRole = await settingsSchema.findOne({
+            guildid: message.guild.id
+        })
+        let isModerator = false;
+        if(userHasModRole.modRoles.length > 0) {
+            message.member.roles.cache.forEach(role => {
+                if(userHasModRole.modRoles.includes(role.id)) isModerator = true;
+            })
+        }
+
         if(!command.moderationCommand) {
-            if(message.member.hasPermission('MANAGE_MESSAGES') && !message.member.hasPermission('ADMINISTRATOR')) {
-                return message.reply('commands are disabled in this channel | you can still run moderation commands')
-            }  else {
-                if(!message.member.hasPermission('ADMINISTRATOR')) {
-                    return message.reply('commands are disabled in this channel')
-                }
-            }
+            if(!message.member.hasPermission('MANAGE_MESSAGES') && !isModerator) {
+                let msg = await message.channel.send('Your command request was cancelled: commands are currently restricted in this channel or channel category')
+                setTimeout(() => { 
+                    msg.delete();
+                    message.delete().catch(() => { return } );
+                }, 3000)
+                return;
+            } 
         }
     }
 
     try {
         command.execute(client, message, args, ops)
+        // Post Statcord command
+        statcord.postCommand(command.name, message.author.id);
     } catch {
         return
     }
-
 });
+
+statcord.on("autopost-start", () => {
+    // Emitted when statcord autopost starts
+    console.log("Started autopost");
+  });
+  
+  statcord.on("post", status => {
+    // status = false if the post was successful
+    // status = "Error message" or status = Error if there was an error
+    if (!status) return;
+    else console.error(status);
+  });
 
 client.login(config.token);

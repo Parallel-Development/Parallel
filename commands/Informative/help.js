@@ -46,7 +46,7 @@ async function getAll(client, message) {
         }
         if (commands.length !== 0) mainHelp.addField(folder, commands.join(', '))
     }
-    mainHelp.addField('Links', `[Invite Link](https://discord.com/oauth2/authorize?client_id=745401642664460319&permissions=8&scope=bot) | [Support/Development Server](https://discord.gg/DcmVMPx8bn) | [Bot Guidelines](https://docs.google.com/document/d/1u0Z6WVS0V8D72E8cU5gUw2OwGeqW3g1OvwSkzG7odOw/edit)`)
+    mainHelp.addField('Links', `[Invite Link](https://discord.com/oauth2/authorize?client_id=745401642664460319&permissions=8&scope=bot) | [Support/Development Server](https://discord.gg/DcmVMPx8bn) | [Bot Guidelines](https://docs.google.com/document/d/1u0Z6WVS0V8D72E8cU5gUw2OwGeqW3g1OvwSkzG7odOw/edit) | [Privacy Policy](https://docs.google.com/document/d/1-dkGO89cDY_GeKzjKj9SMAVm8SbSvdOZlMK3WLZ6kIs/edit)`)
     message.channel.send(mainHelp)
 }
 
@@ -70,6 +70,8 @@ async function getCMD(client, message, input) {
     }
 
     if(cmd.deprecated) return message.channel.send('This command is deprecated and is no longer usable')
+    if(cmd.eval && !config.eval.includes(message.author.id)) return message.channel.send('This command is too cool for you to get help on')
+    if(cmd.developer && !config.blacklist.includes(message.author.id)) return message.channel.send('This command is too cool for you to get help on')
 
     embed.setColor('#09fff2')
     if(cmd.name) embed.setAuthor(`Help | ${cmd.name}`, client.user.displayAvatarURL())

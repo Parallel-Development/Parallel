@@ -52,9 +52,7 @@ module.exports = {
         }
 
         if (message.member.roles.highest.position <= role.position) {
-            if(!message.guild.owner) {
-                return message.channel.send('You cannot remove this role as your role hierarchy is equal or below this role')
-            }
+            return message.channel.send('You cannot remove this role as your role hierarchy is equal or below this role')
         }
         if (message.guild.me.roles.highest.position <= role.position) {
             return message.channel.send('I do not have permission to remove this role, as it is equal or below me in hierarchy')

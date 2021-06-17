@@ -73,7 +73,7 @@ exports.run = async(client, message) => {
                 message.channel.send(kickmsg)
 
                 const caseInfoKick = {
-                    moderatorID: message.author.id,
+                    moderatorID: message.guild.me.id,
                     type: 'Kick',
                     date: date,
                     reason: reason,
@@ -200,7 +200,7 @@ exports.run = async(client, message) => {
                 message.channel.send(mutemsg)
 
                 const caseInfoMute = {
-                    moderatorID: message.author.id,
+                    moderatorID: message.guild.me.id,
                     type: 'Mute',
                     date: date,
                     reason: reason,
@@ -276,7 +276,7 @@ exports.run = async(client, message) => {
                 message.channel.send(banmsg)
 
                 const caseInfoBan = {
-                    moderatorID: message.author.id,
+                    moderatorID: message.guild.me.id,
                     type: 'Ban',
                     date: date,
                     reason: reason,
@@ -405,7 +405,7 @@ exports.run = async(client, message) => {
                 message.channel.send(tempmutemsg)
 
                 const caseInfoTempMute = {
-                    moderatorID: message.author.id,
+                    moderatorID: message.guild.me.id,
                     type: 'Tempute',
                     expires: new Date().getTime() + duration,
                     date: date,
@@ -494,7 +494,7 @@ exports.run = async(client, message) => {
                 message.channel.send(banmsg_)
 
                 const caseInfoBan_ = {
-                    moderatorID: message.author.id,
+                    moderatorID: message.guild.me.id,
                     type: 'Ban',
                     expires: new Date().getTime() + duration,
                     date: date,

@@ -7,7 +7,7 @@ module.exports = {
     name: 'warnings',
     description: 'Fetches a user\'s warnings in the server',
     usage: 'warnings <member> (page number)',
-    aliases: ['infractions', 'modlogs', 'search', 'record', 'warns'],
+    aliases: ['infractions', 'modlogs', 'record', 'warns'],
     async execute(client, message, args) {
 
         const prefixSetting = await settingsSchema.findOne({
