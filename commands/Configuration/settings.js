@@ -19,7 +19,7 @@ module.exports = {
             .addField('Delete Moderation Commands', '__del-mod-cmd-triggers__\n\nDeletes all triggers moderation commands that punishes a user')
             .addField('Remove Roles on Mute', '__remove-roles-on-mute__\n\nRemoves all roles from the muted user, and adds them back when unmuted')
             .addField('Automod Warning Expiration', '__automod-warning-expiration__\n\nSet an expiration date for all automod warnings')
-            .addField('Manual Warning Expiration', '__manual_warning_expiration__\n\nSets a default warning expiration date for manual warnings if no duration is specified')
+            .addField('Manual Warning Expiration', '__manual-warning-expiration__\n\nSets a default warning expiration date for manual warnings if no duration is specified')
             .addField('Message Log Channel', '__message-log-channel__\n\nSets the channel in which message updates will be logged')
             .addField('Moderation Logging Channel', '__moderation-log-channel__\n\nSets the channel in which moderator actions with Razor will be logged')
             .addField('Moderation Role', '__modrole__', 'Gives users with the moderator permissions to run moderation commands')
