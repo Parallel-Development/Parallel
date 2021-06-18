@@ -90,6 +90,15 @@ module.exports = {
 
         const rawTime = reason.split(' ')[0]
         let time = ms(rawTime)
+        if(!time) {
+            const defaultWarningExpirationTime = await settingsSchema.findOne({
+                guildid: message.guild.id
+            });
+            let { manualwarnexpire } = defaultWarningExpirationTime;
+            if(manualwarnexpire !== 'disabled') {
+                time = parseInt(manualwarnexpire);
+            }
+        }
 
         if(time) {
             reason = reason.split(' ').slice(1).join(' ')
@@ -186,7 +195,7 @@ module.exports = {
             }
 
             var file = require('../../structures/moderationLogging');
-            file.run(client, 'Warned', message.author, member, message.channel, reason, cleanTime(time), code)
+            file.run(client, 'Warned', message.member, member, message.channel, reason, cleanTime(time), code)
 
             return;
 

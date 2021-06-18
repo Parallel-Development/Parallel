@@ -450,6 +450,7 @@ client.on('message', async(message) => {
             locked: [],
             rmrolesonmute: false,
             autowarnexpire: 'disabled',
+            manualwarnexpire: 'disabled',
             messageLogChannel: 'none',
             moderationLogChannel: 'none',
             automodLogChannel: 'none',

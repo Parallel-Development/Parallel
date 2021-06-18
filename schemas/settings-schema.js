@@ -24,6 +24,7 @@ const settingsSchema = mongoose.Schema({
     locked: reqStringArray,
     rmrolesonmute: reqBool,
     autowarnexpire: reqString,
+    manualwarnexpire: reqString,
     messageLogging: reqString,
     moderationLogging: reqString,
     modRoles: reqStringArray,
