@@ -1,10 +1,13 @@
 const Discord = require('discord.js');
+const requestCooldown = new Set();
+const requestedCooldown = new Set();
 
 module.exports = {
     name: 'rps',
     description: 'Play someone in rock-paper-scissors',
     usage: 'rps <player>',
     async execute(client, message, args) {
+       
         function getUserFromMention(mention) {
             if (!mention) return false;
             const matches = mention.match(/^<@!?(\d+)>$/);
@@ -22,12 +25,17 @@ module.exports = {
         } catch (err) {
             member = null
         }
-
+        
+        if(requestCooldown.has(message.author.id) return message.channel.send('You already have a pending request! Please wait for it to expire before trying again');
+        if(requestedCooldown.has(member.id) return message.channel.send('This user already has a pending request! Please wait for their pending request to expire before trying again');
         if(!member) return message.channel.send('Please specify a user to play against')
         if(member.user.bot) return message.channel.send('You cannot play a bot!');
         if(member.id == message.author.id) return message.channel.send('Are you that lonely? Cmon, choose someone else');
 
         firstMember = message.member;
+        
+        requestCooldown.add(message.author.id);
+        requestedCooldown.add(member.id);
 
         if(member !== message.guild.me) {
             message.channel.send(`${member}, ${message.member} would like to play you in rock-paper-scissors | Reply "play" to play, anything else to cancel`);
@@ -155,6 +163,8 @@ module.exports = {
             })
 
             collector.on('end', (col, reason) => {
+                requestCooldown.delete(message.author.id);
+                requestedCooldown.delete(member.id)
                 if(reason == 'time') {
                     return message.channel.send('Game offer expired; user did not respond in time')
                 }
