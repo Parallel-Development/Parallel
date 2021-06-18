@@ -119,9 +119,9 @@ function finish(client, ops, dispatcher) {
         ops.active.set(dispatcher.guildID, fetched);
         play(client, ops, fetched);
     } else {
-        ops.active.delete(dispatcher.guildID)
-        let vc = client.guilds.cache.get(dispatcher.guildID).me.voice.channel;
-        if(vc) vc.leave();
+        // ops.active.delete(dispatcher.guildID)
+        // let vc = client.guilds.cache.get(dispatcher.guildID).me.voice.channel;
+        // if(vc) vc.leave();
 
     }
 }
