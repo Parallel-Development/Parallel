@@ -26,8 +26,8 @@ module.exports = {
             member = null
         }
         
-        if(requestCooldown.has(message.author.id) return message.channel.send('You already have a pending request! Please wait for it to expire before trying again');
-        if(requestedCooldown.has(member.id) return message.channel.send('This user already has a pending request! Please wait for their pending request to expire before trying again');
+        if(requestCooldown.has(message.author.id)) return message.channel.send('You already have a pending request! Please wait for it to expire before trying again');
+        if(requestedCooldown.has(member.id)) return message.channel.send('This user already has a pending request! Please wait for their pending request to expire before trying again');
         if(!member) return message.channel.send('Please specify a user to play against')
         if(member.user.bot) return message.channel.send('You cannot play a bot!');
         if(member.id == message.author.id) return message.channel.send('Are you that lonely? Cmon, choose someone else');
