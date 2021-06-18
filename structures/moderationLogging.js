@@ -26,8 +26,8 @@ exports.run = async(client, type, moderator, rawTarget, channel, reason, duratio
     .setTitle(`User ${type}`)
     .addField('User', `**${target.tag}** - \`${target.id}\``, true)
     .addField('Moderator', `**${moderator.user.tag}** - \`${moderator.id}\``, true)
-    .addField('Reason', reason, true)
-    if(duration) modLog.addField('Duration', duration, true)
+    .addField('Reason', reason)
+    if(duration) modLog.addField('Duration', duration)
     modLog.addField('Punishment ID', code, true)
     modLog.addField(`${type} in`, channel, true)
 

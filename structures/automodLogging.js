@@ -24,8 +24,8 @@ exports.run = async (client, type, target, channel, reason, duration, code) => {
         .setAuthor('Parallel Logging', client.user.displayAvatarURL())
         .setTitle(`User automatically ${type}`)
         .addField('User', `**${target.user.tag}** - \`${target.id}\``, true)
-        .addField('Reason', reason, true)
-    if (duration) automodLog.addField('Duration', duration, true)
+        .addField('Reason', reason)
+    if (duration) automodLog.addField('Duration', duration)
     automodLog.addField('Punishment ID', code, true)
     automodLog.addField(`${type} in`, channel, true)
 
