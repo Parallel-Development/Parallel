@@ -41,13 +41,13 @@ module.exports = {
         const uptime = cleanTime(client.uptime)
         const botinfo = new Discord.MessageEmbed()
             .setColor('#09fff2')
-            .setDescription('Razor is a discord bot created for the main purpose of moderation, but includes music, informative, and helpful commands. If you would like to join the development / support server, click [here](https://discord.gg/DcmVMPx8bn)')
+            .setDescription('Parallel is a Discord bot created for the main purpose of moderation, but includes high quality music, utility commands, some fun commands, and is very configurable. If you would like to join the development / support server, click [here](https://discord.gg/DcmVMPx8bn)')
             .addField('Library & Version', '<:discordjs:810209255353352242> discord.js v12.5.1', true)
             .addField('Developers', 'Piyeris, dzlandis', true)
             .addField('Ping (Websocket)', `${client.ws.ping}ms`, true)
             .addField('Servers', client.guilds.cache.size, true)
             .addField('Uptime', uptime, true)
-            .setAuthor('Razor Discord Bot', client.user.displayAvatarURL())
+            .setAuthor('Parallel Discord Bot', client.user.displayAvatarURL())
 
         message.channel.send(botinfo)
     }

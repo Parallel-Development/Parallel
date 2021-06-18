@@ -113,6 +113,9 @@ exports.run = async(client, message) => {
                     })
                 }
 
+                var file = require('../structures/automodLogging');
+                file.run(client, 'Kicked', message.member, message.channel, reason, null, caseInfoKick.code)
+
                 break;
             case 'mute':
                 var date = new Date();
@@ -239,6 +242,10 @@ exports.run = async(client, message) => {
                             }
                         })
                 }
+
+                var file = require('../structures/automodLogging');
+                file.run(client, 'Muted', message.member, message.channel, reason, null, caseInfoMute.code)
+
                 break;
             case 'ban':
                 var date = new Date();
@@ -315,6 +322,9 @@ exports.run = async(client, message) => {
                             }
                         })
                 }
+
+                var file = require('../structures/automodLogging');
+                file.run(client, 'Banned', message.member, message.channel, reason, null, caseInfoBan.code)
 
                 break;
             case 'tempmute':
@@ -445,6 +455,10 @@ exports.run = async(client, message) => {
                             }
                         })
                 }
+
+                var file = require('../structures/automodLogging');
+                file.run(client, 'Muted', message.member, message.channel, reason, cleanTime(duration), caseInfoTempMute.code)
+
                 break;
             case 'tempban':
                 var date = new Date();
@@ -534,6 +548,10 @@ exports.run = async(client, message) => {
                             }
                         })
                     }
+
+                var file = require('../structures/automodLogging');
+                file.run(client, 'Banned', message.member, message.channel, reason, cleanTime(duration), caseInfoBan_.code)
+
                 break;
             default:
                 return;

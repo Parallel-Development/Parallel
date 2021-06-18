@@ -21,7 +21,8 @@ module.exports = {
             .addField('Automod Warning Expiration', '__automod-warning-expiration__\n\nSet an expiration date for all automod warnings')
             .addField('Manual Warning Expiration', '__manual-warning-expiration__\n\nSets a default warning expiration date for manual warnings if no duration is specified')
             .addField('Message Log Channel', '__message-log-channel__\n\nSets the channel in which message updates will be logged')
-            .addField('Moderation Logging Channel', '__moderation-log-channel__\n\nSets the channel in which moderator actions with Razor will be logged')
+            .addField('Moderation Logging Channel', '__moderation-log-channel__\n\nSets the channel in which moderator actions with Parallel will be logged')
+            .addField('Auto-Moderation Log Channel', '__automod-log-channel__\n\nSets the channel in which automod punishments will be logged')
             .addField('Moderation Role', '__modrole__', 'Gives users with the moderator permissions to run moderation commands')
             return message.channel.send(settingsPannel);
         }
@@ -86,8 +87,15 @@ module.exports = {
             case 'moderation-log-channel':
                 if(!args[1]) return message.channel.send(settingsHelp('Moderation Log Channel',
                 'moderation-log-channel <channel | none>',
-                'Sets the channel for which moderator actions with Razor will be logged'));
+                'Sets the channel for which moderator actions with Parallel will be logged'));
                 var file = require('../../settings/modlogchannel');
+                file.run(client, message, args)
+                break;
+            case 'automod-log-channel':
+                if(!args[1]) return message.channel.send(settingsHelp('Auto-Moderation Log Channel', 
+                'automod-log-channel <channel | none>',
+                'Sets the channel for which automod instances will be logged'))
+                var file = require('../../settings/automodlog');
                 file.run(client, message, args)
                 break;
             case 'modrole':

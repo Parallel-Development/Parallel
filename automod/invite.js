@@ -117,6 +117,9 @@ exports.run = async(client, message) => {
 
         var file = require('./psystem');
         file.run(client, message)
+
+        var file = require('../structures/automodLogging');
+        file.run(client, 'Warned', message.member, message.channel, caseInfo.reason, cleanTime(autowarnexpire), caseInfo.code)
     }
 
     if (invites == 'kick') {
@@ -197,6 +200,9 @@ exports.run = async(client, message) => {
         }
 
         message.channel.send(userkicked)
+
+        var file = require('../structures/automodLogging');
+        file.run(client, 'Kicked', message.member, message.channel, caseInfo.reason, null, caseInfo.code)
     }
 
     if (invites == 'mute') {
@@ -329,6 +335,9 @@ exports.run = async(client, message) => {
         message.member.send(mutedm).catch(() => { return })
 
         message.channel.send(usermuted)
+
+        var file = require('../structures/automodLogging');
+        file.run(client, 'Muted', message.member, message.channel, caseInfo.reason, null, caseInfo.code)
     }
 
     if (invites == 'ban') {
@@ -501,6 +510,9 @@ exports.run = async(client, message) => {
         }).save();
 
         message.channel.send(usertempbanned)
+
+        var file = require('../structures/automodLogging');
+        file.run(client, 'Banned', message.member, message.channel, caseInfo.reason, cleanTime(invitesTempBanDuration), caseInfo.code)
     }
 
     if (invites == 'tempmute') {
@@ -635,6 +647,9 @@ exports.run = async(client, message) => {
         message.member.send(tempmutedm).catch(() => { return })
 
         message.channel.send(usertempmuted)
+
+        var file = require('../structures/automodLogging');
+        file.run(client, 'Muted', message.member, message.channel, caseInfo.reason, cleanTime(invitesTempMuteDuration), caseInfo.code)
     }
 }
 

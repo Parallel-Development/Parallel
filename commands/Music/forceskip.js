@@ -4,7 +4,7 @@ module.exports = {
     name: 'forceskip',
     description: 'Forcefully skips a song without the voting process',
     usage: 'forceskip',
-    aliases: ['fs'],
+    aliases: ['fs', 'fskip'],
     async execute(client, message, args, ops) {
         const accessdenied = new Discord.MessageEmbed()
             .setColor('#FF0000')

@@ -22,7 +22,7 @@ exports.run = async(client, type, moderator, rawTarget, channel, reason, duratio
 
     const modLog = new Discord.MessageEmbed()
     .setColor('#ffa500')
-    .setAuthor('Razor Logging', client.user.displayAvatarURL())
+    .setAuthor('Parallel Logging', client.user.displayAvatarURL())
     .setTitle(`User ${type}`)
     .addField('User', `**${target.tag}** - \`${target.id}\``, true)
     .addField('Moderator', `**${moderator.user.tag}** - \`${moderator.id}\``, true)

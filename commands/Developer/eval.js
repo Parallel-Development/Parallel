@@ -59,8 +59,8 @@ module.exports = {
         .setColor('#09fff2')
         .setDescription('Evaluating... <a:loading:834973811735658548>')
 
-        const evaluatingMessage = await message.channel.send(tryingToEval)
-        if(noBlock) evaluatingMessage.delete()
+        let evaluatingMessage;
+        if(!noBlock) evaluatingMessage = await message.channel.send(tryingToEval)
 
         const logEvaluation = client.channels.cache.get('822853570213838849')
         const evalLog = new Discord.MessageEmbed()
@@ -84,7 +84,7 @@ module.exports = {
                 .setColor('#FF0000')
                 .setDescription(`Input: \`\`\`js\n${code}\`\`\`\nOutput: \`\`\`js\n` + err + `\`\`\``)
                 .setAuthor(`Evaluation`, client.user.displayAvatarURL())
-                .setTitle(`Completed in ${Math.abs(new Date().getTime() - evaluatingMessage.createdTimestamp)}ms`)
+                .setTitle(`Completed in ${Math.abs(new Date().getTime() - message.createdTimestamp)}ms`)
                 .setFooter(`Type: error`)
             if(noBlock) return message.channel.send(error)
             else {
@@ -94,7 +94,8 @@ module.exports = {
 
         if (typeof output !== 'string') output = util.inspect(output, { depth: 0 });
 
-        const outputembed = new Discord.MessageEmbed()
+        let outputembed; 
+        if(!noBlock) outputembed = new Discord.MessageEmbed()
             .setColor('#09fff2')
             .setDescription(`Input:\`\`\`js\n${code}\`\`\`\nOutput:\`\`\`js\n` + output + `\`\`\``)
             .setAuthor('Evaluation', client.user.displayAvatarURL())

@@ -4,6 +4,7 @@ module.exports = {
     name: 'resume',
     description: 'Resumes what was playing',
     usage: 'resume',
+    aliases: ['unpause'],
     async execute(client, message, args, ops) {
         let fetched = ops.active.get(message.guild.id)
         if (!fetched) return message.channel.send('There is no music currently playing')

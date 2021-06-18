@@ -4,7 +4,7 @@ module.exports = {
     name: 'skip',
     description: 'Votes to skip a playing song. Use forecskip to forcefully skip without voting',
     usage: 'skip',
-    aliases: ['s'],
+    aliases: ['s', 'voteskip', 'vskip', 'vs'], 
     async execute(client, message, args, ops) {
         const botnotinVC = new Discord.MessageEmbed()
             .setColor('#FF0000')

@@ -10,7 +10,6 @@ client.aliases = new Discord.Collection()
 client.categories = fs.readdirSync('./commands')
 
 const Statcord = require("statcord.js");
-
 const blacklistSchema = require('./schemas/blacklist-schema');
 const settingsSchema = require('./schemas/settings-schema');
 const punishmentSchema = require('./schemas/punishment-schema');
@@ -350,7 +349,7 @@ client.on('messageUpdate', async(oldMessage, message) => {
 
             let messageLogEmbed = new Discord.MessageEmbed()
             .setColor('#FFFF00')
-            .setAuthor('Razor Logging', client.user.displayAvatarURL())
+            .setAuthor('Parallel Logging', client.user.displayAvatarURL())
             .setTitle('Message Update')
             .setDescription(`__[Jump to Message](${message.url})__`)  
             .addField('User', `**${oldMessage.author.tag}** - \`${oldMessage.author.id}\``) 
@@ -404,7 +403,7 @@ client.on('messageDelete', async(message) => {
         
         let messageLogEmbed = new Discord.MessageEmbed()
         .setColor('#FFFF00')
-        .setAuthor('Razor Logging', client.user.displayAvatarURL())
+        .setAuthor('Parallel Logging', client.user.displayAvatarURL())
         .setTitle('Message Deleted')
         .addField('User', `**${message.author.tag}** - \`${message.author.id}\``)
         if(message.content) messageLogEmbed.addField('Message', `\`\`\`${message.content}\`\`\``)
@@ -451,11 +450,9 @@ client.on('message', async(message) => {
             rmrolesonmute: false,
             autowarnexpire: 'disabled',
             manualwarnexpire: 'disabled',
-            messageLogChannel: 'none',
-            moderationLogChannel: 'none',
-            automodLogChannel: 'none',
             messageLogging: 'none',
             moderationLogging: 'none',
+            automodLogging: 'none',
             modRoles: [],
         }).save()
 
@@ -621,7 +618,7 @@ client.on('message', async(message) => {
         }).save();
     }
 
-    // Check for if the message starts with pinging Razor, if it does, give the prefix;
+    // Check for if the message starts with pinging Parallel, if it does, give the prefix;
 
     if (message.content.startsWith('<@!745401642664460319>') || message.content.startsWith('<@745401642664460319>')) {
 

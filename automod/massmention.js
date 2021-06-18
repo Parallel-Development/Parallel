@@ -116,7 +116,10 @@ exports.run = async (client, message) => {
         message.member.send(warndm).catch(() => { return })
 
         var file = require('./psystem');
-        file.run(client, message)
+        file.run(client, message);
+
+        var file = require('../structures/automodLogging');
+        file.run(client, 'Warned', message.member, message.channel, caseInfo.reason, cleanTime(autowarnexpire), caseInfo.code)
     }
 
     if (massmention == 'kick') {
@@ -197,6 +200,9 @@ exports.run = async (client, message) => {
         }
 
         message.channel.send(userkicked)
+
+        var file = require('../structures/automodLogging');
+        file.run(client, 'Kicked', message.member, message.channel, caseInfo.reason, null, caseInfo.code)
     }
 
     if (massmention == 'mute') {
@@ -329,6 +335,9 @@ exports.run = async (client, message) => {
         message.member.send(mutedm).catch(() => { return })
 
         message.channel.send(usermuted)
+
+        var file = require('../structures/automodLogging');
+        file.run(client, 'Muted', message.member, message.channel, caseInfo.reason, null, caseInfo.code)
     }
 
     if (massmention == 'ban') {
@@ -409,6 +418,9 @@ exports.run = async (client, message) => {
         message.guild.members.ban(message.member, { reason: '[RAZOR MASS-MENTION DETECTION] Mass Mention ' }).catch(() => { return })
 
         message.channel.send(userbanned)
+
+        var file = require('../structures/automodLogging');
+        file.run(client, 'Banned', message.member, message.channel, caseInfo.reason, null, caseInfo.code)
     }
 
     if (massmention == 'tempban') {
@@ -501,6 +513,9 @@ exports.run = async (client, message) => {
         }).save();
 
         message.channel.send(usertempbanned)
+
+        var file = require('../structures/automodLogging');
+        file.run(client, 'Banned', message.member, message.channel, caseInfo.reason, cleanTime(massmentionTempBanDuration), caseInfo.code)
     }
 
     if (massmention == 'tempmute') {
@@ -635,6 +650,9 @@ exports.run = async (client, message) => {
         message.member.send(tempmutedm).catch(() => { return })
 
         message.channel.send(usertempmuted)
+
+        var file = require('../structures/automodLogging');
+        file.run(client, 'Muted', message.member, message.channel, caseInfo.reason, cleanTime(massmentionTempMuteDuration), caseInfo.code)
     }
 }
 

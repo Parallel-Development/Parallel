@@ -29,7 +29,7 @@ async function getAll(client, message) {
 
     const mainHelp = new Discord.MessageEmbed()
     mainHelp.setColor('#09fff2')
-    mainHelp.setAuthor('Help | Razor', client.user.displayAvatarURL())
+    mainHelp.setAuthor('Help | Parallel', client.user.displayAvatarURL())
     mainHelp.setFooter(`To get specific information about a command, run ${prefix}help <command>`)
     for(const folder of commandFolders) {
         let commands = new Array();
