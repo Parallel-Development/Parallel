@@ -171,6 +171,7 @@ setInterval(async() => {
 }, 5000)
 
 client.on('voiceStateUpdate', (oldState, newState) => {
+
     if(oldState.member.id !== client.user.id) return
 
     if(newState.channel == null) {

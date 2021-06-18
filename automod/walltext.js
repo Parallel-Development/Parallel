@@ -49,7 +49,7 @@ exports.run = async (client, message) => {
                 moderatorID: message.guild.me.id,
                 type: 'Warn',
                 date: date,
-                reason: '[RAZOR WALLTEXT DETECTION] Walltext',
+                reason: '[PARALLEL WALLTEXT DETECTION] Walltext',
                 code: code,
                 expires: new Date().getTime() + parseInt(autowarnexpire),
                 auto: true
@@ -59,7 +59,7 @@ exports.run = async (client, message) => {
                 moderatorID: message.guild.me.id,
                 type: 'Warn',
                 date: date,
-                reason: '[RAZOR WALLTEXT DETECTION] Walltext',
+                reason: '[PARALLEL WALLTEXT DETECTION] Walltext',
                 code: code,
                 auto: true
             }
@@ -104,9 +104,9 @@ exports.run = async (client, message) => {
 
         const warndm = new Discord.MessageEmbed()
             .setColor('#FF0000')
-            .setAuthor('Razor Moderation', client.user.displayAvatarURL())
+            .setAuthor('Parallel Moderation', client.user.displayAvatarURL())
             .setTitle(`You were warned in ${message.guild.name}`)
-            .addField('Reason', '[RAZOR WALLTEXT DETECTION] Walltext')
+            .addField('Reason', '[PARALLEL WALLTEXT DETECTION] Walltext')
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
         if (autowarnexpire !== 'disabled') warndm.addField('Expires', cleanTime(autowarnexpire))
@@ -147,21 +147,21 @@ exports.run = async (client, message) => {
 
         const kickdm = new Discord.MessageEmbed()
             .setColor('#FF0000')
-            .setAuthor('Razor Moderation', client.user.displayAvatarURL())
+            .setAuthor('Parallel Moderation', client.user.displayAvatarURL())
             .setTitle(`You were kicked from ${message.guild.name}`)
-            .addField('Reason', '[RAZOR WALLTEXT DETECTION] Walltext')
+            .addField('Reason', '[PARALLEL WALLTEXT DETECTION] Walltext')
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
 
         message.member.send(kickdm).catch(() => { return })
 
-        message.member.kick('[RAZOR WALLTEXT DETECTION] Walltext').catch(() => { return })
+        message.member.kick('[PARALLEL WALLTEXT DETECTION] Walltext').catch(() => { return })
 
         const caseInfo = {
             moderatorID: message.guild.me.id,
             type: 'Kick',
             date: date,
-            reason: '[RAZOR WALLTEXT DETECTION] Walltext',
+            reason: '[PARALLEL WALLTEXT DETECTION] Walltext',
             code: code,
             auto: true
         }
@@ -228,7 +228,7 @@ exports.run = async (client, message) => {
             moderatorID: message.guild.me.id,
             type: 'Mute',
             date: date,
-            reason: '[RAZOR WALLTEXT DETECTION] Walltext',
+            reason: '[PARALLEL WALLTEXT DETECTION] Walltext',
             code: code,
             auto: true
         }
@@ -272,7 +272,7 @@ exports.run = async (client, message) => {
             type: 'mute',
             userID: message.author.id,
             duration: 'permanent',
-            reason: '[RAZOR WALLTEXT DETECTION] Walltext',
+            reason: '[PARALLEL WALLTEXT DETECTION] Walltext',
             expires: 'never'
         }).save();
 
@@ -326,9 +326,9 @@ exports.run = async (client, message) => {
 
         const mutedm = new Discord.MessageEmbed()
             .setColor('#FF0000')
-            .setAuthor('Razor Moderation', client.user.displayAvatarURL())
+            .setAuthor('Parallel Moderation', client.user.displayAvatarURL())
             .setTitle(`You were muted in ${message.guild.name}`)
-            .addField('Reason', '[RAZOR WALLTEXT DETECTION] Walltext')
+            .addField('Reason', '[PARALLEL WALLTEXT DETECTION] Walltext')
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
 
@@ -363,7 +363,7 @@ exports.run = async (client, message) => {
             moderatorID: message.guild.me.id,
             type: 'Ban',
             date: date,
-            reason: '[RAZOR WALLTEXT DETECTION] Walltext',
+            reason: '[PARALLEL WALLTEXT DETECTION] Walltext',
             code: code,
             auto: true
         }
@@ -407,15 +407,15 @@ exports.run = async (client, message) => {
 
         const bandm = new Discord.MessageEmbed()
             .setColor('#FF0000')
-            .setAuthor('Razor Moderation', client.user.displayAvatarURL())
+            .setAuthor('Parallel Moderation', client.user.displayAvatarURL())
             .setTitle(`You were banned from ${message.guild.name}`)
-            .addField('Reason', '[RAZOR WALLTEXT DETECTION] Walltext')
+            .addField('Reason', '[PARALLEL WALLTEXT DETECTION] Walltext')
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
 
         message.member.send(bandm).catch(() => { return })
 
-        message.guild.members.ban(message.member, { reason: '[RAZOR WALLTEXT DETECTION] Walltext' }).catch(() => { return })
+        message.guild.members.ban(message.member, { reason: '[PARALLEL WALLTEXT DETECTION] Walltext' }).catch(() => { return })
 
         message.channel.send(userbanned)
 
@@ -448,23 +448,23 @@ exports.run = async (client, message) => {
 
         const tempbandm = new Discord.MessageEmbed()
             .setColor('#FF0000')
-            .setAuthor('Razor Moderation', client.user.displayAvatarURL())
+            .setAuthor('Parallel Moderation', client.user.displayAvatarURL())
             .setTitle(`You were banned from ${message.guild.name}`)
-            .addField('Reason', '[RAZOR WALLTEXT DETECTION] Walltext')
+            .addField('Reason', '[PARALLEL WALLTEXT DETECTION] Walltext')
             .addField('Expires', cleanTime(walltextTempBanDuration), true)
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
 
         message.member.send(tempbandm).catch(() => { return })
 
-        message.guild.members.ban(message.member, { reason: '[RAZOR WALLTEXT DETECTION] Walltext' }).catch(() => { return })
+        message.guild.members.ban(message.member, { reason: '[PARALLEL WALLTEXT DETECTION] Walltext' }).catch(() => { return })
 
         const caseInfo = {
             moderatorID: message.guild.me.id,
             type: 'Tempban',
             expires: new Date().getTime() +  walltextTempBanDuration,
             date: date,
-            reason: '[RAZOR WALLTEXT DETECTION] Walltext',
+            reason: '[PARALLEL WALLTEXT DETECTION] Walltext',
             code: code,
             auto: true
         }
@@ -508,7 +508,7 @@ exports.run = async (client, message) => {
             type: 'ban',
             userID: message.author.id,
             duration: walltextTempBanDuration,
-            reason: '[RAZOR WALLTEXT DETECTION] Walltext',
+            reason: '[PARALLEL WALLTEXT DETECTION] Walltext',
             expires: new Date().getTime() +  walltextTempBanDuration
         }).save();
 
@@ -543,9 +543,9 @@ exports.run = async (client, message) => {
 
         const tempmutedm = new Discord.MessageEmbed()
             .setColor('#FF0000')
-            .setAuthor('Razor Moderation', client.user.displayAvatarURL())
+            .setAuthor('PARALLEL Moderation', client.user.displayAvatarURL())
             .setTitle(`You were muted in ${message.guild.name}`)
-            .addField('Reason', '[RAZOR WALLTEXT DETECTION] Walltext')
+            .addField('Reason', '[PARALLEL WALLTEXT DETECTION] Walltext')
             .addField('Expires', cleanTime(walltextTempMuteDuration), true)
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
@@ -599,7 +599,7 @@ exports.run = async (client, message) => {
             type: 'Tempmute',
             expires: new Date().getTime() +  walltextTempMuteDuration,
             date: date,
-            reason: '[RAZOR WALLTEXT DETECTION] Walltext',
+            reason: '[PARALLEL WALLTEXT DETECTION] Walltext',
             code: code,
             auto: true
         }
@@ -643,7 +643,7 @@ exports.run = async (client, message) => {
             type: 'mute',
             userID: message.member.id,
             duration: walltextTempMuteDuration,
-            reason: '[RAZOR WALLTEXT DETECTION] Walltext',
+            reason: '[PARALLEL WALLTEXT DETECTION] Walltext',
             expires: new Date().getTime() +  walltextTempMuteDuration
         }).save();
 

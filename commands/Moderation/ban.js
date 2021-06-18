@@ -138,7 +138,7 @@ module.exports = {
             if (!userNotMember) {
                 const banmsgdm = new Discord.MessageEmbed()
                     .setColor('#FF0000')
-                    .setAuthor('Razor Moderation', client.user.displayAvatarURL())
+                    .setAuthor(' Moderation', client.user.displayAvatarURL())
                     .setTitle(`You were banned from ${message.guild.name}!`)
                     .addField('Reason', reason, true)
                     .addField('Expires', cleanTime(time), true)
@@ -210,13 +210,13 @@ module.exports = {
             }
 
             return;
-  
+
         }
 
         if (!userNotMember) {
             const banmsgdm = new Discord.MessageEmbed()
                 .setColor('#FF0000')
-                .setAuthor('Razor Moderation', client.user.displayAvatarURL())
+                .setAuthor('Parallel Moderation', client.user.displayAvatarURL())
                 .setTitle(`You were permanently banned from ${message.guild.name}!`)
                 .addField('Reason', reason, true)
                 .addField('Date', date)
@@ -312,4 +312,3 @@ function cleanTime(amount) {
     return product.join(', ')
 
 }
-

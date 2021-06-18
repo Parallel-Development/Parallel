@@ -65,7 +65,7 @@ exports.run = async(client, message) => {
                 moderatorID: message.guild.me.id,
                 type: 'Warn',
                 date: date,
-                reason: '[RAZOR SPAM DETECTION] Fast Message Spam',
+                reason: '[PARALLEL SPAM DETECTION] Fast Message Spam',
                 code: code,
                 expires: new Date().getTime() + parseInt(autowarnexpire),
                 auto: true
@@ -75,7 +75,7 @@ exports.run = async(client, message) => {
                 moderatorID: message.guild.me.id,
                 type: 'Warn',
                 date: date,
-                reason: '[RAZOR SPAM DETECTION] Fast Message Spam',
+                reason: '[PARALLEL SPAM DETECTION] Fast Message Spam',
                 code: code,
                 auto: true
             }
@@ -120,9 +120,9 @@ exports.run = async(client, message) => {
 
         const warndm = new Discord.MessageEmbed()
             .setColor('#FF0000')
-            .setAuthor('Razor Moderation', client.user.displayAvatarURL())
+            .setAuthor('Parallel Moderation', client.user.displayAvatarURL())
             .setTitle(`You were warned in ${message.guild.name}`)
-            .addField('Reason', '[RAZOR SPAM DETECTION] Fast Message Spam')
+            .addField('Reason', '[PARALLEL SPAM DETECTION] Fast Message Spam')
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
         if (autowarnexpire !== 'disabled') warndm.addField('Expires', cleanTime(autowarnexpire))
@@ -163,21 +163,21 @@ exports.run = async(client, message) => {
 
         const kickdm = new Discord.MessageEmbed()
             .setColor('#FF0000')
-            .setAuthor('Razor Moderation', client.user.displayAvatarURL())
+            .setAuthor('Parallel Moderation', client.user.displayAvatarURL())
             .setTitle(`You were kicked from ${message.guild.name}`)
-            .addField('Reason', '[RAZOR SPAM DETECTION] Fast Message Spam')
+            .addField('Reason', '[PARALLEL SPAM DETECTION] Fast Message Spam')
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
 
         message.member.send(kickdm).catch(() => { return })
 
-        message.member.kick('[RAZOR SPAM DETECTION] Fast Message Spam').catch(() => { return })
+        message.member.kick('[PARALLEL SPAM DETECTION] Fast Message Spam').catch(() => { return })
 
         const caseInfo = {
             moderatorID: message.guild.me.id,
             type: 'Kick',
             date: date,
-            reason: '[RAZOR SPAM DETECTION] Fast Message Spam',
+            reason: '[PARALLEL SPAM DETECTION] Fast Message Spam',
             code: code,
             auto: true
         }
@@ -244,7 +244,7 @@ exports.run = async(client, message) => {
             moderatorID: message.guild.me.id,
             type: 'Mute',
             date: date,
-            reason: '[RAZOR SPAM DETECTION] Fast Message Spam',
+            reason: '[PARALLEL SPAM DETECTION] Fast Message Spam',
             code: code,
             auto: true
         }
@@ -288,7 +288,7 @@ exports.run = async(client, message) => {
             type: 'mute',
             userID: message.author.id,
             duration: 'permanent',
-            reason: '[RAZOR SPAM DETECTION] Fast Message Spam',
+            reason: '[PARALLEL SPAM DETECTION] Fast Message Spam',
             expires: 'never'
         }).save();
 
@@ -342,9 +342,9 @@ exports.run = async(client, message) => {
 
         const mutedm = new Discord.MessageEmbed()
             .setColor('#FF0000')
-            .setAuthor('Razor Moderation', client.user.displayAvatarURL())
+            .setAuthor('Parallel Moderation', client.user.displayAvatarURL())
             .setTitle(`You were muted in ${message.guild.name}`)
-            .addField('Reason', '[RAZOR SPAM DETECTION] Fast Message Spam')
+            .addField('Reason', '[PARALLEL SPAM DETECTION] Fast Message Spam')
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
 
@@ -378,7 +378,7 @@ exports.run = async(client, message) => {
             moderatorID: message.guild.me.id,
             type: 'Ban',
             date: date,
-            reason: '[RAZOR SPAM DETECTION] Fast Message Spam',
+            reason: '[PARALLEL SPAM DETECTION] Fast Message Spam',
             code: code,
             auto: true
         }
@@ -422,15 +422,15 @@ exports.run = async(client, message) => {
 
         const bandm = new Discord.MessageEmbed()
             .setColor('#FF0000')
-            .setAuthor('Razor Moderation', client.user.displayAvatarURL())
+            .setAuthor('Parallel Moderation', client.user.displayAvatarURL())
             .setTitle(`You were banned from ${message.guild.name}`)
-            .addField('Reason', '[RAZOR SPAM DETECTION] Fast Message Spam')
+            .addField('Reason', '[PARALLEL SPAM DETECTION] Fast Message Spam')
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
 
         message.member.send(bandm).catch(() => { return })
 
-        message.guild.members.ban(message.member, { reason: '[RAZOR SPAM DETECTION] Fast Message Spam ' }).catch(() => { return })
+        message.guild.members.ban(message.member, { reason: '[PARALLEL SPAM DETECTION] Fast Message Spam ' }).catch(() => { return })
 
         message.channel.send(userbanned)
 
@@ -448,7 +448,7 @@ exports.run = async(client, message) => {
             }, 3000)
         }
         let date = new Date();
-        date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date().getTime() + 14400000).format('h:mm:ss A');
+        date = date.getMParallel Moderationdate.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date().getTime() + 14400000).format('h:mm:ss A');
 
         var code = '';
         var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
@@ -463,23 +463,23 @@ exports.run = async(client, message) => {
 
         const tempbandm = new Discord.MessageEmbed()
             .setColor('#FF0000')
-            .setAuthor('Razor Moderation', client.user.displayAvatarURL())
+            .setAuthor('Parallel Moderation', client.user.displayAvatarURL())
             .setTitle(`You were banned from ${message.guild.name}`)
-            .addField('Reason', '[RAZOR SPAM DETECTION] Fast Message Spam')
+            .addField('Reason', '[PARALLEL SPAM DETECTION] Fast Message Spam')
             .addField('Expires', cleanTime(fastTempBanDuration), true)
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
 
         message.member.send(tempbandm).catch(() => { return })
 
-        message.guild.members.ban(message.member, { reason: '[RAZOR SPAM DETECTION] Fast Message Spam '}).catch(() => { return })
+        message.guild.members.ban(message.member, { reason: '[PARALLEL SPAM DETECTION] Fast Message Spam '}).catch(() => { return })
 
         const caseInfo = {
             moderatorID: message.guild.me.id,
             type: 'Tempban',
             expires: new Date().getTime() +  fastTempBanDuration,
             date: date,
-            reason: '[RAZOR SPAM DETECTION] Fast Message Spam',
+            reason: '[PARALLEL SPAM DETECTION] Fast Message Spam',
             code: code,
             auto: true
         }
@@ -523,7 +523,7 @@ exports.run = async(client, message) => {
             type: 'ban',
             userID: message.author.id,
             duration: fastTempBanDuration,
-            reason: '[RAZOR SPAM DETECTION] Fast Message Spam',
+            reason: '[PARALLEL SPAM DETECTION] Fast Message Spam',
             expires: new Date().getTime() +  fastTempBanDuration
         }).save();
 
@@ -558,9 +558,9 @@ exports.run = async(client, message) => {
 
         const tempmutedm = new Discord.MessageEmbed()
             .setColor('#FF0000')
-            .setAuthor('Razor Moderation', client.user.displayAvatarURL())
+            .setAuthor('PARALLEL Moderation', client.user.displayAvatarURL())
             .setTitle(`You were muted in ${message.guild.name}`)
-            .addField('Reason', '[RAZOR SPAM DETECTION] Fast Message Spam')
+            .addField('Reason', '[PARALLEL SPAM DETECTION] Fast Message Spam')
             .addField('Expires', cleanTime(fastTempMuteDuration), true)
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
@@ -614,7 +614,7 @@ exports.run = async(client, message) => {
             type: 'Tempmute',
             expires: new Date().getTime() +  fastTempMuteDuration,
             date: date,
-            reason: '[RAZOR SPAM DETECTION] Fast Message Spam',
+            reason: '[PARALLEL SPAM DETECTION] Fast Message Spam',
             code: code,
             auto: true
         }
@@ -658,7 +658,7 @@ exports.run = async(client, message) => {
             type: 'mute',
             userID: message.member.id,
             duration: fastTempMuteDuration,
-            reason: '[RAZOR SPAM DETECTION] Fast Message Spam',
+            reason: '[PARALLEL SPAM DETECTION] Fast Message Spam',
             expires: new Date().getTime() +  fastTempMuteDuration
         }).save();
 

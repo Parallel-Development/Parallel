@@ -49,7 +49,7 @@ exports.run = async (client, message) => {
                 moderatorID: message.guild.me.id,
                 type: 'Warn',
                 date: date,
-                reason: '[RAZOR LINK DETECTION] Sending Links',
+                reason: '[PARALLEL LINK DETECTION] Sending Links',
                 code: code,
                 expires: new Date().getTime() + parseInt(autowarnexpire),
                 auto: true
@@ -59,7 +59,7 @@ exports.run = async (client, message) => {
                 moderatorID: message.guild.me.id,
                 type: 'Warn',
                 date: date,
-                reason: '[RAZOR LINK DETECTION] Sending Links',
+                reason: '[PARALLEL LINK DETECTION] Sending Links',
                 code: code,
                 auto: true
             }
@@ -104,9 +104,9 @@ exports.run = async (client, message) => {
 
         const warndm = new Discord.MessageEmbed()
             .setColor('#FF0000')
-            .setAuthor('Razor Moderation', client.user.displayAvatarURL())
+            .setAuthor('Parallel Moderation', client.user.displayAvatarURL())
             .setTitle(`You were warned in ${message.guild.name}`)
-            .addField('Reason', '[RAZOR LINK DETECTION] Sending Links')
+            .addField('Reason', '[PARALLEL LINK DETECTION] Sending Links')
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
         if (autowarnexpire !== 'disabled') warndm.addField('Expires', cleanTime(autowarnexpire))
@@ -147,21 +147,21 @@ exports.run = async (client, message) => {
 
         const kickdm = new Discord.MessageEmbed()
             .setColor('#FF0000')
-            .setAuthor('Razor Moderation', client.user.displayAvatarURL())
+            .setAuthor('Parallel Moderation', client.user.displayAvatarURL())
             .setTitle(`You were kicked from ${message.guild.name}`)
-            .addField('Reason', '[RAZOR LINK DETECTION] Sending Links')
+            .addField('Reason', '[PARALLEL LINK DETECTION] Sending Links')
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
 
         message.member.send(kickdm).catch(() => { return })
 
-        message.member.kick('[RAZOR LINK DETECTION] Sending Links').catch(() => { return })
+        message.member.kick('[PARALLEL LINK DETECTION] Sending Links').catch(() => { return })
 
         const caseInfo = {
             moderatorID: message.guild.me.id,
             type: 'Kick',
             date: date,
-            reason: '[RAZOR LINK DETECTION] Sending Links',
+            reason: '[PARALLEL LINK DETECTION] Sending Links',
             code: code,
             auto: true
         }
@@ -228,7 +228,7 @@ exports.run = async (client, message) => {
             moderatorID: message.guild.me.id,
             type: 'Mute',
             date: date,
-            reason: '[RAZOR LINK DETECTION] Sending Links',
+            reason: '[PARALLEL LINK DETECTION] Sending Links',
             code: code,
             auto: true
         }
@@ -272,7 +272,7 @@ exports.run = async (client, message) => {
             type: 'mute',
             userID: message.member.id,
             duration: 'permanent',
-            reason: '[RAZOR LINK DETECTION] Sending Links',
+            reason: '[PARALLEL LINK DETECTION] Sending Links',
             expires: 'never'
         }).save();
 
@@ -326,9 +326,9 @@ exports.run = async (client, message) => {
 
         const mutedm = new Discord.MessageEmbed()
             .setColor('#FF0000')
-            .setAuthor('Razor Moderation', client.user.displayAvatarURL())
+            .setAuthor('Parallel Moderation', client.user.displayAvatarURL())
             .setTitle(`You were muted in ${message.guild.name}`)
-            .addField('Reason', '[RAZOR LINK DETECTION] Sending Links')
+            .addField('Reason', '[PARALLEL LINK DETECTION] Sending Links')
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
 
@@ -363,7 +363,7 @@ exports.run = async (client, message) => {
             moderatorID: message.guild.me.id,
             type: 'Ban',
             date: date,
-            reason: '[RAZOR LINK DETECTION] Sending Links',
+            reason: '[PARALLEL LINK DETECTION] Sending Links',
             code: code,
             auto: true
         }
@@ -407,15 +407,15 @@ exports.run = async (client, message) => {
 
         const bandm = new Discord.MessageEmbed()
             .setColor('#FF0000')
-            .setAuthor('Razor Moderation', client.user.displayAvatarURL())
+            .setAuthor('Parallel Moderation', client.user.displayAvatarURL())
             .setTitle(`You were banned from ${message.guild.name}`)
-            .addField('Reason', '[RAZOR LINK DETECTION] Sending Links')
+            .addField('Reason', '[PARALLEL LINK DETECTION] Sending Links')
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
 
         message.member.send(bandm).catch(() => { return })
 
-        message.guild.members.ban(message.member, { reason: '[RAZOR LINK DETECTION] Sending Links' }).catch(() => { return })
+        message.guild.members.ban(message.member, { reason: '[PARALLEL LINK DETECTION] Sending Links' }).catch(() => { return })
 
         message.channel.send(userbanned)
 
@@ -445,26 +445,26 @@ exports.run = async (client, message) => {
         const usertempbanned = new Discord.MessageEmbed()
             .setColor('#09fff2')
             .setDescription(`${message.member} has been banned with ID \`${code}\` for sending links <a:check:800062847974375424>`)
-
+Parallel Moderation
         const tempbandm = new Discord.MessageEmbed()
             .setColor('#FF0000')
-            .setAuthor('Razor Moderation', client.user.displayAvatarURL())
+            .setAuthor('Parallel Moderation', client.user.displayAvatarURL())
             .setTitle(`You were banned from ${message.guild.name}`)
-            .addField('Reason', '[RAZOR LINK DETECTION] Sending Links')
+            .addField('Reason', '[PARALLEL LINK DETECTION] Sending Links')
             .addField('Expires', cleanTime(linkTempBanDuration), true)
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
 
         message.member.send(tempbandm).catch(() => { return })
 
-        message.guild.members.ban(message.member, { reason: '[RAZOR LINK DETECTION] Sending Links' }).catch(() => { return })
+        message.guild.members.ban(message.member, { reason: '[PARALLEL LINK DETECTION] Sending Links' }).catch(() => { return })
 
         const caseInfo = {
             moderatorID: message.guild.me.id,
             type: 'Tempban',
             expires: new Date().getTime() +  linkTempBanDuration,
             date: date,
-            reason: '[RAZOR LINK DETECTION] Sending Links',
+            reason: '[PARALLEL LINK DETECTION] Sending Links',
             code: code,
             auto: true
         }
@@ -508,7 +508,7 @@ exports.run = async (client, message) => {
             type: 'ban',
             userID: message.member.id,
             duration: linkTempBanDuration,
-            reason: '[RAZOR LINK DETECTION] Sending Links',
+            reason: '[PARALLEL LINK DETECTION] Sending Links',
             expires: new Date().getTime() +  linkTempBanDuration
         }).save();
 
@@ -543,9 +543,9 @@ exports.run = async (client, message) => {
 
         const tempmutedm = new Discord.MessageEmbed()
             .setColor('#FF0000')
-            .setAuthor('Razor Moderation', client.user.displayAvatarURL())
+            .setAuthor('PARALLEL Moderation', client.user.displayAvatarURL())
             .setTitle(`You were muted in ${message.guild.name}`)
-            .addField('Reason', '[RAZOR LINK DETECTION] Sending Links')
+            .addField('Reason', '[PARALLEL LINK DETECTION] Sending Links')
             .addField('Expires', cleanTime(linkTempMuteDuration), true)
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
@@ -599,7 +599,7 @@ exports.run = async (client, message) => {
             type: 'Tempmute',
             expires: new Date().getTime() +  linkTempMuteDuration,
             date: date,
-            reason: '[RAZOR LINK DETECTION] Sending Links',
+            reason: '[PARALLEL LINK DETECTION] Sending Links',
             code: code,
             auto: true
         }
@@ -643,7 +643,7 @@ exports.run = async (client, message) => {
             type: 'mute',
             userID: message.member.id,
             duration: linkTempMuteDuration,
-            reason: '[RAZOR LINK DETECTION] Sending Links',
+            reason: '[PARALLEL LINK DETECTION] Sending Links',
             expires: new Date().getTime() +  linkTempMuteDuration
         }).save();
 

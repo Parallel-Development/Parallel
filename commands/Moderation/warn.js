@@ -152,7 +152,7 @@ module.exports = {
 
             const tempwarndm = new Discord.MessageEmbed()
                 .setColor('#FF0000')
-                .setAuthor('Razor Moderation', client.user.displayAvatarURL())
+                .setAuthor('Parallel Moderation', client.user.displayAvatarURL())
                 .setTitle(`You were warned in ${message.guild.name}!`)
                 .addField('Reason', reason)
                 .addField('Date', date, true)
@@ -248,7 +248,7 @@ module.exports = {
 
         const warndm = new Discord.MessageEmbed()
             .setColor('#FF0000')
-            .setAuthor('Razor Moderation', client.user.displayAvatarURL())
+            .setAuthor('Parallel Moderation', client.user.displayAvatarURL())
             .setTitle(`You were warned in ${message.guild.name}!`)
             .addField('Reason', reason)
             .addField('Date', date, true)
