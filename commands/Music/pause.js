@@ -25,7 +25,7 @@ module.exports = {
         if (!message.member.voice.channel) return message.channel.send(notinVC)
         if(!message.guild.me.voice.channel) return message.channel.send(botnotinVC)
         if (message.guild.me.voice.channel.id !== message.member.voice.channel.id) return message.channel.send(botnotinVC)
-        if (message.member.voice.channel.members.filter(m => m.user.bot == false).size && !message.member.hasPermission('MANAGE_MESSAGES')) {
+        if (message.member.voice.channel.members.filter(m => m.user.bot == false).size > 1 && !message.member.hasPermission('MANAGE_MESSAGES')) {
             return message.channel.send(accessdenied)
         }
 
