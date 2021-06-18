@@ -17,7 +17,7 @@ module.exports = {
               return setTimeout(() => { // if 1 (you), wait five minutes
                 if (!(oldState.channel.members.size - 1)) // if there's still 1 member, 
                   oldState.channel.leave(); // leave
-              }, 5000); // (5 seconds in ms)
+              }, 60000); // (1 minute in ms)
           });
         const notinVC = new Discord.MessageEmbed()
             .setColor('#FF0000')
