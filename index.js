@@ -444,7 +444,7 @@ client.on('message', async(message) => {
         await new settingsSchema({
             guildname: message.guild.name,
             guildid: message.guild.id,
-            prefix: 'r!',
+            prefix: '>',
             baninfo: 'none',
             delModCmds: false,
             locked: [],

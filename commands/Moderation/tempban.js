@@ -14,6 +14,6 @@ module.exports = {
     aliases: ['tempbanish'],
     deprecated: true,
     async execute(client, message, args) {
-        return message.channel.send('Tempban is no longer a command! Specify a duration in the ban command to tempmute. Example: `r!ban (user) {time} [reason]`')
+        return message.channel.send('Tempban is no longer a command! Specify a duration in the ban command to tempmute. Example: `>ban (user) {time} [reason]`')
     }
 }
