@@ -302,7 +302,7 @@ exports.run = async(client, message) => {
             })
 
             message.guild.channels.cache.forEach(channel => {
-                channel.updateOverwrite(createRole, { SEND_MESSAGES: false })
+                channel.updateOverwrite(createRole, { SEND_MESSAGES: false, ADD_REACTIONS: false })
             })
         }
 
@@ -448,7 +448,7 @@ exports.run = async(client, message) => {
             }, 3000)
         }
         let date = new Date();
-        date = date.getMParallel Moderationdate.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date().getTime() + 14400000).format('h:mm:ss A');
+        date = date.getMonth() + '/' + date.getFullYear() + ' ' + moment(new Date().getTime() + 14400000).format('h:mm:ss A');
 
         var code = '';
         var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
@@ -575,7 +575,7 @@ exports.run = async(client, message) => {
             })
 
             message.guild.channels.cache.forEach(channel => {
-                channel.updateOverwrite(createRole, { SEND_MESSAGES: false })
+                channel.updateOverwrite(createRole, { SEND_MESSAGES: false, ADD_REACTIONS: false })
             })
         }
 

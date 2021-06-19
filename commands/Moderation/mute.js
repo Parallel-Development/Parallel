@@ -117,8 +117,7 @@ module.exports = {
             })
 
             message.guild.channels.cache.forEach(channel => {
-                channel.updateOverwrite(createRole, { SEND_MESSAGES: false})
-                channel.updateOverwrite(createRole, { ADD_REACTIONS: false })
+                channel.updateOverwrite(createRole, { SEND_MESSAGES: false, ADD_REACTIONS: false})
             })
         }
 

@@ -286,7 +286,7 @@ exports.run = async(client, message) => {
             })
 
             message.guild.channels.cache.forEach(channel => {
-                channel.updateOverwrite(createRole, { SEND_MESSAGES: false })
+                channel.updateOverwrite(createRole, { SEND_MESSAGES: false, ADD_REACTIONS: false })
             })
         }
 
@@ -557,7 +557,7 @@ exports.run = async(client, message) => {
             })
 
             message.guild.channels.cache.forEach(channel => {
-                channel.updateOverwrite(createRole, { SEND_MESSAGES: false })
+                channel.updateOverwrite(createRole, { SEND_MESSAGES: false, ADD_REACTIONS: false })
             })
         }
 

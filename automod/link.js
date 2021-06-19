@@ -286,7 +286,7 @@ exports.run = async (client, message) => {
             })
 
             message.guild.channels.cache.forEach(channel => {
-                channel.updateOverwrite(createRole, { SEND_MESSAGES: false })
+                channel.updateOverwrite(createRole, { SEND_MESSAGES: false, ADD_REACTIONS: false })
             })
         }
 
@@ -445,7 +445,7 @@ exports.run = async (client, message) => {
         const usertempbanned = new Discord.MessageEmbed()
             .setColor('#09fff2')
             .setDescription(`${message.member} has been banned with ID \`${code}\` for sending links <a:check:800062847974375424>`)
-Parallel Moderation
+
         const tempbandm = new Discord.MessageEmbed()
             .setColor('#FF0000')
             .setAuthor('Parallel Moderation', client.user.displayAvatarURL())
@@ -560,7 +560,7 @@ Parallel Moderation
             })
 
             message.guild.channels.cache.forEach(channel => {
-                channel.updateOverwrite(createRole, { SEND_MESSAGES: false })
+                channel.updateOverwrite(createRole, { SEND_MESSAGES: false, ADD_REACTIONS: false })
             })
         }
 
