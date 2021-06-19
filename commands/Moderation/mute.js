@@ -154,12 +154,7 @@ module.exports = {
         try {
             await member.roles.add(role)
         } catch (err) {
-            try {
-                var role = message.guild.roles.cache.find(r => r.name == 'Muted')
-                await member.roles.add(role)
-            } catch {
-                return message.channel.send(roletoolower)
-            }
+            return message.channel.send(roletoolower)
         }
 
         var code = '';
