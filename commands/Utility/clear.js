@@ -15,12 +15,12 @@ module.exports = {
 
         const badtime = new Discord.MessageEmbed()
             .setColor('#FF0000')
-            .setDescription('Please choose a number between 0-99')
+            .setDescription('Please choose a number between 0-100')
             .setAuthor('Error', client.user.displayAvatarURL());
 
         const neednumber = new Discord.MessageEmbed()
             .setColor('#FF0000')
-            .setDescription('Please specify a number between 1 and 99')
+            .setDescription('Please specify a number between 1 and 100')
             .setAuthor('Error', client.user.displayAvatarURL())
             .setFooter('The number must be an integer')
 
@@ -59,11 +59,12 @@ module.exports = {
             .setDescription(`Successfully deleted ${amount} messages`)
             .setAuthor('Messages Deleted', client.user.displayAvatarURL())
 
-            if (amount > 99 || amount < 1) return message.channel.send(badtime)
+            if (amount > 100 || amount < 1) return message.channel.send(badtime)
             if (!amount) return message.channel.send(neednumber)
             message.channel.messages.fetch({
                 limit: amount + 1
             }).then(async(messages) => {
+                message.delete();
                 let userMessages = []
                 messages.filter(m => m.author.id == member.id).forEach(m => userMessages.push(m))
                 message.channel.bulkDelete(userMessages)
@@ -84,11 +85,12 @@ module.exports = {
             .setDescription(`Successfully deleted ${amount} messages`)
             .setAuthor('Messages Deleted', client.user.displayAvatarURL())
 
-        if (amount > 99 || amount < 1) return message.channel.send(badtime)
+        if (amount > 100 || amount < 1) return message.channel.send(badtime)
         if (!amount) return message.channel.send(neednumber)
 
         try {
-            message.channel.bulkDelete(amount + 1, true)
+            message.delete();
+            message.channel.bulkDelete(amount, true)
             let delMessage = await message.channel.send(deletedMessages)
 
             setTimeout(async () => {
