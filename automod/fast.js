@@ -577,6 +577,8 @@ exports.run = async(client, message) => {
             message.guild.channels.cache.forEach(channel => {
                 channel.updateOverwrite(createRole, { SEND_MESSAGES: false, ADD_REACTIONS: false })
             })
+
+            role = createRole;
         }
 
         let rmrolesonmute = await settingsSchema.findOne({
