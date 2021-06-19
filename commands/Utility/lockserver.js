@@ -5,7 +5,7 @@ const serverCooldown = new Set();
 module.exports = {
     name: 'lockserver',
     description: 'Locks all channels in the server',
-    usage: 'lockserver <announcement channel> [reason]',
+    usage: 'lockserver',
     permissions: 'MANAGE_GUILD',
     aliases: ['lockall', 'shutdown'],
     async execute(client, message, args) {

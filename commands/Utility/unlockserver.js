@@ -5,7 +5,7 @@ const serverCooldown = new Set();
 module.exports = {
     name: 'unlockserver',
     description: 'Unlocks all channels in the server',
-    usage: 'unlockserver <announcement channel> [reason]',
+    usage: 'unlockserver',
     permissions: 'MANAGE_GUILD',
     aliases: ['unlockall'],
     async execute(client, message, args) {
