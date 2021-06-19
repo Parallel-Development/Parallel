@@ -78,6 +78,20 @@ module.exports = {
             userID: member.id
         })
 
+        if (!role) {
+            const createRole = await message.guild.roles.create({
+                data: {
+                    name: 'Muted'
+                }
+            })
+
+            message.guild.channels.cache.forEach(channel => {
+                channel.updateOverwrite(createRole, { SEND_MESSAGES: false, ADD_REACTIONS: false })
+            })
+
+            role = createRole;
+        }
+
         if (check) {
 
             if (member.roles.cache.has(role.id)) {
@@ -107,18 +121,6 @@ module.exports = {
         let reason = args.splice(1).join(' ');
         if (!reason) {
             reason = 'Unspecified'
-        }
-
-        if (!role) {
-            const createRole = await message.guild.roles.create({
-                data: {
-                    name: 'Muted'
-                }
-            })
-
-            message.guild.channels.cache.forEach(channel => {
-                channel.updateOverwrite(createRole, { SEND_MESSAGES: false, ADD_REACTIONS: false})
-            })
         }
 
         let rmrolesonmute = await settingsSchema.findOne({
