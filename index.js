@@ -97,7 +97,7 @@ setInterval(async() => {
                 guildid: server.id,
                 rmrolesonmute: true
             })
-            if(rmrolesonmute) {
+            if(rmrolesonmute && member) {
                 let getMemberRoles = await muteSchema.findOne({
                     guildid: server.id
                 })
@@ -109,10 +109,10 @@ setInterval(async() => {
                 }
             } 
 
-           await muteSchema.deleteMany({
-               guildid: server.id,
-               userid: member.id
-           })
+            await muteSchema.deleteMany({
+                guildid: server.id,
+                userid: userID
+            })
 
             const unmutedm = new Discord.MessageEmbed()
                 .setColor('#09fff2')
@@ -120,7 +120,7 @@ setInterval(async() => {
                 .setTitle(`You were unmuted in ${server.name}`)
                 .addField('Reason', '[AUTO] Mute expired')
 
-            member.send(unmutedm)
+            if(member) member.send(unmutedm)
 
         }
 
