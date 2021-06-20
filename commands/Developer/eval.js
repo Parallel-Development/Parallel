@@ -3,6 +3,7 @@ const config = require('../../config.json')
 const util = require('util')
 const allowed = config.eval
 const dev = config.developers
+const hastebin = require('hastebin')
 
 module.exports = {
     name: 'eval',
@@ -102,7 +103,17 @@ module.exports = {
             .setTitle(`Completed in ${Math.abs(new Date().getTime() - evaluatingMessage.createdTimestamp)}ms`)
             .setFooter(`Type: ${type}`)
 
-        if(!noBlock) evaluatingMessage.edit(outputembed).catch(() => { return message.channel.send('Output was too big to be sent') })
+        if(!noBlock) evaluatingMessage.edit(outputembed).catch(() => { 
+            hastebin.createPaste(output, {
+                raw: false,
+                contentType: 'text/js',
+                server: 'https://hastebin.com'
+            }).then(urlToPaste => 
+                evaluatingMessage.edit(new Discord.MessageEmbed()
+                .setColor('#ffff00')
+                .setDescription(`Output was too big to be sent as a Discord message!\nOutput: <${urlToPaste}>`))
+                )
+        })
 
     }
 }

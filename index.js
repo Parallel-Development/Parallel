@@ -91,12 +91,12 @@ setInterval(async() => {
 
             var member = await server.members.fetch(userID).catch(() => member = null)
 
-            member.roles.remove(role).catch(() => { return })
+            if(member) member.roles.remove(role).catch(() => { return })
 
-           let rmrolesonmute = await settingsSchema.findOne({
-               guildid: server.id,
-               rmrolesonmute: true
-           })
+            let rmrolesonmute = await settingsSchema.findOne({
+                guildid: server.id,
+                rmrolesonmute: true
+            })
             if(rmrolesonmute) {
                 let getMemberRoles = await muteSchema.findOne({
                     guildid: server.id
