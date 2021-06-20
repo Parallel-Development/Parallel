@@ -740,7 +740,8 @@ client.on('message', async(message) => {
             || command.permissions == 'BAN_MEMBERS'
             || command.permissions == 'KICK_MEMBERS'
             || command.permissions == 'MANAGE_NICKNAMES'
-            || command.permissions == 'MANAGE_ROLES') {
+            || command.permissions == 'MANAGE_ROLES'
+            || command.permissions == 'MANAGE_CHANNELS') {
                 if(!isModerator) {
                     return denyAccess();
                 }

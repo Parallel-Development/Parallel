@@ -42,7 +42,6 @@ module.exports = {
         .addField('filterlist', 'Add, remove, or view the list of filtered words', true)
         .addField('fast', `Toggled: \`${fast}\``, true)
         .addField('walltext', `Toggled: \`${walltext}\``, true)
-        .addField('duplication', 'Not out yet', true)
         .addField('links', `Toggled: \`${links}\``, true)
         .addField('invites', `\`${invites}\``, true)
         .addField('bypass', 'Add or remove channels from the automod bypass list')

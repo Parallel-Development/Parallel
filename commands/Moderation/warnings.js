@@ -6,7 +6,7 @@ const settingsSchema = require('../../schemas/settings-schema')
 module.exports = {
     name: 'warnings',
     description: 'Fetches a user\'s warnings in the server',
-    usage: 'warnings <member> (page number)',
+    usage: 'warnings <member> (page number) <filter: auto, manual>',
     aliases: ['infractions', 'modlogs', 'record', 'warns'],
     async execute(client, message, args) {
 
@@ -82,7 +82,7 @@ module.exports = {
             .setAuthor(`Warnings for ${u.tag} - ${warningsCheck.warnings.length}`, client.user.displayAvatarURL())
             .setDescription(`All times are in GMT | Run \`punishinfo (code)\` to get more information about a punishment`)
             .setFooter(`Page ${pageNumber}/${amountOfPages} | ${prefix}warnings (user) <page number> to access a certain page`)
-
+ss
         let i = (pageNumber - 1) * 7;
         let count = 0
         while(i < warningsCheck.warnings.length && count < 7) {
