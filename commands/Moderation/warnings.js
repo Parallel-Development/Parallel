@@ -82,7 +82,6 @@ module.exports = {
             .setAuthor(`Warnings for ${u.tag} - ${warningsCheck.warnings.length}`, client.user.displayAvatarURL())
             .setDescription(`All times are in GMT | Run \`punishinfo (code)\` to get more information about a punishment`)
             .setFooter(`Page ${pageNumber}/${amountOfPages} | ${prefix}warnings (user) <page number> to access a certain page`)
-ss
         let i = (pageNumber - 1) * 7;
         let count = 0
         while(i < warningsCheck.warnings.length && count < 7) {
