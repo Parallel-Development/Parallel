@@ -9,7 +9,7 @@ const { isInteger } = require('mathjs');
 module.exports = {
     name: 'mute',
     description: 'Mutes the specified member in the server',
-    permissions: 'MANAGE_MESSAGES',
+    permissions: 'MANAGE_ROLES',
     moderationCommand: true,
     usage: 'mute <member> [reason]',
     aliases: ['silence', 'shut', 'm', 'stfu'],
