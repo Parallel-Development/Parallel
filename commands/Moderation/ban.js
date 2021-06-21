@@ -89,9 +89,9 @@ module.exports = {
                 }
 
             })
+        } else {
+            return banUser()
         }
-
-        return banUser();
 
         async function banUser() {
 

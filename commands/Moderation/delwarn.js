@@ -36,7 +36,6 @@ module.exports = {
                     userid = i.userid
                 }
             }
-            console.log(moderatorID)
             if (moderatorID !== message.author.id && !message.member.hasPermission('MANAGE_GUILD')) {
                 return message.channel.send('You can only delete warnings that you gave. You need the `Manage Guild` permission to delete other warnings')
             }
