@@ -51,16 +51,16 @@ module.exports = {
     
         message.guild.fetchBans().then(async(bans) => {
             if(bans.size == 0) return message.channel.send(nobans)
-            let bannedUser = bans.find(b => b.user.id == userID)
-            if(!bannedUser) return message.channel.send(notBanned)
+            let member = bans.find(b => b.user.id == userID).user
+            if(!member) return message.channel.send(notBanned)
 
             if (deleteModerationCommand) message.delete()
             
-            message.guild.members.unban(bannedUser.user)
+            message.guild.members.unban(member)
     
             const unbanned = new Discord.MessageEmbed()
             .setColor('#09fff2')
-            .setDescription(`<@!${userID}> has been unbanned <a:check:800062847974375424>`)
+            .setDescription(`${member} has been unbanned <a:check:800062847974375424>`)
             message.channel.send(unbanned)
 
             let date = new Date();
@@ -115,6 +115,6 @@ module.exports = {
             }
 
             var file = require('../../structures/moderationLogging');
-            file.run(client, 'Unbanned', message.member, await client.users.fetch(userID), message.channel, reason, null, code)
+            file.run(client, 'Unbanned', message.member, member, message.channel, reason, null, code)
         })}
 }
