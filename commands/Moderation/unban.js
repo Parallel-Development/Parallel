@@ -1,5 +1,6 @@
 const Discord = require('discord.js')
 const settingsSchema = require('../../schemas/settings-schema');
+const warningsSchema = require('../../schemas/warning-schema')
 
 module.exports = {
     name: 'unban',
@@ -60,6 +61,47 @@ module.exports = {
             .setColor('#09fff2')
             .setDescription(`<@!${userID}> has been unbanned <a:check:800062847974375424>`)
             message.channel.send(unbanned)
+
+            const caseInfo = {
+            moderatorID: message.author.id,
+            type: 'Unban',
+            date: date,
+            reason: reason,
+            code: code
+        }
+
+        const warningCheck = await warningSchema.findOne({
+            guildid: message.guild.id,
+            userid: member.id
+        })
+
+        if (!warningCheck) {
+            await new warningSchema({
+                userid: member.id,
+                guildname: message.guild.name,
+                guildid: message.guild.id,
+                warnings: []
+            }).save()
+            await warningSchema.updateOne({
+                guildid: message.guild.id,
+                userid: member.id
+            },
+            {
+                $push: {
+                    warnings: caseInfo
+                }
+            })
+           } else {
+                await warningSchema.updateOne({
+                    guildid: message.guild.id,
+                    userid: member.id
+                },
+                {
+                    $push: {
+                        warnings: caseInfo
+                    }
+                })
+            }
 
             var file = require('../../structures/moderationLogging');
             file.run(client, 'Unbanned', message.member, await client.users.fetch(userID), message.channel, reason, null, code)
