@@ -39,6 +39,9 @@ module.exports = {
         if(!userID) return message.channel.send(missingarguser)
         if(isNaN(userID)) return message.channel.send(badinput)
 
+        let reason = args.slice(1).join(' ')
+        if(!reason) reason = 'Unspecified';
+
         const deleteModerationCommand = await settingsSchema.findOne({
             guildid: message.guild.id,
             delModCmds: true
@@ -57,5 +60,8 @@ module.exports = {
             .setColor('#09fff2')
             .setDescription(`<@!${userID}> has been unbanned <a:check:800062847974375424>`)
             message.channel.send(unbanned)
+
+            var file = require('../../structures/moderationLogging');
+            file.run(client, 'Unbanned', message.member, await client.users.fetch(userID), message.channel, reason, null, code)
         })}
 }
