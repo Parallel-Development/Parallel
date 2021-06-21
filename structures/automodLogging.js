@@ -11,7 +11,7 @@ exports.run = async (client, type, target, channel, reason, duration, code) => {
     if (automodLogging == 'none') return;
     if (!target.guild.channels.cache.get(automodLogging)) {
         await settingsSchema.updateOne({
-            guildid: moderator.guild.id
+            guildid: target.guild.id
         },
             {
                 automodLogging: 'none'
