@@ -62,6 +62,16 @@ module.exports = {
             .setDescription(`<@!${userID}> has been unbanned <a:check:800062847974375424>`)
             message.channel.send(unbanned)
 
+            let date = new Date();
+            date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date().getTime() + 14400000).format('h:mm:ss A');
+
+            var code = '';
+            var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+            var charsLength = chars.length
+            for (var i = 0; i < 15; i++) {
+                code += chars.charAt(Math.floor(Math.random() * charsLength))
+            }
+
             const caseInfo = {
             moderatorID: message.author.id,
             type: 'Unban',
