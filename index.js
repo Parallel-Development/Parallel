@@ -508,7 +508,7 @@ client.on('message', async(message) => {
 
          // Mass Mention
 
-        if (message.mentions.users.size >= 5) {
+        if (message.mentions.users.filter(u => u.bot == false).size >= 5) {
             if (!message.member.hasPermission('MANAGE_MESSAGES')) {
                 if (!isModerator) {
                     var file = require('./automod/massmention')
