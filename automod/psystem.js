@@ -58,7 +58,7 @@ exports.run = async(client, message) => {
 
                 const kickmsgdm = new Discord.MessageEmbed()
                 .setColor('#FF0000')
-                .setAuthor('Razor Moderation', client.user.displayAvatarURL())
+                .setAuthor('Parallel Moderation', client.user.displayAvatarURL())
                 .setTitle(`You were kicked from ${message.guild.name}!`)
                 .addField('Reason', `[SYSTEM] Reaching or exceeding **${amount}** warnings`, true)
                 .addField('Date', date)
@@ -191,7 +191,7 @@ exports.run = async(client, message) => {
 
                 const mutemsgdm = new Discord.MessageEmbed()
                     .setColor('#FF0000')
-                    .setAuthor('Razor Moderation', client.user.displayAvatarURL())
+                    .setAuthor('Parallel Moderation', client.user.displayAvatarURL())
                     .setTitle(`You were permanently muted in ${message.guild.name}!`)
                     .addField('Reason', `[SYSTEM] Reaching or exceeding **${amount}** warnings`, true)
                     .addField('Date', date)
@@ -267,7 +267,7 @@ exports.run = async(client, message) => {
 
                 const banmsgdm = new Discord.MessageEmbed()
                     .setColor('#FF0000')
-                    .setAuthor('Razor Moderation', client.user.displayAvatarURL())
+                    .setAuthor('Parallel Moderation', client.user.displayAvatarURL())
                     .setTitle(`You were permanently banned from ${message.guild.name}!`)
                     .addField('Reason', reason, true)
                     .addField('Date', date)
@@ -401,7 +401,7 @@ exports.run = async(client, message) => {
 
                 const tempmutemsgdm = new Discord.MessageEmbed()
                     .setColor('#FF0000')
-                    .setAuthor('Razor Moderation', client.user.displayAvatarURL())
+                    .setAuthor('Parallel Moderation', client.user.displayAvatarURL())
                     .setTitle(`You were muted in ${message.guild.name}!`)
                     .addField('Reason', `[SYSTEM] Reaching or exceeding **${amount}** warnings`, true)
                     .addField('Expires', cleanTime(duration), true)
@@ -479,7 +479,7 @@ exports.run = async(client, message) => {
 
                 const banmsgdm_ = new Discord.MessageEmbed()
                     .setColor('#FF0000')
-                    .setAuthor('Razor Moderation', client.user.displayAvatarURL())
+                    .setAuthor('Parallel Moderation', client.user.displayAvatarURL())
                     .setTitle(`You were banned from ${message.guild.name}!`)
                     .addField('Reason', reason, true)
                     .addField('Expires', cleanTime(duration), true)
