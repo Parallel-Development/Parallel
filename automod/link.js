@@ -509,7 +509,7 @@ exports.run = async (client, message) => {
             userID: message.member.id,
             duration: linksTempBanDuration,
             reason: '[PARALLEL LINK DETECTION] Sending Links',
-            expires: new Date().getTime() +  linkTempBanDuration
+            expires: new Date().getTime() +  linksTempBanDuration
         }).save();
 
         message.channel.send(usertempbanned)
