@@ -11,7 +11,7 @@ exports.run = async (client, message) => {
     const automodGrab = await automodSchema.findOne({
         guildid: message.guild.id
     })
-    let { links, linkTempBanDuration, linkTempMuteDuration } = automodGrab
+    let { links, linksTempBanDuration, linksTempMuteDuration } = automodGrab
 
     const grabSettings = await settingsSchema.findOne({
         guildid: message.guild.id
