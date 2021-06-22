@@ -546,7 +546,7 @@ exports.run = async (client, message) => {
             .setAuthor('PARALLEL Moderation', client.user.displayAvatarURL())
             .setTitle(`You were muted in ${message.guild.name}`)
             .addField('Reason', '[PARALLEL LINK DETECTION] Sending Links')
-            .addField('Expires', cleanTime(linkTempMuteDuration), true)
+            .addField('Expires', cleanTime(linksTempMuteDuration ), true)
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
 
