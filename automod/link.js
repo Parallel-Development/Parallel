@@ -515,7 +515,7 @@ exports.run = async (client, message) => {
         message.channel.send(usertempbanned)
 
         var file = require('../structures/automodLogging');
-        file.run(client, 'Banned', message.member, message.channel, caseInfo.reason, cleanTime(linkTempBanDuration), caseInfo.code)
+        file.run(client, 'Banned', message.member, message.channel, caseInfo.reason, cleanTime(linksTempBanDuration), caseInfo.code)
     }
 
     if (links == 'tempmute') {
@@ -539,7 +539,7 @@ exports.run = async (client, message) => {
 
         const usertempmuted = new Discord.MessageEmbed()
             .setColor('#09fff2')
-            .setDescription(`${message.member} has been muted muted with ID \`${code}\` for sending links <a:check:800062847974375424>`)
+            .setDescription(`${message.member} has been muted with ID \`${code}\` for sending links <a:check:800062847974375424>`)
 
         const tempmutedm = new Discord.MessageEmbed()
             .setColor('#FF0000')
@@ -652,7 +652,7 @@ exports.run = async (client, message) => {
         message.channel.send(usertempmuted)
 
         var file = require('../structures/automodLogging');
-        file.run(client, 'Muted', message.member, message.channel, caseInfo.reason, cleanTime(linkTempMuteDuration), caseInfo.code)
+        file.run(client, 'Muted', message.member, message.channel, caseInfo.reason, cleanTime(linksTempMuteDuration), caseInfo.code)
     }
 }
 
