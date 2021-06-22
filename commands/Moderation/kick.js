@@ -23,7 +23,7 @@ module.exports = {
 
         const missingarguser = new Discord.MessageEmbed()
             .setColor('#FF0000')
-            .setDescription('User not specified / Not in guild')
+            .setDescription('User not specified')
             .setAuthor('Error', client.user.displayAvatarURL());
 
         const moderator = new Discord.MessageEmbed()
