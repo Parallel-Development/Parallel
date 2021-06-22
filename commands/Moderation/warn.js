@@ -71,8 +71,8 @@ module.exports = {
 
         if (deleteModerationCommand) message.delete()
 
-        let reason = args.splice(1).join(' ')
-        if (!reason)  reason = 'Unspecified'
+        let reason = args.slice(1).join(' ')
+        if (!reason) reason = 'Unspecified'
 
         let date = new Date();
         date = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear() + ' ' + moment(new Date().getTime() + 14400000).format('h:mm:ss A');
