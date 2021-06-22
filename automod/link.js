@@ -451,7 +451,7 @@ exports.run = async (client, message) => {
             .setAuthor('Parallel Moderation', client.user.displayAvatarURL())
             .setTitle(`You were banned from ${message.guild.name}`)
             .addField('Reason', '[PARALLEL LINK DETECTION] Sending Links')
-            .addField('Expires', cleanTime(linkTempBanDuration), true)
+            .addField('Expires', cleanTime(linksTempBanDuration), true)
             .addField('Date', date, true)
             .setFooter(`Punishment ID: ${code}`)
 
@@ -462,7 +462,7 @@ exports.run = async (client, message) => {
         const caseInfo = {
             moderatorID: message.guild.me.id,
             type: 'Tempban',
-            expires: new Date().getTime() +  linkTempBanDuration,
+            expires: new Date().getTime() +  linksTempBanDuration,
             date: date,
             reason: '[PARALLEL LINK DETECTION] Sending Links',
             code: code,
@@ -507,7 +507,7 @@ exports.run = async (client, message) => {
             guildid: message.guild.id,
             type: 'ban',
             userID: message.member.id,
-            duration: linkTempBanDuration,
+            duration: linksTempBanDuration,
             reason: '[PARALLEL LINK DETECTION] Sending Links',
             expires: new Date().getTime() +  linkTempBanDuration
         }).save();
@@ -597,7 +597,7 @@ exports.run = async (client, message) => {
         const caseInfo = {
             moderatorID: message.guild.me.id,
             type: 'Tempmute',
-            expires: new Date().getTime() +  linkTempMuteDuration,
+            expires: new Date().getTime() +  linksTempMuteDuration,
             date: date,
             reason: '[PARALLEL LINK DETECTION] Sending Links',
             code: code,
@@ -642,9 +642,9 @@ exports.run = async (client, message) => {
             guildid: message.guild.id,
             type: 'mute',
             userID: message.member.id,
-            duration: linkTempMuteDuration,
+            duration: linksTempMuteDuration,
             reason: '[PARALLEL LINK DETECTION] Sending Links',
-            expires: new Date().getTime() +  linkTempMuteDuration
+            expires: new Date().getTime() +  linksTempMuteDuration
         }).save();
 
         message.member.send(tempmutedm).catch(() => { return })
