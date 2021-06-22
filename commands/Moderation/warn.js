@@ -9,7 +9,7 @@ module.exports = {
     description: 'Warns the specified member in the server',
     permissions: 'MANAGE_MESSAGES',
     moderationCommand: true,
-    usage: 'warn <member> [reason]',
+    usage: 'warn <member> (duration) [reason]',
     aliases: ['strike', 'w'],
     async execute(client, message, args) {
         const missingperms = new Discord.MessageEmbed()
