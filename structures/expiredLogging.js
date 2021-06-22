@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 const settingsSchema = require('../schemas/settings-schema');
 
-exports.run = async (client, type, server, user, channel, reason) => {
+exports.run = async (client, type, server, user, reason) => {
 
     const getAutomodLogChannel = await settingsSchema.findOne({
         guildid: server.id
