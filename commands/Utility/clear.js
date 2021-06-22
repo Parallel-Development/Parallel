@@ -5,7 +5,7 @@ module.exports = {
     description: 'Clears messages in a channel',
     permissions: 'MANAGE_MESSAGES',
     moderationCommand: true,
-    usage: 'clear <amount>',
+    usage: 'clear <amount>\nclear <user> [amount]',
     aliases: ['purge'],
     async execute(client, message, args) {
         const missingperms = new Discord.MessageEmbed()
