@@ -122,7 +122,7 @@ setInterval(async() => {
 
             if(member) member.send(unmutedm)
 
-            var file = require('../structures/expiredLogging');
+            var file = require('./structures/expiredLogging');
             file.run(client, 'Unmuted', server, await client.users.fetch(userID), '[AUTO] Mute Expired')
 
         }
@@ -138,7 +138,7 @@ setInterval(async() => {
 
             server.members.unban(userID).catch(() =>  { return })
 
-            var file = require('../structures/expiredLogging');
+            var file = require('./structures/expiredLogging');
             file.run(client, 'Unbannned', server, await client.users.fetch(userID), '[AUTO] Mute Expired')
         }
 
