@@ -71,7 +71,7 @@ module.exports = {
 
         if (deleteModerationCommand) message.delete()
 
-        let reason = args.slice(1).join(' ')
+        let reason = args.splice(1).join(' ')
         if (!reason) reason = 'Unspecified'
 
         let date = new Date();
@@ -90,6 +90,7 @@ module.exports = {
 
         const rawTime = reason.split(' ')[0]
         let time = ms(rawTime)
+        let x = false;
         if(!time) {
             const defaultWarningExpirationTime = await settingsSchema.findOne({
                 guildid: message.guild.id
@@ -97,11 +98,12 @@ module.exports = {
             let { manualwarnexpire } = defaultWarningExpirationTime;
             if(manualwarnexpire !== 'disabled') {
                 time = parseInt(manualwarnexpire);
+                x = true;
             }
         }
 
         if(time) {
-            reason = reason.split(' ').slice(1).join(' ')
+            if(!x) reason = reason.split(' ').slice(1).join(' ')
             if (!reason) reason = 'Unspecified'
 
             caseInfo = {
