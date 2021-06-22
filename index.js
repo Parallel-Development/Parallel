@@ -122,6 +122,9 @@ setInterval(async() => {
 
             if(member) member.send(unmutedm)
 
+            var file = require('../structures/expiredLogging');
+            file.run(client, 'Unmuted', server, member.user, '[AUTO] Mute Expired')
+
         }
 
         if(type === 'ban') {
