@@ -35,7 +35,7 @@ exports.run = async(client, message) => {
         findPunishment.system.forEach(instance => {
             if(instance.amount == amount) {
                 punishment = instance.punishment
-                if(instance.duration) duration= instance.duration
+                if(instance.duration) duration = instance.duration
             }
         })
         switch (punishment) {
@@ -560,7 +560,7 @@ exports.run = async(client, message) => {
 
 
 
-    const userWarnings = userWarningsCount.warnings.filter(a => a.auto == true).length;
+    const userWarnings = userWarningsCount.warnings.filter(a => a.auto == true && a.type == 'Warn').length;
     let warningInstances = [];
     system.system.forEach(instance => {
         warningInstances.push(instance.amount)
