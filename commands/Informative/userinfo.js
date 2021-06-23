@@ -20,16 +20,11 @@ module.exports = {
 
         let userNotMember = false;
 
-        try {
-            member = await message.guild.members.cache.find(member => member.id == parseInt(getUserFromMention(args[0])));
-        } catch (err) {
-            console.log('Yo!')
+        member = await message.guild.members.cache.find(member => member.id == parseInt(getUserFromMention(args[0])));
+        if (!member) { 
             member = await client.users.fetch(args[0])
-            .catch(() => { member = null })
-            console.log(member)
-            userNotMember = true;
+            if(!member) member = message.member
         }
-        if (!member) member = message.member
         const user = await client.users.fetch(member.id)
 
         let memberRolesRaw = new Array();
