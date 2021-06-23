@@ -31,6 +31,7 @@ module.exports = {
                 if(message.content == 'cancel') {
                     await msg.edit('Action Cancelled')
                     collector.stop();
+                    return
                 } else {
                     reason = message.content
                     await msg.edit('For what duration? `permanent` to make it permanent, `cancel` to cancel')
@@ -41,6 +42,7 @@ module.exports = {
                 if(message.content == 'cancel') {
                     await msg.edit('Action Cancelled')
                     collector.stop();
+                    return;
                 } else if(message.content == 'permanent') {
                     duration = 'permanent'
                 } else {
@@ -49,6 +51,7 @@ module.exports = {
                     if(time == NaN) {
                         await msg.edit('An invalid time was provided, cancelled')
                         collector.stop();
+                        return;
                     } else {
                         duration = time
                     }
