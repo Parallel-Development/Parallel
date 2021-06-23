@@ -9,5 +9,5 @@ exports.run = async(client, message, args) => {
     }, {
         prefix: prefix
     })
-    message.channel.send(`The server prefix for razor is now \`${prefix}\`. You can ping me for the prefix if you ever forget`)
+    message.channel.send(`The server prefix for Parallel is now \`${prefix}\`. You can ping me for the prefix if you ever forget`)
 }
