@@ -10,6 +10,8 @@ module.exports = {
     aliases: ['p'],
     async execute(client, message, args, ops) {
 
+        return message.channel.send('Hello, unfortunately we are experiencing issues with Music right now, so Music has been temporarily disabled')
+
         client.on('voiceStateUpdate', (oldState, newState) => {
 
             if (oldState.channelID !== oldState.guild.me.voice.channelID || newState.channel)
