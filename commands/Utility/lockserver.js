@@ -21,7 +21,7 @@ module.exports = {
                     serverCooldown.delete(message.guild.id)
                 }, 60000)
                 const msg = await message.channel.send('🔒 Locking all server channels... <a:loading:834973811735658548> | This may take a while')
-                message.guild.channels.cache.forEach(async(channel) => {
+                await message.guild.channels.cache.forEach(async(channel) => {
 
                     let alreadyLocked = await lockSchema.findOne({
                         guildid: message.guild.id,
@@ -32,7 +32,7 @@ module.exports = {
                         let enabledOverwrites = new Array();
                         let neutralOverwrites = new Array();
 
-                        channel.permissionOverwrites.forEach(async (r) => {
+                        await channel.permissionOverwrites.forEach(async (r) => {
                             if (r.type == 'role' && !channel.permissionsFor(message.guild.roles.cache.get(r.id)).toArray().includes('MANAGE_MESSAGES')) {
                                 if (!r.allow.toArray().includes('MANAGE_MESSAGES')
                                     || !channel.permissionsFor(message.guild.roles.cache.get(r.id)).toArray().includes('MANAGE_MESSAGES')

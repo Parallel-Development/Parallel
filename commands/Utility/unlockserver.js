@@ -21,7 +21,7 @@ module.exports = {
                     serverCooldown.delete(message.guild.id)
                 }, 60000)
                 const msg = await message.channel.send('🔓 Unlocking all server channels... <a:loading:834973811735658548> | This may take a while')
-                message.guild.channels.cache.forEach(async(channel) => {
+                await message.guild.channels.cache.forEach(async(channel) => {
 
                     let getLockSchema = await lockSchema.findOne({
                         guildid: message.guild.id,
@@ -30,13 +30,13 @@ module.exports = {
                     if(getLockSchema) {
                         let { enabledOverwrites, neutralOverwrites } = getLockSchema;
 
-                        enabledOverwrites.forEach(overwrite => {
+                        await enabledOverwrites.forEach(overwrite => {
                             channel.updateOverwrite(message.guild.roles.cache.get(overwrite), {
                                 SEND_MESSAGES: true
                             }).catch(e => false)
                         })
 
-                        neutralOverwrites.forEach(overwrite => {
+                        await neutralOverwrites.forEach(overwrite => {
                             channel.updateOverwrite(message.guild.roles.cache.get(overwrite), {
                                 SEND_MESSAGES: null
                             }).catch(e => false)

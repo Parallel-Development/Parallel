@@ -43,13 +43,13 @@ module.exports = {
 
         const msg = await message.channel.send(unlocking)
 
-        enabledOverwrites.forEach(overwrite => {
+        await enabledOverwrites.forEach(overwrite => {
             channel.updateOverwrite(message.guild.roles.cache.get(overwrite), { 
                 SEND_MESSAGES: true
             }).catch(e => false)
         })
 
-        neutralOverwrites.forEach(overwrite => {
+        await neutralOverwrites.forEach(overwrite => {
             channel.updateOverwrite(message.guild.roles.cache.get(overwrite), {
                 SEND_MESSAGES: null
             }).catch(e => false)

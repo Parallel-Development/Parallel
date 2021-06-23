@@ -11,7 +11,7 @@ exports.run = async (client, message, args) => {
                 moderationLogging: 'none'
             })
 
-        message.channel.send(`Success! Moderator actions with Razor will no longer be logged`)
+        message.channel.send(`Success! Moderator actions with Parallel will no longer be logged`)
 
         return;
 
@@ -29,5 +29,5 @@ exports.run = async (client, message, args) => {
             moderationLogging: channel.id
         })
 
-    message.channel.send(`Success! Moderator actions with Razor will now be logged in ${channel}`)
+    message.channel.send(`Success! Moderator actions with Parallel will now be logged in ${channel}`)
 }

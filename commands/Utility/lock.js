@@ -44,7 +44,7 @@ module.exports = {
         let enabledOverwrites = new Array();
         let neutralOverwrites = new Array();
 
-        channel.permissionOverwrites.forEach(async(r) => {
+        await channel.permissionOverwrites.forEach(async(r) => {
             if (r.type == 'role' && !channel.permissionsFor(message.guild.roles.cache.get(r.id)).toArray().includes('MANAGE_MESSAGES')) {
                 if(!r.allow.toArray().includes('MANAGE_MESSAGES')
                 || !channel.permissionsFor(message.guild.roles.cache.get(r.id)).toArray().includes('MANAGE_MESSAGES')

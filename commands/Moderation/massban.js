@@ -65,7 +65,7 @@ module.exports = {
                     serverCooldown.add(message.guild.id)
                     setTimeout(() => {
                         serverCooldown.delete(message.guild.id)
-                    }, 30000)
+                    }, 60000)
 
                 } else {
                     await msg.edit('Action Cancelled')
@@ -85,6 +85,7 @@ async function banUser(client, message, msg, users, reason, duration) {
         guildid: message.guild.id,
     })
 
+    let bannedAmount = 0;
     reason = `[MASSBAN] ${reason}`
 
     let date = new Date();
@@ -92,11 +93,11 @@ async function banUser(client, message, msg, users, reason, duration) {
 
     await msg.edit(`Attempting to ban \`${users.size}\` users... <a:loading:834973811735658548>`)
 
-    await users.forEach(async(user) => {
+    users.forEach(async(user) => {
         user = message.guild.members.cache.get(user.id)
-        if (user.roles.highest.position >= message.member.roles.highest.position) return await msg.edit(`You cannot ban ${user} as their highest role is higher or equal to yours in hierarchy`)
-        if (user.hasPermission('ADMINISTRATOR')) return await msg.edit(`You cannot ban ${user} as they are an adninistrator`)
-        if(user.roles.highest.position >= message.guild.me.roles.highest.position) return await msg.edit(`I cannot ban ${user} as their highest role is higher than or equal to mine in heirarchy`)
+        if (user.roles.highest.position >= message.member.roles.highest.position) return message.channel.send(`You cannot ban ${user} as their highest role is higher or equal to yours in hierarchy`)
+        if (user.hasPermission('ADMINISTRATOR')) return await message.channel.send(`You cannot ban ${user} as they are an adninistrator`)
+        if(user.roles.highest.position >= message.guild.me.roles.highest.position) return message.channel.send(`I cannot ban ${user} as their highest role is higher than or equal to mine in heirarchy`)
 
         var code = '';
         var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
@@ -119,15 +120,6 @@ async function banUser(client, message, msg, users, reason, duration) {
         if (baninfo !== 'none') banmsgdm.addField('Additional Information', baninfo, true)
         banmsgdm.setFooter(`Punishment ID: ${code}`)
 
-        await new punishmentSchema({
-            guildname: message.guild.name,
-            guildid: message.guild.id,
-            type: 'ban',
-            userID: user.id,
-            duration: duration,
-            reason: reason,
-            expires: new Date().getTime() + duration
-        }).save();
 
         user.send(banmsgdm).catch(() => { })
         message.guild.members.ban(user, { reason: reason })
@@ -150,6 +142,16 @@ async function banUser(client, message, msg, users, reason, duration) {
                 reason: reason,
                 code: code
             }
+
+            await new punishmentSchema({
+                guildname: message.guild.name,
+                guildid: message.guild.id,
+                type: 'ban',
+                userID: user.id,
+                duration: duration,
+                reason: reason,
+                expires: new Date().getTime() + duration
+            }).save();
         }
 
         const warningCheck = await warningSchema.findOne({
@@ -187,10 +189,10 @@ async function banUser(client, message, msg, users, reason, duration) {
 
         var file = require('../../structures/moderationLogging');
         file.run(client, 'Banned', message.member, user, message.channel, reason, cleanTime(duration), code)
-
+        bannedAmount++
     })
 
-    await msg.edit(`Successfully banned \`${users.size}\` users <a:check:800062847974375424>`)
+    await msg.edit('Process Complete <a:check:800062847974375424>')
 }
 
 
