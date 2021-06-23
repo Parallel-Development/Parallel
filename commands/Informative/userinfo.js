@@ -74,9 +74,9 @@ module.exports = {
             .addField('User ID', user.id, false)
             .addField('Bot Account?', bot, true)
             .addField('Status', status, true)
-            if(!userNotMember) userInfo.addField('Joined', moment(member.joinedAt).format('dddd, MMMM Do YYYY, h:mm:ss a'), false)
+            if(!userNotMember) userinfo.addField('Joined', moment(member.joinedAt).format('dddd, MMMM Do YYYY, h:mm:ss a'), false)
             userInfo.addField('Created', moment(user.createdAt).format('dddd, MMMM Do YYYY, h:mm:ss a'), false)
-            if(!userNotMembrr) userInfo.addField(`Roles [${member.roles.cache.size - 1}]`, memberRoles, false)
+            if(!userNotMembrr) userinfo.addField(`Roles [${member.roles.cache.size - 1}]`, memberRoles, false)
             .setFooter(`Information requested by ${message.author.tag}`, message.member.user.displayAvatarURL())
 
         message.channel.send(userinfo);
