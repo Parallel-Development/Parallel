@@ -23,8 +23,10 @@ module.exports = {
         try {
             member = await message.guild.members.cache.find(member => member.id == parseInt(getUserFromMention(args[0])));
         } catch (err) {
+            console.log('Yo!')
             member = await client.users.fetch(args[0])
             .catch(() => { member = null })
+            console.log(member)
             userNotMember = true;
         }
         if (!member) member = message.member
