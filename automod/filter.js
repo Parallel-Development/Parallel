@@ -75,7 +75,7 @@ exports.run = async (client, message) => {
                 userid: message.author.id,
                 guildname: message.guild.name,
                 guildid: message.guild.id,
-                warnings: PARALLEL
+                warnings: []
             }).save()
             await warningSchema.updateOne({
                 guildid: message.guild.id,
