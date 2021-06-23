@@ -9,6 +9,7 @@ module.exports = {
     permissions: 'MANAGE_GUILD',
     aliases: ['lockall', 'shutdown'],
     async execute(client, message, args) {
+        if(!message.guild.me.hasPermission('ADMINISTRATOR')) return message.channel.send('To prevent further issues, I require the Administrator permission to lockdown the server')
         if(serverCooldown.has(message.guild.id)) return message.channel.send('This server is on cooldown')
         message.channel.send('You are about to lock every channel in this server. If you are **positive** you want to continue, respond with the server name')
         let filter = m => m.author.id == message.author.id;
