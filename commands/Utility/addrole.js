@@ -63,14 +63,10 @@ module.exports = {
             return message.channel.send('This member already has that role!')
         }
 
-        try {
-            member.roles.add(role)
-            const addedRole = new Discord.MessageEmbed()
-            .setColor('#09fff2')
-            .setDescription((`Successfully granted the \`${role.name}\` role to ${member}`))
-            message.channel.send(addedRole)
-        } catch {
-            return message.channel.send('An error occured whilst trying to give this role to the specified member')
-        }
+        member.roles.add(role).catch(() => { message.channel.send('An unexpected error occurred while trying to add this role') })
+        const addedRole = new Discord.MessageEmbed()
+        .setColor('#09fff2')
+        .setDescription((`Successfully granted the \`${role.name}\` role to ${member}`))
+        message.channel.send(addedRole)
     }
 }
