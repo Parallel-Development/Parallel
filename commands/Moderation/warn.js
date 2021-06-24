@@ -102,6 +102,9 @@ module.exports = {
                     time = parseInt(manualwarnexpire);
                     x = true;
                 }
+            } else {
+                reason = reason.split(' ').slice(1).join(' ')
+                if(!reason) reason = 'Unspecified';
             }
         }
 
