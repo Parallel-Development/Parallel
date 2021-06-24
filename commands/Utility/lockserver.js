@@ -16,11 +16,11 @@ module.exports = {
         const collector = new Discord.MessageCollector(message.channel, filter, { time: 30000 })
         collector.on('collect', async(message) => {
             if(message.content == message.guild.name) {
+                collector.stop()
                 serverCooldown.add(message.guild.id)
                 setTimeout(() => {
                     serverCooldown.delete(message.guild.id)
                 }, 60000)
-                let lockedChannels = 0;
                 const msg = await message.channel.send('🔒 Locking all server channels... <a:loading:834973811735658548> | This may take a while')
                 await message.guild.channels.cache.forEach(async(channel) => {
 
@@ -58,14 +58,10 @@ module.exports = {
                             enabledOverwrites: enabledOverwrites,
                             neutralOverwrites: neutralOverwrites
                         }).save()
-                        lockedChannels++
                     }
                     
                 })
-                if(lockedChannels == 0) return await msg.edit('Nothing changed as all channels are already locked')
                 await msg.edit('🔒 All server channels have been locked')
-                collector.stop();
-                return;
             } else {
                 message.channel.send('Action Cancelled')
                 collector.stop();
