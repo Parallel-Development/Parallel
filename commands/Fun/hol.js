@@ -56,7 +56,7 @@ module.exports = {
         })
 
         collector.on('end', (collected, reason) => {
-            openedSession.delete(messsage.author.id)
+            openedSession.delete(message.author.id)
             if (answered) return;
             if (reason == 'time') {
                 message.channel.send(`You ran out of time! The number was \`${chosenNumber}\``)
