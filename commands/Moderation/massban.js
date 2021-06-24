@@ -15,7 +15,7 @@ module.exports = {
         if (serverCooldown.has(message.guild.id)) return message.channel.send('This server is on cooldown')
 
         const users = message.mentions.users;
-        if(users.size == 0) return message.channel.send('Please mention at least 1 user to ban!')
+        if(users.size < 2) return message.channel.send('Please mention at least 2 users to ban!')
         if(users.size > 15) return message.channel.send('The max amount of users you can massban is 15')
 
         let reason;
