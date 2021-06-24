@@ -60,9 +60,8 @@ module.exports = {
         if (!member.roles.cache.has(role.id)) {
             return message.channel.send('This member does not have this role!')
         }
-        if(role == message.guild.roles.everyone) {
-            return message.channel.send('This role is not removeable')
-        }
+  
+        if(role == message.guild.roles.everyone || role.managed) return message.channel.send('You cannot add this role')
 
         await member.roles.remove(role).catch(() => { return message.channel.send('An unexpected error occurred trying to remove this role') })
         const addedRole = new Discord.MessageEmbed()
