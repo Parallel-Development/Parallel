@@ -51,8 +51,6 @@ module.exports = {
             if(!role) return message.channel.send(missingargrole)
         }
 
-        if(role.managable) return message.channel.send('You cannot add a bot role to a user!')
-
         if(message.member.roles.highest.position <= role.position) {
             return message.channel.send('You cannot grant this role as your role hierarchy is equal or below this role')
         }
@@ -63,10 +61,12 @@ module.exports = {
             return message.channel.send('This member already has that role!')
         }
 
-        await member.roles.add(role).catch(() => { return message.channel.send('An unexpected error occurred while trying to add this role') })
+        if(role == message.guild.roles.everyone || role.managed) return message.channel.send('You cannot add this role')
+
+        member.roles.add(role).catch(() => { return message.channel.send('An unexpected error occurred while trying to add this role') })
         const addedRole = new Discord.MessageEmbed()
         .setColor('#09fff2')
         .setDescription((`Successfully granted the \`${role.name}\` role to ${member}`))
-        await message.channel.send(addedRole)
+        message.channel.send(addedRole)
     }
 }
