@@ -1,6 +1,7 @@
 const Discord = require('discord.js')
 const settingsSchema = require('../../schemas/settings-schema')
 let talkedRecently = new Set()
+let openedSession = new Set()
 
 module.exports = {
     name: 'hol',
@@ -8,10 +9,12 @@ module.exports = {
     usage: 'hol',
     aliases: ['higherorlower', 'guessthenumber', 'gtn'],
     async execute(client, message, args) {
+        if(openedSession.has(message.author.id) return;
         const prefixSetting = await settingsSchema.findOne({
             guildid: message.guild.id
         })
 
+        openedSession.add(message.author.id)
         const chosenNumber = Math.round(Math.random() * 1000);
         let tries = 0;
         const startDate = new Date().getTime();
@@ -36,13 +39,6 @@ module.exports = {
                 return;
             }
 
-            const { prefix } = prefixSetting
-            if (message.content.startsWith(`${prefix}hol`) || message.content.startsWith(`${prefix}gtn`) || message.content.startsWith(`${prefix}guessthenumber`) || message.content.startsWith(`${prefix}higherorlower`)) {
-                collector.stop();
-                message.channel.send('Minigame ended since you started a new one')
-                return;
-            }
-
             tries++;
 
             if (isNaN(message.content)) return message.channel.send('This isn\'t even a number :/')
@@ -60,6 +56,7 @@ module.exports = {
         })
 
         collector.on('end', (collected, reason) => {
+            openedSession.delete(messsage.author.id)
             if (answered) return;
             if (reason == 'time') {
                 message.channel.send(`You ran out of time! The number was \`${chosenNumber}\``)
