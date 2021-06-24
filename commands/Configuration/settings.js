@@ -23,7 +23,7 @@ module.exports = {
             .addField('Message Log Channel', '__message-log-channel__\n\nSets the channel in which message updates will be logged')
             .addField('Moderation Logging Channel', '__moderation-log-channel__\n\nSets the channel in which moderator actions with Parallel will be logged')
             .addField('Auto-Moderation Log Channel', '__automod-log-channel__\n\nSets the channel in which automod punishments will be logged')
-            .addField('Moderation Role', '__modrole__', 'Gives users with the moderator permissions to run moderation commands')
+            .addField('Moderation Role', '__modrole__', 'Gives users with a moderatoe role the permission to run moderation commands')
             return message.channel.send(settingsPannel);
         }
 
@@ -101,7 +101,7 @@ module.exports = {
             case 'modrole':
                 if(!args[1]) return message.channel.send(settingsHelp('Mod Role',
                 'modrole <option: add, remove, removeall, view> [role]',
-                'Gives users with the moderator permissions to run moderation commands'))
+                'Gives users with a moderatoe role the permission to run moderation commands'))
                 var file = require('../../settings/modrole');
                 file.run(client, message, args)
                 break;
