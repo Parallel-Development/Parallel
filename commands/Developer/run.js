@@ -5,6 +5,7 @@ const settingsSchema = require('../../schemas/settings-schema')
 const { execute } = require('../Moderation/ban')
 const allowed = config.eval
 const dev = config.developers
+const openedSession = new Set()
 
 module.exports = {
     name: 'run',
@@ -16,7 +17,7 @@ module.exports = {
     async execute(client, message, args) {
 
         if (!allowed.includes(message.author.id)) return message.channel.send('Sorry, you can\'t run that!')
-
+        if(openedSet.has(message.author.id) return;
         const prefixSetting = await settingsSchema.findOne({
             guildid: message.guild.id
         })
@@ -30,9 +31,11 @@ module.exports = {
             .setDescription(`A new session has been opened for **${message.author.tag}**\n\nYou can end this session by typing \`.exit\`, and can make the bot ignore a message by putting an exclamation mark before your message`)
 
         message.channel.send(sessionstarted)
+        openedSession.add(message.author.id)
         let filter = m => m.author.id === message.author.id
         let collector = new Discord.MessageCollector(message.channel, filter, { time: 1800000 })
         collector.on('collect', (message, col) => {
+
             if (message.content.startsWith('.exit')) {
                 collector.stop();
                 message.channel.send(`Session ended for **${message.author.tag}**!`)
@@ -101,6 +104,7 @@ module.exports = {
         })
 
         collector.on('end', () => {
+            openedSession.delete(message.author.id)
             return;
         })
     }
