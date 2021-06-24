@@ -50,7 +50,7 @@ module.exports = {
                 } else {
                     const rawTime = message.content
                     const time = ms(rawTime)
-                    if(time == NaN) {
+                    if(!time) {
                         await msg.edit('An invalid time was provided, cancelled')
                         collector.stop();
                         return;
