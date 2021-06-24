@@ -24,6 +24,7 @@ module.exports = {
         let count = 0;
 
         const msg = await message.channel.send('For what reason? `cancel` to cancel')
+        openedSession.add(message.author.id)
         let filter = m => m.author.id == message.author.id
         const collector = new Discord.MessageCollector(message.channel, filter, { time: 120000, max: 3 })
         collector.on('collect', async(message) => {
