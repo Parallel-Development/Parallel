@@ -63,7 +63,7 @@ module.exports = {
             if (!amount) return message.channel.send(neednumber)
             await message.delete();
             message.channel.messages.fetch({
-                limit: amount + 1
+                limit: amount
             }).then(async(messages) => {
                 let userMessages = []
                 messages.filter(m => m.author.id == member.id).forEach(m => userMessages.push(m))
