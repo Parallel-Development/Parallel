@@ -20,6 +20,7 @@ module.exports = {
                 setTimeout(() => {
                     serverCooldown.delete(message.guild.id)
                 }, 60000)
+                let lockedChannels = 0;
                 const msg = await message.channel.send('🔒 Locking all server channels... <a:loading:834973811735658548> | This may take a while')
                 await message.guild.channels.cache.forEach(async(channel) => {
 
@@ -57,10 +58,11 @@ module.exports = {
                             enabledOverwrites: enabledOverwrites,
                             neutralOverwrites: neutralOverwrites
                         }).save()
+                        lockedChannels++
                     }
                     
                 })
-
+                if(lockedChannels == 0) return await msg.edit('Nothing changed as all channels are already locked')
                 await msg.edit('🔒 All server channels have been locked')
                 collector.stop();
                 return;
