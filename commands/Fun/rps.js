@@ -25,6 +25,8 @@ module.exports = {
         } catch (err) {
             member = null
         }
+
+        if(!member) return message.channel.send('Please specify a valid member | The member must be in the server')
         
         if(requestCooldown.has(message.author.id)) return message.channel.send('You already have a pending request! Please wait for it to expire before trying again');
         if(requestedCooldown.has(member.id)) return message.channel.send('This user already has a pending request! Please wait for their pending request to expire before trying again');
