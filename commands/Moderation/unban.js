@@ -51,8 +51,9 @@ module.exports = {
     
         message.guild.fetchBans().then(async(bans) => {
             if(bans.size == 0) return message.channel.send(nobans)
-            let member = bans.find(b => b.user.id == userID).user
+            let member = bans.find(b => b.user.id == userID)
             if(!member) return message.channel.send(notBanned)
+            member = member.user
 
             if (deleteModerationCommand) message.delete()
             
