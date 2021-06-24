@@ -60,15 +60,14 @@ module.exports = {
         if (!member.roles.cache.has(role.id)) {
             return message.channel.send('This member does not have this role!')
         }
-
-        try {
-            member.roles.remove(role)
-            const addedRole = new Discord.MessageEmbed()
-                .setColor('#09fff2')
-                .setDescription((`Successfully removed the \`${role.name}\` role from ${member}`))
-            message.channel.send(addedRole)
-        } catch {
-            return message.channel.send('An error occured whilst trying to remove this role to the specified member')
+        if(role == message.guild.roles.everyone) {
+            return message.channel.send('This role is not removeable')
         }
+
+        member.roles.remove(role).catch(() => { message.channel.send('An unexpected error occurred trying to remove this role') })
+        const addedRole = new Discord.MessageEmbed()
+            .setColor('#09fff2')
+            .setDescription((`Successfully removed the \`${role.name}\` role from ${member}`))
+        message.channel.send(addedRole)
     }
 }
