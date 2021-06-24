@@ -9,7 +9,7 @@ module.exports = {
     usage: 'hol',
     aliases: ['higherorlower', 'guessthenumber', 'gtn'],
     async execute(client, message, args) {
-        if(openedSession.has(message.author.id) return;
+        if(openedSession.has(message.author.id)) return;
         const prefixSetting = await settingsSchema.findOne({
             guildid: message.guild.id
         })
