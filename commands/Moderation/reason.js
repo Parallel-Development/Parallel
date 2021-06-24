@@ -44,7 +44,7 @@ module.exports = {
         }
 
         if (moderatorID !== message.author.id && !message.member.hasPermission('MANAGE_GUILD')) {
-            return message.channel.send('You can only delete warnings that you gave. You need the `Manage Guild` permission to delete other warnings')
+            return message.channel.send('You can only change the reason of warnings that you gave. You need the `Manage Guild` permission to change the reason of other warnings')
         }
 
         const noReason = new Discord.MessageEmbed()
