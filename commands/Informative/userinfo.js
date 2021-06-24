@@ -51,17 +51,6 @@ module.exports = {
             bot = 'No'
         }
 
-        var status;
-        if (user.presence.status === 'dnd') {
-            status = 'Do Not Disturb'
-        } else if (user.presence.status === 'idle') {
-            status = 'Idle'
-        } else if (user.presence.status === 'online') {
-            status = 'Online'
-        } else {
-            status = 'Offline'
-        }
-
         let description = `User information for ${user}`;
         if(!userNotMember) if(member.user.username !== member.displayName) description += ` (${member.user.username})`
 
@@ -72,7 +61,6 @@ module.exports = {
             .addField('User Tag', user.tag, true)
             .addField('User ID', user.id, true)
             .addField('Bot Account?', bot, false)
-            if(!userNotMember) userinfo.addField('Status', status, true)
             if(!userNotMember) userinfo.addField('Joined', moment(member.joinedAt).format('dddd, MMMM Do YYYY, h:mm:ss a'), false)
             userinfo.addField('Created', moment(user.createdAt).format('dddd, MMMM Do YYYY, h:mm:ss a'), false)
             if(!userNotMember) userinfo.addField(`Roles [${member.roles.cache.size - 1}]`, memberRoles, false)
