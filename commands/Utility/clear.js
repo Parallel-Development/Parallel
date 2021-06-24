@@ -61,7 +61,7 @@ module.exports = {
 
             if (amount > 100 || amount < 1) return message.channel.send(badtime)
             if (!amount) return message.channel.send(neednumber)
-            message.delete();
+            await message.delete();
             message.channel.messages.fetch({
                 limit: amount + 1
             }).then(async(messages) => {
