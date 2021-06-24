@@ -35,11 +35,13 @@ module.exports = {
 
         let moderatorID;
         let userid;
+        let reason;
 
         for (const i of codeExists.warnings) {
             if (i.code == code) {
                 moderatorID = i.moderatorID;
                 userid = i.userid
+                reason = i.reason
             }
         }
 
@@ -52,6 +54,7 @@ module.exports = {
         .setDescription('Please specify the new reason for this punishment')
         
         if(!newReason) return message.channel.send(noReason)
+        if(newReason == reason) return message.channel.send('The reason must be different!')
 
         await warningSchema.updateOne({
             guildid: message.guild.id,
