@@ -42,13 +42,6 @@ module.exports = {
                 return;
             }
 
-            const { prefix } = prefixSetting
-            if (message.content.startsWith(`${prefix}run`) || message.content.startsWith(`${prefix}session`)) {
-                message.channel.send(`The old session for **${message.author.username}**, because a new one has been created!`);
-                collector.stop();
-                return;
-            }
-
             if (message.content.startsWith('!')) return;
 
             count++
