@@ -67,6 +67,6 @@ module.exports = {
         const addedRole = new Discord.MessageEmbed()
         .setColor('#09fff2')
         .setDescription((`Successfully granted the \`${role.name}\` role to ${member}`))
-        message.channel.send(addedRole)
+        await message.channel.send(addedRole)
     }
 }
