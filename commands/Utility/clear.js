@@ -6,7 +6,7 @@ module.exports = {
     permissions: 'MANAGE_MESSAGES',
     moderationCommand: true,
     usage: 'clear <amount>\nclear <user> [amount]',
-    aliases: ['purge'],
+    aliases: ['purge', 'prune'],
     async execute(client, message, args) {
         const missingperms = new Discord.MessageEmbed()
             .setColor('#FF0000')
