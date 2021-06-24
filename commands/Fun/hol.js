@@ -37,7 +37,7 @@ module.exports = {
             }
 
             const { prefix } = prefixSetting
-            if (message.content.startsWith(`${prefix}hol`)) {
+            if (message.content.startsWith(`${prefix}hol`) || message.content.startsWith(`${prefix}gtn`) || message.content.startsWith(`${prefix}guessthenumber`) || message.content.startsWith(`${prefix}higherorlower`)) {
                 collector.stop();
                 message.channel.send('Minigame ended since you started a new one')
                 return;
@@ -46,8 +46,7 @@ module.exports = {
             tries++;
 
             if (isNaN(message.content)) return message.channel.send('This isn\'t even a number :/')
-            if (message.content > 1000) return message.channel.send('bruv I said between 0-1000')
-            if (message.content < 0) return message.channel.send('bruv I said between 0-1000')
+            if (message.content > 1000 || message.content < 0) return message.channel.send('bruv I said between 0-1000')
             if (message.content < chosenNumber) return message.channel.send('Higher!');
             if (message.content > chosenNumber) return message.channel.send('Lower!');
             if (message.content == chosenNumber) {
