@@ -54,9 +54,7 @@ module.exports = {
         if(role.managable) return message.channel.send('You cannot add a bot role to a user!')
 
         if(message.member.roles.highest.position <= role.position) {
-            if(!message.guild.owner) {
-                return message.channel.send('You cannot grant this role as your role hierarchy is equal or below this role')
-            }
+            return message.channel.send('You cannot grant this role as your role hierarchy is equal or below this role')
         }
         if(message.guild.me.roles.highest.position <= role.position) {
             return message.channel.send('I do not have permission to grant this role, as it is equal or below me in hierarchy')
