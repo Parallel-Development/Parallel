@@ -93,13 +93,15 @@ module.exports = {
         if(rawTime !== '') time = ms(rawTime)
         let x = false;
         if(!time) {
-            const defaultWarningExpirationTime = await settingsSchema.findOne({
-                guildid: message.guild.id
-            });
-            let { manualwarnexpire } = defaultWarningExpirationTime;
-            if(manualwarnexpire !== 'disabled') {
-                time = parseInt(manualwarnexpire);
-                x = true;
+            if(!(rawTime == 'permanent' || rawTime == 'perm' || rawTime == 'p')) {
+                const defaultWarningExpirationTime = await settingsSchema.findOne({
+                    guildid: message.guild.id
+                });
+                let { manualwarnexpire } = defaultWarningExpirationTime;
+                if(manualwarnexpire !== 'disabled') {
+                    time = parseInt(manualwarnexpire);
+                    x = true;
+                }
             }
         }
 
