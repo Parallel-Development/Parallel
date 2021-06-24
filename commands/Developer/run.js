@@ -17,7 +17,7 @@ module.exports = {
     async execute(client, message, args) {
 
         if (!allowed.includes(message.author.id)) return message.channel.send('Sorry, you can\'t run that!')
-        if(openedSet.has(message.author.id) return;
+        if(openedSet.has(message.author.id)) return;
         const prefixSetting = await settingsSchema.findOne({
             guildid: message.guild.id
         })
