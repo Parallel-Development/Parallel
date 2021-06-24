@@ -33,6 +33,20 @@ module.exports = {
 
         if(!codeExists) return message.channel.send(codeNotFound)
 
+        let moderatorID;
+        let userid;
+
+        for (const i of codeExists.warnings) {
+            if (i.code == code) {
+                moderatorID = i.moderatorID;
+                userid = i.userid
+            }
+        }
+
+        if (moderatorID !== message.author.id && !message.member.hasPermission('MANAGE_GUILD')) {
+            return message.channel.send('You can only delete warnings that you gave. You need the `Manage Guild` permission to delete other warnings')
+        }
+
         const noReason = new Discord.MessageEmbed()
         .setColor('#FF0000')
         .setDescription('Please specify the new reason for this punishment')
