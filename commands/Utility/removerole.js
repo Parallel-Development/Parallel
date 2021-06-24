@@ -64,7 +64,7 @@ module.exports = {
             return message.channel.send('This role is not removeable')
         }
 
-        await member.roles.remove(role).catch(() => { message.channel.send('An unexpected error occurred trying to remove this role') })
+        await member.roles.remove(role).catch(() => { return message.channel.send('An unexpected error occurred trying to remove this role') })
         const addedRole = new Discord.MessageEmbed()
             .setColor('#09fff2')
             .setDescription((`Successfully removed the \`${role.name}\` role from ${member}`))
