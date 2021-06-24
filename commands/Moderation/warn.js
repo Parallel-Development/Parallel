@@ -89,8 +89,8 @@ module.exports = {
         // Make the warning have an expirtion date?
 
         const rawTime = reason.split(' ')[0]
-        if(rawTime == '') rawTime = null;
-        let time = ms(rawTime)
+        let time;
+        if(rawTime !== '') time = ms(rawTime)
         let x = false;
         if(!time) {
             const defaultWarningExpirationTime = await settingsSchema.findOne({
