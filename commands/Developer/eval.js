@@ -112,7 +112,7 @@ module.exports = {
                 evaluatingMessage.edit(new Discord.MessageEmbed()
                 .setColor('#ffff00')
                 .setDescription(`Output was too big to be sent as a Discord message!\nOutput: <${urlToPaste}>`))
-                )
+            )
         })
 
     }

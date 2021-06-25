@@ -2,6 +2,7 @@ const config = require('./config.json');
 const Discord = require('discord.js');
 const client = new Discord.Client();
 const mongo = require('./mongo');
+const hastebin = require('hastebin')
 
 const fs = require('fs')
 const commandFolders = fs.readdirSync('./commands')
@@ -364,7 +365,23 @@ client.on('messageUpdate', async(oldMessage, message) => {
             .addField('New Message', `\`\`\`${message.content}\`\`\``)
             .addField('Edited in', message.channel)
             .setFooter(`ID: ${message.id}`)
-            messageLogChannel.send(messageLogEmbed).catch(() => { return })
+            messageLogChannel.send(messageLogEmbed).catch(() => {
+                let output = `Old Message:\n${oldMessage.content}\n\nNew Message:\n${message.content}`
+                hastebin.createPaste(output, {
+                    raw: true,
+                    contentType: 'text/plain',
+                    server: 'https://hastebin.com'
+                }).then(urlToPaste =>
+                    messageLogChannel.send(new Discord.MessageEmbed()
+                        .setColor('#FFFF00')
+                        .setAuthor('Parallel Logging', client.user.displayAvatarURL())
+                        .setTitle('Message Update')
+                        .setDescription(`__[Jump to Message](${message.url})__`)
+                        .addField('User', `**${oldMessage.author.tag}** - \`${oldMessage.author.id}\``) 
+                        .setDescription(urlToPaste)
+                        .addField('Edited in', message.channel)
+                        .setFooter(`ID: ${message.id}`))
+                ) })
         }
     }
 
