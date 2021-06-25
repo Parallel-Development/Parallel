@@ -137,8 +137,6 @@ module.exports = {
 
 
                     collector1.on('end', (col, reason) => {
-                        openedSession.delete(message.author.id)
-                        openedSession.delete(member.id)
                         if (reason == 'time') {
                             message.channel.send('No response in 30 seconds, cancelled');
                             collector1.stop();
@@ -153,8 +151,6 @@ module.exports = {
                     })
 
                     collector2.on('end', (col, reason) => {
-                        openedSession.delete(message.author.id)
-                        openedSession.delete(member.id)
                         if (reason == 'time') {
                             message.channel.send('No response in 30 seconds, cancelled');
                             collector.stop();
@@ -197,6 +193,9 @@ module.exports = {
  */
 
 function finish(user1, user2, user1option, user2option, gameBoard, client, collector1, collector2) {
+
+    openedSession.delete(user1.id)
+    openedSession.delete(user2.id)
 
     if(user1option && user2option) {
 
