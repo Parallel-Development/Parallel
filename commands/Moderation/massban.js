@@ -106,7 +106,7 @@ async function banUser(client, message, msg, users, reason, duration) {
     users.forEach(async(user) => {
         user = message.guild.members.cache.get(user.id)
         if (user.roles.highest.position >= message.member.roles.highest.position) return message.channel.send(`You cannot ban ${user} as their highest role is higher or equal to yours in hierarchy`)
-        if (user.hasPermission('ADMINISTRATOR')) return await message.channel.send(`You cannot ban ${user} as they are an adninistrator`)
+        if (user.hasPermission('ADMINISTRATOR')) return await message.channel.send(`You cannot ban ${user} as they are an administrator`)
         if(user.roles.highest.position >= message.guild.me.roles.highest.position) return message.channel.send(`I cannot ban ${user} as their highest role is higher than or equal to mine in heirarchy`)
 
         var code = '';
