@@ -137,6 +137,8 @@ module.exports = {
 
 
                     collector1.on('end', (col, reason) => {
+                        openedSession.delete(message.author.id)
+                        openedSession.delete(member.id)
                         if (reason == 'time') {
                             message.channel.send('No response in 30 seconds, cancelled');
                             collector1.stop();
@@ -151,6 +153,8 @@ module.exports = {
                     })
 
                     collector2.on('end', (col, reason) => {
+                        openedSession.delete(message.author.id)
+                        openedSession.delete(member.id)
                         if (reason == 'time') {
                             message.channel.send('No response in 30 seconds, cancelled');
                             collector.stop();
@@ -170,8 +174,6 @@ module.exports = {
             })
 
             collector.on('end', (col, reason) => {
-                openedSession.delete(message.author.id)
-                openedSession.delete(member.id)
                 requestCooldown.delete(message.author.id);
                 requestedCooldown.delete(member.id)
                 if(reason == 'time') {
