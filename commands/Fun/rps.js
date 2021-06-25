@@ -1,12 +1,15 @@
 const Discord = require('discord.js');
 const requestCooldown = new Set();
 const requestedCooldown = new Set();
+let openedSession = new Set()
 
 module.exports = {
     name: 'rps',
     description: 'Play someone in rock-paper-scissors',
     usage: 'rps <player>',
     async execute(client, message, args) {
+
+        if(openedSession.has(message.author.id)) return message.channel.send('You are already in a game!')
        
         function getUserFromMention(mention) {
             if (!mention) return false;
@@ -46,6 +49,8 @@ module.exports = {
             collector.on('collect', async(message, col) => { 
                 
                 if(message.content.toLowerCase() == 'play') {
+                    openedSession.add(message.author.id)
+                    openedSession.add(member.id)
                     const gameBoardEmbed = new Discord.MessageEmbed()
                     .setColor('#09ff2')
                     .setAuthor('Rock Paper Scissors', client.user.displayAvatarURL())
@@ -165,6 +170,8 @@ module.exports = {
             })
 
             collector.on('end', (col, reason) => {
+                openedSession.delete(message.author.id)
+                openedSession.delete(member.id)
                 requestCooldown.delete(message.author.id);
                 requestedCooldown.delete(member.id)
                 if(reason == 'time') {
