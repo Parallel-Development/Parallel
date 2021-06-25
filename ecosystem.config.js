@@ -1,6 +1,6 @@
 module.exports = {
   apps : [{
-    name: 'Razor',
+    name: 'Parallel',
     script: 'index.js',
     args: '',
     autorestart: true,
