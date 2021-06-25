@@ -11,7 +11,7 @@ module.exports = {
         .setColor('#09fff2')
         .setAuthor(`Server Information for ${message.guild.name}`, client.user.displayAvatarURL())
         .addField('Server ID', message.guild.id, true)
-        .addField('Members', `<:offline:815453799917420565> ${message.guild.memberCount} Members<:spacer:815451803642626068><:online:815451803683651594>${message.guild.members.cache.filter(member => member.presence.status !== 'offline').size} Online`)
+        .addField('Member Count', message.guild.members.cache.size)
         .addField('Channels', `<:text:815451803733852160> ${message.guild.channels.cache.filter(channel => channel.type === 'text').size} Text<:spacer:815451803642626068><:voice:815451803331854367>${message.guild.channels.cache.filter(channel => channel.type === 'voice').size} Voice`)
         .addField('Emojis', message.guild.emojis.cache.size, true)
         .addField('Roles', message.guild.roles.cache.size, true)
