@@ -17,9 +17,9 @@ module.exports = {
             if (oldState.channelID !== oldState.guild.me.voice.channelID || newState.channel)
               return;
             
-            if (newState.channel.members.filter(m => m.user.bot == false).size == 0)
+            if (!newState.channel.members.filter(m => m.user.bot == false).size)
               return setTimeout(() => {
-                if (newState.channel.members.filter(m => m.user.bot == false).size == 0) 
+                if (!newState.channel.members.filter(m => m.user.bot == false).size)
                  newState.channel.leave(); // leave
               }, 60000);
           });
