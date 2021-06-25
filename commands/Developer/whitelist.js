@@ -34,7 +34,8 @@ module.exports = {
 
 
         await blacklistSchema.deleteOne({
-            user: id
+            user: id,
+            server: false
         });
 
         const whitelisted = new Discord.MessageEmbed()

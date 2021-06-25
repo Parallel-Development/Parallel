@@ -49,7 +49,8 @@ module.exports = {
         if (!reason) return message.channel.send(reasonReq)
 
         const result = await blacklistSchema.findOne({
-            user: args[0]
+            user: args[0],
+            server: false
         })
 
         if (result) {
@@ -67,12 +68,13 @@ module.exports = {
             user: member.id,
             reason: reason,
             date: date,
-            sent: false
+            sent: false,
+            server: false
         }).save();
 
         const blacklisted = new Discord.MessageEmbed()
             .setColor('#FF0000')
-            .setDescription(`The ID \`${member.id}\` has been added to the blacklist <a:check:800062847974375424>`)
+            .setDescription(`The user ID \`${member.id}\` has been added to the blacklist <a:check:800062847974375424>`)
 
         message.channel.send(blacklisted)
 

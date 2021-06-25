@@ -10,7 +10,7 @@ module.exports = {
     aliases: ['p'],
     async execute(client, message, args, ops) {
 
-        return message.channel.send('Hello, unfortunately we are experiencing issues with Music right now, so Music has been temporarily disabled')
+        //return message.channel.send('Hello, unfortunately we are experiencing issues with Music right now, so Music has been temporarily disabled')
 
         client.on('voiceStateUpdate', (oldState, newState) => {
 
@@ -77,6 +77,7 @@ module.exports = {
             data.connection = await message.member.voice.channel.join().catch(() => { return message.chanenl.send('Failed to join the Voice Channel. Do I have the permission to join?') });
             message.guild.me.voice.setDeaf(true).catch(() => { return })
         }
+
         if (!data.queue) data.queue = [];
         data.guildID = message.guild.id;
         data.queue.push({
@@ -101,6 +102,8 @@ module.exports = {
 }
 
 async function play(client, ops, data) {
+
+
     const nowplaying = new Discord.MessageEmbed()
     .setColor('#09fff2')
     .setDescription(`<:youtube:800062024771305553> Now playing: [${data.queue[0].songTitle}](${data.queue[0].songURL}) | Requested by: **${data.queue[0].requester}**`)
@@ -112,9 +115,11 @@ async function play(client, ops, data) {
     data.dispatcher.once('finish', function() {
         finish(client, ops, this);
     })
+
 }
 
 function finish(client, ops, dispatcher) {
+
     let fetched = ops.active.get(dispatcher.guildID)
     fetched.queue.shift();
     if(fetched.queue.length > 0) {

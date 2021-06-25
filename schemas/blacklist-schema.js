@@ -12,6 +12,10 @@ const blacklistSchema = mongoose.Schema({
     sent: {
         type: Boolean,
         required: true
+    },
+    server: {
+        type: Boolean,
+        required: true
     }
 })
 

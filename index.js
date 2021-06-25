@@ -439,8 +439,14 @@ client.on('message', async(message) => {
     })
 
     const check = await blacklistSchema.findOne({
-        user: message.author.id
+        user: message.author.id,
+        server: false
     }).catch(e => false)
+
+    const check2 = await blacklistSchema.findOne({
+        user: message.guild.id,
+        server: true
+    })
 
     const prefixSetting = await settingsSchema.findOne({
         guildid: message.guild.id
@@ -682,13 +688,34 @@ client.on('message', async(message) => {
             .setFooter('You cannot appeal your ban if it is not unjustified!');
         message.author.send(blacklistEmbed).catch(() => { return message.react('🛑') }).catch(() => { return })
         await blacklistSchema.updateMany({
-            user: message.author.id
+            user: message.author.id,
+            server: false
         },
         {
             sent: true
         })
         return;
     }
+
+    if(check2) {
+        let { reason, date, sent } = check2;
+
+        if(sent) return message.guild.leave();
+        message.channel.send(`Your command request was denied: the server in which you ran this command has been added to the command blacklist.\n\nReason: ${reason}\nDate: ${date}\nAppeal: <https://docs.google.com/document/d/15EwKPOPvlIO5iSZj-qQyBjmQ5X7yKHlijW9wCiDfffM/edit>\n\n\nGoodbye now ;)`)
+
+        await blacklistSchema.updateMany({
+            user: message.guild.id,
+            server: true
+        },
+        {
+            sent: true
+        })
+
+        message.guild.leave();
+        return 
+    }
+
+
 
     if (!message.channel.permissionsFor(message.guild.me).toArray().includes('SEND_MESSAGES')) return;
 
