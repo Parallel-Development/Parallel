@@ -17,7 +17,7 @@ module.exports = {
         .addField('Roles', message.guild.roles.cache.size, true)
         .addField('Highest Role', message.guild.roles.highest)
         .addField('Nitro Boosts', `<:boost:815451803361214465> ${message.guild.premiumSubscriptionCount} (Level ${message.guild.premiumTier})`)
-        .addField('Server Owner', message.guild.members.cache.get(message.guild.ownerID))
+        .addField('Server Owner', message.guild.owner)
         .addField('Created', moment(message.guild.createdAt).format('dddd, MMMM Do YYYY, h:mm:ss a'))
         .setFooter(`Information requested by ${message.author.tag}`, client.user.displayAvatarURL())
         .setThumbnail(message.guild.iconURL({dynamic: true}))
