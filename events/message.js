@@ -70,6 +70,7 @@ module.exports = {
         }).catch(() => { });
 
         const prefix = settings.prefix || client.config.prefix;
+        const { delModCmds } = settings;
 
         const automodCheck = await automodSchema.findOne({
             guildID: message.guild.id
@@ -296,12 +297,41 @@ module.exports = {
             else if(shortcmd.type === 'mute' || shortcmd.type === 'tempmute') permissions = 'MANAGE_MEMBERS'
             else if(shortcmd.type === 'ban' || shortcmd.type === 'tempban') permissions = 'BAN_MEMBERS';
 
+            const punishmentID = client.util.generateRandomBase62String();
+
             if(!message.member.hasPermission(permissions) && !isModerator) return denyAccess();
 
             if(shortcmd.type === 'mute' || shortcmd.type === 'tempmute' || shortcmd.type === 'ban' || shortcmd.type === 'tempban') {
+                let member = message.mentions.members.first() || message.guild.members.cache.get(args[0]) || await client.users.fetch(args[0]).catch(() => {})
+                if(!member) return message.channel.send(client.config.errorMessages.missing_argument_user);
+
+                if (member.user) {
+                    if (member.id === client.user.id) return message.channel.send(client.config.errorMessages.cannot_punish_myself);
+                    if (member.id === message.member.id) return message.channel.send(client.config.errorMessages.cannot_punish_yourself);
+                    if (member.roles.highest.position >= message.member.roles.highest.position && message.member !== message.guild.owner) return message.channel.send(client.config.errorMessages.hierarchy);
+                    if (member.roles.highest.position >= message.guild.me.roles.highest.position) return message.channel.send(client.config.errorMessages.my_hierarchy);
+                    if (member === message.guild.owner) return message.channel.send(client.config.errorMessages.cannot_punish_owner)
+                }
+
+                if(shortcutcmd.type === 'ban' || shortcutcmd.type === 'tempban') {
+                    const alreadyBanned = await message.guild.fetchBans().then(bans => bans.find(ban => ban.user.id === member.id));
+                    if (alreadyBanned) return message.channel.send('This user is already banned');
+
+                    const { baninfo } = settings;
+
+                    if (member.user) await DMUserInfraction.run(client, 'banned', client.config.colors.punishment[2], message, member, shortcmd.reason, punishmentID, shortcmd.duration, baninfo !== 'none' ? baninfo : null);
+                    ModerationLogger.run(client, 'Banned', message.member, member, message.channel, shortcmd.reason, shortcmd.duration, punishmentID);
+                    await message.guild.members.ban(member.id, { reason: shortcmd.reason });
+                    NewInfraction.run(client, 'Ban', message, member, shortcmd.reason, punishmentID, shortcmd.duration, false);
+                    if (shortcmd.duration) NewPunishment.run(message.guild.name, message.guild.id, 'ban', member.id, shortcmd.reason, shortcmd.duration ? Date.now() + shortcmd.duration : 'Never');
+
+                } else {
+                    
+                }
+
 
             } else {
-                
+
             }
         }
 
