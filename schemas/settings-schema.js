@@ -28,6 +28,10 @@ const settingsSchema = mongoose.Schema({
     moderationLogging: reqString,
     automodLogging: reqString,
     modRoles: reqStringArray,
+    shortcutCommands: {
+        type: [Object],
+        required: true
+    }
 })
 
 module.exports = mongoose.model('settings', settingsSchema)

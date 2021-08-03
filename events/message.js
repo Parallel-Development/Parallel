@@ -57,9 +57,11 @@ module.exports = {
                 autowarnexpire: 'disabled',
                 manualwarnexpire: 'disabled',
                 messageLogging: 'none',
+                messageLoggingIgnored: [],
                 moderationLogging: 'none',
                 automodLogging: 'none',
                 modRoles: [],
+                shortcutCommands: []
             }).save()
         } 
 
@@ -101,7 +103,8 @@ module.exports = {
                 linksTempBanDuration: 0,
                 invitesTempBanDuration: 0,
                 massmentionTempBanDuration: 0,
-                bypassChannels: []
+                bypassChannels: [],
+                bypassRoles: []
             }).save();
         }
 
@@ -113,7 +116,6 @@ module.exports = {
             guildID: message.guild.id,
             bypassChannels: message.channel.id
         })
-
         const isBlacklisted = await blacklistSchema.findOne({
             ID: message.author.id,
             server: false
@@ -123,10 +125,21 @@ module.exports = {
             server: true
         })
 
+        let roleBypassed = false;
+        for(var i = 0; i !== message.member.roles.cache.array().length; ++i) {
+            const x = await automodSchema.findOne({
+                guildID: message.guild.id
+            })
+            const { bypassRoles } = x;
+            const role = message.member.roles.cache.array()[i];
+            if(bypassRoles.includes(role.id)) roleBypassed = true;
+        }
+
         if (
             !message.member.hasPermission('MANAGE_MESSAGES') &&
             !isModerator &&
-            (!channelBypassed || !channelBypassed)
+            (!channelBypassed || !channelBypassed.length) &&
+            !roleBypassed
         ) require('../structures/AutomodChecks').run(client, message);
         
 
@@ -213,21 +226,21 @@ module.exports = {
 
         if(command.developing && !client.config.developers.includes(message.author.id)) return;
 
+        const denyAccess = () => {
+            const errorMessage = new Discord.MessageEmbed()
+                .setColor(client.config.colors.err)
+                .setAuthor('Access Denied')
+                .setDescription(`You do not have permission to run the \`${command.name}\` command`)
+            return message.channel.send(errorMessage).then(msg => {
+                setTimeout(() => { message.delete(msg).catch(() => { }); msg.delete() }, 3000)
+            })
+        }
         
         if (
             command.permissions && 
             !message.member.hasPermission(command.permissions) 
         ) {
 
-            const denyAccess = () => {
-                const errorMessage = new Discord.MessageEmbed()
-                    .setColor(client.config.colors.err)
-                    .setAuthor('Access Denied')
-                    .setDescription(`You do not have permission to run the \`${command.name}\` command`)
-                return message.channel.send(errorMessage).then(msg => {
-                    setTimeout(() => { message.delete(msg).catch(() => { }); msg.delete() }, 3000)
-                })
-            }
             if (
                 command.permissions === 'MANAGE_MESSAGES'
                 || command.permissions === 'BAN_MEMBERS'
@@ -248,31 +261,46 @@ module.exports = {
 
             return message.channel.send(missingPermissionEmbed)
         };
-        
-       if(
-           await settingsSchema.findOne({
-            guildID: message.guild.id,
-            locked: message.channel.id
+
+        if (
+            await settingsSchema.findOne({
+                guildID: message.guild.id,
+                locked: message.channel.id
             }) ||
             await settingsSchema.findOne({
                 guildID: message.guild.id,
                 locked: message.channel.parentID
             })
-       ) {
-           if(!message.member.hasPermission('MANAGE_MESSAGES') && !isModerator) {
-               const msg = await message.channel.send('Commands are disabled in this channel');
-               setTimeout(() => {
-                   message.delete();
-                   msg.delete();
-               }, 3000);
-               return;
-           }
-       }
+        ) {
+            if (!message.member.hasPermission('MANAGE_MESSAGES') && !isModerator) {
+                const msg = await message.channel.send('Commands are disabled in this channel');
+                setTimeout(() => {
+                    message.delete();
+                    msg.delete();
+                }, 3000);
+                return;
+            }
+        }
 
+        for (var i = 0; i !== args.length; ++i) {
+            const word = args[i];
+            message.guild.members.fetch(word).catch(() => { });
+        }
 
+        const { shortcutCommands } = automodSchema;
+        if(shortcutCommands.some(command => command.name === cmd)) {
+            const shortcmd = shortcutCommands.find(command => command.name === cmd);
+            let permissions;
+            if(shortcmd.type === 'warn') permissions = 'MANAGE_MESSAGES'
+            else if(shortcmd.type === 'kick') permissions = 'KICK_MEMBERS'
+            else if(shortcmd.type === 'mute' || shortcmd.type === 'tempmute') permissions = 'MANAGE_MEMBERS'
+            else if(shortcmd.type === 'ban' || shortcmd.type === 'tempban') permissions = 'BAN_MEMBERS';
 
+            if(!message.member.hasPermission(permissions) && !isModerator) return denyAccess();
 
-        await message.guild.members.fetch();
+            const member = args[0];
+            
+        }
 
         try { command.execute(client, message, args) }
         catch { return; }

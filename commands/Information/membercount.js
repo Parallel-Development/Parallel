@@ -2,7 +2,7 @@ const Discord = require('discord.js')
 
 module.exports = {
     name: 'membercount',
-    description: 'Shows the number of members in the server',
+    description: 'Shows the number of members on the server',
     usage: 'membercount',
     aliases: ['usercount'],
     async execute(client, message, args) {
@@ -10,7 +10,7 @@ module.exports = {
         const membercount = new Discord.MessageEmbed()
             .setColor(client.config.colors.main)
             .setTitle('Member Count')
-            .setDescription(`There are **${message.guild.memberCount}** users in this server, **${message.guild.members.cache.filter(member => member.user.bot).size}** bots, **${message.guild.members.cache.filter(member => !member.user.bot).size}** humans`)
+            .setDescription(`There are **${message.guild.memberCount}** members on this server`)
 
         return message.channel.send(membercount)
     }

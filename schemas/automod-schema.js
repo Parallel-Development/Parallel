@@ -41,6 +41,10 @@ const automodSchema = mongoose.Schema({
     bypassChannels: {
         type: [String],
         required: true
+    },
+    bypassRoles: {
+        type: [String],
+        required: true
     }
 });
 

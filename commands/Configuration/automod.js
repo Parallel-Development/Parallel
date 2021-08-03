@@ -952,6 +952,94 @@ module.exports = {
 
                 }
                 break;
+            case 'rolebypass':
+
+                switch (toggle) {
+                    case 'add':
+                        var bypassRole = message.mentions.roles.first() || message.guild.roles.cache.find(r => r.name === args.slice(2).join(' ')) || message.guild.roles.cache.get(args[2])
+                        if (!bypassRole) return message.channel.send(client.config.errorMessages.missing_argument_role)
+                        const alreadyInBypassList0 = await automodSchema.findOne({
+                            guildID: message.guild.id,
+                            bypassRoles: bypassRole.id
+                        })
+                        if (alreadyInBypassList0 && alreadyInBypassList0.length !== 0) return message.channel.send('This role is already in the bypass list! You can view the list by running `automod rolebypass view`')
+                        await automodSchema.updateOne({
+                            guildID: message.guild.id
+                        },
+                            {
+                                $push: {
+                                    bypassRoles: bypassRole.id
+                                }
+                            })
+                        await message.channel.send(`\`${bypassRole.name}\` has been added to the automod bypass list`)
+                        break;
+                    case 'remove':
+                        var bypassRole = message.mentions.roles.first() || message.guild.roles.cache.find(r => r.name === args.slice(2).join(' ')) || message.guild.roles.cache.get(args[2])
+                        if (!bypassRole) return message.channel.send(client.config.errorMessages.missing_argument_role)
+                        const alreadyInBypassList1 = await automodSchema.findOne({
+                            guildID: message.guild.id,
+                            bypassRoles: bypassRole.id
+                        })
+                        if (!alreadyInBypassList1 || !alreadyInBypassList1.length) return message.channel.send('This role is not in the bypass list! You can view the list by running `automod rolebypass view`')
+                        await automodSchema.updateOne({
+                            guildID: message.guild.id
+                        },
+                            {
+                                $pull: {
+                                    bypassRoles: bypassRole.id
+                                }
+                            })
+                        await message.channel.send(`\`${bypassRole.name}\` has been removed from the automod bypass list`)
+                        break;
+                    case 'removeall':
+                        await automodSchema.updateOne({
+                            guildID: message.guild.id
+                        },
+                            {
+                                bypassRoles: []
+                            })
+                        await message.channel.send(`All roles have been removed from the automod rolebypass list`)
+                        break;
+                    case 'view':
+                        const rolesBypassed = await automodSchema.findOne({
+                            guildID: message.guild.id,
+                        })
+
+                        const { bypassRoles } = rolesBypassed
+
+                        if (!bypassRoles || !bypassRoles.length) return message.channel.send('No roles are on the automod rolebypass list! Want to add some? `automod rolebypass add (role)`')
+                        const bypassRolesViewList = new Discord.MessageEmbed()
+                            .setColor('#09fff2')
+                            .setAuthor(`Bypassed role list for ${message.guild.name}`, client.user.displayAvatarURL())
+                        const bypassRoles2 = [];
+                        for (var i = 0; i !== bypassRoles.length; ++i) {
+                            const role = bypassRoles[i];
+                            if (!message.guild.roles.cache.get(role)) {
+                                await automodSchema.updateOne({
+                                    guildID: message.guild.id
+                                },
+                                    {
+                                        $pull: {
+                                            bypassRoles: role
+                                        }
+                                    })
+                            } else {
+                                bypassRoles2.push(message.guild.roles.cache.get(role))
+                            }
+                        }
+
+                        bypassRolesViewList.setDescription(bypassRoles2.join(', '))
+                        message.channel.send(bypassRolesViewList)
+                        break;
+                    default:
+                        if (args[0]) {
+                            return message.channel.send(client.config.errorMessages.missing_argument_option)
+                        } else {
+                            return message.channel.send(client.config.errorMessages.invalid_option)
+                        }
+
+                }
+                break;
             default:
                 return message.channel.send('Invalid setting!')
         }
