@@ -34,8 +34,8 @@ exports.run = async (client, type, message, member, reason, punishmentID, time, 
                     moderatorID: message.author.id,
                     date: client.util.timestamp(),
                     reason: reason,
-                    duration: time ? client.util.convertMillisecondsToDuration(time) : 'Permanent',
-                    expires: time ? Date.now() + time : 'Never',
+                    duration: time && time !== 'Permanent' ? client.util.convertMillisecondsToDuration(time) : 'Permanent',
+                    expires: time && time !== 'Permanent' ? Date.now() + time : 'Never',
                     punishmentID: punishmentID,
                     auto: auto ? true : false
                 }

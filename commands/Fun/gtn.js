@@ -16,7 +16,7 @@ module.exports = {
         let tries = 0;
         const startDate = Date.now();
         let answered = false;
-        message.channel.send('A number has been chosen `0-1000`. You have `8` tries and `60` seconds to guess! (You can run `.end` to cancel this minigame)');
+        message.reply('A number has been chosen `0-1000`. You have `8` tries and `60` seconds to guess! (You can run `.end` to cancel this minigame)');
         const filter = m => m.author.id === message.author.id;
         const collector = new Discord.MessageCollector(message.channel, filter, { time: 60000, max: 8 });
         collector.on('collect', (message) => {
@@ -35,17 +35,17 @@ module.exports = {
                 return answered = true;
             }
 
-            if (parseInt(message.content) === NaN) return message.channel.send(client.config.errorMessages.bad_input_number);
-            if (message.content > 1000 || message.content < 0) return message.channel.send('Number must be within the range of 0 to 1,000')
+            if (parseInt(message.content) === NaN) return message.reply(client.config.errorMessages.bad_input_number);
+            if (message.content > 1000 || message.content < 0) return message.reply('Number must be within the range of 0 to 1,000')
 
             tries++;
 
-            if (message.content < chosenNumber) return message.channel.send('Higher!');
-            if (message.content > chosenNumber) return message.channel.send('Lower!');
+            if (message.content < chosenNumber) return message.reply('Higher!');
+            if (message.content > chosenNumber) return message.reply('Lower!');
             if (message.content == chosenNumber) {
                 const endDate = Date.now();
                 const finishDate = (endDate - startDate) / 1000;
-                message.channel.send(`Jackpot! You guessed the number in \`${tries}\` tries, and it took you around \`${Math.round(finishDate)}\` seconds`)
+                message.reply(`Jackpot! You guessed the number in \`${tries}\` tries, and it took you around \`${Math.round(finishDate)}\` seconds`)
                 answered = true;
                 return collector.stop();
             }
@@ -55,10 +55,10 @@ module.exports = {
             openedSession.delete(message.author.id)
             if (answered) return;
             if (reason === 'time') {
-                return message.channel.send(`You ran out of time! The number was \`${chosenNumber}\``)
+                return message.reply(`You ran out of time! The number was \`${chosenNumber}\``)
             }
             if (reason === 'limit') {
-                return message.channel.send(`You ran out of tries! The number was \`${chosenNumber}\``)
+                return message.reply(`You ran out of tries! The number was \`${chosenNumber}\``)
             }
         })
     }

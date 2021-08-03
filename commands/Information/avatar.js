@@ -9,7 +9,7 @@ module.exports = {
 
         const member = message.mentions.members.first()
         || message.guild.members.cache.get(args[0])
-        || await client.users.fetch(args[0]).catch(() => { member = null })
+        || await client.users.fetch(args[0]).catch(() => { })
         || message.member
 
         const user = await client.users.fetch(member.id)
@@ -19,6 +19,6 @@ module.exports = {
         .setAuthor(`${user.tag}'s avatar`, client.user.displayAvatarURL())
         avatar.setImage(user.displayAvatarURL({ dynamic: true, size: 1024 }))
 
-        return message.channel.send(avatar)
+        return message.reply({ embeds: [avatar] })
     }
 }

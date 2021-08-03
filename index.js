@@ -1,5 +1,10 @@
 const Discord = require('discord.js');
-const client = new Discord.Client();
+const client = new Discord.Client({ intents: [Discord.Intents.FLAGS.GUILDS, 
+    Discord.Intents.FLAGS.GUILD_MESSAGES, 
+    Discord.Intents.FLAGS.DIRECT_MESSAGES, 
+    Discord.Intents.FLAGS.GUILD_BANS,
+    Discord.Intents.FLAGS.GUILD_VOICE_STATES
+] });
 const fs = require('fs');
 client.config = require('./config.json');
 client.util = require('./structures/Utils');
@@ -9,10 +14,7 @@ client.aliases = new Discord.Collection();
 client.categories = fs.readdirSync('./commands');
 
 const warningSchema = require('./schemas/warning-schema');
-const settingsSchema = require('./schemas/settings-schema');
-const muteSchema = require('./schemas/mute-schema');
 const punishmentSchema = require('./schemas/punishment-schema');
-
 const mongo = require('./mongo');
 const eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.js'));
 const commandFolders = fs.readdirSync('./commands')

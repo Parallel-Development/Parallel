@@ -18,15 +18,15 @@ module.exports = {
             })
         }
 
-        if (currentlyInProcess.has(message.guild.id)) return message.channel.send('This server is currently undergoing a unlock or a lock. Please wait for it to finish before attempting to lock again')
-        message.channel.send('You are about to lock every channel in this server. If you are **positive** you want to continue, respond with the server name')
+        if (currentlyInProcess.has(message.guild.id)) return message.reply('This server is currently undergoing a unlock or a lock. Please wait for it to finish before attempting to lock again')
+        message.reply('You are about to lock every channel in this server. If you are **positive** you want to continue, respond with the server name')
         const filter = m => m.author.id === message.author.id;
         const collector = new Discord.MessageCollector(message.channel, filter, { time: 30000 })
         collector.on('collect', async (message) => {
             if (message.content === message.guild.name) {
                 collector.stop()
                 currentlyInProcess.add(message.guild.id);
-                const msg = await message.channel.send('🔒 Locking all server channels... <a:loading:834973811735658548> | This may take a range from a few seconds up to a few minutes depending on your server size\n\nPlease do not remove any permissions from me while this is running or it may cause further issues')
+                const msg = await message.reply('🔒 Locking all server channels... <a:loading:834973811735658548> | This may take a range from a few seconds up to a few minutes depending on your server size\n\nPlease do not remove any permissions from me while this is running or it may cause further issues')
 
                 const channels = [...message.guild.channels.cache.values()]
 
@@ -46,7 +46,7 @@ module.exports = {
                         const enabledOverwrites = [];
                         const permissionOverwrites = [...channel.permissionOverwrites.values()]
 
-                        if (!alreadyLocked && !channel.permissionsLocked && message.guild.me.hasPermission('ADMINISTRATOR') && channel.type !== 'voice') {
+                        if (!alreadyLocked && !channel.permissionsLocked && message.guild.me.permissions.has('ADMINISTRATOR') && channel.type !== 'voice') {
                             let foundEveryoneOverwrite = false;
                             try {
                                 for (var i = 0; i !== permissionOverwrites.length; ++i) {
@@ -57,7 +57,7 @@ module.exports = {
                                             || !channel.permissionsFor(message.guild.roles.cache.get(r.id)).has('MANAGE_MESSAGES')
                                             || !channel.permissionsFor(message.guild.roles.cache.get(r.id)).has('ADMINISTRATOR')) {
 
-                                            channel.updateOverwrite(message.guild.roles.cache.get(r.id), {
+                                            channel.permissionOverwrites.edit(message.guild.roles.cache.get(r.id), {
                                                 SEND_MESSAGES: false,
                                             }, `Server Lockdown | Trusted Moderator: ${message.author.tag}`).catch(e => false)
 
@@ -73,7 +73,7 @@ module.exports = {
                                 }
                             } finally {
                                 if (!foundEveryoneOverwrite) {
-                                    channel.updateOverwrite(message.guild.roles.everyone, {
+                                    channel.permissionOverwrites.edit(message.guild.roles.everyone, {
                                         SEND_MESSAGES: false,
                                     }).catch(e => false)
                                     neutralOverwrites.push(message.guild.id)
@@ -107,11 +107,11 @@ module.exports = {
                 } finally {
                     currentlyInProcess.delete(message.guild.id)
                     await msg.edit(`🔒 All server channels have been locked!`)
-                    return message.channel.send(`Process complete! ${msg.url}`)
+                    return message.reply(`Process complete! ${msg.url}`)
                 }
 
             } else {
-                message.channel.send('Action Cancelled')
+                message.reply('Action Cancelled')
                 collector.stop();
                 return;
             }
@@ -120,7 +120,7 @@ module.exports = {
 
         collector.on('end', (col, reason) => {
             if (reason === 'time') {
-                return message.channel.send('No response in 30 seconds; cancelled')
+                return message.reply('No response in 30 seconds; cancelled')
             }
         })
     }

@@ -29,5 +29,5 @@ exports.run = async (client, type, server, user, reason) => {
         .addField('Reason', reason)
 
     const automodLogChannel = server.channels.cache.get(automodLogging);
-    automodLogChannel.send(expiredLog)
+    automodLogChannel.send({ embeds: [expiredLog] })
 }

@@ -20,11 +20,11 @@ exports.run = async (client, type, color, message, member, reason, punishmentID,
         infractionEmbed.setAuthor(`You were ${type} in ${message.guild.name}!`, client.user.displayAvatarURL())
 
     infractionEmbed.addField('Reason', reason)
-    if(time !== 'ignore') infractionEmbed.addField('Duration', time  ? client.util.convertMillisecondsToDuration(time) : 'Permanent', true)
-    if (time !== 'ignore') infractionEmbed.addField('Expires', time ? client.util.timestamp(Date.now() + time) : 'Never', true)
+    if(time !== 'ignore') infractionEmbed.addField('Duration', time && time !== 'Permanent' ? client.util.convertMillisecondsToDuration(time) : 'Permanent', true)
+    if (time !== 'ignore') infractionEmbed.addField('Expires', time && time !== 'Permanent' ? client.util.timestamp(Date.now() + time) : 'Never', true)
     infractionEmbed.addField('Date', client.util.timestamp())
     if(baninfo) infractionEmbed.addField('Additional Ban Information', baninfo)
     if(punishmentID && time !== 'ignore') infractionEmbed.setFooter(`Punishment ID: ${punishmentID}`)
 
-    return member.send(infractionEmbed).catch(() => { });
+    return member.send({ embeds: [infractionEmbed] }).catch(() => { });
 }

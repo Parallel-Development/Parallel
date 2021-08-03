@@ -16,6 +16,6 @@ module.exports = {
             .addField('Uptime', client.util.convertMillisecondsToDuration(client.uptime), true)
             .setAuthor('Parallel Discord Bot', client.user.displayAvatarURL());
 
-        return message.channel.send(botinfo);
+        return message.reply({ embeds: [botinfo] });
     }
 }

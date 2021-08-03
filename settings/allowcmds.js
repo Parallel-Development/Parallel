@@ -9,10 +9,10 @@ exports.run = async (client, message, args) => {
 
     switch (args[1]) {
         case 'enable':
-            if(!args[0]) return message.channel.send(client.config.errorMessages.missing_argument_channel);
+            if(!args[0]) return message.reply(client.config.errorMessages.missing_argument_channel);
             const enableChannel = message.mentions.channels.first() || message.guild.channels.cache.get(args[2])
-            if (!enableChannel) return message.channel.send(client.config.errorMessages.invalid_channel)
-            if (enableChannel.type !== 'text') return message.channel.send(client.config.errorMessages.not_channel_type_text);
+            if (!enableChannel) return message.reply(client.config.errorMessages.invalid_channel)
+            if (enableChannel.type !== 'text') return message.reply(client.config.errorMessages.not_channel_type_text);
 
             var prevent = false
             for(var i = 0; i !== locked.length; ++i) {
@@ -24,7 +24,7 @@ exports.run = async (client, message, args) => {
                 ) prevent = true;
             }
 
-            if (prevent) return message.channel.send('This channel\'s category is currently disabled, therefore you cannot enable this channel')
+            if (prevent) return message.reply('This channel\'s category is currently disabled, therefore you cannot enable this channel')
 
             const alreadyEnabled = await settingsSchema.findOne({
                 guildID: message.guild.id,
@@ -32,7 +32,7 @@ exports.run = async (client, message, args) => {
             })
 
             if (!alreadyEnabled || alreadyEnabled.length === 0) {
-                return message.channel.send('Commands are already enabled in this channel! `allowcmds viewdisabled` to view disabled command channels')
+                return message.reply('Commands are already enabled in this channel! `allowcmds viewdisabled` to view disabled command channels')
             }
 
             await settingsSchema.updateOne({
@@ -43,19 +43,19 @@ exports.run = async (client, message, args) => {
                         locked: enableChannel.id
                     }
                 })
-            message.channel.send(`Commands in ${enableChannel} have been enabled`)
+            message.reply(`Commands in ${enableChannel} have been enabled`)
             break;
         case 'enablecategory':
             const enableCategory = message.guild.channels.cache.find(c => c.name === args.slice(2).join(' ')) || message.guild.channels.cache.get(args[2])
-            if (!enableCategory) return message.channel.send('Please specify the category name you want to enable commands in')
-            if (enableCategory.type !== 'category') return message.channel.send('Please specify a category name only')
+            if (!enableCategory) return message.reply('Please specify the category name you want to enable commands in')
+            if (enableCategory.type !== 'category') return message.reply('Please specify a category name only')
 
             const alreadyEnabledCategory = await settingsSchema.findOne({
                 guildID: message.guild.id,
                 locked: enableCategory.id
             })
             if (!alreadyEnabledCategory || alreadyEnabledCategory.length === 0) {
-                return message.channel.send('Commands are already enabled in this category! `allowcmds viewdisabled` to view disabled command channels')
+                return message.reply('Commands are already enabled in this category! `allowcmds viewdisabled` to view disabled command channels')
             }
 
             await settingsSchema.updateOne({
@@ -81,13 +81,13 @@ exports.run = async (client, message, args) => {
                 }
             }
 
-            message.channel.send(`Commands in the category \`${enableCategory.name}\` have been enabled`)
+            message.reply(`Commands in the category \`${enableCategory.name}\` have been enabled`)
             break;
 
         case 'disable':
             const disableChannel = message.mentions.channels.first() || message.guild.channels.cache.get(args[2])
-            if (!disableChannel) return message.channel.send('Please specify the channel you wish to manage')
-            if (disableChannel.type !== 'text') return message.channel.send('The channel must only be a text channel!')
+            if (!disableChannel) return message.reply('Please specify the channel you wish to manage')
+            if (disableChannel.type !== 'text') return message.reply('The channel must only be a text channel!')
 
             var prevent = false
             for(var i = 0; i !== locked.length; ++i) {
@@ -98,7 +98,7 @@ exports.run = async (client, message, args) => {
                     message.guild.channels.cache.get(channel).id === disableChannel.parent.id
                 ) prevent = true;
             }
-            if (prevent) return message.channel.send('This channel\'s category is currently disabled, therefore you cannot disable this channel')
+            if (prevent) return message.reply('This channel\'s category is currently disabled, therefore you cannot disable this channel')
 
             const alreadyDisabled = await settingsSchema.findOne({
                 guildID: message.guild.id,
@@ -106,7 +106,7 @@ exports.run = async (client, message, args) => {
             })
 
             if (alreadyDisabled && !alreadyDisabled.length) {
-                return message.channel.send('Commands are already disabled in this channel! `allowcmds viewdisabled` to view disabled command channels')
+                return message.reply('Commands are already disabled in this channel! `allowcmds viewdisabled` to view disabled command channels')
             }
 
             await settingsSchema.updateOne({
@@ -117,19 +117,19 @@ exports.run = async (client, message, args) => {
                         locked: disableChannel.id
                     }
                 })
-            message.channel.send(`Commands in ${disableChannel} have been disabled`)
+            message.reply(`Commands in ${disableChannel} have been disabled`)
             break;
         case 'disablecategory':
             const disableCategory = message.guild.channels.cache.find(c => c.name === args.slice(2).join(' ')) || message.guild.channels.cache.get(args[2])
-            if (!disableCategory) return message.channel.send('Please specify the category name you want to disable commands in')
-            if (disableCategory.type !== 'category') return message.channel.send('Please specify a category name only')
+            if (!disableCategory) return message.reply('Please specify the category name you want to disable commands in')
+            if (disableCategory.type !== 'category') return message.reply('Please specify a category name only')
 
             const alreadyDisabledCategory = await settingsSchema.findOne({
                 guildID: message.guild.id,
                 locked: disableCategory.id
             })
             if (alreadyDisabledCategory && !alreadyDisabledCategory.length) {
-                return message.channel.send('Commands are already disabled in this category! `allowcmds viewdisabled` to view disabled command channels')
+                return message.reply('Commands are already disabled in this category! `allowcmds viewdisabled` to view disabled command channels')
             }
 
             await settingsSchema.updateOne({
@@ -155,7 +155,7 @@ exports.run = async (client, message, args) => {
                 }
             }
 
-            message.channel.send(`Commands in the category \`${disableCategory.name}\` have been disabled`)
+            message.reply(`Commands in the category \`${disableCategory.name}\` have been disabled`)
             break;
         case 'enableall':
             await settingsSchema.updateOne({
@@ -164,10 +164,10 @@ exports.run = async (client, message, args) => {
                 {
                     locked: []
                 })
-            message.channel.send(`All channels now allow commands`)
+            message.reply(`All channels now allow commands`)
             break;
         case 'viewdisabled':
-            if (locked === null || !locked.length) return message.channel.send('No channels currrently prevent commands. Want to add some? `allowcmds disable (channel)`')
+            if (locked === null || !locked.length) return message.reply('No channels currrently prevent commands. Want to add some? `allowcmds disable (channel)`')
             const disabledCommandChannels = new Discord.MessageEmbed()
                 .setColor('#09fff2')
                 .setAuthor(`Disabled command channels for ${message.guild.name}`, client.user.displayAvatarURL())
@@ -176,7 +176,7 @@ exports.run = async (client, message, args) => {
             const disabledCategories = [];
             for(var i = 0; i !== locked.length; ++i) {
                 const channel = locked[i];
-                if (!message.guild.channels.cache.get(channel) || message.guild.channels.cache.get(channel).type === 'voice') {
+                if (!message.guild.channels.cache.get(channel) || message.guild.channels.cache.get(channel).type === 'GUILD_VOICE') {
                     await settingsSchema.updateOne({
                         guildID: message.guild.id
                     },
@@ -195,9 +195,9 @@ exports.run = async (client, message, args) => {
             }
             if (disabledCategories.length) disabledCommandChannels.addField('Categories', disabledCategories.join(', '))
             if (disabledChannels.length) disabledCommandChannels.addField('Channels', disabledChannels.join(', '))
-            message.channel.send(disabledCommandChannels)
+            message.reply({ embeds: [disabledCommandChannels] })
             break;
         default:
-            return message.channel.send('Invalid option! Options: enable, enablecateory, disable, disablecategory, viewdisabled')
+            return message.reply('Invalid option! Options: enable, enablecateory, disable, disablecategory, viewdisabled')
     }
 }

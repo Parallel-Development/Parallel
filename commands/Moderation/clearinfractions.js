@@ -9,10 +9,10 @@ module.exports = {
     permissions: 'MANAGE_GUILD',
     async execute(client, message, args)  {
 
-        if(!args[0]) return message.channel.send(client.config.errorMessages.missing_argument_user);
+        if(!args[0]) return message.reply(client.config.errorMessages.missing_argument_user);
 
         const user = message.mentions.users.first() || await client.users.fetch(args[0]).catch(() => { });
-        if(!user) return message.channel.send(client.config.errorMessages.invalid_user);
+        if(!user) return message.reply(client.config.errorMessages.invalid_user);
 
         const userWarnings = await warningSchema.findOne({
             guildID: message.guild.id,
@@ -23,7 +23,7 @@ module.exports = {
             }
         })
 
-        if(!userWarnings || !userWarnings.warnings.length) return message.channel.send('This user has no infractions');
+        if(!userWarnings || !userWarnings.warnings.length) return message.reply('This user has no infractions');
 
         let filter = args[1];
         if(!(filter === 'manual' || filter === 'auto' || filter === 'all')) filter = 'all';
@@ -50,7 +50,7 @@ module.exports = {
                 .setColor(client.config.colors.main)
                 .setDescription(`${client.config.emotes.success} All infractions have been removed from **${user.tag}**`)
 
-                return message.channel.send(all);
+                return message.reply({ embeds: [all] });
                 break;
             case 'manual':
                 await warningSchema.updateMany({
@@ -74,7 +74,7 @@ module.exports = {
                     .setColor(client.config.colors.main)
                     .setDescription(`${client.config.emotes.success} All manual infractions have been removed from **${user.tag}**`)
 
-                return message.channel.send(manual);
+                return message.reply({ embeds: [manual] });
                 break;
             case 'auto':
                 await warningSchema.updateMany({
@@ -98,7 +98,7 @@ module.exports = {
                     .setColor(client.config.colors.main)
                     .setDescription(`${client.config.emotes.success} All auto infractions have been removed from **${user.tag}**`)
 
-                return message.channel.send(auto);
+                return message.reply({ embeds: [auto] });
                 break;
         }
     }

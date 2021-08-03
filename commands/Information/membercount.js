@@ -12,6 +12,6 @@ module.exports = {
             .setTitle('Member Count')
             .setDescription(`There are **${message.guild.memberCount}** members on this server`)
 
-        return message.channel.send(membercount)
+        return message.reply({ embeds: [membercount] })
     }
 }

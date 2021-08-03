@@ -17,7 +17,7 @@ module.exports = {
         })
 
         if (
-            !message.member.hasPermission('MANAGE_MESSAGES') &&
+            !message.member.permissions.has('MANAGE_MESSAGES') &&
             !isModerator &&
             (!channelBypassed || channelBypassed.length === 0)
         ) require('../structures/AutomodChecks').run(client, message, true);

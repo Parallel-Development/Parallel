@@ -24,6 +24,6 @@ module.exports.run = async(client, channel, message, oldMessage = null) => {
         } 
     }
 
-    return channel.send(logEmbed).catch(() => { });
+    return channel.send({ embeds: [logEmbed] }).catch(() => { });
 
 }

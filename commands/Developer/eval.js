@@ -4,15 +4,15 @@ const util = require('util')
 module.exports = {
     name: 'eval',
     description: 'Evaluates the specified code',
-    usage: 'eval [code]\neval -hideoutput [code]\neval -delete [code]\neval -hideanddelete [code]',
+    usage: 'eval [code]\neval --silent [code]\neval -delete [code]\neval -sad [code]',
     moderationCommand: true,
     aliases: ['e', 'ev', 'evaluate'],
-    eval: true,
+    developer: true,
     async execute(client, message, args) {
 
-        if (!client.config.developers.includes(message.author.id)) return message.channel.send('Sorry, you can\'t run that!')
+        if (!client.config.developers.includes(message.author.id)) return message.reply('Sorry, you can\'t run that!')
 
-        const code = args.join(' ');
+        let code = args.join(' ');
         let silent = false
         if (args[0] === '--silent' || args[0] === '-s') {
             code = args.splice(1).join(' ')
@@ -26,13 +26,13 @@ module.exports = {
             message.delete();
         }
 
-        if (!code) return message.channel.send('Please input something to run')
+        if (!code) return message.reply('Please input something to run')
 
         const tryingToEval = new Discord.MessageEmbed()
             .setColor('#09fff2')
             .setDescription(`Evaluating... ${client.config.emotes.loading}`);
 
-        const evaluatingMessage = !silent ? await message.channel.send(tryingToEval) : null;
+        const evaluatingMessage = !silent ? await message.reply({ embeds: [tryingToEval] }) : null;
 
         const logEvaluationChannel = client.channels.cache.get('822853570213838849')
         const evalLog = new Discord.MessageEmbed()
@@ -43,7 +43,7 @@ module.exports = {
             .addField('Server ID', message.guild.id)
             .setDescription(code.length <= 1500 ? `Input: \`\`\`js\n${code}\`\`\`` : await client.util.createBin(code))
 
-        logEvaluationChannel.send(evalLog);
+        logEvaluationChannel.send({embeds: [evalLog]});
 
         try {
             output = await eval(code)
@@ -55,8 +55,8 @@ module.exports = {
                 .setAuthor(`Evaluation`, client.user.displayAvatarURL())
                 .setTitle(`Completed in ${Date.now() - message.createdTimestamp}ms`)
                 .setFooter(`Type: error`)
-            if (silent) return message.channel.send(error)
-            else return evaluatingMessage.edit(error).catch(() => { return })
+            if (silent) return message.reply(error)
+            else return evaluatingMessage.edit({embeds: [error]}).catch(() => { return })
         }
 
         if (typeof output !== 'string') output = util.inspect(output, { depth: 0 });
@@ -69,11 +69,11 @@ module.exports = {
             .setTitle(`Completed in ${Date.now() - message.createdTimestamp}ms`)
             .setFooter(`Type: ${type}`)
 
-        if (!silent) evaluatingMessage.edit(outputEmbed).catch(async() => {
+        if (!silent) evaluatingMessage.edit({embeds: [outputEmbed]}).catch(async() => {
             const newOutputEmbed = new Discord.MessageEmbed()
             .setColor(client.config.colors.main)
             .setDescription(`Failed to send output, click [here](${await client.util.createBin(output, true)}) to see the output`)
-            return evaluatingMessage.edit(newOutputEmbed);
+            return evaluatingMessage.edit({embeds: [newOutputEmbed]});
         })
 
     }

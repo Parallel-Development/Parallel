@@ -8,9 +8,9 @@ module.exports = {
     aliases: ['warnings', 'warns', 'punishments', 'record'],
     async execute(client, message, args) {
 
-        let member = message.mentions.members.first() 
-        || message.guild.members.cache.get(args[0]) 
-        || await client.users.fetch(args[0]).catch(() => { }) 
+        let member = message.mentions.members.first()
+        || message.guild.members.cache.get(args[0])
+        || await client.users.fetch(args[0]).catch(() => { })
 
         let pageNumber = 0;
         if(!member && !parseInt(args[0]) !== NaN) {
@@ -18,8 +18,8 @@ module.exports = {
             member = message.member;
         }
 
-        if(member !== message.member && !message.member.hasPermission('MANAGE_MESSAGES')) return message.channel.send('You do not have the permission to view the infractions of other members');
-        
+        if (member !== message.member && !message.member.permissions.has('MANAGE_MESSAGES')) return message.reply('You do not have the permission to view the infractions of other members');
+
         const userWarnings = await warningSchema.findOne({
             guildID: message.guild.id,
             warnings: {
@@ -27,7 +27,7 @@ module.exports = {
             }
         })
 
-        if(!userWarnings || !userWarnings.warnings.length) return message.channel.send('This user has no infractions!');
+        if(!userWarnings || !userWarnings.warnings.length) return message.reply('This user has no infractions!');
 
         if(!pageNumber) {
             if(!args[1]) pageNumber = 1;
@@ -41,7 +41,7 @@ module.exports = {
         if (amountOfPages < userWarnings.warnings.length / 7) amountOfPages++
 
         if (pageNumber > amountOfPages) {
-            return message.channel.send(`Please specify a page number between \`1\` and \`${amountOfPages}\``)
+            return message.reply(`Please specify a page number between \`1\` and \`${amountOfPages}\``)
         } else if (pageNumber < 1) {
             pageNumber = 1
         }
@@ -62,11 +62,11 @@ module.exports = {
             if (infraction.reason.length > 60) {
                 infraction.reason = infraction.reason.substr(0, 60) + '...'
             }
-            warningsEmbed.addField(`${i + 1}: ${infraction.type}`, `Reason: \`${infraction.reason}\`\nDate: \`${infraction.date}\`\nPunishment ID: \`${infraction.punishmentID}\``)
+            warningsEmbed.addField(`${i + 1}: ${infraction.type}`, `Reason: \`${infraction.reason}\`\nDate: ${infraction.date}\nPunishment ID: \`${infraction.punishmentID}\``)
             ++i
         }
 
-        return message.channel.send(warningsEmbed)
+        return message.reply({ embeds: [warningsEmbed] })
 
     }
 

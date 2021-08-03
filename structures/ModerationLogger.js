@@ -28,11 +28,11 @@ exports.run = async (client, type, moderator, target, channel, reason, duration,
         .addField('User', `**${user.tag}** - \`${user.id}\``, true)
         .addField('Moderator', `**${moderator.user.tag}** - \`${moderator.id}\``, true)
         .addField('Reason', reason.length < 1500 ? reason : await client.util.createBin(reason))
-    if (duration) modLog.addField('Duration', client.util.convertMillisecondsToDuration(duration), true)
-    if(duration) modLog.addField('Expires', client.util.timestamp(Date.now() + duration), true)
+    if (duration && duration !== 'Permanent') modLog.addField('Duration', client.util.convertMillisecondsToDuration(duration), true)
+    if (duration && duration !== 'Permanent') modLog.addField('Expires', client.util.timestamp(Date.now() + duration), true)
     modLog.addField('Punishment ID', punishmentID, true)
     modLog.addField(`${type} in`, channel, true)
 
     const modLogChannel = moderator.guild.channels.cache.get(moderationLogging);
-    modLogChannel.send(modLog).catch(() => { })
+    modLogChannel.send({ embeds: [modLog] }).catch(() => { })
 }

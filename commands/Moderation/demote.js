@@ -9,18 +9,18 @@ module.exports = {
     requiredBotPermission: 'MANAGE_ROLES',
     async execute(client, message, args) {
 
-        if (!args[0]) return message.channel.send(client.config.errorMessages.missing_argument_member);
+        if (!args[0]) return message.reply(client.config.errorMessages.missing_argument_member);
 
         const member = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
-        if (!member) return message.channel.send(client.config.errorMessages.invalid_member);
+        if (!member) return message.reply(client.config.errorMessages.invalid_member);
 
-        if (member.id === client.user.id) return message.channel.send(client.config.errorMessages.cannot_punish_myself);
-        if (member.id === message.member.id) return message.channel.send(client.config.errorMessages.cannot_punish_yourself);
-        if (member.roles.highest.position >= message.member.roles.highest.position && message.member !== message.guild.owner) return message.channel.send(client.config.errorMessages.hierarchy);
-        if (member.roles.highest.position >= message.guild.me.roles.highest.position) return message.channel.send(client.config.errorMessages.my_hierarchy);
-        if (member === message.guild.owner) return message.channel.send(client.config.errorMessages.cannot_punish_owner);
+        if (member.id === client.user.id) return message.reply(client.config.errorMessages.cannot_punish_myself);
+        if (member.id === message.member.id) return message.reply(client.config.errorMessages.cannot_punish_yourself);
+        if (member.roles.highest.position >= message.member.roles.highest.position && message.member !== message.guild.owner) return message.reply(client.config.errorMessages.hierarchy);
+        if (member.roles.highest.position >= message.guild.me.roles.highest.position) return message.reply(client.config.errorMessages.my_hierarchy);
+        if (member === message.guild.owner) return message.reply(client.config.errorMessages.cannot_punish_owner);
 
-        if(!member.roles.cache.size) return message.channel.send('This user does not have any roles');
+        if(!member.roles.cache.size) return message.reply('This user does not have any roles');
 
         const memberRoles = [];
         for(var role of member.roles.cache.array()) {
@@ -39,13 +39,13 @@ module.exports = {
             )) memberRoles.push(role);
         };
 
-        if(member.roles.cache.size === memberRoles.length) return message.channel.send('This user does not have any roles with staff permissions');
+        if(member.roles.cache.size === memberRoles.length) return message.reply('This user does not have any roles with staff permissions');
         member.roles.set(memberRoles, `Administrator: ${message.author.tag}`);
 
         const demotedEmbed = new Discord.MessageEmbed()
         .setColor(client.config.colors.punishment[1])
         .setDescription(`${client.config.emotes.success} ${member} has been demoted`)
-        message.channel.send(demotedEmbed);
+        message.reply(demotedEmbed);
 
         if(args[1] === '--dm') {
             const reason = args.slice(2).join(' ') || 'Unspecified';
@@ -55,7 +55,7 @@ module.exports = {
             .setTitle(`You were demoted in ${message.guild.name}`)
             .setDescription(reason)
 
-            member.send(demotedDMEmbed);
+            member.send({ embeds: [demotedDMEmbed] });
         }
 
         return;

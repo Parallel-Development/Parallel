@@ -64,14 +64,14 @@ exports.run = async(client, message, type) => {
         await DMUserInfraction.run(client, `${name.endsWith('e') ? name : name.endsWith('n') ? name + 'ne': name + 'e'}d`, color, message, message.member, reason, punishmentID, time, name === 'ban' ? baninfo !== 'none' ? baninfo : null : null)
         ModerationLogger.run(client, `${name.charAt(0).toUpperCase() + name.slice(1) + (name.endsWith('e') ? '' : name.endsWith('n') ? 'ne' : 'e')}d`, message.guild.me, message.member, message.channel, reason, time, punishmentID);
 
-        if(name === 'kick') await message.member.kick({reason: reason}) 
-        else if(name === 'ban') await message.guild.members.ban(message.member, { reason: reason });
+        if(name === 'kick') await message.memberKICK({reason: reason}) 
+        else if(name === 'ban') await message.guild.membersBAN(message.member, { reason: reason });
 
         const punishedEmbed = new Discord.MessageEmbed()
         .setColor(color)
         .setDescription(`${member} has been automatically ${name.endsWith('e') ? name : name.endsWith('n') ? name + 'ne' : name + 'e'}d with ID \`${punishmentID}\``)
 
-        const msg = await message.channel.send(punishedEmbed);
+        const msg = await message.channel.send({ embeds: [punishedEmbed] });
         setTimeout(() => { msg.delete() }, 5000);
 
         return;

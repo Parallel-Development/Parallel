@@ -50,13 +50,13 @@ module.exports = {
 
         const option = args[0]
         const toggle = args[1]
-        if (!option) return message.channel.send(automodList)
+        if (!option) return message.reply({ embeds: [automodList] })
 
         const duration = args[2] ? ms(args[2]) : null
         if(!duration && (args[1] === 'tempmute' || args[1] === 'temban')) {
-            if(!args[2]) return message.channel.send(client.config.errorMessages.missing_argument_duration)
-            else return message.channel.send(client.config.errorMessages.bad_duration)
-        } else if (duration && duration > 315576000000) return message.channel.send(client.config.errorMessages.time_too_long);
+            if(!args[2]) return message.reply(client.config.errorMessages.missing_argument_duration)
+            else return message.reply(client.config.errorMessages.bad_duration)
+        } else if (duration && duration > 315576000000) return message.reply(client.config.errorMessages.time_too_long);
 
         // FUNCTIONS ================================================================================
 
@@ -332,41 +332,41 @@ module.exports = {
                 switch (toggle) {
                     case 'delete':
                         updateFilter('delete')
-                        message.channel.send(`Members who send words on the \`Filtered List\` will get their message deleted`)
+                        message.reply(`Members who send words on the \`Filtered List\` will get their message deleted`)
                         break;
                     case 'warn':
                         updateFilter('warn')
-                        message.channel.send(`Members who send words on the \`Filtered List\` will get warned`)
+                        message.reply(`Members who send words on the \`Filtered List\` will get warned`)
                         break;
                     case 'kick':
                         updateFilter('kick')
-                        message.channel.send(`Members who send words on the \`Filtered List\` will get kicked`)
+                        message.reply(`Members who send words on the \`Filtered List\` will get kicked`)
                         break
                     case 'mute':
                         updateFilter('mute')
-                        message.channel.send(`Members who send words on the \`Filtered List\` will get muted`)
+                        message.reply(`Members who send words on the \`Filtered List\` will get muted`)
                         break;
                     case 'ban':
                         updateFilter('ban')
-                        message.channel.send(`Members who send words on the \`Filtered List\` will get banned`)
+                        message.reply(`Members who send words on the \`Filtered List\` will get banned`)
                         break;
                     case 'tempban':
                         updateFilter('tempban', duration)
-                        message.channel.send(`Members who send words on the \`Filtered List\` will get banned for \`${client.util.convertMillisecondsToDuration(duration)}\``)
+                        message.reply(`Members who send words on the \`Filtered List\` will get banned for \`${client.util.convertMillisecondsToDuration(duration)}\``)
                         break;
                     case 'tempmute':
                         updateFilter('tempmute', duration)
-                        message.channel.send(`Members who send words on the \`Filtered List\` will get muted for  \`${client.util.convertMillisecondsToDuration(duration)}\``)
+                        message.reply(`Members who send words on the \`Filtered List\` will get muted for  \`${client.util.convertMillisecondsToDuration(duration)}\``)
                         break;
                     case 'disable':
                         updateFilter('disable')
-                        message.channel.send('Members will no longer be punished for sending words in the `Filter list`')
+                        message.reply('Members will no longer be punished for sending words in the `Filter list`')
                         break;
                     default:
                         if (!args[0]) {
-                            return message.channel.send('Invalid option!')
+                            return message.reply('Invalid option!')
                         } else {
-                            return message.channel.send('Please specify a punishment')
+                            return message.reply('Please specify a punishment')
                         }
                 }
                 break;
@@ -374,7 +374,7 @@ module.exports = {
             case 'filterlist':
 
                 const word = args.slice(2).join(' ');
-                if(!args[2] && (args[1] && args[1] !== 'remove' && args[1] !== 'removeall' && args[1] !== 'view')) return message.channel.send('Please specify a word');
+                if(!args[2] && (args[1] && args[1] !== 'remove' && args[1] !== 'removeall' && args[1] !== 'view')) return message.reply('Please specify a word');
 
                 switch (toggle) {
                     case 'add':
@@ -384,14 +384,14 @@ module.exports = {
                             filterList: word
                         })
 
-                        if (wordAlreadyInFilter && wordAlreadyInFilter.length != 0) return message.channel.send('This word is already in the filter! Run `automod filter view` to view the current list of filtered words')
+                        if (wordAlreadyInFilter && wordAlreadyInFilter.length != 0) return message.reply('This word is already in the filter! Run `automod filter view` to view the current list of filtered words')
                         await automodSchema.updateOne({
                             guildID: message.guild.id
                         },
                             {
                                 $push: { filterList: word.toLowerCase() }
                             })
-                        message.channel.send(`\`${word.toLowerCase()}\` has been added to the filter`)
+                        message.reply(`\`${word.toLowerCase()}\` has been added to the filter`)
                         break;
                     case 'remove':
 
@@ -400,14 +400,14 @@ module.exports = {
                             filterList: word
                         })
 
-                        if (!wordNotInFilter || !wordInFilter.length) return message.channel.send(`Could not find the word \`${word}\` on the filter. Run \`automod filterlist view\` to view the current list of filtered words`)
+                        if (!wordNotInFilter || !wordInFilter.length) return message.reply(`Could not find the word \`${word}\` on the filter. Run \`automod filterlist view\` to view the current list of filtered words`)
                         await automodSchema.updateOne({
                             guildID: message.guild.id
                         },
                             {
                                 $pull: { filterList: word }
                             })
-                        message.channel.send(`\`${word}\` has been removed from the filter!`)
+                        message.reply(`\`${word}\` has been removed from the filter!`)
                         break;
                     case 'removeall':
                         await automodSchema.updateOne({
@@ -416,7 +416,7 @@ module.exports = {
                             {
                                 filterList: []
                             })
-                        message.channel.send('Wiped all words from the filter')
+                        message.reply('Wiped all words from the filter')
                         break;
                     case 'view':
                         const noWordsInFilter = await automodSchema.findOne({
@@ -425,12 +425,12 @@ module.exports = {
 
                         const { filterList } = noWordsInFilter
 
-                        if (!filterList|| !filterList.length) return message.channel.send('No words are on the filter! Want to add some? `automod filterlist add (word)`')
+                        if (!filterList|| !filterList.length) return message.reply('No words are on the filter! Want to add some? `automod filterlist add (word)`')
                         const filterViewList = new Discord.MessageEmbed()
                             .setColor('#09fff2')
                             .setAuthor(`Filter list for ${message.guild.name}`, client.user.displayAvatarURL())
                             .setDescription(`\`${filterList.join(', ')}\``)
-                        message.channel.send(filterViewList)
+                        message.reply({ embeds: [filterViewList] })
                         break;
                     default:
                         if (!args[1]) {
@@ -440,15 +440,15 @@ module.exports = {
 
                             const { filterList } = noWordsInFilter_
 
-                            if (!filterList || !filterList.length) return message.channel.send('No words are on the filter! Want to add some? `automod filterlist add (word)`')
+                            if (!filterList || !filterList.length) return message.reply('No words are on the filter! Want to add some? `automod filterlist add (word)`')
                             const filterViewList_ = new Discord.MessageEmbed()
                                 .setColor('#09fff2')
                                 .setAuthor(`Filter list for ${message.guild.name}`, client.user.displayAvatarURL())
                                 .setDescription(`\`${filterList.join(', ')}\``)
-                            message.channel.send(filterViewList_)
+                            message.reply({ embeds: [filterViewList_] })
                             return;
                         } else {
-                            return message.channel.send('Options: add, remove, removeall, view')
+                            return message.reply('Options: add, remove, removeall, view')
                         }
                 }
                 break;
@@ -456,79 +456,91 @@ module.exports = {
                 switch (toggle) {
                     case 'delete':
                         updateFast('delete')
-                        message.channel.send(
+                        message.reply({ embeds: [
                             new Discord.MessageEmbed()
                                 .setColor('#09fff2')
                                 .setDescription(`${client.config.emotes.success} Members who send fast message spam will get their spam deleted`)
                                 .setAuthor('Automod Update', client.user.displayAvatarURL())
-                        )
+                        ]})
                         break;
                     case 'warn':
                         updateFast('warn')
-                        message.channel.send(new Discord.MessageEmbed()
-                            .setColor('#09fff2')
-                            .setDescription(`${client.config.emotes.success} Members who send fast message spam will get warned`)
-                            .setAuthor('Automod Update', client.user.displayAvatarURL()))
+                        message.reply({
+                            embeds: [
+                                new Discord.MessageEmbed()
+                                    .setColor('#09fff2')
+                                    .setDescription(`${client.config.emotes.success} Members who send fast message spam will get warned`)
+                                    .setAuthor('Automod Update', client.user.displayAvatarURL())
+                            ]
+                        })
                         break;
                     case 'kick':
                         updateFast('kick')
-                        message.channel.send(
-                            new Discord.MessageEmbed()
-                                .setColor('#09fff2')
-                                .setDescription(`${client.config.emotes.success} Members who send fast message spam will get kicked`)
-                                .setAuthor('Automod Update', client.user.displayAvatarURL())
-                        )
+                        message.reply({
+                            embeds: [
+                                new Discord.MessageEmbed()
+                                    .setColor('#09fff2')
+                                    .setDescription(`${client.config.emotes.success} Members who send fast message spam will get kicked`)
+                                    .setAuthor('Automod Update', client.user.displayAvatarURL())
+                            ]
+                        })
                         break
                     case 'mute':
                         updateFast('mute')
-                        message.channel.send(
-                            new Discord.MessageEmbed()
-                                .setColor('#09fff2')
-                                .setDescription(`${client.config.emotes.success} Members who send fast message spam will get muted`)
-                                .setAuthor('Automod Update', client.user.displayAvatarURL())
-                        )
+                        message.reply({
+                            embeds: [
+                                new Discord.MessageEmbed()
+                                    .setColor('#09fff2')
+                                    .setDescription(`${client.config.emotes.success} Members who send fast message spam will get muted`)
+                                    .setAuthor('Automod Update', client.user.displayAvatarURL())
+                            ]
+                        })
                         break;
                     case 'ban':
                         updateFast('ban')
-                        message.channel.send(
-                            new Discord.MessageEmbed()
-                                .setColor('#09fff2')
-                                .setDescription(`${client.config.emotes.success} Members who send fast message spam will get banned`)
-                                .setAuthor('Automod Update', client.user.displayAvatarURL())
-                        )
+                        message.reply({
+                            embeds: [
+                                new Discord.MessageEmbed()
+                                    .setColor('#09fff2')
+                                    .setDescription(`${client.config.emotes.success} Members who send fast message spam will get banned`)
+                                    .setAuthor('Automod Update', client.user.displayAvatarURL())
+                            ]
+                        })
                         break;
                     case 'tempban':
                         updateFast('tempban', duration)
-                        message.channel.send(
+                        message.reply({ embeds: [
                             new Discord.MessageEmbed()
                                 .setColor('#09fff2')
                                 .setDescription(`${client.config.emotes.success} Members who send fast message spam will get banned for \`${client.util.convertMillisecondsToDuration(duration)}\``)
                                 .setAuthor('Automod Update', client.user.displayAvatarURL())
-                        )
+                        ]})
                         break;
                     case 'tempmute':
                         updateFast('tempmute', duration)
-                        message.channel.send(
-                            new Discord.MessageEmbed()
-                                .setColor('#09fff2')
-                                .setDescription(`${client.config.emotes.success} Members who send fast message spam will get muted for \`${client.util.convertMillisecondsToDuration(duration)}\``)
-                                .setAuthor('Automod Update', client.user.displayAvatarURL())
-                        )
+                        message.reply({
+                            embeds: [
+                                new Discord.MessageEmbed()
+                                    .setColor('#09fff2')
+                                    .setDescription(`${client.config.emotes.success} Members who send fast message spam will get muted for \`${client.util.convertMillisecondsToDuration(duration)}\``)
+                                    .setAuthor('Automod Update', client.user.displayAvatarURL())
+                            ]
+                        })
                         break;
                     case 'disable':
                         updateFast('disable')
-                        message.channel.send(
-                            new Discord.MessageEmbed()
+                        message.reply({ embeds: [
+                            new Discord.MessageEmbed({})
                                 .setColor('#09fff2')
                                 .setDescription(`${client.config.emotes.success} Members who send fast message spam will no longer be automatically punished`)
                                 .setAuthor('Automod Update', client.user.displayAvatarURL())
-                        )
+                        ] })
                         break;
                     default:
                         if (args[0]) {
-                            return message.channel.send(client.config.errorMessages.missing_argument_option)
+                            return message.reply(client.config.errorMessages.missing_argument_option)
                         } else {
-                            return message.channel.send(client.config.errorMessages.invalid_option)
+                            return message.reply(client.config.errorMessages.invalid_option)
                         }
                 }
                 break;
@@ -536,82 +548,81 @@ module.exports = {
                 switch (toggle) {
                     case 'delete':
                         updateWalltext('delete');
-                        var success = new Discord.MessageEmbed()
-                        message.channel.send(
+                        message.reply({ embeds: [
                             new Discord.MessageEmbed()
                                 .setColor('#09fff2')
                                 .setDescription(`${client.config.emotes.success} Members who send walltext will get their spam deleted`)
                                 .setAuthor('Automod Update', client.user.displayAvatarURL())
-                        )
+                        ]})
                         break;
                     case 'warn':
                         updateWalltext('warn')
-                        message.channel.send(
+                        message.reply({ embeds: [
                             new Discord.MessageEmbed()
                                 .setColor('#09fff2')
                                 .setDescription(`${client.config.emotes.success} Members who send walltext will get warned`)
-                                .setAuthor('Automod Update', client.user.displayAvatarURL())
-                        )
+                                .setAuthor('Automod Update', client.user.displayAvatarURL()) 
+                        ] })
                         break;
                     case 'kick':
                         updateWalltext('kick')
-                        message.channel.send(
+                        message.reply({ embeds: [
                             new Discord.MessageEmbed()
-                                .setColor('#09fff2')
-                                .setDescription(`${client.config.emotes.success} Members who send walltext will get kicked`)
-                                .setAuthor('Automod Update', client.user.displayAvatarURL())
-                        )
+                            .setColor('#09fff2')
+                            .setDescription(`${client.config.emotes.success} Members who send walltext will get kicked`)
+                            .setAuthor('Automod Update', client.user.displayAvatarURL())
+                        ]})
                         break
                     case 'mute':
                         updateWalltext('mute')
-                        message.channel.send(
+                        message.reply({ embeds: [
                             new Discord.MessageEmbed()
-                                .setColor('#09fff2')
-                                .setDescription(`${client.config.emotes.success} Members who send walltext will get muted`)
-                                .setAuthor('Automod Update', client.user.displayAvatarURL())
-                        )
+                            .setColor('#09fff2')
+                            .setDescription(`${client.config.emotes.success} Members who send walltext will get muted`)
+                            .setAuthor('Automod Update', client.user.displayAvatarURL())
+                        ]})
                         break;
                     case 'ban':
                         updateWalltext('ban')
-                        message.channel.send(
+                        message.reply({ embeds: [
                             new Discord.MessageEmbed()
-                                .setColor('#09fff2')
-                                .setDescription(`${client.config.emotes.success} Members who send walltext will get banned`)
-                                .setAuthor('Automod Update', client.user.displayAvatarURL())
-                        )
+                            .setColor('#09fff2')
+                            .setDescription(`${client.config.emotes.success} Members who send walltext will get banned`)
+                            .setAuthor('Automod Update', client.user.displayAvatarURL())
+                        ]})
                         break;
                     case 'tempban':
                         updateWalltext('tempban', duration)
-                        message.channel.send(
+                        message.reply({ embeds: [
                             new Discord.MessageEmbed()
-                                .setColor('#09fff2')
-                                .setDescription(`${client.config.emotes.success} Members who send walltext will get banned for \`${client.util.convertMillisecondsToDuration(duration)}\``)
-                                .setAuthor('Automod Update', client.user.displayAvatarURL())
-                        )
+                            .setColor('#09fff2')
+                            .setDescription(`${client.config.emotes.success} Members who send walltext will get banned for \`${client.util.convertMillisecondsToDuration(duration)}\``)
+                            .setAuthor('Automod Update', client.user.displayAvatarURL())
+                        ]})
                         break;
                     case 'tempmute':
                         updateWalltext('tempmute');
-                        message.channel.send(
+                        message.reply({ embeds: [
                             new Discord.MessageEmbed()
-                                .setColor('#09fff2')
-                                .setDescription(`${client.config.emotes.success} Members who send walltext will get muted for \`${client.util.convertMillisecondsToDuration(duration)}\``)
-                                .setAuthor('Automod Update', client.user.displayAvatarURL())
-                        )
+                            .setColor('#09fff2')
+                            .setDescription(`${client.config.emotes.success} Members who send walltext will get muted for \`${client.util.convertMillisecondsToDuration(duration)}\``)
+                            .setAuthor('Automod Update', client.user.displayAvatarURL())
+                        ]})
                         break;
                     case 'disable':
                         updateWalltext('disable', )
-                        message.channel.send(
+                        message.reply({ embeds: [
                             new Discord.MessageEmbed()
-                                .setColor('#09fff2')
-                                .setDescription(`${client.config.emotes.success} Members who send walltext will no longer be punished`)
-                                .setAuthor('Automod Update', client.user.displayAvatarURL())
-                        )
+                            .setColor('#09fff2')
+                            .setDescription(`${client.config.emotes.success} Members who send walltext will no longer be punished`)
+                            .setAuthor('Automod Update', client.user.displayAvatarURL())
+                        ]})
                         break;
                     default:
                         if (args[0]) {
-                            return message.channel.send(client.config.errorMessages.missing_argument_option)
+                            return message.reply(client.config.errorMessages.missing_argument_option)
                         } else {
-                            return message.channel.send(client.config.errorMessages.invalid_option)
+                            return message.reply(client.config.errorMessages.invalid_option)
                         }
                 }
                 break;
@@ -619,81 +630,81 @@ module.exports = {
                 switch (toggle) {
                     case 'delete':
                         updateLinks('delete')
-                        message.channel.send(
+                        message.reply({ embeds: [
                             new Discord.MessageEmbed()
-                                .setColor('#09fff2')
-                                .setDescription(`${client.config.emotes.success} Members who send links will get their message deleted`)
-                                .setAuthor('Automod Update', client.user.displayAvatarURL())
-                        )
+                            .setColor('#09fff2')
+                            .setDescription(`${client.config.emotes.success} Members who send links will get their message deleted`)
+                            .setAuthor('Automod Update', client.user.displayAvatarURL())
+                        ]})
                         break;
                     case 'warn':
                         updateLinks('warn')
-                        message.channel.send(
+                        message.reply({ embeds: [
                             new Discord.MessageEmbed()
-                                .setColor('#09fff2')
-                                .setDescription(`${client.config.emotes.success} Members who send links will get warned`)
-                                .setAuthor('Automod Update', client.user.displayAvatarURL())
-                        )
+                            .setColor('#09fff2')
+                            .setDescription(`${client.config.emotes.success} Members who send links will get warned`)
+                            .setAuthor('Automod Update', client.user.displayAvatarURL())
+                    ]})
                         break;
                     case 'kick':
                         updateLinks('kick')
-                        message.channel.send(
+                        message.reply({ embeds: [
                             new Discord.MessageEmbed()
-                                .setColor('#09fff2')
-                                .setDescription(`${client.config.emotes.success} Members who send links will get kicked`)
-                                .setAuthor('Automod Update', client.user.displayAvatarURL())
-                        )
+                            .setColor('#09fff2')
+                            .setDescription(`${client.config.emotes.success} Members who send links will get kicked`)
+                            .setAuthor('Automod Update', client.user.displayAvatarURL())
+                        ]})
                         break
                     case 'mute':
                         updateLinks('mute')
-                        message.channel.send(
+                        message.reply({ embeds: [
                             new Discord.MessageEmbed()
-                                .setColor('#09fff2')
-                                .setDescription(`${client.config.emotes.success} Members who send links will get muted`)
-                                .setAuthor('Automod Update', client.user.displayAvatarURL())
-                        )
+                            .setColor('#09fff2')
+                            .setDescription(`${client.config.emotes.success} Members who send links will get muted`)
+                            .setAuthor('Automod Update', client.user.displayAvatarURL())
+                    ]})
                         break;
                     case 'ban':
                         updateLinks('ban')
-                        message.channel.send(
+                        message.reply({ embeds: [
                             new Discord.MessageEmbed()
-                                .setColor('#09fff2')
-                                .setDescription(`${client.config.emotes.success} Members who send links will get banned`)
-                                .setAuthor('Automod Update', client.user.displayAvatarURL())
-                        )
+                            .setColor('#09fff2')
+                            .setDescription(`${client.config.emotes.success} Members who send links will get banned`)
+                            .setAuthor('Automod Update', client.user.displayAvatarURL())
+                    ]})
                         break;
                     case 'tempban':
                         updateLinks('tempban', duration)
-                        message.channel.send(
+                        message.reply({ embeds: [
                             new Discord.MessageEmbed()
-                                .setColor('#09fff2')
-                                .setDescription(`${client.config.emotes.success} Members who send links will get banned for \`${client.util.convertMillisecondsToDuration(duration)}\``)
-                                .setAuthor('Automod Update', client.user.displayAvatarURL())
-                        )
+                            .setColor('#09fff2')
+                            .setDescription(`${client.config.emotes.success} Members who send links will get banned for \`${client.util.convertMillisecondsToDuration(duration)}\``)
+                            .setAuthor('Automod Update', client.user.displayAvatarURL())
+                    ]})
                         break;
                     case 'tempmute':
                         updateLinks('tempmute', duration)
-                        message.channel.send(
+                        message.reply({ embeds: [
                             new Discord.MessageEmbed()
-                                .setColor('#09fff2')
-                                .setDescription(`${client.config.emotes.success} Members who send links will get muted for \`${client.util.convertMillisecondsToDuration(duration)}\``)
-                                .setAuthor('Automod Update', client.user.displayAvatarURL())
-                        )
+                            .setColor('#09fff2')
+                            .setDescription(`${client.config.emotes.success} Members who send links will get muted for \`${client.util.convertMillisecondsToDuration(duration)}\``)
+                            .setAuthor('Automod Update', client.user.displayAvatarURL())
+                    ]})
                         break;
                     case 'disable':
                         updateLinks('disable')
-                        message.channel.send(
+                        message.reply({ embeds: [
                             new Discord.MessageEmbed()
-                                .setColor('#09fff2')
-                                .setDescription(`${client.config.emotes.success} Members who send links will no longer be automatically punished`)
-                                .setAuthor('Automod Update', client.user.displayAvatarURL())
-                        )
+                            .setColor('#09fff2')
+                            .setDescription(`${client.config.emotes.success} Members who send links will no longer be automatically punished`)
+                            .setAuthor('Automod Update', client.user.displayAvatarURL())
+                    ]})
                         break;
                     default:
                         if (args[0]) {
-                            return message.channel.send(client.config.errorMessages.missing_argument_option)
+                            return message.reply(client.config.errorMessages.missing_argument_option)
                         } else {
-                            return message.channel.send(client.config.errorMessages.invalid_option)
+                            return message.reply(client.config.errorMessages.invalid_option)
                         }
                 }
                 break;
@@ -701,84 +712,84 @@ module.exports = {
                 switch (toggle) {
                     case 'delete':
                         updateInvites('delete')
-                        message.channel.send(
+                        message.reply({ embeds: [
                             new Discord.MessageEmbed()
-                                .setColor('#09fff2')
-                                .setDescription(`${client.config.emotes.success} Members who send invites will get their deleted`)
-                                .setAuthor('Automod Update', client.user.displayAvatarURL())
-                        )
+                            .setColor('#09fff2')
+                            .setDescription(`${client.config.emotes.success} Members who send invites will get their deleted`)
+                            .setAuthor('Automod Update', client.user.displayAvatarURL())
+                    ]})
                         break;
                     case 'warn':
                         updateInvites('warn')
-                        message.channel.send(
+                        message.reply({ embeds: [
                             new Discord.MessageEmbed()
-                                .setColor('#09fff2')
-                                .setDescription(`${client.config.emotes.success} Members who send invites will get warned`)
-                                .setAuthor('Automod Update', client.user.displayAvatarURL())
-                        )
+                            .setColor('#09fff2')
+                            .setDescription(`${client.config.emotes.success} Members who send invites will get warned`)
+                            .setAuthor('Automod Update', client.user.displayAvatarURL())
+                    ]})
                         break;
                     case 'kick':
                         updateInvites('kick')
-                        message.channel.send(
+                        message.reply({ embeds: [
                             new Discord.MessageEmbed()
-                                .setColor('#09fff2')
-                                .setDescription(`${client.config.emotes.success} Members who send invites will get kicked`)
-                                .setAuthor('Automod Update', client.user.displayAvatarURL())
-                        )
+                            .setColor('#09fff2')
+                            .setDescription(`${client.config.emotes.success} Members who send invites will get kicked`)
+                            .setAuthor('Automod Update', client.user.displayAvatarURL())
+                    ]})
                         break
                     case 'mute':
                         updateInvites('mute')
-                        message.channel.send(
+                        message.reply({ embeds: [
                             new Discord.MessageEmbed()
-                                .setColor('#09fff2')
-                                .setDescription(`${client.config.emotes.success} Members who send invites will get muted`)
-                                .setAuthor('Automod Update', client.user.displayAvatarURL())
-                        )
+                            .setColor('#09fff2')
+                            .setDescription(`${client.config.emotes.success} Members who send invites will get muted`)
+                            .setAuthor('Automod Update', client.user.displayAvatarURL())
+                    ]})
                         break;
                     case 'ban':
                         updateInvites('ban')
-                        message.channel.send(
+                        message.reply({ embeds: [
                             new Discord.MessageEmbed()
-                                .setColor('#09fff2')
-                                .setDescription(`${client.config.emotes.success} Members who send invites will get banned`)
-                                .setAuthor('Automod Update', client.user.displayAvatarURL())
-                        )
+                            .setColor('#09fff2')
+                            .setDescription(`${client.config.emotes.success} Members who send invites will get muted`)
+                            .setAuthor('Automod Update', client.user.displayAvatarURL())
+                    ]})
                         break;
                     case 'tempban':
                         updateInvites('tempban', duration)
-                        message.channel.send(
+                        message.reply({ embeds: [
                             new Discord.MessageEmbed()
-                                .setColor('#09fff2')
-                                .setDescription(`${client.config.emotes.success} Members who send invites will get banned for \`${client.util.convertMillisecondsToDuration(duration)}\``)
-                                .setAuthor('Automod Update', client.user.displayAvatarURL())
-                        )
-                        message.channel.send(success)
+                            .setColor('#09fff2')
+                            .setDescription(`${client.config.emotes.success} Members who send invites will get banned for \`${client.util.convertMillisecondsToDuration(duration)}\``)
+                            .setAuthor('Automod Update', client.user.displayAvatarURL())
+                    ]})
+                        message.reply(success)
                         break;
                     case 'tempmute':
                         updateInvites('tempmute', duration)
-                        message.channel.send(
+                        message.reply({ embeds: [
                             new Discord.MessageEmbed()
-                                .setColor('#09fff2')
-                                .setDescription(`${client.config.emotes.success} Members who send invites will get muted for \`${client.util.convertMillisecondsToDuration(duration)}\``)
-                                .setAuthor('Automod Update', client.user.displayAvatarURL())
-                        )
-                        message.channel.send(success)
+                            .setColor('#09fff2')
+                            .setDescription(`${client.config.emotes.success} Members who send invites will get muted for \`${client.util.convertMillisecondsToDuration(duration)}\``)
+                            .setAuthor('Automod Update', client.user.displayAvatarURL())
+                    ]})
+                        message.reply(success)
                         break;
                     case 'disable':
                         updateInvites('disable')
-                        message.channel.send(
+                        message.reply({ embeds: [
                             new Discord.MessageEmbed()
-                                .setColor('#09fff2')
-                                .setDescription(`${client.config.emotes.success} Members who send invites will no longer get punished`)
-                                .setAuthor('Automod Update', client.user.displayAvatarURL())
-                        )
-                        message.channel.send(success)
+                            .setColor('#09fff2')
+                            .setDescription(`${client.config.emotes.success} Members who send invites will no longer get punished`)
+                            .setAuthor('Automod Update', client.user.displayAvatarURL())
+                    ]})
+                        message.reply(success)
                         break;
                     default:
                         if (args[0]) {
-                            return message.channel.send(client.config.errorMessages.missing_argument_option)
+                            return message.reply(client.config.errorMessages.missing_argument_option)
                         } else {
-                            return message.channel.send(client.config.errorMessages.invalid_option)
+                            return message.reply(client.config.errorMessages.invalid_option)
                         }
                 }
                 break;
@@ -786,16 +797,16 @@ module.exports = {
                 switch (toggle) {
                     case 'delete':
                         updateMassmention('delete')
-                        message.channel.send(
+                        message.reply({ embeds: [
                             new Discord.MessageEmbed()
-                                .setColor('#09fff2')
-                                .setDescription(`${client.config.emotes.success} Members who mention 5+ users will get their message deleted`)
-                                .setAuthor('Automod Update', client.user.displayAvatarURL())
-                        )
+                            .setColor('#09fff2')
+                            .setDescription(`${client.config.emotes.success} Members who mention 5+ users will get their message deleted`)
+                            .setAuthor('Automod Update', client.user.displayAvatarURL())
+                    ]})
                         break;
                     case 'warn':
                         updateMassmention('warn')
-                        message.channel.send(
+                        message.reply(
                             new Discord.MessageEmbed()
                                 .setColor('#09fff2')
                                 .setDescription(`${client.config.emotes.success} Members who mention 5+ users will get warned`)
@@ -804,63 +815,63 @@ module.exports = {
                         break;
                     case 'kick':
                         updateMassmention('kick')
-                        message.channel.send(
+                        message.reply({ embeds: [
                             new Discord.MessageEmbed()
-                                .setColor('#09fff2')
-                                .setDescription(`${client.config.emotes.success} Members who mention 5+ users will get kicked`)
-                                .setAuthor('Automod Update', client.user.displayAvatarURL())
-                        )
+                            .setColor('#09fff2')
+                            .setDescription(`${client.config.emotes.success} Members who mention 5+ users will get kicked`)
+                            .setAuthor('Automod Update', client.user.displayAvatarURL())
+                    ]})
                         break
                     case 'mute':
                         updateMassmention('mute')
-                        message.channel.send(
+                        message.reply({ embeds: [
                             new Discord.MessageEmbed()
-                                .setColor('#09fff2')
-                                .setDescription(`${client.config.emotes.success} Members who mention 5+ users will get muted`)
-                                .setAuthor('Automod Update', client.user.displayAvatarURL())
-                        )
+                            .setColor('#09fff2')
+                            .setDescription(`${client.config.emotes.success} Members who mention 5+ users will get muted`)
+                            .setAuthor('Automod Update', client.user.displayAvatarURL())
+                    ]})
                         break;
                     case 'ban':
                         updateMassmention('ban')
-                        message.channel.send(
+                        message.reply({ embeds: [
                             new Discord.MessageEmbed()
-                                .setColor('#09fff2')
-                                .setDescription(`${client.config.emotes.success} Members who mention 5+ users will get banned`)
-                                .setAuthor('Automod Update', client.user.displayAvatarURL())
-                        )
+                            .setColor('#09fff2')
+                            .setDescription(`${client.config.emotes.success} Members who mention 5+ users will get banned`)
+                            .setAuthor('Automod Update', client.user.displayAvatarURL())
+                    ]})
                         break;
                     case 'tempban':
                         updateMassmention('tempban', duration)
-                        message.channel.send(
+                        message.reply({ embeds: [
                             new Discord.MessageEmbed()
-                                .setColor('#09fff2')
-                                .setDescription(`${client.config.emotes.success} Members who mention 5+ users will get banned for \`${client.util.convertMillisecondsToDuration(duration)}\``)
-                                .setAuthor('Automod Update', client.user.displayAvatarURL())
-                        )
+                            .setColor('#09fff2')
+                            .setDescription(`${client.config.emotes.success} Members who mention 5+ users will get banned for \`${client.util.convertMillisecondsToDuration(duration)}\``)
+                            .setAuthor('Automod Update', client.user.displayAvatarURL())
+                    ]})
                         break;
                     case 'tempmute':
                         updateMassmention('tempmute', duration)
-                        message.channel.send(
+                        message.reply({ embeds: [
                             new Discord.MessageEmbed()
-                                .setColor('#09fff2')
-                                .setDescription(`${client.config.emotes.success} Members who mention 5+ users will get muted for \`${client.util.convertMillisecondsToDuration(duration)}\``)
-                                .setAuthor('Automod Update', client.user.displayAvatarURL())
-                        )
+                            .setColor('#09fff2')
+                            .setDescription(`${client.config.emotes.success} Members who mention 5+ users will get muted for \`${client.util.convertMillisecondsToDuration(duration)}\``)
+                            .setAuthor('Automod Update', client.user.displayAvatarURL())
+                    ]})
                         break;
                     case 'disable':
                         updateMassmention('disable')
-                        message.channel.send(
+                        message.reply({ embeds: [
                             new Discord.MessageEmbed()
-                                .setColor('#09fff2')
-                                .setDescription(`${client.config.emotes.success} Members who mention 5+ users will no longer get punished`)
-                                .setAuthor('Automod Update', client.user.displayAvatarURL())
-                        )
+                            .setColor('#09fff2')
+                            .setDescription(`${client.config.emotes.success} Members who mention 5+ users will no longer get punished`)
+                            .setAuthor('Automod Update', client.user.displayAvatarURL())
+                    ]})
                         break;
                     default:
                         if (args[0]) {
-                            return message.channel.send(client.config.errorMessages.missing_argument_option)
+                            return message.reply(client.config.errorMessages.missing_argument_option)
                         } else {
-                            return message.channel.send(client.config.errorMessages.invalid_option)
+                            return message.reply(client.config.errorMessages.invalid_option)
                         }
                 }
                 break;
@@ -869,13 +880,13 @@ module.exports = {
 
                 switch (toggle) {
                     case 'add':
-                        if (!bypassChannel) return message.channel.send(client.config.errorMessages.missing_argument_channel)
-                        if (bypassChannel.type !== 'text') return message.channel.send(client.config.errorMessages.not_type_text_channel)
+                        if (!bypassChannel) return message.reply(client.config.errorMessages.missing_argument_channel)
+                        if (bypassChannel.type !== 'text') return message.reply(client.config.errorMessages.not_type_text_channel)
                         const alreadyInBypassList0 = await automodSchema.findOne({
                             guildID: message.guild.id,
                             bypassChannels: bypassChannel.id
                         })
-                        if (alreadyInBypassList0 && alreadyInBypassList0.length !== 0) return message.channel.send('This channel is already in the bypass list! You can view the list by running `automod bypass view`')
+                        if (alreadyInBypassList0 && alreadyInBypassList0.length !== 0) return message.reply('This channel is already in the bypass list! You can view the list by running `automod bypass view`')
                         await automodSchema.updateOne({
                             guildID: message.guild.id
                         },
@@ -884,15 +895,15 @@ module.exports = {
                                     bypassChannels: bypassChannel.id
                                 }
                             })
-                        await message.channel.send(`${bypassChannel} has been added to the automod bypass list`)
+                        await message.reply(`${bypassChannel} has been added to the automod bypass list`)
                         break;
                     case 'remove':
-                        if (!bypassChannel) return message.channel.send(client.config.errorMessages.missing_argument_channel)
+                        if (!bypassChannel) return message.reply(client.config.errorMessages.missing_argument_channel)
                         const alreadyInBypassList1 = await automodSchema.findOne({
                             guildID: message.guild.id,
                             bypassChannels: bypassChannel.id
                         })
-                        if (!alreadyInBypassList1 || !alreadyInBypassList1.length) return message.channel.send('This channel is not in the bypass list! You can view the list by running `automod bypass view`')
+                        if (!alreadyInBypassList1 || !alreadyInBypassList1.length) return message.reply('This channel is not in the bypass list! You can view the list by running `automod bypass view`')
                         await automodSchema.updateOne({
                             guildID: message.guild.id
                         },
@@ -901,7 +912,7 @@ module.exports = {
                                     bypassChannels: bypassChannel.id
                                 }
                             })
-                        await message.channel.send(`${bypassChannel} has been removed from the automod bypass list`)
+                        await message.reply(`${bypassChannel} has been removed from the automod bypass list`)
                         break;
                     case 'removeall':
                         await automodSchema.updateOne({
@@ -910,7 +921,7 @@ module.exports = {
                             {
                                 bypassChannels: []
                             })
-                        await message.channel.send(`All channels have been removed from the automod bypass list`)
+                        await message.reply(`All channels have been removed from the automod bypass list`)
                         break;
                     case 'view':
                         const channelsBypassed = await automodSchema.findOne({
@@ -919,7 +930,7 @@ module.exports = {
 
                         const { bypassChannels } = channelsBypassed
 
-                        if (!bypassChannels || !bypassChannels.length) return message.channel.send('No channels are on the automod bypass list! Want to add some? `automod bypass add (channel)`')
+                        if (!bypassChannels || !bypassChannels.length) return message.reply('No channels are on the automod bypass list! Want to add some? `automod bypass add (channel)`')
                         const bypassChannelsViewList = new Discord.MessageEmbed()
                             .setColor('#09fff2')
                             .setAuthor(`Bypassed channel list for ${message.guild.name}`, client.user.displayAvatarURL())
@@ -941,13 +952,13 @@ module.exports = {
                         }
 
                         bypassChannelsViewList.setDescription(bypassChannels2.join(', '))
-                        message.channel.send(bypassChannelsViewList)
+                        message.reply(bypassChannelsViewList)
                         break;
                     default:
                         if (args[0]) {
-                            return message.channel.send(client.config.errorMessages.missing_argument_option)
+                            return message.reply(client.config.errorMessages.missing_argument_option)
                         } else {
-                            return message.channel.send(client.config.errorMessages.invalid_option)
+                            return message.reply(client.config.errorMessages.invalid_option)
                         }
 
                 }
@@ -957,12 +968,12 @@ module.exports = {
                 switch (toggle) {
                     case 'add':
                         var bypassRole = message.mentions.roles.first() || message.guild.roles.cache.find(r => r.name === args.slice(2).join(' ')) || message.guild.roles.cache.get(args[2])
-                        if (!bypassRole) return message.channel.send(client.config.errorMessages.missing_argument_role)
+                        if (!bypassRole) return message.reply(client.config.errorMessages.missing_argument_role)
                         const alreadyInBypassList0 = await automodSchema.findOne({
                             guildID: message.guild.id,
                             bypassRoles: bypassRole.id
                         })
-                        if (alreadyInBypassList0 && alreadyInBypassList0.length !== 0) return message.channel.send('This role is already in the bypass list! You can view the list by running `automod rolebypass view`')
+                        if (alreadyInBypassList0 && alreadyInBypassList0.length !== 0) return message.reply('This role is already in the bypass list! You can view the list by running `automod rolebypass view`')
                         await automodSchema.updateOne({
                             guildID: message.guild.id
                         },
@@ -971,16 +982,16 @@ module.exports = {
                                     bypassRoles: bypassRole.id
                                 }
                             })
-                        await message.channel.send(`\`${bypassRole.name}\` has been added to the automod bypass list`)
+                        await message.reply(`\`${bypassRole.name}\` has been added to the automod bypass list`)
                         break;
                     case 'remove':
                         var bypassRole = message.mentions.roles.first() || message.guild.roles.cache.find(r => r.name === args.slice(2).join(' ')) || message.guild.roles.cache.get(args[2])
-                        if (!bypassRole) return message.channel.send(client.config.errorMessages.missing_argument_role)
+                        if (!bypassRole) return message.reply(client.config.errorMessages.missing_argument_role)
                         const alreadyInBypassList1 = await automodSchema.findOne({
                             guildID: message.guild.id,
                             bypassRoles: bypassRole.id
                         })
-                        if (!alreadyInBypassList1 || !alreadyInBypassList1.length) return message.channel.send('This role is not in the bypass list! You can view the list by running `automod rolebypass view`')
+                        if (!alreadyInBypassList1 || !alreadyInBypassList1.length) return message.reply('This role is not in the bypass list! You can view the list by running `automod rolebypass view`')
                         await automodSchema.updateOne({
                             guildID: message.guild.id
                         },
@@ -989,7 +1000,7 @@ module.exports = {
                                     bypassRoles: bypassRole.id
                                 }
                             })
-                        await message.channel.send(`\`${bypassRole.name}\` has been removed from the automod bypass list`)
+                        await message.reply(`\`${bypassRole.name}\` has been removed from the automod bypass list`)
                         break;
                     case 'removeall':
                         await automodSchema.updateOne({
@@ -998,7 +1009,7 @@ module.exports = {
                             {
                                 bypassRoles: []
                             })
-                        await message.channel.send(`All roles have been removed from the automod rolebypass list`)
+                        await message.reply(`All roles have been removed from the automod rolebypass list`)
                         break;
                     case 'view':
                         const rolesBypassed = await automodSchema.findOne({
@@ -1007,7 +1018,7 @@ module.exports = {
 
                         const { bypassRoles } = rolesBypassed
 
-                        if (!bypassRoles || !bypassRoles.length) return message.channel.send('No roles are on the automod rolebypass list! Want to add some? `automod rolebypass add (role)`')
+                        if (!bypassRoles || !bypassRoles.length) return message.reply('No roles are on the automod rolebypass list! Want to add some? `automod rolebypass add (role)`')
                         const bypassRolesViewList = new Discord.MessageEmbed()
                             .setColor('#09fff2')
                             .setAuthor(`Bypassed role list for ${message.guild.name}`, client.user.displayAvatarURL())
@@ -1029,19 +1040,19 @@ module.exports = {
                         }
 
                         bypassRolesViewList.setDescription(bypassRoles2.join(', '))
-                        message.channel.send(bypassRolesViewList)
+                        message.reply(bypassRolesViewList)
                         break;
                     default:
                         if (args[0]) {
-                            return message.channel.send(client.config.errorMessages.missing_argument_option)
+                            return message.reply(client.config.errorMessages.missing_argument_option)
                         } else {
-                            return message.channel.send(client.config.errorMessages.invalid_option)
+                            return message.reply(client.config.errorMessages.invalid_option)
                         }
 
                 }
                 break;
             default:
-                return message.channel.send('Invalid setting!')
+                return message.reply('Invalid setting!')
         }
     }
 }

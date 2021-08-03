@@ -22,9 +22,9 @@ module.exports = {
             reason = args.join(' ') || 'Unspecified';
         }
 
-        if (channel.type !== 'text') return message.channel.send(client.config.errorMessages.not_type_text_channel);
-        if (!channel.permissionsFor(message.guild.me).has('MANAGE_MESSAGES')) return message.channel.send(client.config.errorMessages.channel_access_denied);
-        if (!channel.permissionsFor(message.guild.me).has('MANAGE_MESSAGES')) return message.channel.send(client.config.errorMessages.my_channel_access_denied);
+        if (channel.type !== 'GUILD_TEXT') return message.reply(client.config.errorMessages.not_type_text_channel);
+        if (!channel.permissionsFor(message.guild.me).has('MANAGE_MESSAGES')) return message.reply(client.config.errorMessages.channel_access_denied);
+        if (!channel.permissionsFor(message.guild.me).has('MANAGE_MESSAGES')) return message.reply(client.config.errorMessages.my_channel_access_denied);
 
         if (!channel) {
             channel = message.channel;
@@ -38,13 +38,13 @@ module.exports = {
             }
         })
 
-        if (alreadyLocked) return message.channel.send('This channel is already locked! (If you manually unlocked, just run the unlock command to register this channel as unlocked)')
+        if (alreadyLocked) return message.reply('This channel is already locked! (If you manually unlocked, just run the unlock command to register this channel as unlocked)')
 
         const locking = new Discord.MessageEmbed()
             .setColor(client.config.colors.main)
             .setDescription(`Now attempting to lock ${channel}...`)
 
-        const msg = await message.channel.send(locking)
+        const msg = await message.reply({ embeds: [locking] })
         const permissionOverwrites = [...channel.permissionOverwrites.values()]
 
         try {
@@ -62,7 +62,7 @@ module.exports = {
                             || !channel.permissionsFor(message.guild.roles.cache.get(r.id)).has('MANAGE_MESSAGES')
                             || !channel.permissionsFor(message.guild.roles.cache.get(r.id)).has('ADMINISTRATOR')) {
 
-                            channel.updateOverwrite(message.guild.roles.cache.get(r.id), {
+                            channel.permissionOverwrites.edit(message.guild.roles.cache.get(r.id), {
                                 SEND_MESSAGES: false,
                             }, `Channel Lock | Moderator: ${message.author.tag}`).catch(e => false)
 
@@ -78,7 +78,7 @@ module.exports = {
                 }
             } finally {
                 if (!foundEveryoneOverwrite) {
-                    channel.updateOverwrite(message.guild.roles.everyone, {
+                    channel.permissionOverwrites.edit(message.guild.roles.everyone, {
                         SEND_MESSAGES: false,
                     }).catch(e => false)
                     neutralOverwrites.push(message.guild.id)
@@ -108,20 +108,21 @@ module.exports = {
                 }).save()
             }
         } finally {
-            const locked = new Discord.MessageEmbed()
+            if (channel === message.channel) {
+
+                const locked = new Discord.MessageEmbed()
                 .setColor(client.config.colors.main)
                 .setAuthor('Channel Locked', client.user.displayAvatarURL())
                 .setDescription('This channel is currently locked')
                 .addField('Lock Reason', reason)
 
-            if (channel === message.channel) {
-                await msg.edit(locked)
+                await msg.edit( { embeds: [locked] })
             } else {
                 msg.edit(new Discord.MessageEmbed()
                     .setColor(client.config.colors.main)
                     .setDescription(`Successfully locked ${channel}`))
 
-                channel.send(locked).catch(() => { return });
+                channel.send({ embeds: [locked] }).catch(() => { return });
             }
         }
 

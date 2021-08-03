@@ -16,9 +16,9 @@ module.exports = {
             guildID: message.guild.id
         })
 
-        if(!guildWarnings || !guildWarnings.warnings.length) return message.channel.send('This server has no warnings')
+        if(!guildWarnings || !guildWarnings.warnings.length) return message.reply('This server has no warnings')
 
-        message.channel.send('Are you sure? This will remove all warnings from the server and there is no way to get them back. To confirm, respond with the server name')
+        message.reply('Are you sure? This will remove all warnings from the server and there is no way to get them back. To confirm, respond with the server name')
         const filter = m => m.author.id === message.author.id;
         const collector = new Discord.MessageCollector(message.channel, filter, { time: 30000 });
         collector.on('collect', async(message) => {
@@ -29,17 +29,17 @@ module.exports = {
                 const deletedAllWarnings = new Discord.MessageEmbed()
                 .setColor(client.config.colors.main)
                 .setDescription(`${client.config.emotes.success} All warnings have been deleted`)
-                message.channel.send(deletedAllWarnings)
+                message.reply(deletedAllWarnings)
                 return collector.stop();
             } else {
-                message.channel.send('Action Cancelled');
+                message.reply('Action Cancelled');
                 return collector.stop();
             }
         })
 
         collector.on('end', (collected, reason) => {
             restricted.delete(message.guild.id)
-            if(reason === 'time') return message.channel.send('No response was received in time, cancelled')
+            if(reason === 'time') return message.reply('No response was received in time, cancelled')
         })
     }
 }

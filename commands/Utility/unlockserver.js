@@ -21,17 +21,17 @@ module.exports = {
             guildID: message.guild.id
         })
 
-        if (!areAnyLocked) return message.channel.send('No channels are currently locked!')
+        if (!areAnyLocked) return message.reply('No channels are currently locked!')
 
-        if (currentlyInProcess.has(message.guild.id)) return message.channel.send('This server is on cooldown')
-        message.channel.send('You are about to unlock every channel in this server. If you are **positive** you want to continue, respond with the server name')
+        if (currentlyInProcess.has(message.guild.id)) return message.reply('This server is on cooldown')
+        message.reply('You are about to unlock every channel in this server. If you are **positive** you want to continue, respond with the server name')
         const filter = m => m.author.id === message.author.id;
         const collector = new Discord.MessageCollector(message.channel, filter, { time: 30000 })
         collector.on('collect', async (message) => {
             if (message.content === message.guild.name) {
                 collector.stop();
                 currentlyInProcess.add(message.guild.id);
-                const msg = await message.channel.send('🔓 Unlocking all server channels... <a:loading:834973811735658548> | This may take a range from a few seconds up to a few minutes depending on your server size\n\nPlease do not remove any permissions from me while this is running or it may cause further issues')
+                const msg = await message.reply('🔓 Unlocking all server channels... <a:loading:834973811735658548> | This may take a range from a few seconds up to a few minutes depending on your server size\n\nPlease do not remove any permissions from me while this is running or it may cause further issues')
 
                 const channels = [...message.guild.channels.cache.values()]
 
@@ -49,14 +49,14 @@ module.exports = {
                             }
                         })
 
-                        if (getLockSchema && message.guild.me.hasPermission('ADMINISTRATOR')) {
+                        if (getLockSchema && message.guild.me.permissions.has('ADMINISTRATOR')) {
 
                             const enabledOverwrites = getLockSchema.channels.find(key => key.ID === channel.id).enabledOverwrites;
                             const neutralOverwrites = getLockSchema.channels.find(key => key.ID === channel.id).neutralOverwrites;
 
                             const a = async () => {
                                 for (var i = 0; i !== enabledOverwrites.length; ++i) {
-                                    channel.updateOverwrite(message.guild.roles.cache.get(enabledOverwrites[i]), {
+                                    channel.permissionOverwrites.edit(message.guild.roles.cache.get(enabledOverwrites[i]), {
                                         SEND_MESSAGES: true
                                     }, `Server Unlock | Administrator: ${message.author.tag}`).catch(e => false)
 
@@ -66,7 +66,7 @@ module.exports = {
                             const b = async () => {
 
                                 for (var i = 0; i !== neutralOverwrites.length; ++i) {
-                                    channel.updateOverwrite(message.guild.roles.cache.get(neutralOverwrites[i]), {
+                                    channel.permissionOverwrites.edit(message.guild.roles.cache.get(neutralOverwrites[i]), {
                                         SEND_MESSAGES: null
                                     }, `Server Unlock | Administrator: ${message.author.tag}`).catch(e => false)
 
@@ -80,7 +80,7 @@ module.exports = {
                 } finally {
                     currentlyInProcess.delete(message.guild.id);
                     await msg.edit(`🔓 All server channels have been unlocked`);
-                    message.channel.send(`Process complete! ${msg.url}`)
+                    message.reply(`Process complete! ${msg.url}`)
                     await lockSchema.deleteOne({
                         guildID: message.guild.id
                     })
@@ -88,7 +88,7 @@ module.exports = {
                 }
 
             } else {
-                message.channel.send('Action Cancelled')
+                message.reply('Action Cancelled')
                 return collector.stop();
             }
         })
@@ -96,7 +96,7 @@ module.exports = {
 
         collector.on('end', (col, reason) => {
             if (reason === 'time') {
-                return message.channel.send('No response in 30 seconds; cancelled')
+                return message.reply('No response in 30 seconds; cancelled')
             }
         })
     }

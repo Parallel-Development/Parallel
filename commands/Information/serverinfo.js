@@ -22,6 +22,6 @@ module.exports = {
             .setFooter(`Information requested by ${message.author.tag}`, client.user.displayAvatarURL())
             .setThumbnail(message.guild.iconURL({ dynamic: true }))
 
-        return message.channel.send(serverinfo)
+        return message.reply({ embeds: [serverinfo] })
     }
 }

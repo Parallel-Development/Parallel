@@ -7,12 +7,12 @@ module.exports = {
     aliases: ['roleinformation'],
     async execute(client, message, args) {
 
-        if (!args[0]) return message.channel.send('Please specify a role to get information on!');
+        if (!args[0]) return message.reply('Please specify a role to get information on!');
         const role = message.mentions.roles.first()
             || message.guild.roles.cache.find(r => r.name == args.join(' '))
             || message.guild.roles.cache.get(args[0]);
 
-        if (!role) return message.channel.send(client.config.errorMessages.invalid_role);
+        if (!role) return message.reply(client.config.errorMessages.invalid_role);
 
         const roleInfoEmbed = new Discord.MessageEmbed()
             .setColor(client.config.colors.main)
@@ -24,6 +24,6 @@ module.exports = {
             .addField('Hoisted?', role.hoist ? "Yes" : "No", true)
             .addField('Created on', client.util.timestamp(role.createdAt));
 
-        return message.channel.send(roleInfoEmbed)
+        return message.reply({ embeds: [roleInfoEmbed] })
     }
 }

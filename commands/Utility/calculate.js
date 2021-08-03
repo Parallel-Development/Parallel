@@ -7,7 +7,7 @@ module.exports = {
     usage: 'calculate <calculation>',
     aliases: ['calc'],
     async execute(client, message, args) {
-        if (!args[0]) return message.channel.send('Please input a calculation')
+        if (!args[0]) return message.reply('Please input a calculation')
 
         let resp;
         try {
@@ -18,7 +18,7 @@ module.exports = {
                 .addField('Input', `\`\`\`js\n${args.join(' ')}\`\`\``)
                 .addField('Output', `\`\`\`Error\`\`\``)
 
-            return message.channel.send(errorEmbed)
+            return message.reply(errorEmbed)
         }
 
         const answerEmbed = new Discord.MessageEmbed()
@@ -26,6 +26,6 @@ module.exports = {
             .addField('Input', `\`\`\`js\n${args.join(' ')}\`\`\``)
             .addField('Output', `\`\`\`js\n${resp}\`\`\``)
 
-        return message.channel.send(answerEmbed)
+        return message.reply({ embeds: [answerEmbed] })
     }
 }

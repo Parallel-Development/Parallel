@@ -2,8 +2,8 @@ const automodSchema = require('../schemas/automod-schema');
 
 exports.run = async(client, message, args) => {
     const option = args[1];
-    if(!option) return message.channel.send('Please specify a toggle');
-    if(!(option === 'enable' || option === 'disable')) return message.channel.send('Expected input `enable` or `disable`');
+    if(!option) return message.reply('Please specify a toggle');
+    if(!(option === 'enable' || option === 'disable')) return message.reply('Expected input `enable` or `disable`');
     const attachmentPermsOnly = args[2] === 'true' ? true : false;
 
     await automodSchema.updateOne({
@@ -26,7 +26,7 @@ exports.run = async(client, message, args) => {
                 attachmentPermsOnly: attachmentPermsOnly
             }
         })
-        return message.channel.send('Tenor links will now be excluded from the link automod' + (attachmentPermsOnly ? ' | Users without attachment perms will still get affected' : ''));
+        return message.reply('Tenor links will now be excluded from the link automod' + (attachmentPermsOnly ? ' | Users without attachment perms will still get affected' : ''));
     } else {
         await automodSchema.updateOne({
             guildID: message.guild.id
@@ -37,6 +37,6 @@ exports.run = async(client, message, args) => {
                     attachmentPermsOnly: false
                 }
             })
-        return message.channel.send('Tenor links will now no longer be excluded from the link automod');
+        return message.reply('Tenor links will now no longer be excluded from the link automod');
     }
 }

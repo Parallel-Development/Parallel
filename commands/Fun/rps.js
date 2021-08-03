@@ -9,23 +9,23 @@ module.exports = {
     usage: 'rps [player]',
     async execute(client, message, args) {
 
-        if (openedSession.has(message.author.id)) return message.channel.send('You are already in a game!')
+        if (openedSession.has(message.author.id)) return message.reply('You are already in a game!')
 
         const playerOne = message.member;
-        if (!args[0]) return message.channel.send(client.config.errorMessages.missing_argument_member);
+        if (!args[0]) return message.reply(client.config.errorMessages.missing_argument_member);
         const playerTwo = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
-        if (!playerTwo) return message.channel.send(client.config.errorMessages.invalid_member);
+        if (!playerTwo) return message.reply(client.config.errorMessages.invalid_member);
 
-        if (requestCooldown.has(message.author.id)) return message.channel.send('You already have a pending request! Please wait for it to expire before trying again');
-        if (requestedCooldown.has(member.id)) return message.channel.send('This user already has a pending request! Please wait for their pending request to expire before trying again');
-        if (!playerTwo) return message.channel.send('Please specify a user to play against')
-        if (playerTwo.user.bot) return message.channel.send('You cannot play a bot!');
-        if (playerTwo.id === message.author.id) return message.channel.send('Are you that lonely? Cmon, choose someone else');
+        if (requestCooldown.has(message.author.id)) return message.reply('You already have a pending request! Please wait for it to expire before trying again');
+        if (requestedCooldown.has(member.id)) return message.reply('This user already has a pending request! Please wait for their pending request to expire before trying again');
+        if (!playerTwo) return message.reply('Please specify a user to play against')
+        if (playerTwo.user.bot) return message.reply('You cannot play a bot!');
+        if (playerTwo.id === message.author.id) return message.reply('Are you that lonely? Cmon, choose someone else');
 
         requestCooldown.add(message.author.id);
         requestedCooldown.add(member.id);
 
-        message.channel.send(`${playerTwo}, ${playerOne} would like to play you in rock-paper-scissors | Reply "play" to play, anything else to cancel`);
+        message.reply(`${playerTwo}, ${playerOne} would like to play you in rock-paper-scissors | Reply "play" to play, anything else to cancel`);
         const filter = m => p.author.id === playerOne.id;
         const collector = new Discord.MessageCollector(message.channel, filter, { time: 30000 });
         collector.on('collect', async (message, col) => {
@@ -38,7 +38,7 @@ module.exports = {
                     .setAuthor('Rock Paper Scissors', client.user.displayAvatarURL())
                     .setDescription('Awaiting response from both users...')
                     .setFooter(`${playerOne.user.username} | ${playerTwo.user.username}`)
-                const gameBoard = await message.channel.send(gameBoardEmbed)
+                const gameBoard = await message.reply({ embeds: [gameBoardEmbed] })
 
                 collector.stop();
 
@@ -82,13 +82,13 @@ module.exports = {
                             .setDescription('Game cancelled; a user failed to input a valid option')
                             .setAuthor('Rock Paper Scissors', client.user.displayAvatarURL()));
 
-                        return message.channel.send('Cancelled');
+                        return message.reply('Cancelled');
                     }
                     if (!possibleAnswers.includes(message.content.split(' ')[0].toLowerCase())) {
                         tries1++
-                        return message.channel.send(client.config.errorMessages.invalid_option)
+                        return message.reply(client.config.errorMessages.invalid_option)
                     } else {
-                        message.channel.send('Option collected!')
+                        message.reply('Option collected!')
                         user1option = message.content.split(' ')[0].toLowerCase();
                         collector1.stop()
                         finish(playerOne, playerTwo, user1option, user2option, gameBoard, client, collector1, collector2);
@@ -104,13 +104,13 @@ module.exports = {
                             .setDescription('Game cancelled; a user failed to input a valid option')
                             .setAuthor('Rock Paper Scissors', client.user.displayAvatarURL()));
 
-                        return message.channel.send('Cancelled');
+                        return message.reply('Cancelled');
                     }
                     if (!possibleAnswers.includes(message.content.split(' ')[0].toLowerCase())) {
                         tries2++
-                        return message.channel.send(client.config.errorMessages.invalid_option);
+                        return message.reply(client.config.errorMessages.invalid_option);
                     } else {
-                        message.channel.send('Option collected!')
+                        message.reply('Option collected!')
                         user2option = message.content.split(' ')[0].toLowerCase();
                         collector2.stop();
                         finish(firstMember, member, user1option, user2option, gameBoard, client, collector1, collector2);
@@ -120,7 +120,7 @@ module.exports = {
 
                 collector1.on('end', (col, reason) => {
                     if (reason === 'time') {
-                        message.channel.send('No response in 30 seconds, cancelled');
+                        message.reply('No response in 30 seconds, cancelled');
                         collector1.stop();
                         collector2.stop();
 
@@ -133,7 +133,7 @@ module.exports = {
 
                 collector2.on('end', (col, reason) => {
                     if (reason === 'time') {
-                        message.channel.send('No response in 30 seconds, cancelled');
+                        message.reply('No response in 30 seconds, cancelled');
                         collector.stop();
                         collector1.stop();
                         collector2.stop();
@@ -145,7 +145,7 @@ module.exports = {
                 })
             } else {
                 collector.stop();
-                return message.channel.send('Game cancelled')
+                return message.reply('Game cancelled')
             }
         })
 
@@ -153,7 +153,7 @@ module.exports = {
             requestCooldown.delete(message.author.id);
             requestedCooldown.delete(member.id)
             if (reason === 'time') {
-                return message.channel.send('Game offer expired; user did not respond in time')
+                return message.reply('Game offer expired; user did not respond in time')
             }
         })
     }

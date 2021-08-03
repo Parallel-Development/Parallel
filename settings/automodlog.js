@@ -11,14 +11,14 @@ exports.run = async (client, message, args) => {
                 automodLogging: 'none'
             })
 
-        return message.channel.send(`Success! Automod instances will no longer be logged`)
+        return message.reply(`Success! Automod instances will no longer be logged`)
 
     }
-    if (!channel) return message.channel.send(client.config.errorMessages.missing_argument_channel);
-    if (channel.type !== 'text') return message.channel.send(client.config.errorMessages.not_channel_type_txxt);
+    if (!channel) return message.reply(client.config.errorMessages.missing_argument_channel);
+    if (channel.type !== 'GUILD_TEXT') return message.reply(client.config.errorMessages.not_channel_type_txxt);
 
     if (!channel.permissionsFor(message.guild.me).has('SEND_MESSAGES')) {
-        return message.channel.send('I cannot send messages in this channel! Please give me permission to send messages here and run again')
+        return message.reply('I cannot send messages in this channel! Please give me permission to send messages here and run again')
     }
 
     await settingsSchema.updateOne({
@@ -29,5 +29,5 @@ exports.run = async (client, message, args) => {
         }
     )
 
-    message.channel.send(`Success! Automod instances will now be logged in ${channel}`)
+    message.reply(`Success! Automod instances will now be logged in ${channel}`)
 }

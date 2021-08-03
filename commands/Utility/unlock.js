@@ -24,9 +24,9 @@ module.exports = {
             reason = args.join(' ') || 'Unspecified';
         }
 
-        if (channel.type !== 'text') return message.channel.send(client.config.errorMessages.not_type_text_channel);
-        if (!channel.permissionsFor(message.guild.me).has('MANAGE_MESSAGES')) return message.channel.send(client.config.errorMessages.channel_access_denied);
-        if (!channel.permissionsFor(message.guild.me).has('MANAGE_MESSAGES')) return message.channel.send(client.config.errorMessages.my_channel_access_denied);
+        if (channel.type !== 'GUILD_TEXT') return message.reply(client.config.errorMessages.not_type_text_channel);
+        if (!channel.permissionsFor(message.guild.me).has('MANAGE_MESSAGES')) return message.reply(client.config.errorMessages.channel_access_denied);
+        if (!channel.permissionsFor(message.guild.me).has('MANAGE_MESSAGES')) return message.reply(client.config.errorMessages.my_channel_access_denied);
 
         const getLockSchema = await lockSchema.findOne({
             guildID: message.guild.id,
@@ -35,12 +35,7 @@ module.exports = {
             }
         })
 
-        console.log(getLockSchema);
-        console.log(getLockSchema.channels);
-        // and I just can't seem to get enabledOverwrites and neutralOverwrites out of this! But it did? Do you mean in the unlockserver part? Cause it got it here in this one I believe.
-        // [{"ID":"800716799754502184","enabledOverwrites":[],"neutralOverwrites":["790760107365498880"]}] is what it said
-
-        if (!getLockSchema) return message.channel.send('This channel is already unlocked! (If you manually locked, just run the lock command to register this channel as locked)')
+        if (!getLockSchema) return message.reply('This channel is already unlocked! (If you manually locked, just run the lock command to register this channel as locked)')
 
         const enabledOverwrites = getLockSchema.channels.find(key => key.ID === channel.id).enabledOverwrites;
         const neutralOverwrites = getLockSchema.channels.find(key => key.ID === channel.id).neutralOverwrites;
@@ -49,11 +44,11 @@ module.exports = {
             .setColor(client.config.colors.main)
             .setDescription(`Now attempting to unlock ${channel}...`)
 
-        const msg = await message.channel.send(unlocking)
+        const msg = await message.reply(unlocking)
 
         try {
             for (var i = 0; i !== enabledOverwrites.length; i++) {
-                channel.updateOverwrite(message.guild.roles.cache.get(enabledOverwrites[i]), {
+                channel.permissionOverwrites.edit(message.guild.roles.cache.get(enabledOverwrites[i]), {
                     SEND_MESSAGES: true
                 }, `Channel Unlock | Moderator: ${message.author.tag}`).catch(e => false)
 
@@ -61,7 +56,7 @@ module.exports = {
             }
 
             for (var i = 0; i < neutralOverwrites.length; i++) {
-                channel.updateOverwrite(message.guild.roles.cache.get(neutralOverwrites[i]), {
+                channel.permissionOverwrites.edit(message.guild.roles.cache.get(neutralOverwrites[i]), {
                     SEND_MESSAGES: null
                 }, `Channel Unlock | Moderator: ${message.author.tag}`).catch(e => false)
 
@@ -83,20 +78,22 @@ module.exports = {
             })
 
         } finally {
-            const unlocked = new Discord.MessageEmbed()
+
+            if (channel === message.channel) {
+
+                const unlocked = new Discord.MessageEmbed()
                 .setColor(client.config.colors.main)
                 .setAuthor('Channel Unlocked', client.user.displayAvatarURL())
                 .setDescription('This channel has been unlocked')
                 .addField('Unlock Reason', reason)
 
-            if (channel === message.channel) {
-                msg.edit(unlocked)
+                msg.edit({ embeds: [unlocked] })
             } else {
                 msg.edit(new Discord.MessageEmbed()
                     .setColor(client.config.colors.main)
                     .setDescription(`Successfully unlocked ${channel}`))
 
-                channel.send(unlocked).catch(() => { return });
+                channel.send({ embeds: [unlocked] }).catch(() => { return });
             }
         }
 

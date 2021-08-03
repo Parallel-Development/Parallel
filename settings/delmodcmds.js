@@ -11,7 +11,7 @@ exports.run = async (client, message, args) => {
                 {
                     delModCmds: true
                 })
-            message.channel.send('The command ran by the moderator for all moderation commands will now be deleted')
+            message.reply('The command ran by the moderator for all moderation commands will now be deleted')
             break;
         case 'disable':
             await settingsSchema.updateOne({
@@ -20,10 +20,10 @@ exports.run = async (client, message, args) => {
                 {
                     delModCmds: false
                 })
-            message.channel.send('The command ran by the moderator for all moderation commands will no longer be deleted')
+            message.reply('The command ran by the moderator for all moderation commands will no longer be deleted')
             break;
         default:
-            if(!option) return message.channel.send('Options: enable, disable')
-            else return message.channel.send(client.config.errorMessages.invalid_option)
+            if(!option) return message.reply('Options: enable, disable')
+            else return message.reply({ embeds: [client.config.errorMessages.invalid_option] })
     }
 }

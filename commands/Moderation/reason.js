@@ -8,7 +8,7 @@ module.exports = {
     aliases: ['changereason'],
     permissions: 'MANAGE_MESSAGES',
     async execute(client, message, args) {
-        if (!args[0]) return message.channel.send(client.config.errorMessages.missing_argument_punishmentID);
+        if (!args[0]) return message.reply(client.config.errorMessages.missing_argument_punishmentID);
         const ID = args[0];
 
         const findPunishmentID = await warningSchema.findOne({
@@ -20,17 +20,17 @@ module.exports = {
             }
         })
 
-        if (!findPunishmentID) return message.channel.send(client.config.errorMessages.invalid_punishmentID);
+        if (!findPunishmentID) return message.reply(client.config.errorMessages.invalid_punishmentID);
 
         const moderatorID = findPunishmentID.warnings.find(key => key.punishmentID === ID).moderatorID;
         const userID = findPunishmentID.warnings.find(key => key.punishmentID === ID).userID;
         const reason = findPunishmentID.warnings.find(key => key.punishmentID === ID).reason;
 
-        if (moderatorID !== message.author.id && !message.member.hasPermission('MANAGE_MESSAGES')) return message.channel.send('You can only delete warnings that you distributed');
+        if (moderatorID !== message.author.id && !message.member.permissions.has('MANAGE_MESSAGES')) return message.reply('You can only delete warnings that you distributed');
 
         const newReason = args.slice(1).join(' ');
-        if(!newReason) return message.channel.send('Please specify a new reason');
-        if(newReason === reason) return message.channel.send('The new reason must be different from the old reason!');
+        if(!newReason) return message.reply('Please specify a new reason');
+        if(newReason === reason) return message.reply('The new reason must be different from the old reason!');
 
         await warningSchema.updateOne({
             guildID: message.guild.id,
@@ -50,6 +50,6 @@ module.exports = {
         .setColor(client.config.colors.main)
         .setDescription(`${client.config.emotes.success} Reason for infraction \`${ID}\` has been updated to ${newReason.length < 1500 ? newReason : await client.util.createBin(newReason)} for **${(await client.users.fetch(userID)).tag}**`)
 
-        return message.channel.send(changedInfractionReasonEmbed);
+        return message.reply({ embeds: [changedInfractionReasonEmbed] });
     }
 }

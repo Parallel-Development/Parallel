@@ -6,22 +6,23 @@ module.exports =  {
     name: 'reload',
     description: "A command that can reload other commands!",
     usage: 'reload <directory> <file_name>',
+    developer: true,
     async execute(client, message, args) {
 
         const config = require("../../config.json");
-        if(!client.config.developers.includes(message.author.id)) return message.channel.send("Sorry, you can't run that!")
+        if(!client.config.developers.includes(message.author.id)) return message.reply("Sorry, you can't run that!")
   
         const directory = args[0];
         const fileName = args[1]
 
-        if(!directory) return message.channel.send('A directory name must be provided')
-        if(!fileName && directory !== '-all') return message.channel.send('A file name must be provided')
+        if(!directory) return message.reply('A directory name must be provided')
+        if(!fileName && directory !== '-all') return message.reply('A file name must be provided')
         
         const commandPath = `./${directory}/${fileName}`
 
         if(args[0] === "-all") {
 
-            const msg = await message.channel.send('Reloading...')
+            const msg = await message.reply('Reloading...')
             for (const folder of commandFolders) {
                 const commandFiles = fs.readdirSync(`./commands/${folder}`).filter(file => file.endsWith('.js'))
                 for (const file of commandFiles) {
@@ -31,7 +32,7 @@ module.exports =  {
                         const pull = require(`../${folder}/${file}`)
                         client.commands.set(path.parse(file).name, pull)
                     } catch (e) {
-                        message.channel.send(`Could not reload: \`${folder}/${file}\``)
+                        message.reply(`Could not reload: \`${folder}/${file}\``)
                     }
                 }
 
@@ -46,8 +47,8 @@ module.exports =  {
             const pull = require(`../${commandPath}.js`)
             client.commands.set(fileName, pull)
         } catch(e) {
-            return message.channel.send(`Could not reload: \`${commandPath}\``)
+            return message.reply(`Could not reload: \`${commandPath}\``)
         }
-        message.channel.send(`The file \`${commandPath}\` has been reloaded!`)
+        message.reply(`The file \`${commandPath}\` has been reloaded!`)
     }
   }

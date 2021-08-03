@@ -16,7 +16,7 @@ module.exports = {
     aliases: ['unshut'],
     async execute(client, message, args) {
 
-        if(!args[0]) return message.channels.send(client.config.errorMessages.missing_arugment_member);
+        if(!args[0]) return message.reply(client.config.errorMessages.missing_arugment_member);
 
         const reason = args.slice(1).join(' ') || 'Unspecified';
         const punishmentID = client.util.generateRandomBase62String();
@@ -32,10 +32,10 @@ module.exports = {
 
             let hasMuteRecord = await punishmentSchema.findOne({
                 guildID: message.guild.id,
-                userID: user.id
+                userID: member.id
             })
 
-            if(!hasMuteRecord) return message.channel.send('This user is not currently muted');
+            if(!hasMuteRecord) return message.reply('This user is not currently muted');
             if (delModCmds) message.delete();
 
             NewInfraction.run(client, 'Unmute', message, user, reason, punishmentID, null, false);
@@ -47,30 +47,32 @@ module.exports = {
                 type: 'mute'
             })
 
-            return message.channel.send(`**${user.tag}** has been unmuted. They are not currently on this server`)
+            return message.reply(`**${user.tag}** has been unmuted. They are not currently on this server`)
 
         }
-        if(!member) return message.channel.send(client.config.errorMessages.invalid_member);
+        if(!member) return message.reply(client.config.errorMessages.invalid_member);
 
-        if (member.roles.highest.position >= message.member.roles.highest.position && message.member !== message.guild.owner) return message.channel.send(client.config.errorMessages.hierarchy);
+        if (member.roles.highest.position >= message.member.roles.highest.position && message.member !== message.guild.owner) return message.reply(client.config.errorMessages.hierarchy);
 
         const role = message.guild.roles.cache.find(r => r.name === 'Muted');
-        if(!role) return message.channel.send('The muted role does not exist');
-        if(role.position >= message.guild.me.roles.highest.position) return message.channel.send(client.config.errorMessages.my_hierarchy);
+        if(!role) return message.reply('The muted role does not exist');
+        if(role.position >= message.guild.me.roles.highest.position) return message.reply(client.config.errorMessages.my_hierarchy);
 
         let hasMuteRecord = await punishmentSchema.findOne({
             guildID: message.guild.id,
             userID: member.id
         })
 
-        if(!member.roles.cache.has(role.id) && !hasMuteRecord) return message.channel.send('This user is not currently muted');
+        if(!member.roles.cache.has(role.id) && !hasMuteRecord) return message.reply('This user is not currently muted');
         if (delModCmds) message.delete();
 
         await punishmentSchema.deleteMany({
             guildID: message.guild.id,
             userID: member.id,
             type: 'mute'
-        })
+        });
+
+        member.roles.remove(role)
 
         NewInfraction.run(client, 'Unmute', message, member, reason, punishmentID, null, false);
         DMUserInfraction.run(client, 'unmuted', client.config.colors.punishment[1], message, member, reason, 'ignore', 'ignore');
@@ -80,7 +82,7 @@ module.exports = {
         .setColor(client.config.colors.main)
         .setDescription(`${client.config.emotes.success} ${member} has been unmuted`)
         
-        return message.channel.send(unmutedEmbed);
+        return message.reply(unmutedEmbed);
         
     }
 }

@@ -8,23 +8,23 @@ module.exports = {
     requiredBotPermission: 'MANAGE_ROLES',
     aliases: ['removerole', 'takerole'],
     async execute(client, message, args) {
-        if (!args[0]) return message.channel.send(client.config.errorMessages.missing_argument_member);
+        if (!args[0]) return message.reply(client.config.errorMessages.missing_argument_member);
         const member = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
-        if (!member) return message.channel.send(client.config.errorMessages.invalid_member);
+        if (!member) return message.reply(client.config.errorMessages.invalid_member);
 
-        if (!args[1]) return message.channel.send(client.config.errorMessages.missing_argument_role);
+        if (!args[1]) return message.reply(client.config.errorMessages.missing_argument_role);
         const role = message.mentions.roles.first() || message.guild.roles.cache.find(r => r.name === args.slice(1).join(' ')) || message.guild.roles.cache.get(args[1]);
-        if (!role) return message.channel.send(client.config.errorMessages.invalid_role);
+        if (!role) return message.reply(client.config.errorMessages.invalid_role);
 
-        if (role.position >= message.member.roles.highest.position && message.member !== message.guild.owner) return message.channel.send(client.config.errorMessages.hierarchy);
-        if (role.position >= message.guild.me.roles.highest.position) return message.channel.send(client.config.errorMessages.my_hierarchy);
-        if (role === message.guild.roles.everyone || role.managed) return message.channel.send(client.config.errorMessages.unmanagable_role);
-        if (!member.roles.cache.has(role.id)) return message.channel.send('This member does not has this role!');
+        if (role.position >= message.member.roles.highest.position && message.member !== message.guild.owner) return message.reply(client.config.errorMessages.hierarchy);
+        if (role.position >= message.guild.me.roles.highest.position) return message.reply(client.config.errorMessages.my_hierarchy);
+        if (role === message.guild.roles.everyone || roleMANAGEd) return message.reply(client.config.errorMessages.unmanagable_role);
+        if (!member.roles.cache.has(role.id)) return message.reply('This member does not has this role!');
 
         member.roles.remove(role, `Responsible Member: ${message.member.user.tag}`);
         const removedRole = new Discord.MessageEmbed()
             .setColor(client.config.colors.main)
             .setDescription(`${client.config.emotes.success} Role ${role} successfully removed from member ${member}`);
-        return message.channel.send(removedRole); 
+        return message.reply( { embeds: [removedRole] }); 
     }
 }

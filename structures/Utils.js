@@ -64,11 +64,11 @@ module.exports = {
         }
 
         let product = [];
-        if (weeks > 0) product.push(`${Math.round(weeks)} weeks`)
-        if (days > 0) product.push(`${Math.round(days)} days`)
-        if (hours > 0) product.push(`${Math.round(hours)} hours`)
-        if (minutes > 0) product.push(`${Math.round(minutes)} minutes`)
-        if (seconds > 0) product.push(`${Math.round(seconds)} seconds`)
+        if (weeks > 0) product.push(`${Math.round(weeks)} ${weeks === 1 ? 'week' : 'weeks'}`)
+        if (days > 0) product.push(`${Math.round(days)} ${days === 1 ? 'day' : 'days'}`)
+        if (hours > 0) product.push(`${Math.round(hours)} ${hours === 1 ? 'hour' : 'hours'}`)
+        if (minutes > 0) product.push(`${Math.round(minutes)} ${minutes === 1 ? 'minute' : 'minutes'}`)
+        if (seconds > 0) product.push(`${Math.round(seconds)} ${seconds === 1 ? 'second' : 'seconds'}`)
 
         if(ms < 1000) return '0 seconds'
 
@@ -82,7 +82,7 @@ module.exports = {
      */
 
     timestamp(time = Date.now()) {
-        return `<t:${time}>`;
+        return `<t:${Math.round(time / 1000)}>`;
     },
 
     generateRandomBase62String(length = 15) {
@@ -103,11 +103,10 @@ module.exports = {
 
     async createMuteRole(message) {
 
-        const role = await message.guild.roles.crete({
-            data: {
-                name: 'Muted',
-                color: '#546e7a'
-            }
+        const role = await message.guild.roles.create({
+            name: 'Muted',
+            color: '#546e7a',
+            reason: 'Made the muted role, as none was found'
         })
 
         const sleep = async(ms) => {
@@ -120,7 +119,7 @@ module.exports = {
         for(var i = 0; i !== channels.length; ++i) {
             const channel = channels[i];
             if(!channel.permissionsFor(message.guild.me).has('MANAGE_CHANNEL')) return;
-            channel.updateOverwrite(role, { SEND_MESSAGES: false, ADD_REACTIONS: false, CONNECT: false });
+            channel.permissionOverwrites.edit(role, { SEND_MESSAGES: false, ADD_REACTIONS: false, CONNECT: false });
 
             await sleep(0); // ????
         }
@@ -145,22 +144,7 @@ module.exports = {
      */
 
     async muteMember(message, member, muteRole) {
-
-        const settings = await settingsSchema.findOne({
-            guildID: message.guild.id
-        })
-        const { rmrolesonmute } = settings;
-
-        const memberRoles = [];
-
-        const muteSchema = require('../schemas/mute-schema');
-        await new muteSchema({
-            guildname: message.guild.name,
-            guildID: message.guild.id,
-            userID: member.id,
-            roles: memberRoles
-        }).save();
-
-        return memberRoles;
+        await member.roles.add(muteRole);
+        if(member.voice.channel) member.voiceKICK();
     }
 }

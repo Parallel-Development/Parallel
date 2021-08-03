@@ -11,13 +11,13 @@ exports.run = async (client, message, args) => {
                 messageLogging: 'none'
             })
 
-        return message.channel.send(`Success! Messages updates will no longer be logged`)
+        return message.reply(`Success! Messages updates will no longer be logged`)
     }
-    if (!args[1]) return message.channel.send(client.config.errorMessages.missing_argument_channel);
-    if (channel.type !== 'text') return message.channel.send(client.config.errorMessages.not_type_text_channel);
+    if (!args[1]) return message.reply(client.config.errorMessages.missing_argument_channel);
+    if (channel.type !== 'GUILD_TEXT') return message.reply(client.config.errorMessages.not_type_text_channel);
 
     if (!channel.permissionsFor(message.guild.me).has('SEND_MESSAGES')) {
-        return message.channel.send('I cannot send messages in this channel! Please give me permission to send messages here and run again')
+        return message.reply('I cannot send messages in this channel! Please give me permission to send messages here and run again')
     }
 
     await settingsSchema.updateOne({
@@ -27,5 +27,5 @@ exports.run = async (client, message, args) => {
             messageLogging: channel.id
         })
 
-    message.channel.send(`Success! Messages updates will now be logged in ${channel}`)
+    message.reply(`Success! Messages updates will now be logged in ${channel}`)
 }

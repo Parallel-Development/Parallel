@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "discord.js": "^12.5.3",
+    "discord.js": "^13.0.0-dev.t1627992462.35fa3b3",
     "hastebin": "^0.2.1",
     "mathjs": "^9.4.4",
     "moment": "^2.29.1",
