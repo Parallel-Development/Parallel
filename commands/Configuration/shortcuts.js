@@ -19,7 +19,7 @@ module.exports = {
         if(!(option === 'view' || option === 'create' || option === 'remove')) return message.channel.send(client.config.errorMessages.invalid_option);
         const shortcutName = args[1];
         if(!shortcutName) return message.channel.send('A shortcut name is requied');
-        if(client.commands.has(shortcutName)) return message.channel.send('Illegal shortcut name')
+        if(client.commands.has(shortcutName) || client.aliases.has(shortcutName)) return message.channel.send('Illegal shortcut name')
         if(!shortcutName) return message.channel.send(client.config.errorMessages.missing_argument_text);
 
         if(option === 'create') {
