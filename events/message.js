@@ -298,8 +298,11 @@ module.exports = {
 
             if(!message.member.hasPermission(permissions) && !isModerator) return denyAccess();
 
-            const member = args[0];
-            
+            if(shortcmd.type === 'mute' || shortcmd.type === 'tempmute' || shortcmd.type === 'ban' || shortcmd.type === 'tempban') {
+
+            } else {
+                
+            }
         }
 
         try { command.execute(client, message, args) }
