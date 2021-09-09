@@ -1,0 +1,58 @@
+{
+    "token": "NzQ1NDAxNjQyNjY0NDYwMzE5.XzxPYA.xpKYUUcC_Qf3bWbjt6eLv-yyCKk",
+    "prefix": ">",
+    "youtubeapi": "AIzaSyAdL-sUZVA7JzexThmarLCy7lQwvXIvT4Y",
+    "mongoURL": "mongodb+srv://Piyeris:1BwlI3Zn02t7sOs1@razor.ghfnk.mongodb.net/Razor?retryWrites=true&w=majority",
+    "developers": [
+        "633776442366361601",
+        "483375587176480768"
+    ],
+    "colors": {
+        "err": "#FF0000",
+        "main": "#0000ff",
+        "punishment": [
+            "#FFFF00",
+            "#ffa500",
+            "#FF0000"
+        ],
+        "log": "#FFFF00"
+    },
+    "emotes": {
+        "success": "<a:check:800062978899836958>",
+        "loading": "<a:loading:834973811735658548>",
+        "ban": "<:ban:879486684868247552>",
+        "settings": "<:settings:879487909131083867>",
+        "developer": "<:developer:879487883772317716>",
+        "controller": "<:controller:879487851060924466>",
+        "information": "<:information:879487823017807882>"
+    },
+    "errors": {
+        "missing_argument_member": "Please specify a member!",
+        "invalid_member": "An invalid member was provided!",
+        "missing_argument_user": "Please specify a user!",
+        "invalid_user": "No such user exists!",
+        "missing_argument_role": "Please specify a role!",
+        "invalid_role": "An invalid role was provided!",
+        "missing_argument_option": "Please specify an option!",
+        "invalid_option": "An invalid option was provided!",
+        "missing_argument_text": "Please input text!",
+        "missing_argument_amount": "Please input an amount!",
+        "missing_argument_channel": "Please input a channel!",
+        "invalid_channel": "An invalid channel was provided!",
+        "not_type_text_channel": "Channel type must be type text!",
+        "hierarchy": "You cannot perform this action because your role hierarchy is too low!",
+        "my_hierarchy": "I cannot perform this action because my role hierachy is too low!",
+        "unmanagable_role": "This role cannot be managed!",
+        "bad_input_number": "A number was expected but was not received!",
+        "missing_argument_number": "Please specify a number!",
+        "my_channel_access_denied": "I cannot perform this action because I have insufficient permissions in the channel you are targetting!",
+        "cannot_punish_myself": "You cannot perform this action against me!",
+        "cannot_punish_yourself": "You cannot perform this action against yourself!",
+        "time_too_long": "This duration is too long! The max duration is `10 years`!",
+        "missing_argument_punishmentID": "Please specify a punishment ID!",
+        "invalid_punishmentID": "An invalid punishment ID was provided!",
+        "cannot_punish_owner": "It is impossible to perform this action against the owner!",
+        "missing_argument_duration": "Please specify a duration!",
+        "bad_duration": "A duration was expected but was not received!"
+    }
+}
