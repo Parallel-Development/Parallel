@@ -440,7 +440,7 @@ module.exports = {
 
 
         if (command.developing && !client.config.developers.includes(message.author.id)) return;
-        if (command.developer && !client.config.developers.includes(message.author.id)) return await client.util.throwError(message, 'Sorry, you can\'t run that!');
+        if (command.developer && !client.config.developers.includes(message.author.id)) return await client.util.throwError(message, 'You do not have access to run this command; this command is restricted to a specific set of users');
 
         if (
             command.permissions &&
