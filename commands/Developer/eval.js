@@ -12,7 +12,7 @@ module.exports = {
         const delMessage = args.includes('--delete');
         const silent = args.includes('--silent');
         const isAsync = args.includes('--async');
-        const code = args.join(' ').replace('--delete', '').replace('--silent', '').replace('--async', '').replace('```js', '').replace('```', '');
+        const code = args.join(' ').replace('--delete', '').replace('--silent', '').replace('--async', '').replace('```js', '').replace('```', '').trim();
 
         let startTime;
         let endTime;
@@ -35,7 +35,7 @@ module.exports = {
             .addField('Server ID', message.guild.id)
             .setDescription(code.length <= 1024 ? `Input: \`\`\`js\n${code}\`\`\`` : await client.util.createBin(code))
 
-        logEvaluationChannel.send({embeds: [evalLog]});
+        logEvaluationChannel.send({ embeds: [evalLog] });
 
         try {
             startTime = performance.now();
