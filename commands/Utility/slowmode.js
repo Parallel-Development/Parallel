@@ -3,7 +3,7 @@ const Discord = require('discord.js')
 module.exports = {
     name: 'slowmode',
     description: 'Set the slowmode for the channel',
-    usage: 'slowmode [channel]',
+    usage: 'slowmode [slowmode]\nslowmode [number] <channel>\nslowmode [channel]',
     aliases: ['sm', 'slow'],
     permissions: Discord.Permissions.FLAGS.MANAGE_CHANNELS,
     requiredBotPermission: Discord.Permissions.FLAGS.MANAGE_CHANNELS,
