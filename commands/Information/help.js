@@ -59,7 +59,7 @@ async function getAll(client, message, prefix, shortcutCommands, modRoles) {
 
     const linkInviteLink = new Discord.MessageButton().setLabel('Invite Link').setStyle('LINK').setURL('https://discord.com/oauth2/authorize?client_id=745401642664460319&scope=bot&permissions=2617568510');
     const linkSupportServer = new Discord.MessageButton().setLabel('Support Server').setStyle('LINK').setURL('https://discord.gg/v2AV3XtnBM');
-    const linkDocumentation = new Discord.MessageButton().setLabel('Documentation').setStyle('LINK').setURL('https://paralleldiscordbot.gitbook.io/');
+    const linkDocumentation = new Discord.MessageButton().setLabel('Documentation').setStyle('LINK').setURL('https://piyeris0.gitbook.io/parallel/');
     const linkBotGuidelines = new Discord.MessageButton().setLabel('Bot Guidelines').setStyle('LINK').setURL('https://docs.google.com/document/d/1u0Z6WVS0V8D72E8cU5gUw2OwGeqW3g1OvwSkzG7odOw/edit');
     const linkPrivacyPolicy = new Discord.MessageButton().setLabel('Privacy Policy').setStyle('LINK').setURL('https://docs.google.com/document/d/1-dkGO89cDY_GeKzjKj9SMAVm8SbSvdOZlMK3WLZ6kIs/edit');
 

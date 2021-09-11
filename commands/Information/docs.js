@@ -4,6 +4,6 @@ module.exports = {
     usage: 'docs',
     aliases: ['documentation', 'readthedocs'],
     async execute(client, message, args) {
-        return message.reply('Parallel\'s official documentation is found at this page: https://paralleldiscordbot.gitbook.io/parallel/')
+        return message.reply('Parallel\'s official documentation is found at this page: https://piyeris0.gitbook.io/parallel/')
     }
 }
