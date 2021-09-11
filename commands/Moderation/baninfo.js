@@ -31,8 +31,6 @@ module.exports = {
         if (userBan) {
             banInfoEmbed.addField('Date', userBan.date, true)
             banInfoEmbed.addField('Expires', client.util.timestamp(userBan.expires), true)
-        } else {
-            banInfoEmbed.setDescription('There is no record of the user being banned in their moderation logs')
         }
 
         return message.reply({ embeds: [banInfoEmbed] });
