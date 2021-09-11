@@ -11,14 +11,11 @@ module.exports = {
         await client.util.getUser(client, args[0]) ||
         message.member;
 
-        let description = `User information for ${member}`;
-        if (member.user && message.author.username !== member.nickname) description += ` (${member.user.username})`
-
         const user = member.user ? member.user : member;
 
         const userinfo = new Discord.MessageEmbed()
             .setColor(client.config.colors.main)
-            .setDescription(description)
+            .setDescription(`User information for ${member} ${member.user && member.user.username !== member.displayName ? `(${member.user.username})` : ''}`)
             .setThumbnail(user.displayAvatarURL({ dynamic: true }))
             .addField('User Tag', user.tag, true)
             .addField('User ID', user.id, true)

@@ -64,7 +64,6 @@ class Utils {
         while (hours >= 24) {
             hours -= 24;
             ++days
-            ++savedDays;
         }
 
         while (days >= 7) {
