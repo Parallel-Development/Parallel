@@ -89,8 +89,6 @@ module.exports = {
                     !modRoles.includes(role.id)
                 ) {
 
-                    console.log(message.guild.roles.cache.get(role.id).name);
-
                     if (role.allow.has(Discord.Permissions.FLAGS.SEND_MESSAGES)) {
                         enabledOverwrites.push(role.id)
                     } else if (!role.deny.has(Discord.Permissions.FLAGS.SEND_MESSAGES)) {
