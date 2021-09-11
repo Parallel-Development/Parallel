@@ -1,24 +1,35 @@
 const Discord = require('discord.js')
-const settingsSchema = require('../../schemas/settings-schema')
 const cooldown = new Set()
 const openedSession = new Set()
 
 module.exports = {
     name: 'gtn',
     description: 'Game of Guess the Number!',
-    usage: 'gtn',
+    usage: 'gtn\ngtn [mode]\n\nmodes: `easy`, `medium`, `hard`, `insane`, `extreme`\n\nBy default, the mode is `normal`',
     aliases: ['higherorlower', 'guessthenumber', 'hol'],
     async execute(client, message, args) {
         if (openedSession.has(message.author.id)) return;
+
+        const mode = args[0]?.toLowerCase() ?? 'medium';
+
+        let max = 0;
+        let time = 0;
+
+        if(mode === 'easy') max = 10, time = 60000;
+        else if (mode === 'medium') max = 8, time = 60000;
+        else if (mode === 'hard') max = 6, time = 40000;
+        else if (mode === 'insane') max = 3, time = 20000;
+        else if (mode === 'extreme') max = 1, time = 10000;
+        else max = 8, time = 60000;
 
         openedSession.add(message.author.id)
         const chosenNumber = Math.floor(Math.random() * 1000);
         let tries = 0;
         const startTime = performance.now()
         let answered = false;
-        message.reply('A number has been chosen `0-1000`. You have `8` tries and `60` seconds to guess! (You can run `cancel` to cancel this minigame)');
+        message.reply(`A number has been chosen \`0-1000\`. You have \`${max}\` tries and \`${client.util.duration(time)}\` to guess the number! (You can run \`cancel\` to cancel this minigame)`);
         const filter = m => m.author.id === message.author.id;
-        const collector = new Discord.MessageCollector(message.channel, { time: 60000, filter: filter, max: 8 });
+        const collector = new Discord.MessageCollector(message.channel, { time: time, filter: filter, max: max });
         collector.on('collect', async(message) => {
 
             if (cooldown.has(message.author.id)) return message.react('🕑')
