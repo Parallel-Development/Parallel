@@ -43,19 +43,19 @@ module.exports = {
                 break;
             case 'del-mod-cmd-triggers':
                 if (!args[1]) if (!args[1]) return message.reply({ embeds: [settingsHelp('Delete Moderation Command Triggers',
-                    'del-mod-cmd-triggers <enable, disable>',
+                    'del-mod-cmd-triggers <enable, disable, current>',
                     'Deletes the trigger of all moderation commands that punish a user')]})
                 require('../../settings/delmodcmds').run(client, message, args)
                 break;
             case 'automod-warning-expiration':
                 if (!args[1]) return message.reply({ embeds: [settingsHelp('Automod Warning Expiration',
-                    'automod-warning-expiration <duration>',
+                    'automod-warning-expiration <duration, current>',
                     'Sets an expiration date for all automod warnings')]})
                 require('../../settings/autowarnexpire').run(client, message, args)
                 break;
             case 'manual-warning-expiration':
                 if (!args[1]) return message.reply({ embeds: [settingsHelp('Manual Warning Expiration',
-                    'manual-warning-expiration <duration>',
+                    'manual-warning-expiration <duration, current>',
                     'Sets a default expiration date for manual warnings')]})
                 require('../../settings/manualwarnexpire').run(client, message, args);
                 break;
@@ -67,19 +67,19 @@ module.exports = {
                 break;
             case 'message-log-channel':
                 if (!args[1]) return message.reply({ embeds: [settingsHelp('Message Log Channel',
-                    'message-log-channel <channel | none>',
+                    'message-log-channel <channel, none, current>',
                     'Sets the channel for which message updates will be logged')]})
                 require('../../settings/msglogchannel').run(client, message, args)
                 break;
             case 'moderation-log-channel':
                 if (!args[1]) return message.reply({ embeds: [settingsHelp('Moderation Log Channel',
-                    'moderation-log-channel <channel | none>',
+                    'moderation-log-channel <channel, none, current>',
                     'Sets the channel for which moderator actions with Parallel will be logged')]})
                 require('../../settings/modlogchannel').run(client, message, args)
                 break;
             case 'automod-log-channel':
                 if (!args[1]) return message.reply({ embeds: [settingsHelp('Auto-Moderation Log Channel',
-                    'automod-log-channel <channel | none>',
+                    'automod-log-channel <channel, none, current>',
                     'Sets the channel for which automod instances will be logged')]});
                 require('../../settings/automodlog').run(client, message, args)
                 break;
@@ -91,19 +91,19 @@ module.exports = {
                 break;
             case 'allowtenor':
                 if (!args[1]) return message.reply({ embeds: [settingsHelp('Allow Tenor Links',
-                'allowtenor <option: enable, disable> <only for users with attachment perms boolean: true, false>',
+                'allowtenor <option: enable, disable, current> <only for users with attachment perms boolean: true, false>',
                 'If the link automod is enabled, it will allow tenor links to go by')]})
                 require('../../settings/allowtenor').run(client, message, args);
                 break;
             case 'muterole':
                 if (!args[1]) return message.reply({ embeds: [settingsHelp('Mute Role',
-                'muterole (mute role, current)',
+                'muterole <mute role, current>',
                 'Sets the role the bot mutes user\'s with')] })
                 require('../../settings/muterole').run(client, message, args)
                 break;
             case 'remove-roles-on-mute':
                 if (!args[1]) return message.reply({ embeds: [settingsHelp('Remove Roles On Mute',
-                'remove-roles-on-mute [enable, disable]',
+                'remove-roles-on-mute <enable, disable, current>',
                 'An option whether to remove all roles from a user when they are muted and add the muted role, or just add the muted role')]})
                 require('../../settings/removerolesonmute').run(client, message, args);
                 break;

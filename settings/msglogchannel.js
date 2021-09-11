@@ -3,7 +3,18 @@ const settingsSchema = require('../schemas/settings-schema');
 
 exports.run = async (client, message, args) => {
 
-    if (args[1] === 'none') {
+    if(args[1].toLowerCase() === 'current') {
+        const guildSettings = await settingsSchema.findOne({ guildID: message.guild.id });
+        const { messageLogging } = guildSettings;
+        
+        const messageLoggingChannelEmbed = new Discord.MessageEmbed()
+        .setColor(client.config.colors.main)
+        .setDescription(messageLogging === 'none' ? 'There is no channel set for logging updated message content or deleted messages' : `The current message log channel is ${message.guild.channels.cache.get(messageLogging)}`);
+
+        return message.reply({ embeds: [messageLoggingChannelEmbed] });
+    }
+
+    if (args[1].toLowerCase() === 'none') {
         await settingsSchema.updateOne({
             guildID: message.guild.id,
         },

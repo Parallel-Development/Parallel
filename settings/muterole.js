@@ -9,7 +9,7 @@ exports.run = async(client, message, args) => {
         if (!message.guild.roles.cache.get(muterole)) return message.reply('There is no mute role. Mute a user to have the bot automatically create one, or just set the new muted role')
         const currentMuteroleEmbed = new Discord.MessageEmbed()
         .setColor(client.config.colors.main)
-        .setDescription(`The current muted role is set as ${message.guild.roles.cache.get(muterole)}`)
+        .setDescription(`The current muted role is set to ${message.guild.roles.cache.get(muterole)}`)
         return message.reply( { embeds: [currentMuteroleEmbed] });
     }
 

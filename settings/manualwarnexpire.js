@@ -4,7 +4,18 @@ const ms = require('ms');
 
 exports.run = async (client, message, args) => {
 
-    if (args[1] === 'disable') {
+    if(args[1].toLowerCase() === 'current') {
+        const guildSettings = await settingsSchema.findOne({ guildID: message.guild.id });
+        const { manualwarnexpire } = guildSettings;
+        
+        const manualwarnexpireEmbed = new Discord.MessageEmbed()
+        .setColor(client.config.colors.main)
+        .setDescription(manualwarnexpire === 'disabled' ? 'Manual warnings are currently **not** set to expire if no duration is provided' : `All manual warnings, if no duration is provided, are set to expire in \`${client.util.duration(manualwarnexpire)}\``);
+
+        return message.reply({ embeds: [manualwarnexpireEmbed]})
+    }
+
+    if (args[1].toLowerCase() === 'disable') {
         await settingsSchema.updateOne({
             guildID: message.guild.id
         },

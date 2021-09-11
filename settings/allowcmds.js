@@ -7,7 +7,7 @@ exports.run = async (client, message, args) => {
     })
     const { locked } = grabLocked
 
-    switch (args[1]) {
+    switch (args[1].toLowerCase()) {
         case 'enable':
             if (!args[0]) return await client.util.throwError(message, client.config.errors.missing_argument_channel);
             const enableChannel = client.util.getChannel(message.guild, args[2])

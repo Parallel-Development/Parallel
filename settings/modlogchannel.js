@@ -3,7 +3,18 @@ const settingsSchema = require('../schemas/settings-schema');
 
 exports.run = async (client, message, args) => {
 
-    if (args[1] === 'none') {
+    if(args[1].toLowerCase() === 'current') {
+        const guildSettings = await settingsSchema.findOne({ guildID: message.guild.id });
+        const { moderationLogging } = guildSettings;
+        
+        const moderationLoggingChannelEmbed = new Discord.MessageEmbed()
+        .setColor(client.config.colors.main)
+        .setDescription(moderationLogging === 'none' ? 'There is no channel set for logging moderation instances with Parallel!' : `The current moderation log channel is ${message.guild.channels.cache.get(moderationLogging)}`);
+
+        return message.reply({ embeds: [moderationLoggingChannelEmbed] });
+    }
+
+    if (args[1].toLowerCase() === 'none') {
         await settingsSchema.updateOne({
             guildID: message.guild.id,
         },

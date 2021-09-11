@@ -4,7 +4,18 @@ const ms = require('ms');
 
 exports.run = async (client, message, args) => {
 
-    if (args[1] === 'disable') {
+    if(args[1].toLowerCase() === 'current') {
+        const guildSettings = await settingsSchema.findOne({ guildID: message.guild.id });
+        const { autowarnexpire } = guildSettings;
+        
+        const autowarnexpireEmbed = new Discord.MessageEmbed()
+        .setColor(client.config.colors.main)
+        .setDescription(autowarnexpire === 'disabled' ? 'Auto-warnings are **not** currently set to expire' : `All auto-warnings are set to expire in \`${client.util.duration(autowarnexpire)}\``);
+
+        return message.reply({ embeds: [autowarnexpireEmbed]})
+    }
+
+    if (args[1].toLowerCase() === 'disable') {
         await settingsSchema.updateOne({
             guildID: message.guild.id
         },

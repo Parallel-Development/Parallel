@@ -1,9 +1,22 @@
 const automodSchema = require('../schemas/automod-schema');
+const Discord = require('discord.js');
 
 exports.run = async(client, message, args) => {
-    const option = args[1];
+    const option = args[1].toLowerCase();
     if (!option) return await client.util.throwError(message, 'Please specify a toggle');
-    if (!(option === 'enable' || option === 'disable')) return await client.util.throwError(message, 'Expected input `enable` or `disable`');
+
+    if(option === 'current') {
+        const guildSettings = await automodSchema.findOne({ guildID: message.guild.id });
+        const { allowTenor } = guildSettings;
+
+        const currentAllowTenorStateEmbed = new Discord.MessageEmbed()
+        .setColor(client.config.colors.main)
+        .setDescription(`This module is currently ${allowTenor.enabled ? 'enabled' : 'disabled'} ${allowTenor.attachmentPermsOnly ? ' | Users without attachment permissions will still get affected' : allowTenor.enabled ? ' | All users, regardless of if they have attachment permisions will not be affected by the Parallel link automod from sending a tenor link' : ''}`);
+
+        return message.reply({ embeds: [currentAllowTenorStateEmbed] })
+    }
+
+    if (!(option === 'enable' || option === 'disable')) return await client.util.throwError(message, client.config.errors.invalid_option);
     const attachmentPermsOnly = args[2] === 'true' ? true : false;
 
     await automodSchema.updateOne({

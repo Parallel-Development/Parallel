@@ -1,4 +1,4 @@
-if (process.argv.slice(2)[0] === '--v' || process.argv.slice(2)[0] === '--void') {
+if (process.argv.slice(2).includes('--v') || process.argv.slice(2).includes('--void')) {
     global.void = true;
 }
 

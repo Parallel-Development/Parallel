@@ -3,7 +3,18 @@ const settingsSchema = require('../schemas/settings-schema');
 
 exports.run = async (client, message, args) => {
 
-    if (args[1] === 'none') {
+    if(args[1].toLowerCase() === 'current') {
+        const guildSettings = await settingsSchema.findOne({ guildID: message.guild.id });
+        const { automodLogging } = guildSettings;
+        
+        const automodLoggingChannelEmbed = new Discord.MessageEmbed()
+        .setColor(client.config.colors.main)
+        .setDescription(automodLogging === 'none' ? 'There is no channel set for logging automod instances!' : `The current automod log channel is ${message.guild.channels.cache.get(automodLogging)}`);
+
+        return message.reply({ embeds: [automodLoggingChannelEmbed] });
+    }
+
+    if (args[1].toLowerCase() === 'none') {
         await settingsSchema.updateOne({
             guildID: message.guild.id,
         },
