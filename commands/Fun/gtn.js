@@ -54,7 +54,7 @@ module.exports = {
             if (parseInt(message.content) < chosenNumber) return message.reply('Higher!');
             if (parseInt(message.content) > chosenNumber) return message.reply('Lower!');
             if (parseInt(message.content) == chosenNumber) {
-                message.reply(`Jackpot! You guessed the number in \`${tries}\` tries, and it took you around \`${client.util.duration(Math.floor(performance.now() - startTime))}\``)
+                message.reply(`Jackpot! You guessed the number in \`${tries}\` tries and it took you around \`${client.util.duration(Math.floor(performance.now() - startTime))}\``)
                 answered = true;
                 return collector.stop();
             }
