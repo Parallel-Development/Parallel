@@ -223,7 +223,7 @@ module.exports = {
 
         if (!message.content.startsWith(prefix)) return;
 
-        const args = message.content.replaceAll('\n', ' ').split(' ');
+        const args = message.content.split(' ');
         const cmd = args.shift().slice(prefix.length).toLowerCase();
 
         const denyAccess = (commandName) => {
