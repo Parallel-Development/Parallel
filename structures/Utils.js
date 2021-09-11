@@ -24,6 +24,11 @@ class Utils {
 
     duration(ms) {
 
+        // Accounting for leap year,
+        // It is a leap year if the year is divisible by 4
+        // You skip leap year ever beginning of the century
+        // If the beginning of the century is divisible by 4, then a leap year is expected!
+
         if (!ms && ms !== 0) throw new Error('required argument \'ms\' is missing');
 
         if (ms == 0) return '0 seconds';
@@ -38,7 +43,8 @@ class Utils {
         } 
 
         if (ms < 1000) return `${Math.floor(ms)} ${ms == 1 ? 'millisecond' : 'milliseconds'}`
-        
+
+        let years = 0;;
         let weeks = 0;
         let days = 0;
         let hours = 0;
@@ -57,7 +63,8 @@ class Utils {
 
         while (hours >= 24) {
             hours -= 24;
-            days++
+            ++days
+            ++savedDays;
         }
 
         while (days >= 7) {

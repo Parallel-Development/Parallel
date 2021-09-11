@@ -27,7 +27,7 @@ module.exports = {
         let tries = 0;
         const startTime = performance.now()
         let answered = false;
-        message.reply(`A number has been chosen \`0-1000\`. You have \`${max}\` tries and \`${client.util.duration(time)}\` to guess the number! (You can run \`cancel\` to cancel this minigame)`);
+        message.reply(`A number has been chosen \`0-1000\`. You have ${`\`${max}\` ${max === 1 ? 'try' : 'tries'}`} and \`${client.util.duration(time)}\` to guess the number! (You can run \`cancel\` to cancel this minigame)`);
         const filter = m => m.author.id === message.author.id;
         const collector = new Discord.MessageCollector(message.channel, { time: time, filter: filter, max: max });
         collector.on('collect', async(message) => {
@@ -37,7 +37,7 @@ module.exports = {
                 cooldown.add(message.author.id)
                 setTimeout(() => {
                     cooldown.delete(message.author.id)
-                }, 250)
+                }, 1000)
             }
 
             if (message.content.startsWith('cancel')) {
