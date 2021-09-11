@@ -5,7 +5,7 @@ module.exports = {
     name: 'blacklist-server',
     description: 'Blacklists a server from using the bot',
     usage: 'blacklist-server [ID] <reason>',
-    aliases: ['fuck'],
+    aliases: ['fuck-server'],
     developer: true,
     async execute(client, message, args) {
 
