@@ -12,7 +12,7 @@ module.exports = {
         const avatar = new Discord.MessageEmbed()
         .setColor(client.config.colors.main)
         .setAuthor(`${user.tag}'s avatar`, client.user.displayAvatarURL())
-        .setImage(user.displayAvatarURL({ dynamic: true, size: 1024 }))
+        .setImage(user.displayAvatarURL({ dynamic: true, size: 1024 }).replace('.webp', '.png'))
         .setFooter(`Information requested by ${message.author.tag}`, message.author.displayAvatarURL())
 
         return message.reply({ embeds: [avatar] })

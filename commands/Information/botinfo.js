@@ -18,7 +18,7 @@ module.exports = {
             .addField('Uptime', client.util.duration(client.uptime), true)
             .setAuthor('Parallel Discord Bot', client.user.displayAvatarURL())
             .setFooter(`Information requested by ${message.author.tag}`, message.author.displayAvatarURL())
-            .setThumbnail(client.user.displayAvatarURL())
+            .setThumbnail(client.user.displayAvatarURL().replace('.webp', '.png'))
 
         return message.reply({ embeds: [botinfo] });
     }
