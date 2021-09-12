@@ -52,7 +52,8 @@ module.exports = {
             removerolesonmute: false
         }).save()
 
-        const prefix = settings.prefix || client.config.prefix;
+        let prefix = settings.prefix || client.config.prefix;
+        if (new RegExp(`^<@!?${client.user.id}>`).exec(message.content)?.index === 0) prefix = message.content.split(' ')[0] + ' ';
         const { muterole, removerolesonmute } = settings;
 
         const findMuteRole = message.guild.roles.cache.find(r => r.name.toLowerCase() === 'mute') || await message.guild.roles.cache.find(r => r.name.toLowerCase() === 'muted') || 'none';
@@ -207,7 +208,8 @@ module.exports = {
 
         if (
             new RegExp(`^<@!?${client.user.id}>`).test(message.content) &&
-            !cooldown.has(message.author.id)
+            !cooldown.has(message.author.id) &&
+            message.content.split(' ').length === 1
         ) {
 
             const cooldownWhitelist = client.config.developers;
@@ -218,13 +220,16 @@ module.exports = {
                 }, 1500)
             }
 
-            return message.reply(`My prefix is \`${prefix}\` | Run \`${prefix}help\` for a list of commands`)
+            return message.reply(`My prefix is \`${settings.prefix}\` | Run \`${settings.prefix}help\` for a list of commands`)
         }
 
         if (!message.content.startsWith(prefix)) return;
 
         const args = message.content.split(' ');
-        const cmd = args.shift().slice(prefix.length).toLowerCase();
+        const cmd = prefix.includes(' ') ? args[1].toLowerCase() : args.shift().slice(prefix.length).toLowerCase();
+        if(prefix.includes(' ')) args.splice(0, 2);
+        console.log(args)
+        console.log(cmd);
 
         const denyAccess = (commandName) => {
             const errorMessage = new Discord.MessageEmbed()
