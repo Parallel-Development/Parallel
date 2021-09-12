@@ -84,7 +84,7 @@ class AutomodChecks {
 
             // Invites
 
-            const inviteCheck = new RegExp('discord(?:app)?.(?:com\/invite|gg)\/[a-zA-Z0-9]+\/?', 'i')
+            const inviteCheck = /discord(?:app)?.(?:com\/invite|gg)\/[a-zA-Z0-9]+\/?/i
             if (inviteCheck.test(message.content.toLowerCase())) {
                 let punished = await new Automod(client, message, 'invites').punished;
                 if (punished) return;

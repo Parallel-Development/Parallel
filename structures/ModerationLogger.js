@@ -3,7 +3,7 @@ const settingsSchema = require('../schemas/settings-schema');
 
 class ModerationLogger {
 
-    constructor(client, type, moderator, target, channel, { reason, duration, punishmentID } = {}) {
+    constructor(client, type, moderator, target, channel, { reason, duration, punishmentID, auto } = {}) {
 
         if (!client) throw new Error('required argument `client` is missing');
         if (!type) throw new Error('required argument `user` is missing');
@@ -23,14 +23,23 @@ class ModerationLogger {
                 guildID: moderator.guild.id
             })
 
-            const { moderationLogging } = settings;
-            if (moderationLogging === 'none') return;
+            const { moderationLogging, automodLogging } = settings;
+            if (moderationLogging === 'none' && !auto || automodLogging === 'none' && auto) return;
             if (!moderator.guild.channels.cache.get(moderationLogging)) {
                 await settingsSchema.updateOne({
                     guildID: moderator.guild.id
                 },
                     {
                         moderationLogging: 'none'
+                    })
+                return;
+            }
+            if (!moderator.guild.channels.cache.get(automodLogging)) {
+                await settingsSchema.updateOne({
+                    guildID: moderator.guild.id
+                },
+                    {
+                        automodLogging: 'none'
                     })
                 return;
             }
@@ -47,7 +56,7 @@ class ModerationLogger {
             modLog.addField('Punishment ID', punishmentID, true)
             modLog.addField(`${type} in`, channel.toString(), true)
 
-            const modLogChannel = moderator.guild.channels.cache.get(moderationLogging);
+            const modLogChannel = moderator.guild.channels.cache.get(auto ? automodLogging : moderationLogging);
             modLogChannel.send({ embeds: [modLog] }).catch(() => { })
         }
 
