@@ -13,7 +13,7 @@ class Automod {
 
     punished;
 
-    constructor(client, message, type, { deleteAmount } = {}) {
+    constructor(client, message, type) {
 
         if (!client) throw new Error('required argument `client` is missing');
         if (!message) throw new Error('required argument `message` is missing');

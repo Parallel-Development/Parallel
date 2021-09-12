@@ -228,8 +228,6 @@ module.exports = {
         const args = message.content.split(' ');
         const cmd = prefix.includes(' ') ? args[1].toLowerCase() : args.shift().slice(prefix.length).toLowerCase();
         if(prefix.includes(' ')) args.splice(0, 2);
-        console.log(args)
-        console.log(cmd);
 
         const denyAccess = (commandName) => {
             const errorMessage = new Discord.MessageEmbed()

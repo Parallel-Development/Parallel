@@ -8,7 +8,7 @@ module.exports = {
     usage: 'lock <channel>',
     requiredBotPermission: Discord.Permissions.FLAGS.MANAGE_CHANNELS,
     permissions: Discord.Permissions.FLAGS.MANAGE_CHANNELS,
-    async execute(client, message, args) {
+    async execute(client, message, args, { lockserver = false } = {}) {
 
         const sleep = async (ms) => {
             return new Promise(resolve => {
@@ -42,7 +42,7 @@ module.exports = {
             .setColor(client.config.colors.main)
             .setDescription(`Now attempting to lock ${channel}...`)
 
-        const msg = await message.reply({ embeds: [locking] })
+        const msg = lockserver ? await message.reply({ embeds: [locking] }) : null;
         const permissionOverwrites = [...channel.permissionOverwrites.cache.values()]
 
         try {
@@ -114,6 +114,7 @@ module.exports = {
             })
 
         } finally {
+            if(lockserver) return;
             const locked = new Discord.MessageEmbed()
                 .setColor(client.config.colors.main)
                 .setAuthor('Channel Locked', client.user.displayAvatarURL())
