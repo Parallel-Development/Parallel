@@ -23,7 +23,7 @@ module.exports = {
 
         const { muterole, delModCmds, removerolesonmute } = settings;
 
-        if (!args[0]) return await client.util.throwError(message, client.config.errors.missing_argument_member);
+        if (!args[0]) return await client.util.throwError(message, client.config.errors.missing_argument_user);
 
         const member = await client.util.getMember(message.guild, args[0])
         if (member && member.permissions.has(Discord.Permissions.FLAGS.MANAGE_ROLES) && !removerolesonmute) return await client.util.throwError(message, 'This command may not be effective on this member | If you have the **Remove Roles On Mute** module enabled, this may work');
