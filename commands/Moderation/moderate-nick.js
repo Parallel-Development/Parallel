@@ -27,17 +27,17 @@ module.exports = {
 
         await member.setNickname(`Moderated_${code}`);
 
-        const moderatedNicknameEmbed = new Discord.MessageEmbed()
-        .setColor(client.config.colors.main)
-        .setDescription(`${client.config.emotes.success} User with ID \`${member.id}\` has been moderated with identifier code \`${code}\``)
-        
-        message.reply({ embeds: [moderatedNicknameEmbed] });
+        let failedToSend = false;
         if (args[1] === '--dm') {
             let reason = args.slice(2).join(' ');
             if (reason.length >= 1024) reason = await client.util.createBin(reason);
-            await member.send(`Your username was moderated in **${message.guild.name}** ${reason ? "| Reason: " + reason : ""}`)
+            await member.send(`Your username was moderated in **${message.guild.name}** ${reason ? "| Reason: " + reason : ""}`).catch(() => failedtoSend = true )
         }
 
-        return;
+        const moderatedNicknameEmbed = new Discord.MessageEmbed()
+        .setColor(client.config.colors.main)
+        .setDescription(`${client.config.emotes.success} User with ID \`${member.id}\` has been moderated with identifier code \`${code}\` ${args['dm'] ? failedToSend ? '| Failed to DM them' : '| Successfully DM\'d them' : ''}`)
+        
+        await message.reply({ embeds: [moderatedNicknameEmbed] });
     }
 }

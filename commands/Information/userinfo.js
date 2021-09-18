@@ -2,7 +2,7 @@ const Discord = require('discord.js');
 
 module.exports = {
     name: 'userinfo',
-    description: 'Shows informated related to a user',
+    description: 'Shows informated of a user',
     usage: 'userinfo [user]',
     aliases: ['whois', 'ui'],
     async execute(client, message, args) {

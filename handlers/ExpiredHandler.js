@@ -34,7 +34,7 @@ class ExpiredHandler {
                     const role = server.roles.cache.get(muterole)
                     if (!role) return;
 
-                    const member = await server.members.fetch(userID);
+                    const member = await server.members.fetch(userID).catch(() => {});
                     if (member) {
 
                         const rolesToAdd = roles?.filter(role => server.roles.cache.get(role) && !(role.managed && !member.roles.cache.has(role)) && server.roles.cache.get(role).position < server.me.roles.highest.position);

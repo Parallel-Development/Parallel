@@ -22,11 +22,8 @@ module.exports = {
         if (member.roles.cache.has(role.id)) return await client.util.throwError(message, 'This member already has this role!');
 
         await member.roles.add(role, `Responsible Member: ${message.member.user.tag}`);
-        const assignedRole = new Discord.MessageEmbed()
-        .setColor(client.config.colors.main)
-        .setDescription(`${client.config.emotes.success} Role ${role.toString()} successfully assigned to ${member.toString()}`);
-        message.reply({ embeds: [assignedRole] });
 
+        let didNotSend = false;
         if (args[2] === '--dm') {
             const reason = args.slice(3).join(' ') || 'Unspecified';
             const addedRoleDM = new Discord.MessageEmbed()
@@ -36,8 +33,16 @@ module.exports = {
             .addField('Added Role', `${role.name} - \`${role.id}\``)
             .addField('Reason', reason.length <= 1024 ? reason : await client.util.createBin(reason))
 
-            return await member.send({ embeds: [addedRoleDM] }).catch(() => {});
+            await member.send({ embeds: [addedRoleDM] }).catch(() => { didNotSend = true });
         }
+
+        await member.roles.add(role, `Responsible Member: ${message.author.tag}`);
+        const assignedRole = new Discord.MessageEmbed()
+        .setColor(client.config.colors.main)
+        .setDescription(`${client.config.emotes.success} Role ${role.toString()} successfully assigned to ${member.toString()} ${args['dm'] ? didNotSend ? '| Failed to DM them' : '| Successfully DM\'d them' : '' }`);
+        message.reply({ embeds: [assignedRole] });
+
+        return;
 
         return;
     }

@@ -239,13 +239,20 @@ module.exports = {
             })
         }
 
-        const missingPerms = (commandRequiredBotPermissions) => {
-            const missingPermissionEmbed = new Discord.MessageEmbed()
-                .setColor(client.config.colors.err)
-                .setAuthor(`Missing Permissions`)
-                .setDescription(`I am missing required permissions for this command to work\nMissing Permission: \`${commandRequiredBotPermissions}\``)
+        const missingPerms = (commandRequiredBotPermission) => {
+            if(command.requiredBotPermission && !message.guild.me.permissions.has(command.requiredBotPermission)) {
 
-            return message.reply(missingPermissionEmbed)
+                let missingPermission = new Discord.Permissions(commandRequiredBotPermission);
+                missingPermission = missingPermission.toArray();
+                if(missingPermission.length > 1) missingPermission = 'ADMINISTRATOR';
+                else missingPermission = missingPermission[0].replaceAll('_', ' ');
+                const missingPermissionEmbed = new Discord.MessageEmbed()
+                    .setColor(client.config.colors.err)
+                    .setAuthor(`Missing Permissions`)
+                    .setDescription(`I am missing required permissions for this command to work\nMissing Permission: \`${missingPermission}\``)
+
+                return message.reply({ embeds: [missingPermissionEmbed ]});
+            }
         }
 
         const { shortcutCommands } = settings;
@@ -294,7 +301,7 @@ module.exports = {
                     if (member.user) await new DMUserInfraction(client, 'banned', client.config.colors.punishment[2], message, member, { reason: shortcmd.reason, punishmentID: punishmentID, time: duration, baninfo: baninfo !== 'none' ? baninfo : null });
                     new ModerationLogger(client, 'Banned', message.member, member, message.channel, { reason: shortcmd.reason, duration: shortcmd.duration, punishmentID: punishmentID });
                     await message.guild.members.ban(member.id, { reason: shortcmd.reason });
-                    new Infraction(client, 'Ban', message, message.member, member, { reason: shortcmd.reason, punishmentID: punishmentID, duration: duration, auto: false });
+                    new Infraction(client, 'Ban', message, message.member, member, { reason: shortcmd.reason, punishmentID: punishmentID, time: duration, auto: false });
                     if (shortcmd.type === 'tempban') new Punishment(message.guild.name, message.guild.id, 'ban', member.id, { reason: shortcmd.reason, time: duration ? Date.now() + duration : 'Never' });
 
                 } else if (shortcmd.type === 'mute' || shortcmd.type === 'tempmute') {
@@ -327,7 +334,7 @@ module.exports = {
                     else await client.util.muteMember(message, member, role);
 
 
-                    new Infraction(client, 'Mute', message, message.member, member, { reason: shortcmd.reason, punishmentID: punishmentID, duration: duration, auto: false });
+                    new Infraction(client, 'Mute', message, message.member, member, { reason: shortcmd.reason, punishmentID: punishmentID, time: duration, auto: false });
                     new Punishment(message.guild.name, message.guild.id, 'mute', member.id, { reason: shortcmd.reason, time: duration ? Date.now() + duration : 'Never', roles: memberRoles });
                     new DMUserInfraction(client, 'muted', client.config.colors.punishment[1], message, member, { reason: shortcmd.reason, punishmentID: punishmentID, time: duration });
                     new ModerationLogger(client, 'Muted', message.member, member, message.channel, { reason: shortcmd.reason, duration: duration, punishmentID: punishmentID });
@@ -414,7 +421,7 @@ module.exports = {
             let failedToSend = false;
             if (!sent) {
 
-                await message.reply(`This server is blacklisted!\n\nReason: ${reason}\nDate: ${date}`).catch(() => { failedToSend = true; });
+                await message.reply(`This server is blacklisted!\n\nReason: ${reason}\nDate: ${date}`).catch(() => failedToSend = true );
 
                 if (!failedToSend) {
                     await blacklistSchema.updateOne({
@@ -462,7 +469,7 @@ module.exports = {
             } else return denyAccess(command.name);
         }
 
-        if (command.requiredBotPermissions && !message.guild.me.permissions.has(command.requiredBotPermission)) return missingPerms(command.requiredBotPermission.toUpperCase().replace('_', ' ').replace('_', ' '));
+        if (command.requiredBotPermission && !message.guild.me.permissions.has(command.requiredBotPermission)) return missingPerms(command.requiredBotPermission);
 
         if (
             await settingsSchema.findOne({

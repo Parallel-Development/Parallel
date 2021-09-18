@@ -104,7 +104,7 @@ class Automod {
 
                 const punishedEmbed = new Discord.MessageEmbed()
                     .setColor(color)
-                    .setDescription(`${client.config.emotes.success} ${member.toString()} has been automatically ${name.endsWith('e') ? name : name.endsWith('ban') ? name + 'ne' : name + 'e'}d with ID \`${punishmentID}\``)
+                    .setDescription(`${member.toString()} has been automatically ${name.endsWith('e') ? name : name.endsWith('ban') ? name + 'ne' : name + 'e'}d with ID \`${punishmentID}\``)
 
                 const msg = await message.channel.send({ embeds: [punishedEmbed] });
                 setTimeout(() => { msg.delete() }, 5000);
@@ -173,7 +173,7 @@ class Automod {
                 if (instance.punishment === 'mute' || instance.punishment === 'tempmute') _punishedEmbed.setColor(client.config.colors.punishment[1]);
                 if (instance.punishment === 'ban' || instance.punishment === 'tempban') _punishedEmbed.setColor(client.config.colors.punishment[2]);
                 const stype = instance.punishment.replace('temp', '')
-                _punishedEmbed.setDescription(`${client.config.emotes.success} ${member.toString()} has been automatically ${(stype.charAt(0).toUpperCase() + stype.slice(1) + (stype.endsWith('e') ? '' : stype.endsWith('ban') ? 'ne' : 'e')).toLowerCase()}d with ID \`${punishmentID}\``);
+                _punishedEmbed.setDescription(`${member.toString()} has been automatically ${(stype.charAt(0).toUpperCase() + stype.slice(1) + (stype.endsWith('e') ? '' : stype.endsWith('ban') ? 'ne' : 'e')).toLowerCase()}d with ID \`${punishmentID}\``);
                 const msg2 = await message.channel.send({ embeds: [_punishedEmbed] });
                 return setTimeout(async() => await msg2.delete(), 5000);
             }

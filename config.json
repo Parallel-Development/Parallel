@@ -36,8 +36,8 @@
         "missing_argument_option": "Please specify an option!",
         "invalid_option": "An invalid option was provided!",
         "missing_argument_text": "Please input text!",
-        "missing_argument_amount": "Please input an amount!",
-        "missing_argument_channel": "Please input a channel!",
+        "missing_argument_amount": "Please specify an amount!",
+        "missing_argument_channel": "Please specify a channel!",
         "invalid_channel": "An invalid channel was provided!",
         "not_type_text_channel": "Channel type must be type text!",
         "hierarchy": "You cannot perform this action because your role hierarchy is too low!",
@@ -53,6 +53,9 @@
         "invalid_punishmentID": "An invalid punishment ID was provided!",
         "cannot_punish_owner": "It is impossible to perform this action against the owner!",
         "missing_argument_duration": "Please specify a duration!",
-        "bad_duration": "A duration was expected but was not received!"
+        "bad_duration": "An invalid duration was provided!",
+        "reason_but_no_dm": "The reason argument was provided but the 'dm' argument was not set to true!",
+        "duration_not_expected": "A duration was provided but was not expected",
+        "no_button_access": "You cannot use this button"
     }
 }

@@ -175,7 +175,11 @@ class Utils {
     }
 
     async throwError(message, errorName) {
-        const msg = await message.reply(errorName);
+        if(message.type === 'APPLICATION_COMMAND' || message.type === 'MESSAGE_COMPONENT') {
+            await message.reply({ content: `Error: ${errorName}`, ephemeral: true }).catch(async() => { await message.editReply({ content: `Error: ${errorName}`, ephemeral: true }).catch(() => {})})
+            return;
+        }
+        const msg = await message.reply(`Error: ${errorName}`)
         setTimeout(() => { msg.delete().catch(() => {}); message.delete().catch(() => {}) }, 5000);
     }
 }

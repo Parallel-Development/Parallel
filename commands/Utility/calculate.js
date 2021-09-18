@@ -3,7 +3,7 @@ const math = require('mathjs')
 
 module.exports = {
     name: 'calculate',
-    description: 'Calculate your input | All calculations are done by the common NPM package `mathjs`',
+    description: 'Calculate your input',
     usage: 'calculate <calculation>',
     aliases: ['calc'],
     async execute(client, message, args) {

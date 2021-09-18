@@ -27,10 +27,6 @@ module.exports = {
                 await warningSchema.deleteOne({
                     guildID: message.guild.id
                 })
-                await punishmentSchema.deleteMany({
-                    guildID: message.guild.id,
-                    type: 'warn'
-                })
                 const deletedAllWarnings = new Discord.MessageEmbed()
                 .setColor(client.config.colors.main)
                 .setDescription(`${client.config.emotes.success} All warnings have been deleted`)

@@ -14,14 +14,20 @@ const client = new Discord.Client({ intents: [
 
 const fs = require('fs');
 const Utils = require('./structures/Utils');
+
 client.commands = new Discord.Collection();
 client.aliases = new Discord.Collection();
 client.util = new Utils();
 client.events = new Discord.Collection();
 client.categories = fs.readdirSync('./commands');
 client.config = require('./config.json');
+
 global.collectionPrevention = [];
 global.guildCollectionPrevention = [];
+global.confirmationRequests = [];
+global.requestCooldown = new Set();
+global.requestedCooldown = new Set();
+global.openedSession = new Set();
 
 const mongo = require('./mongo');
 const connectToMongoDB = async () => {
@@ -33,8 +39,6 @@ connectToMongoDB();
 const EventHandler = require('./handlers/EventHandler'), CommandHandler = require('./handlers/CommandHandler'), ExpiredHandler = require('./handlers/ExpiredHandler');
 new EventHandler(client), new CommandHandler(client), new ExpiredHandler(client);
 
-process.on('uncaughtException', (error) => {
-    console.error(error);
-})
+process.on('uncaughtException', (error) => console.error(error));
 
 client.login(client.config.token);

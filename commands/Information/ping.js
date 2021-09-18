@@ -1,7 +1,8 @@
 module.exports = {
     name: 'ping',
-    description: 'Finds the latency of the bot.',
+    description: 'Returns the client websocket and bot latency',
     aliases: ['pong'],
+    usage: 'ping',
     async execute(client, message, args) {
         message.reply('Pinging...')
         .then(result => {

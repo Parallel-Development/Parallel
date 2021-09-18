@@ -8,7 +8,7 @@ const Infraction = require('../../structures/Infraction');
 
 module.exports = {
     name: 'warn',
-    description: 'Warns a member',
+    description: 'Issue a warning against a member',
     usage: 'warn [member]\nwarn [member] <reason>\nwarn [member] <duration> \nwarn [member] permanent (reason)\nwarn [member] <duration> (reason)',
     aliases: ['strike', 'w'],
     permissions: Discord.Permissions.FLAGS.MANAGE_MESSAGES,

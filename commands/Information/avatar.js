@@ -2,8 +2,8 @@ const Discord = require('discord.js');
 
 module.exports = {
     name: 'avatar',
-    description: 'Displays the specified member\'s avatar',
-    usage: 'avatar [member]',
+    description: 'Displays the specified user\'s avatar',
+    usage: 'avatar [user]',
     aliases: ['av', 'icon', 'pfp'],
     async execute(client, message, args) {
 

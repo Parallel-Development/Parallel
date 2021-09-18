@@ -6,16 +6,16 @@ const DMUserInfraction = require('../../structures/DMUserInfraction');
 const Infraction = require('../../structures/Infraction');
 const Punishment = require('../../structures/Punishment');
 
+const { SlashCommandBuilder } = require('@discordjs/builders');
+
 module.exports = {
     name: 'ban',
-    description: 'Bans a member from the server',
+    description: 'Bans a user from the server',
     usage: 'ban [member]\nban [member] <reason>\nban [member] <duration>\nban [member] <duration> (reason)',
     aliases: ['gtfo', 'banish', 'b'],
     permissions: Discord.Permissions.FLAGS.BAN_MEMBERS,
     requiredBotPermission: Discord.Permissions.FLAGS.BAN_MEMBERS,
     async execute(client, message, args) {
-
-        if (!args[0]) return await client.util.throwError(message, client.config.errors.missing_argument_member);
 
         const member = await client.util.getMember(message.guild, args[0]) || await client.util.getUser(client, args[0]);
         if (!member) return await client.util.throwError(message, client.config.errors.invalid_member);

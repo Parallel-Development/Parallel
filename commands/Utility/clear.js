@@ -13,7 +13,7 @@ module.exports = {
         const amount = parseInt(args[0]);
         if (!amount) return await client.util.throwError(message, client.config.errors.bad_input_number);
         if (amount > 100 || amount < 1) return await client.util.throwError(message, 'Number must a number between 1-100');
-        if (!message.channel.permissionsFor(message.guild.me).has(Discord.Permissions.FLAGS.MANAGE_MESSAGES)) return client.util.throwError(client.config.errors.my_channel_access_denied, message);
+        if (!message.channel.permissionsFor(message.guild.me).has(Discord.Permissions.FLAGS.MANAGE_MESSAGES)) return client.util.throwError(interaction, client.config.errors.my_channel_access_denied);
         await message.delete();
 
         const user = await client.util.getUser(client, args[1]);

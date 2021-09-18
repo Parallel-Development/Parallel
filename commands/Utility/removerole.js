@@ -21,14 +21,11 @@ module.exports = {
         if (role === message.guild.roles.everyone || role.managed) return await client.util.throwError(message, client.config.errors.unmanagable_role);
         if (!member.roles.cache.has(role.id)) return await client.util.throwError(message, 'This member does not has this role!');
 
-        member.roles.remove(role, `Responsible Member: ${message.member.user.tag}`);
-        const removedRole = new Discord.MessageEmbed()
-            .setColor(client.config.colors.main)
-            .setDescription(`${client.config.emotes.success} Role ${role.toString()} successfully removed from ${member.toString()}`);
-        message.reply( { embeds: [removedRole] }); 
+        await member.roles.remove(role, `Responsible Member: ${message.member.user.tag}`);
 
-        if (args[2] === '--dm') {
-            const reason = args.slice(3).join(' ') || 'Unspecified';
+        let didNotSend = false;
+        if (args['dm'] === true) {
+            const reason = args['reason'] || 'Unspecified';
             const addedRoleDM = new Discord.MessageEmbed()
             .setColor(client.config.colors.main)
             .setAuthor('Parallel Role Management', client.user.displayAvatarURL())
@@ -36,8 +33,13 @@ module.exports = {
             .addField('Removed Role', `${role.name} - \`${role.id}\``)
             .addField('Reason', reason.length <= 1024 ? reason : await client.util.createBin(reason))
 
-            return await member.send({ embeds: [addedRoleDM] }).catch(() => {});
+            await member.send({ embeds: [addedRoleDM] }).catch(() => { didNotSend = true });
         }
+
+        const removedRole = new Discord.MessageEmbed()
+            .setColor(client.config.colors.main)
+            .setDescription(`${client.config.emotes.success} Role ${role.toString()} successfully removed from ${member.toString()} ${args['dm'] ? didNotSend ? '| Failed to DM them' : '| Successfully DM\'d them' : '' }`);
+        message.reply( { embeds: [removedRole] }); 
 
         return;
     }

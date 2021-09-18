@@ -39,7 +39,7 @@ module.exports = {
 
         const blacklistEmbed = new Discord.MessageEmbed()
             .setColor(client.config.colors.main)
-            .setDescription(`${client.config.emotes.success} Server with ID  **${ID}** has been whitelisted`)
+            .setDescription(`${client.config.emotes.success} Server with ID **${ID}** has been whitelisted`)
         return message.reply({ embeds: [blacklistEmbed] });
 
     }
