@@ -11,9 +11,9 @@ module.exports = {
 
         const inSeconds = args['type'] === 'seconds';
         const input = inSeconds ? parseFloat(args['amount']) * 1000 : parseFloat(args['amount'])
-        if (!input) return client.util.throwError(message, client.config.errors.missing_argument_number);
-        if (!input && input !== 0) return client.util.throwError(message, client.config.errors.bad_input_number)
-        if (input > 315576000000) return client.util.throwError(message, client.config.errors.time_too_long);
+        if (!input) return client.util.throwError(interaction, client.config.errors.missing_argument_number);
+        if (!input && input !== 0) return client.util.throwError(interaction, client.config.errors.bad_input_number)
+        if (input > 315576000000) return client.util.throwError(interaction, client.config.errors.time_too_long);
         const duration = client.util.duration(input)
 
         const durationEmbed = new Discord.MessageEmbed()
