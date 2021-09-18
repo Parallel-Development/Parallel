@@ -1,4 +1,5 @@
 node_modules
+events/interactionCreate
 SlashCommands
 register.js
 Buttons
