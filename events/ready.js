@@ -8,8 +8,7 @@ module.exports = {
     async execute(client) { 
         client.user.setActivity('>help', { type: 'LISTENING'} )
         console.log(`Logged in as ${client.user.tag}!`);
-
-        /*
+        
         if (global.void === true) console.log('Bot is in void mode');
 
         const guild = client.guilds.cache.get('790760107365498880');
@@ -38,8 +37,6 @@ module.exports = {
 
         console.log('All commands have been loaded!');
         console.log(`Completed in: ${Math.floor(process.uptime())} seconds`)
-
-        */
 
         return;
     }
