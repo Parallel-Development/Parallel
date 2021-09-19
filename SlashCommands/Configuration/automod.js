@@ -415,7 +415,7 @@ module.exports = {
                 duration = toggle['duration'] ? ms(toggle['duration']) : undefined;
                 if(toggle['duration'] && (toggle['punishment'] !== 'tempban' && toggle['punishment'] !== 'tempmute')) return client.util.throwError(interaction, client.config.errors.duration_not_expected);
                 if(!toggle['duration'] && (toggle['punishment'] === 'tempban' || toggle['punishment'] === 'tempmute')) return client.util.throwError(interaction, client.config.missing_argument_duration);
-                if(!duration && toggle['duration']) return client.util.throwError(interaction, client.config.invalid_duration);
+                if(!duration && toggle['duration']) return client.util.throwError(interaction, client.config.bad_duration);
                 if(duration > 315576000000) return client.util.throwError(interaction, client.config.time_too_long);
 
                 switch (toggle['punishment']) {
@@ -525,7 +525,7 @@ module.exports = {
                 duration = toggle['duration'] ? ms(toggle['duration']) : undefined;
                 if(toggle['duration'] && (toggle['punishment'] !== 'tempban' && toggle['punishment'] !== 'tempmute')) return client.util.throwError(interaction, client.config.errors.duration_not_expected);
                 if(!toggle['duration'] && (toggle['punishment'] === 'tempban' || toggle['punishment'] === 'tempmute')) return client.util.throwError(interaction, client.config.missing_argument_duration);
-                if(!duration && toggle['duration']) return client.util.throwError(interaction, client.config.invalid_duration);
+                if(!duration && toggle['duration']) return client.util.throwError(interaction, client.config.bad_duration);
                 if(duration > 315576000000) return client.util.throwError(interaction, client.config.time_too_long);
 
                 switch (toggle['punishment']) {
@@ -619,7 +619,7 @@ module.exports = {
                 duration = toggle['duration'] ? ms(toggle['duration']) : undefined;
                 if(toggle['duration'] && (toggle['punishment'] !== 'tempban' && toggle['punishment'] !== 'tempmute')) return client.util.throwError(interaction, client.config.errors.duration_not_expected);
                 if(!toggle['duration'] && (toggle['punishment'] === 'tempban' || toggle['punishment'] === 'tempmute')) return client.util.throwError(interaction, client.config.missing_argument_duration);
-                if(!duration && toggle['duration']) return client.util.throwError(interaction, client.config.invalid_duration);
+                if(!duration && toggle['duration']) return client.util.throwError(interaction, client.config.bad_duration);
                 if(duration > 315576000000) return client.util.throwError(interaction, client.config.time_too_long);
                 
                 switch (toggle['punishment']) {
@@ -703,7 +703,7 @@ module.exports = {
                 duration = toggle['duration'] ? ms(toggle['duration']) : undefined;
                 if(toggle['duration'] && (toggle['punishment'] !== 'tempban' && toggle['punishment'] !== 'tempmute')) return client.util.throwError(interaction, client.config.errors.duration_not_expected);
                 if(!toggle['duration'] && (toggle['punishment'] === 'tempban' || toggle['punishment'] === 'tempmute')) return client.util.throwError(interaction, client.config.missing_argument_duration);
-                if(!duration && toggle['duration']) return client.util.throwError(interaction, client.config.invalid_duration);
+                if(!duration && toggle['duration']) return client.util.throwError(interaction, client.config.bad_duration);
                 if(duration > 315576000000) return client.util.throwError(interaction, client.config.time_too_long);
 
                 switch (toggle['punishment']) {
@@ -787,7 +787,7 @@ module.exports = {
                 duration = toggle['duration'] ? ms(toggle['duration']) : undefined;
                 if(toggle['duration'] && (toggle['punishment'] !== 'tempban' && toggle['punishment'] !== 'tempmute')) return client.util.throwError(interaction, client.config.errors.duration_not_expected);
                 if(!toggle['duration'] && (toggle['punishment'] === 'tempban' || toggle['punishment'] === 'tempmute')) return client.util.throwError(interaction, client.config.missing_argument_duration);
-                if(!duration && toggle['duration']) return client.util.throwError(interaction, client.config.invalid_duration);
+                if(!duration && toggle['duration']) return client.util.throwError(interaction, client.config.bad_duration);
                 if(duration > 315576000000) return client.util.throwError(interaction, client.config.time_too_long);
 
                 switch (toggle['punishment']) {
@@ -873,7 +873,7 @@ module.exports = {
                 duration = toggle['duration'] ? ms(toggle['duration']) : undefined;
                 if(toggle['duration'] && (toggle['punishment'] !== 'tempban' && toggle['punishment'] !== 'tempmute')) return client.util.throwError(interaction, client.config.errors.duration_not_expected);
                 if(!toggle['duration'] && (toggle['punishment'] === 'tempban' || toggle['punishment'] === 'tempmute')) return client.util.throwError(interaction, client.config.missing_argument_duration);
-                if(!duration && toggle['duration']) return client.util.throwError(interaction, client.config.invalid_duration);
+                if(!duration && toggle['duration']) return client.util.throwError(interaction, client.config.bad_duration);
                 if(duration > 315576000000) return client.util.throwError(interaction, client.config.time_too_long);
                 switch (toggle['punishment']) {
                     case 'delete':
