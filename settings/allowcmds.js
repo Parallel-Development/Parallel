@@ -11,8 +11,8 @@ exports.run = async (client, message, args) => {
         case 'enable':
             if (!args[0]) return await client.util.throwError(message, client.config.errors.missing_argument_channel);
             const enableChannel = client.util.getChannel(message.guild, args[2])
-            if (enableChannel?.type !== 'GUILD_TEXT') return await client.util.throwError(message, client.config.errors.not_channel_type_text);
-            if (!enableChannel) return await client.util.throwError(message, client.config.errors.invalid_channel)
+            if (!enableChannel) return await client.util.throwError(message, client.config.errors.invalid_channel);
+            if (enableChannel?.type !== 'GUILD_TEXT') return client.util.throwError(message, client.config.errors.not_type_text_channel);
 
             var prevent = false
             for (let i = 0; i !== locked.length; ++i) {

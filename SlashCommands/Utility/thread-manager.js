@@ -10,9 +10,10 @@ module.exports = {
     .addChannelOption(option => option.setName('channel').setDescription('The channel to manage threads in')),
     async execute(client, interaction, args) {
   
-        const channel = client.util.getChannel(interaction.guild, args['channel']) || interaction.channel;
+        let channel = client.util.getChannel(interaction.guild, args['channel']) || interaction.channel;
+        if(channel.type.endsWith('THREAD')) channel = channel.parent;
         const option = args['choice'];
-        if (channel.type !== 'GUILD_TEXT' && !channel.type.endsWith('THREAD')) return client.util.throwError(interaction, client.config.errors.not_type_text_channel);
+        if (!channel.isText()) return client.util.throwError(interaction, client.config.errors.not_type_text_channel);
         if (!channel.permissionsFor(interaction.member).has(Discord.Permissions.FLAGS.MANAGE_CHANNELS)) return client.util.throwError(interaction, 'You do not have permission to manage this channel');
 
         const threads = [...channel.threads.cache.values()];
@@ -26,14 +27,14 @@ module.exports = {
                 if (!thread.archived) thread.setArchived(true);
             }
 
-            await interaction.editReply(`Successfully archived all threads in ${channel}`)//.catch(() => {});
+            await interaction.editReply(`Successfully archived all threads in ${channel}`).catch(() => {});
         } else if (option === 'delete') {
             for (let i = 0; i !== threads.length; ++i) {
                 const _thread = threads[i];
                 if (!_thread.archived) _thread.delete();
             }
 
-            await interaction.editReply(`Successfully deleted all threads in ${channel}`)//.catch(() => {})
+            await interaction.editReply(`Successfully deleted all threads in ${channel}`).catch(() => {})
         }
     }
 }

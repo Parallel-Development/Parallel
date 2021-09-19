@@ -37,7 +37,7 @@ module.exports = {
             global.requestCooldown.delete(interaction.user.id);
             global.requestedCooldown.delete(playerTwo.id);
 
-            interaction.editReply({ content: `${playerTwo}, ${playerOne} would like to play you in rock-paper-scissors | To play, hit the \`Play\` button below\n\nThis request has expired`, components: [join_] });
+            interaction.editReply({ content: `${playerTwo}, ${playerOne} would like to play you in rock-paper-scissors | To play, hit the \`Play\` button below\n\nThis request has expired`, components: [join_] }).catch(() => {});
         }, 30000)
 
         return;

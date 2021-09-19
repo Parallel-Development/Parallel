@@ -79,10 +79,6 @@ module.exports.run = async(client, interaction) => {
 
             if (!winner) winner = 'tie', beats = `**${member1Option}** ties against **${member2Option}**`;
 
-            const rockButton_ = new Discord.MessageButton().setLabel('Rock').setStyle('DANGER').setCustomId('rock').setDisabled(true);
-            const paperButton_ = new Discord.MessageButton().setLabel('Paper').setStyle('PRIMARY').setCustomId('paper').setDisabled(true);
-            const scissorsButton_ = new Discord.MessageButton().setLabel('Scissors').setStyle('SUCCESS').setCustomId('scissors').setDisabled(true);
-
             collector.stop();
             finalEmbed = new Discord.MessageEmbed()
             .setColor(client.config.colors.main)
@@ -100,17 +96,12 @@ module.exports.run = async(client, interaction) => {
         global.openedSession.delete(interaction.user.id);
         global.openedSession.delete(interaction.message.interaction.user.id);
 
-        const rockButton_ = new Discord.MessageButton().setLabel('Rock').setStyle('DANGER').setCustomId('rock').setDisabled(true);
-        const paperButton_ = new Discord.MessageButton().setLabel('Paper').setStyle('PRIMARY').setCustomId('paper').setDisabled(true);
-        const scissorsButton_ = new Discord.MessageButton().setLabel('Scissors').setStyle('SUCCESS').setCustomId('scissors').setDisabled(true);
-
-        const choices_ = new Discord.MessageActionRow().addComponents(rockButton_, paperButton_, scissorsButton_);
         if(reason === 'time') return msg.edit({ embeds: [
             new Discord.MessageEmbed()
             .setColor(client.config.colors.main)
             .setDescription('Did not receive a response from both users within 60 seconds!')
             .setAuthor('Rock Paper Scissors', client.user.displayAvatarURL())
-        ], components: [choices_] })
+        ], components: [] })
         if(answers.length !== 2) return msg.edit({ embeds: [gameBoard], components: [choices_] })
     })
 }
