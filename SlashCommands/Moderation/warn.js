@@ -28,7 +28,7 @@ module.exports = {
 
         const punishmentID = client.util.generateID();
 
-        const time = args['duration'] ? ms(args['duration']) : null
+        let time = args['duration'] ? ms(args['duration']) : null
         if (time && time > 315576000000) return client.util.throwError(interaction, client.config.errors.time_too_long);
         const reason = args['reason'] || 'Unspecified';
 
