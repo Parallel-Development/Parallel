@@ -4,7 +4,7 @@ const ms = require('ms');
 
 exports.run = async (client, message, args) => {
 
-    if(args[1].toLowerCase() === 'current') {
+    if (args[1].toLowerCase() === 'current') {
         const guildSettings = await settingsSchema.findOne({ guildID: message.guild.id });
         const { manualwarnexpire } = guildSettings;
         

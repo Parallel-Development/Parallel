@@ -46,7 +46,7 @@ module.exports = {
         .setColor(client.config.colors.punishment[1])
         .setDescription(`✅ ${member.toString()} has been kicked with ID \`${punishmentID}\``)
 
-        if(delModCmds) {
+        if (delModCmds) {
             await interaction.reply({ content: `Successfully kicked member ${member}`, ephemeral: true })
             return interaction.channel.send({ embeds: [kickedEmbed] });
         } else return interaction.reply({ embeds: [kickedEmbed] });

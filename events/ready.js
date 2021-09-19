@@ -23,7 +23,7 @@ module.exports = {
             const commandFiles = fs.readdirSync(`./SlashCommands/${folder}`);
             for(const file of commandFiles) {
                 const command = require(`../SlashCommands/${folder}/${file}`);
-                if(command.userPermissions) {
+                if (command.userPermissions) {
                     const permissions = command.userPermissions;
                     const guildCommand = guildCommands.find(cmd => cmd.name === command.name);
                     const guildCommand2 = guildCommands2.find(cmd => cmd.name === command.name);

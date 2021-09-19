@@ -13,10 +13,10 @@ module.exports = {
     .addStringOption(option => option.setName('reason').setDescription('The message sent to the user regarding their role change if you are to DM them')),
     async execute(client, interaction, args) {
 
-        if(args['reason'] && !args['dm']) return client.util.throwError(interaction, client.config.errors.reason_but_no_dm)
+        if (args['reason'] && !args['dm']) return client.util.throwError(interaction, client.config.errors.reason_but_no_dm)
 
         const member = await client.util.getMember(interaction.guild, args['member']);
-        if(!member) return client.util.throwError(interaction, client.config.errors.invalid_member)
+        if (!member) return client.util.throwError(interaction, client.config.errors.invalid_member)
         const role = client.util.getRole(interaction.guild, args['role']);
 
         if (role.position >= interaction.member.roles.highest.position && interaction.member.id !== interaction.guild.ownerId) return client.util.throwError(interaction, client.config.errors.hierarchy);

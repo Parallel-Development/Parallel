@@ -29,7 +29,7 @@ module.exports = {
         const { shortcutCommands } = guildSettings;
 
         const subArgs = interaction.options.data.reduce((map, arg) => (map[arg.name] = arg, map), {})
-        if(subArgs['create']) {
+        if (subArgs['create']) {
 
             const createArgs = subArgs['create'].options.reduce((a, b) => ({ ...a, [b['name']]: b.value }), {});
             const shortcutName = createArgs['name'];
@@ -66,7 +66,7 @@ module.exports = {
             })
 
             return interaction.reply(`Successfully created shortcut \`${shortcutName}\``)
-        } else if(subArgs['delete']) {
+        } else if (subArgs['delete']) {
 
             const deleteArgs = subArgs['delete'].options.reduce((a, b) => ({ ...a, [b['name']]: b.value }), {});
 
@@ -86,15 +86,15 @@ module.exports = {
             })
 
             return interaction.reply(`Successfully removed shortcut \`${shortcutName}\``)
-        } else if(subArgs['delete-all']) {
+        } else if (subArgs['delete-all']) {
 
-            if(!shortcutCommands.length) return client.util.throwError(interaction, 'This server has no shortcuts')
+            if (!shortcutCommands.length) return client.util.throwError(interaction, 'This server has no shortcuts')
 
-            if(global.confirmationRequests.some(request => request.ID === interaction.user.id)) global.confirmationRequests.pop({ ID: interaction.user.id })
+            if (global.confirmationRequests.some(request => request.ID === interaction.user.id)) global.confirmationRequests.pop({ ID: interaction.user.id })
             global.confirmationRequests.push({ ID: interaction.user.id, request: 'deleteAllShortcuts', at: Date.now() });
 
             return interaction.reply('Are you sure? This will delete all shortcut commands. To confirm, run `/confirm`. To cancel, run `/cancel`');
-        } else if(subArgs['view']) {
+        } else if (subArgs['view']) {
 
             if (!shortcutCommands?.length) return client.util.throwError(interaction, 'No shortcut commands are setup for this server!')
 

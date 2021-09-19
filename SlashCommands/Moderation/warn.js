@@ -50,7 +50,7 @@ module.exports = {
         .setColor(client.config.colors.punishment[0])
         .setDescription(`✅ ${member.toString()} has been warned with ID \`${punishmentID}\``)
 
-        if(delModCmds) {
+        if (delModCmds) {
             await interaction.reply({ content: `Successfully warned member ${member}`, ephemeral: true })
             return interaction.channel.send({ embeds: [warnedEmbed] });
         } else return interaction.reply({ embeds: [warnedEmbed] });

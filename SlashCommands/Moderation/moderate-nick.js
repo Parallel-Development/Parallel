@@ -12,7 +12,7 @@ module.exports = {
     requiredBotPermission: Discord.Permissions.FLAGS.MANAGE_NICKNAMES,
     async execute(client, interaction, args) {
 
-        if(args['reason'] && !args['dm']) return client.util.throwError(interaction, client.config.errors.reason_but_no_dm)
+        if (args['reason'] && !args['dm']) return client.util.throwError(interaction, client.config.errors.reason_but_no_dm)
 
         const member = await client.util.getMember(interaction.guild, args['member']);
         if (!member) return client.util.throwError(interaction, client.config.errors.invalid_member);

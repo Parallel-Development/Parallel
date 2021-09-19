@@ -5,7 +5,7 @@ exports.run = async(client, message, args) => {
     const option = args[1].toLowerCase();
     if (!option) return await client.util.throwError(message, 'Please specify a toggle');
 
-    if(option === 'current') {
+    if (option === 'current') {
         const guildSettings = await automodSchema.findOne({ guildID: message.guild.id });
         const { allowTenor } = guildSettings;
 

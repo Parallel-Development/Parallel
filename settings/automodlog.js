@@ -3,7 +3,7 @@ const settingsSchema = require('../schemas/settings-schema');
 
 exports.run = async (client, message, args) => {
 
-    if(args[1].toLowerCase() === 'current') {
+    if (args[1].toLowerCase() === 'current') {
         const guildSettings = await settingsSchema.findOne({ guildID: message.guild.id });
         const { automodLogging } = guildSettings;
         

@@ -28,16 +28,16 @@ module.exports = {
         const subArgs = interaction.options.data.reduce((map, arg) => (map[arg.name] = arg, map), {});
         const systemCheck = await systemSchema.findOne({ guildID: interaction.guild.id });
         
-        if(subArgs['set']) {
+        if (subArgs['set']) {
             const setArgs = subArgs['set'].options.reduce((a, b) => ({ ...a, [b['name']]: b.value }), {});
             const warningCount = setArgs['warning_count'];
-            if(warningCount > 20 || warningCount < 2) return client.util.throwError(interaction, 'The warning count must be between \`2\` and \`20\`');
+            if (warningCount > 20 || warningCount < 2) return client.util.throwError(interaction, 'The warning count must be between \`2\` and \`20\`');
 
             const punishment = setArgs['type'];
             const duration = setArgs['duration'] ? ms(setArgs['duration']) : null;
 
-            if(!punishment.startsWith('temp') && !setArgs['duration']) return client.util.throwError(interaction, client.config.errors.missing_argument_duration);
-            if(!punishment.startsWith('temp') && !duration) return client.util.throwError(interaction, client.config.errors.bad_duration);
+            if (!punishment.startsWith('temp') && !setArgs['duration']) return client.util.throwError(interaction, client.config.errors.missing_argument_duration);
+            if (!punishment.startsWith('temp') && !duration) return client.util.throwError(interaction, client.config.errors.bad_duration);
             if (duration && !(punishment.startsWith('temp') || punishment === 'warn')) return client.util.throwError(interaction, `Warning at argument \`duration\`: a duration was specified but not expected. A duration can only be input for types \`warn\`, \`tempmute\` and \`tempban\``);
             if (duration && duration > 315576000000) return client.util.throwError(interaction, client.config.errors.time_too_long);
 
@@ -135,13 +135,13 @@ module.exports = {
                 }
             })
             return interaction.reply(`Successfully removed the punishment given at \`${warningCount}\` warnings`)
-        } else if(subArgs['reset']) {
+        } else if (subArgs['reset']) {
 
-            if(global.confirmationRequests.some(request => request.ID === interaction.user.id)) global.confirmationRequests.pop({ ID: interaction.user.id })
+            if (global.confirmationRequests.some(request => request.ID === interaction.user.id)) global.confirmationRequests.pop({ ID: interaction.user.id })
             global.confirmationRequests.push({ ID: interaction.user.id, request: 'resetSystem', at: Date.now() });
 
             return interaction.reply('Are you sure? This will reset the **entire** punishment system. To confirm, run `/confirm`. To cancel. run `/cancel`')
-        } else if(subArgs['view']) {
+        } else if (subArgs['view']) {
             if (systemCheck.system.length === 0) return interaction.reply('No warning amount instances are set for this server')
             if (systemCheck.system.length === 0) return interaction.reply('No warning amount instances are set for this server')
             const pSystem = new Discord.MessageEmbed()

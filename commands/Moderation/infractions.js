@@ -13,7 +13,7 @@ module.exports = {
         let pageNumber = 0;
         if (!member && parseInt(args[1])) pageNumber = args[1];
         else if (parseInt(args[0]) && !member) pageNumber = parseInt(args[0]);
-        else if(member && parseInt(args[1])) pageNumber = args[1];
+        else if (member && parseInt(args[1])) pageNumber = args[1];
 
         if (!member) member = message.author;
 

@@ -7,7 +7,7 @@ module.exports.run = async(client, interaction) => {
 
     const join = new Discord.MessageActionRow().addComponents(joinButton, denyButton);
 
-    if(Date.now() - interaction.message.createdAt > 30000) {
+    if (Date.now() - interaction.message.createdAt > 30000) {
         interaction.message.edit({ content: interaction.message.content, components: [join] })
         return await client.util.throwError(interaction, 'This request has already expired');
     }
@@ -18,9 +18,9 @@ module.exports.run = async(client, interaction) => {
         if (requested.startsWith('!')) requested = requested.slice(1);
     }
 
-     if(interaction.user.id !== requested) return await client.util.throwError(interaction, client.config.errors.no_button_access);
+     if (interaction.user.id !== requested) return await client.util.throwError(interaction, client.config.errors.no_button_access);
 
-    if(interaction.customId === 'deny') {
+    if (interaction.customId === 'deny') {
         await interaction.reply('The request was denied by the requested user');
         return interaction.message.edit({ content: interaction.message.content + '\n\nThis request has expired', components: [join] });
     }
@@ -54,12 +54,12 @@ module.exports.run = async(client, interaction) => {
 
 
     collector.on('collect', async(_interaction) => {
-        if(answers.some(answer => answer.ID === _interaction.user.id)) return await client.util.throwError(_interaction, 'You already answered!');
+        if (answers.some(answer => answer.ID === _interaction.user.id)) return await client.util.throwError(_interaction, 'You already answered!');
         answers.push({ ID: _interaction.user.id, answer: _interaction.customId });
         _interaction.reply({ content: `Your answer ${_interaction.customId} has been collected, please wait for your opponent`, ephemeral: true });
 
 
-        if(answers.length === 2) {
+        if (answers.length === 2) {
 
             const member1 = await client.util.getMember(interaction.guild, answers.find(answer => answer.ID === interaction.message.interaction.user.id).ID);
             const member2 = await client.util.getMember(interaction.guild, answers.find(answer => answer.ID === requested).ID);
@@ -96,12 +96,12 @@ module.exports.run = async(client, interaction) => {
         global.openedSession.delete(interaction.user.id);
         global.openedSession.delete(interaction.message.interaction.user.id);
 
-        if(reason === 'time') return msg.edit({ embeds: [
+        if (reason === 'time') return msg.edit({ embeds: [
             new Discord.MessageEmbed()
             .setColor(client.config.colors.main)
             .setDescription('Did not receive a response from both users within 60 seconds!')
             .setAuthor('Rock Paper Scissors', client.user.displayAvatarURL())
         ], components: [] })
-        if(answers.length !== 2) return msg.edit({ embeds: [gameBoard], components: [choices_] })
+        if (answers.length !== 2) return msg.edit({ embeds: [gameBoard], components: [choices_] })
     })
 }

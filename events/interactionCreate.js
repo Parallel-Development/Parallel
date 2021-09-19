@@ -11,7 +11,7 @@ module.exports = {
 
         const isBlacklisted = await blacklistSchema.findOne({ ID: interaction.user.id, server: false});
         const isBlacklistedServer = await blacklistSchema.findOne({ ID: interaction.guild.id, server: true});
-        if(isBlacklistedServer) {
+        if (isBlacklistedServer) {
             const { reason, date, sent } = isBlacklistedServer;
             let failedToSend = false;
             if (!sent) {
@@ -33,7 +33,7 @@ module.exports = {
             return interaction.guild.leave();
         }
         
-        if(isBlacklisted) {
+        if (isBlacklisted) {
             const { reason, date, sent } = isBlacklisted;
             let doNotSend = false;
             if (sent) return;
@@ -60,20 +60,20 @@ module.exports = {
             return;
         }
 
-        if(interaction.isButton()) {
-            if(interaction.customId === 'join' || interaction.customId === 'deny') return rps.run(client, interaction);
+        if (interaction.isButton()) {
+            if (interaction.customId === 'join' || interaction.customId === 'deny') return rps.run(client, interaction);
         }
 
-        if(cooldown.has(interaction.user.id)) return interaction.reply({ content: 'You are on cooldown', ephemeral: true });
-        else if(!client.config.developers.includes(interaction.user.id)) {
+        if (cooldown.has(interaction.user.id)) return interaction.reply({ content: 'You are on cooldown', ephemeral: true });
+        else if (!client.config.developers.includes(interaction.user.id)) {
             cooldown.add(interaction.user.id);
             setTimeout(() => { cooldown.delete(interaction.user.id )}, 750)
         }
 
-        if(!interaction.isCommand()) return;
+        if (!interaction.isCommand()) return;
 
         const command = client.slashCommands.get(interaction.commandName);
-        if(!command) return interaction.reply({ content: 'Unexpeted error: The interaction exists but there is no found linked command for it', ephemeral: true });
+        if (!command) return interaction.reply({ content: 'Unexpeted error: The interaction exists but there is no found linked command for it', ephemeral: true });
 
         const { modRoles, locked } = await settingsSchema.findOne({ guildID: interaction.guild.id });
 
@@ -103,11 +103,11 @@ module.exports = {
             } else return denyAccess(command.name);
         }
 
-        if(command.requiredBotPermission && !interaction.guild.me.permissions.has(command.requiredBotPermission)) {
+        if (command.requiredBotPermission && !interaction.guild.me.permissions.has(command.requiredBotPermission)) {
 
             let missingPermission = new Discord.Permissions(command.requiredBotPermission);
             missingPermission = missingPermission.toArray();
-            if(missingPermission.length > 1) missingPermission = 'ADMINISTRATOR';
+            if (missingPermission.length > 1) missingPermission = 'ADMINISTRATOR';
             else missingPermission = missingPermission[0].replaceAll('_', ' ');
             const missingPermissionEmbed = new Discord.MessageEmbed()
                 .setColor(client.config.colors.err)
@@ -117,7 +117,7 @@ module.exports = {
             return interaction.reply({ embeds: [missingPermissionEmbed ]});
         }
 
-        if(
+        if (
             (locked.includes(interaction.channel.id) || locked.includes(interaction.parent?.id))
             && !interaction.member.roles.cache.some(role => modRoles.includes(role)) 
             && !interaction.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_MESSAGES)

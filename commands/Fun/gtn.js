@@ -15,7 +15,7 @@ module.exports = {
         let max = 0;
         let time = 0;
 
-        if(mode === 'easy') max = 10, time = 60000;
+        if (mode === 'easy') max = 10, time = 60000;
         else if (mode === 'medium') max = 8, time = 60000;
         else if (mode === 'hard') max = 6, time = 40000;
         else if (mode === 'insane') max = 3, time = 20000;
@@ -52,7 +52,7 @@ module.exports = {
 
             tries++;
 
-            if(tries < max) {
+            if (tries < max) {
                 if (parseInt(message.content) < chosenNumber) return message.reply('Higher!');
                 if (parseInt(message.content) > chosenNumber) return message.reply('Lower!');
             }

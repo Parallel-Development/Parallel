@@ -31,7 +31,7 @@ module.exports = {
         const isModerator = interaction.member.roles.cache.some(role => modRoles.includes(role));
 
         const shortcmd = shortcutCommands.find(command => command.name === args['name']);
-        if(!shortcmd) return client.util.throwError(interaction, 'No shortcut with the provided name exists');
+        if (!shortcmd) return client.util.throwError(interaction, 'No shortcut with the provided name exists');
 
         let member;
         let permissions;
@@ -120,7 +120,7 @@ module.exports = {
         const stype = shortcmd.type.replace('temp', '')
         punishedEmbed.setDescription(`✅ **${member.user ? member.toString() : member.tag}** has been ${(stype.charAt(0).toUpperCase() + stype.slice(1) + (stype.endsWith('e') ? '' : stype.endsWith('ban') ? 'ne' : 'e')).toLowerCase()}d with ID \`${punishmentID}\``);
 
-        if(delModCmds) {
+        if (delModCmds) {
             interaction.reply(`Successfully ${(stype.charAt(0).toUpperCase() + stype.slice(1) + (stype.endsWith('e') ? '' : stype.endsWith('ban') ? 'ne' : 'e')).toLowerCase()}d ${member.user ? member.toString() : member.tag}`)
             return interaction.channel.send({ embeds: [punishedEmbed] });
         } else return interaction.reply({ embeds: [punishedEmbed] })

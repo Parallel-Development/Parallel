@@ -109,7 +109,7 @@ class Automod {
                 const msg = await message.channel.send({ embeds: [punishedEmbed] });
                 setTimeout(() => { msg.delete() }, 5000);
 
-                if(name !== 'warn') return;
+                if (name !== 'warn') return;
 
                 const guildSystem = await systemSchema.findOne({
                     guildID: message.guild.id

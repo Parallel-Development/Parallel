@@ -175,7 +175,7 @@ class Utils {
     }
 
     async throwError(message, errorName) {
-        if(message.type === 'APPLICATION_COMMAND' || message.type === 'MESSAGE_COMPONENT') {
+        if (message.type === 'APPLICATION_COMMAND' || message.type === 'MESSAGE_COMPONENT') {
             await message.reply({ content: `Error: ${errorName}`, ephemeral: true }).catch(async() => { await message.editReply({ content: `Error: ${errorName}`, ephemeral: true }).catch(() => {})})
             return;
         }

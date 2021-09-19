@@ -86,7 +86,7 @@ module.exports = {
         .setColor(client.config.colors.main)
         .setDescription(`✅ ${member.toString()} has been unmuted`)
         
-        if(delModCmds) {
+        if (delModCmds) {
             await interaction.reply({ content: `Successfully unmuted member ${member}`, ephemeral: true });
             return interaction.channel.send({ embeds: [unmutedEmbed] });
         }

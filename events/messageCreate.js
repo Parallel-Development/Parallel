@@ -227,7 +227,7 @@ module.exports = {
 
         const args = message.content.split(' ');
         const cmd = prefix.includes(' ') ? args[1].toLowerCase() : args.shift().slice(prefix.length).toLowerCase();
-        if(prefix.includes(' ')) args.splice(0, 2);
+        if (prefix.includes(' ')) args.splice(0, 2);
 
         const denyAccess = (commandName) => {
             const errorMessage = new Discord.MessageEmbed()
@@ -240,11 +240,11 @@ module.exports = {
         }
 
         const missingPerms = (commandRequiredBotPermission) => {
-            if(command.requiredBotPermission && !message.guild.me.permissions.has(command.requiredBotPermission)) {
+            if (command.requiredBotPermission && !message.guild.me.permissions.has(command.requiredBotPermission)) {
 
                 let missingPermission = new Discord.Permissions(commandRequiredBotPermission);
                 missingPermission = missingPermission.toArray();
-                if(missingPermission.length > 1) missingPermission = 'ADMINISTRATOR';
+                if (missingPermission.length > 1) missingPermission = 'ADMINISTRATOR';
                 else missingPermission = missingPermission[0].replaceAll('_', ' ');
                 const missingPermissionEmbed = new Discord.MessageEmbed()
                     .setColor(client.config.colors.err)

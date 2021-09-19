@@ -18,7 +18,7 @@ module.exports = {
 
         if (!guildWarnings || !guildWarnings.warnings.length) return interaction.reply('This server has no warnings')
 
-        if(global.confirmationRequests.some(request => request.ID === interaction.user.id)) global.confirmationRequests.pop({ ID: interaction.user.id })
+        if (global.confirmationRequests.some(request => request.ID === interaction.user.id)) global.confirmationRequests.pop({ ID: interaction.user.id })
         global.confirmationRequests.push({ ID: interaction.user.id, request: 'clearServerInfractions', at: Date.now() });
 
         interaction.reply('Are you sure? This will remove all warnings from the server and there is no way to get them back. To confirm, run `/confirm`. To cancel, run `/cancel`');

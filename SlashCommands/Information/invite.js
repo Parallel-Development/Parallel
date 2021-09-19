@@ -9,7 +9,7 @@ module.exports = {
     .addBooleanOption(option => option.setName('raw').setDescription('Send the links as plain links, not as buttons')),
     async execute(client, interaction, args) {
 
-        if(args['raw'] === true) {
+        if (args['raw'] === true) {
             return interaction.reply('Parallel invite: <https://discord.com/oauth2/authorize?client_id=745401642664460319&scope=bot&permissions=2617568510>\nDiscord server: <https://discord.gg/v2AV3XtnBM>')
         }
 

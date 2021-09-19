@@ -101,7 +101,7 @@ module.exports = {
         .setColor(client.config.colors.punishment[1])
         .setDescription(`✅ ${member.toString()} has been muted with ID \`${punishmentID}\``)
 
-        if(delModCmds) {
+        if (delModCmds) {
             await interaction.reply({ content: `Successfully muted member ${member}`, ephemeral: true });
             return interaction.channel.send({ embeds: [mutedEmbed] });
         }

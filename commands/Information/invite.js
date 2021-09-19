@@ -6,7 +6,7 @@ module.exports = {
     usage: 'invite\ninvite raw',
     async execute(client, message, args) {
 
-        if(args[0] === 'raw') {
+        if (args[0] === 'raw') {
             return message.channel.send('Parallel invite: <https://discord.com/oauth2/authorize?client_id=745401642664460319&scope=bot&permissions=2617568510>\nDiscord server: <https://discord.gg/v2AV3XtnBM>')
         }
 

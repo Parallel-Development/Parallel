@@ -11,7 +11,7 @@ module.exports = {
     async execute(client, interaction, args) {
   
         let channel = client.util.getChannel(interaction.guild, args['channel']) || interaction.channel;
-        if(channel.type.endsWith('THREAD')) channel = channel.parent;
+        if (channel.type.endsWith('THREAD')) channel = channel.parent;
         const option = args['choice'];
         if (!channel.isText()) return client.util.throwError(interaction, client.config.errors.not_type_text_channel);
         if (!channel.permissionsFor(interaction.member).has(Discord.Permissions.FLAGS.MANAGE_CHANNELS)) return client.util.throwError(interaction, 'You do not have permission to manage this channel');

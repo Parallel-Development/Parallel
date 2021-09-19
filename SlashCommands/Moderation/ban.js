@@ -59,7 +59,7 @@ module.exports = {
         .setColor(client.config.colors.punishment[2])
         .setDescription(`✅ **${member.user ? member : member.tag}** has been banned with ID \`${punishmentID}\``);
 
-        if(delModCmds) {
+        if (delModCmds) {
             await interaction.reply({ content: `Successfully banned member ${member}`, ephemeral: true });
             return interaction.channel.send({ embeds: [banEmbed] });
         }

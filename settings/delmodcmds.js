@@ -4,7 +4,7 @@ const Discord = require('discord.js');
 exports.run = async (client, message, args) => {
     const option = args[1].toLowerCase();
 
-    if(option === 'current') {
+    if (option === 'current') {
         const guildSettings = await settingsSchema.findOne({ guildID: message.guild.id });
         const { delModCmds } = guildSettings;
 
