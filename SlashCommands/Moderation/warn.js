@@ -12,7 +12,7 @@ module.exports = {
     description: 'Issue a warning against a member',
     data: new SlashCommandBuilder().setName('warn').setDescription('Issue a warning against a member')
     .addUserOption(option => option.setName('user').setDescription('The user to warn').setRequired(true))
-    .addStringOption(option => option.setName('duration').setDescription('The duration of the warning'))
+    .addStringOption(option => option.setName('duration').setDescription('The duration of the warning | Set this to permanent to make it permanent'))
     .addStringOption(option => option.setName('reason').setDescription('The warning reason')),
     permissions: Discord.Permissions.FLAGS.MANAGE_MESSAGES,
     async execute(client, interaction, args) {
@@ -39,7 +39,7 @@ module.exports = {
         const { manualwarnexpire } = settings
         const { delModCmds } = settings;
 
-        if (!time && manualwarnexpire !== 'disabled' && args['duration'] !== 'permament' && __time !== 'p' && __time !== 'forever') time = parseInt(manualwarnexpire);
+        if (!time && manualwarnexpire !== 'disabled' && args['duration'] !== 'permament') time = parseInt(manualwarnexpire);
 
         new Infraction(client, 'Warn', interaction, interaction.member, member, { reason: reason, punishmentID: punishmentID, time: time, auto: false });
         await new DMUserInfraction(client, 'warned', client.config.colors.punishment[1], interaction, member, { reason: reason, punishmentID: punishmentID, time: time })
