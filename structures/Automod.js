@@ -149,7 +149,10 @@ class Automod {
 
                     if (!message.member.roles.cache.has(role.id)) {
 
-                        if (removerolesonmute) await member.roles.set([role, ...unmanagableRoles]);
+                        if (removerolesonmute) {
+                            await member.voice.disconnect().catch(() => {});
+                            await member.roles.set([role, ...unmanagableRoles]);
+                        }
                         else await client.util.muteMember(message, member, role);
         
                     }

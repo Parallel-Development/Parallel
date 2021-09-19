@@ -123,7 +123,7 @@ class Utils {
 
     async muteMember(message, member, muteRole) {
         await member.roles.add(muteRole).catch(() => {});
-        if (member.voice.channel) member.voice.disconnect().catch(() => {});
+        if (member.voice.channel) await member.voice.disconnect().catch(() => {});
     }
 
     async getMember(guild, mention) {

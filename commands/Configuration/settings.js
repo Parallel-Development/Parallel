@@ -44,7 +44,7 @@ module.exports = {
             case 'del-mod-cmd-triggers':
                 if (!args[1]) if (!args[1]) return message.reply({ embeds: [settingsHelp('Delete Moderation Command Triggers',
                     'del-mod-cmd-triggers <enable, disable, current>',
-                    'Deletes the trigger of all moderation commands that punish a user')]})
+                    'Deletes the trigger of all moderation commands that punish a user. If using an interaction, send the punished embed seperately and reply to the interaction privately')]})
                 require('../../settings/delmodcmds').run(client, message, args)
                 break;
             case 'automod-warning-expiration':

@@ -64,10 +64,10 @@ module.exports = {
             if(interaction.customId === 'join' || interaction.customId === 'deny') return rps.run(client, interaction);
         }
 
-        if(cooldown.has(interaction.user.id)) return;
+        if(cooldown.has(interaction.user.id)) return interaction.reply({ content: 'You are on cooldown', ephemeral: true });
         else if(!client.config.developers.includes(interaction.user.id)) {
             cooldown.add(interaction.user.id);
-            setTimeout(() => { cooldown.delete(interaction.user.id )}, 2000)
+            setTimeout(() => { cooldown.delete(interaction.user.id )}, 750)
         }
 
         if(!interaction.isCommand()) return;

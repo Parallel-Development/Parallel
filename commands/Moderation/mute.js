@@ -88,7 +88,10 @@ module.exports = {
         const memberRoles = removerolesonmute ? member.roles.cache.map(roles => roles.id) : [];
         const unmanagableRoles = member.roles.cache.filter(role => role.managed).map(roles => roles.id);
 
-        if (removerolesonmute) await member.roles.set([role, ...unmanagableRoles]);
+        if (removerolesonmute) {
+            await member.voice.disconnect().catch(() => {});
+            await member.roles.set([role, ...unmanagableRoles]);
+        }
         else await client.util.muteMember(message, member, role);
 
         new Infraction(client, 'Mute', message, message.member, member, { reason: reason, punishmentID: punishmentID, time: time, auto: false });

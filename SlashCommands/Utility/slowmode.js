@@ -13,7 +13,7 @@ module.exports = {
 
         const slowmode = Math.floor(args['seconds']);
         const channel = interaction.guild.channels.cache.get(args['channel']) || interaction.channel;
-        if(!channel.isText() && !channel.type.endsWith('THREAD')) return client.util.throwError(interaction, client.config.errors.not_type_text_channel)
+        if(!channel.isText()) return client.util.throwError(interaction, client.config.errors.not_type_text_channel)
         if(!slowmode && slowmode !== 0) return interaction.reply(`The current slowmode for ${channel} is set at \`${channel.rateLimitPerUser} seconds\``)
         if (slowmode > 21600) return client.util.throwError(interaction, 'Number must be less than or equal to 21,600 seconds');
         if (!channel.permissionsFor(interaction.guild.me).has(Discord.Permissions.FLAGS.MANAGE_CHANNELS)) return client.util.throwError(interaction, client.config.errors.my_channel_access_denied);

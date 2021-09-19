@@ -83,13 +83,12 @@ module.exports.run = async(client, interaction) => {
             const paperButton_ = new Discord.MessageButton().setLabel('Paper').setStyle('PRIMARY').setCustomId('paper').setDisabled(true);
             const scissorsButton_ = new Discord.MessageButton().setLabel('Scissors').setStyle('SUCCESS').setCustomId('scissors').setDisabled(true);
 
-            const choices_ = new Discord.MessageActionRow().addComponents(rockButton_, paperButton_, scissorsButton_);
-
             collector.stop();
             finalEmbed = new Discord.MessageEmbed()
             .setColor(client.config.colors.main)
             .setDescription(`${member1} picked ${member1Option}, ${member2} picked ${member2Option}\n> ${beats}\n${winner === 'tie' ? 'It is a tie' : `The winner is ${winner}`}`)
             .setAuthor('Rock Paper Scissors', client.user.displayAvatarURL())
+            collector.stop()
             return msg.edit({ embeds: [finalEmbed], components: [] })
         }
     })

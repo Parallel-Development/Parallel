@@ -39,7 +39,7 @@ module.exports = {
         const { manualwarnexpire } = settings
         const { delModCmds } = settings;
 
-        if (!time && manualwarnexpire !== 'disabled' && __time !== 'permament' && __time !== 'p' && __time !== 'forever') time = parseInt(manualwarnexpire);
+        if (!time && manualwarnexpire !== 'disabled' && args['duration'] !== 'permament' && __time !== 'p' && __time !== 'forever') time = parseInt(manualwarnexpire);
 
         new Infraction(client, 'Warn', interaction, interaction.member, member, { reason: reason, punishmentID: punishmentID, time: time, auto: false });
         await new DMUserInfraction(client, 'warned', client.config.colors.punishment[1], interaction, member, { reason: reason, punishmentID: punishmentID, time: time })

@@ -12,7 +12,7 @@ module.exports = {
   
         const channel = client.util.getChannel(interaction.guild, args['channel']) || interaction.channel;
         const option = args['choice'];
-        if (!channel.isText()) return client.util.throwError(interaction, client.config.errors.not_type_text_channel);
+        if (channel.type !== 'GUILD_TEXT' && !channel.type.endsWith('THREAD')) return client.util.throwError(interaction, client.config.errors.not_type_text_channel);
         if (!channel.permissionsFor(interaction.member).has(Discord.Permissions.FLAGS.MANAGE_CHANNELS)) return client.util.throwError(interaction, 'You do not have permission to manage this channel');
 
         const threads = [...channel.threads.cache.values()];
