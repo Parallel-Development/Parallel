@@ -147,7 +147,7 @@ module.exports = {
             const pSystem = new Discord.MessageEmbed()
                 .setColor(client.config.colors.main)
                 .setAuthor(`Punishment system for ${interaction.guild.name}`, client.user.displayAvatarURL())
-            pSystem.setDescription(systemCheck.system.map(instance => `**${instance.amount}** warnings: \`${instance.duration ? instance.punishment.replace('temp', '') + ' for ' + client.util.duration(instance.duration) : instance.punishment}\``).join('\n\n'))
+            pSystem.setDescription(systemCheck.system.sort((first, second) => first.amount - second.amount).map(instance => `**${instance.amount}** warnings: \`${instance.duration ? instance.punishment.replace('temp', '') + ' for ' + client.util.duration(instance.duration) : instance.punishment}\``).join('\n\n'))
             return interaction.reply({ embeds: [pSystem] })
         }
 
