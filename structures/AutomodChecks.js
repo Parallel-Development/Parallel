@@ -30,14 +30,16 @@ class AutomodChecks {
                         extraAllowedChars.push(message.content[i].toLowerCase());
                 }
             }
-
+            
             
             const joinedCharacters = messageCharacters.join('');
+
             if (
                 filterList.some(word => 
                     joinedCharacters.split(' ').includes(word) || 
-                    joinedCharacters.split('').filter(char => !extraAllowedChars.includes(char)).join('').split(' ').includes(word))
+                    joinedCharacters.split('').filter(char => !extraAllowedChars.includes(char)).join('').includes(word))
             ) {
+                console.log('IN ORDER FOR THIS TO EVEN **EXECUTE**, THIS HAS TO BE LOGGED????');
                 let punished = await new Automod(client, message, 'filter').punished;
                 if (punished) return;
             }
