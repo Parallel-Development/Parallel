@@ -39,14 +39,14 @@ module.exports = {
             if (!purgedMessages) return interaction.editReply('Deleted 0 messages, either failed to fetch any messages from the user, or the messages were too old to be bulk deleted')
             const bulkDeleteEmbed = new Discord.MessageEmbed()
             .setColor(client.config.colors.main)
-            .setDescription(`✅ Successfully purged \`${purgedMessages}\` messages from ${user}`);
+            .setDescription(`✅ Successfully purged \`${purgedMessages}\` ${purgedMessages === 1 ? 'message' : 'messages'} from ${user}`);
             const _msg = await interaction.editReply({ embeds: [bulkDeleteEmbed] })
         } else {
             const deletedAmount = await interaction.channel.bulkDelete(amount, true);
             if (!deletedAmount.size) return interaction.editReply('Deleted 0 messages, either there are no messages in this channel or the messages are too old')
             const _bulkDeleteEmbed = new Discord.MessageEmbed()
             .setColor(client.config.colors.main)
-            .setDescription(`✅ Successfully purged \`${deletedAmount.size - 1}\` messages`);
+            .setDescription(`✅ Successfully purged \`${deletedAmount.size}\` ${deletedAmount.size === 1 ? 'message' : 'messages'}`);
             const msg = await interaction.editReply({ embeds: [_bulkDeleteEmbed] });
         }
 
