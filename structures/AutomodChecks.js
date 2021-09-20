@@ -20,19 +20,24 @@ class AutomodChecks {
             // Filter Check;
 
             const { filterList } = automodSettings;
-            const allowedChars = 'abcdefghjiklmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ ';
-            const extraAllowedChars = [];
-            const messageCharacters = [];
+            const allowedChars = 'abcdefghjiklmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ ';
+
+            /*
             for (let i = 0; i !== message.content.length; ++i) {
                 if (allowedChars.includes(message.content[i]) || filterList.some(word => word.includes(message.content[i]))) {
                     messageCharacters.push(message.content[i].toLowerCase());
                     if (!allowedChars.includes(message.content[i].toLowerCase()) && filterList.some(word => word.includes(message.content[i].toLowerCase()))) 
                         extraAllowedChars.push(message.content[i].toLowerCase());
                 }
-            }
-            
-            
+            }*/
+
+            const messageCharacters = message.content.split('').filter(char => allowedChars.includes(char) || filterList.some(word => word.includes(char)))
+            const extraAllowedChars = message.content.split('').filter(char => !allowedChars.includes(char) && filterList.some(word => word.includes(char)));
             const joinedCharacters = messageCharacters.join('');
+
+            console.log(joinedCharacters);
+            console.log(joinedCharacters.split('').filter(char => !extraAllowedChars.includes(char)).join('').toLowerCase())
+
 
             if (
                 filterList.some(word => 
