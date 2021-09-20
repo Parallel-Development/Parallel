@@ -35,18 +35,18 @@ module.exports = {
                 purgedMessages += deletedMessages.size;
             }
 
-            if (!purgedMessages) return message.channel.send('Deleted 0 messages, either failed to fetch any messages from the user, or the messages were too old to be bulk deleted')
+            if (!purgedMessages) return message.channel.send('Deleted 0 messages; either failed to fetch any messages from the user, or the messages were too old to be bulk deleted')
             const bulkDeleteEmbed = new Discord.MessageEmbed()
             .setColor(client.config.colors.main)
-            .setDescription(`${client.config.emotes.success} Successfully purged \`${purgedMessages}\` messages from ${user}`);
+            .setDescription(`${client.config.emotes.success} Successfully purged \`${purgedMessages}\` ${purgedMessages === 1 ? 'message' : 'messages'} from ${user}`);
             const bulkDeleteMessage = await message.channel.send({ embeds: [bulkDeleteEmbed] })
             setTimeout(() => { bulkDeleteMessage.delete() }, 5000);
         } else {
             const deletedAmount = await message.channel.bulkDelete(amount, true);
-            if (!deletedAmount.size) return message.channel.send('Deleted 0 messages, either there are no messages in this channel or the messages are too old')
+            if (!deletedAmount.size) return message.channel.send('Deleted 0 messages; either there are no messages in this channel or the messages are too old')
             const _bulkDeleteEmbed = new Discord.MessageEmbed()
             .setColor(client.config.colors.main)
-            .setDescription(`${client.config.emotes.success} Successfully purged \`${deletedAmount.size}\` messages`);
+            .setDescription(`${client.config.emotes.success} Successfully purged \`${deletedAmount.size}\` ${deletedAmount.size === 1 ? 'message' : 'message'}`);
             const _bulkDeleteMessage = await message.channel.send({ embeds: [_bulkDeleteEmbed] })
             setTimeout(() => { _bulkDeleteMessage.delete() }, 5000);
         }
