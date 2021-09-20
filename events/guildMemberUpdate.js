@@ -19,6 +19,15 @@ module.exports = {
         if ((oldMember.roles.cache.has(muterole) && newMember.roles.cache.has(muterole)) 
         || (!oldMember.roles.cache.has(muterole) && !newMember.roles.cache.has(muterole))) return;
 
+        const fetchedLogs = await oldMember.guild.fetchAuditLogs({
+            limit: 1,
+            type: 'UPDATE_MEMBER_ROLES'
+        })
+
+        const log = fetchedLogs.entries.first();
+        const { executor } = log;
+        if(executor.id === client.user.id) return;
+
         if (oldMember.roles.cache.has(muterole)) {
             await punishmentSchema.deleteOne({ guildID: oldMember.guild.id, userID: oldMember.id })
             return;
