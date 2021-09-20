@@ -21,6 +21,10 @@ module.exports.run = async(client, interaction) => {
      if (interaction.user.id !== requested) return await client.util.throwError(interaction, client.config.errors.no_button_access);
 
     if (interaction.customId === 'deny') {
+        
+        global.requestCooldown.delete(interaction.user.id);
+        global.requestedCooldown.delete(playerTwo.id);
+
         await interaction.reply('The request was denied by the requested user');
         return interaction.message.edit({ content: interaction.message.content + '\n\nThis request has expired', components: [join] });
     }
@@ -56,7 +60,7 @@ module.exports.run = async(client, interaction) => {
     collector.on('collect', async(_interaction) => {
         if (answers.some(answer => answer.ID === _interaction.user.id)) return await client.util.throwError(_interaction, 'You already answered!');
         answers.push({ ID: _interaction.user.id, answer: _interaction.customId });
-        _interaction.reply({ content: `Your answer ${_interaction.customId} has been collected, please wait for your opponent`, ephemeral: true });
+        await _interaction.reply({ content: `Your answer ${_interaction.customId} has been collected`, ephemeral: true });
 
 
         if (answers.length === 2) {
@@ -84,7 +88,6 @@ module.exports.run = async(client, interaction) => {
             .setColor(client.config.colors.main)
             .setDescription(`${member1} picked ${member1Option}, ${member2} picked ${member2Option}\n> ${beats}\n${winner === 'tie' ? 'It is a tie' : `The winner is ${winner}`}`)
             .setAuthor('Rock Paper Scissors', client.user.displayAvatarURL())
-            collector.stop()
             return msg.edit({ embeds: [finalEmbed], components: [] })
         }
     })
@@ -92,9 +95,9 @@ module.exports.run = async(client, interaction) => {
     collector.on('end', (_, reason) => {
 
         global.requestCooldown.delete(interaction.user.id)
-        global.requestedCooldown.delete(interaction.message.interaction.user.id)
+        global.requestedCooldown.delete(requested)
         global.openedSession.delete(interaction.user.id);
-        global.openedSession.delete(interaction.message.interaction.user.id);
+        global.openedSession.delete(requested);
 
         if (reason === 'time') return msg.edit({ embeds: [
             new Discord.MessageEmbed()
