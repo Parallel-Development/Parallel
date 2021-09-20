@@ -36,8 +36,8 @@ class AutomodChecks {
 
             if (
                 filterList.some(word => 
-                    joinedCharacters.split(' ').includes(word) || 
-                    joinedCharacters.split('').filter(char => !extraAllowedChars.includes(char)).join('').includes(word))
+                    joinedCharacters.split(' ').join('').toLowerCase().includes(word) || 
+                    joinedCharacters.split('').filter(char => !extraAllowedChars.includes(char)).join('').toLowerCase().includes(word))
             ) {
                 let punished = await new Automod(client, message, 'filter').punished;
                 if (punished) return;
