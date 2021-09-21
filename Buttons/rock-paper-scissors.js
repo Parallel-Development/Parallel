@@ -23,7 +23,7 @@ module.exports.run = async(client, interaction) => {
     if (interaction.customId === 'deny') {
         
         global.requestCooldown.delete(interaction.user.id);
-        global.requestedCooldown.delete(playerTwo.id);
+        global.requestedCooldown.delete(requested);
 
         await interaction.reply('The request was denied by the requested user');
         return interaction.message.edit({ content: interaction.message.content + '\n\nThis request has expired', components: [join] });
@@ -94,9 +94,9 @@ module.exports.run = async(client, interaction) => {
 
     collector.on('end', (_, reason) => {
 
-        global.requestCooldown.delete(interaction.user.id)
+        global.requestCooldown.delete(interaction.message.interaction.user.id)
         global.requestedCooldown.delete(requested)
-        global.openedSession.delete(interaction.user.id);
+        global.openedSession.delete(interaction.message.interaction.user.id);
         global.openedSession.delete(requested);
 
         if (reason === 'time') return msg.edit({ embeds: [

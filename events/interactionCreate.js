@@ -4,6 +4,7 @@ const blacklistSchema = require('../schemas/blacklist-schema');
 const settingsSchema = require('../schemas/settings-schema');
 const cooldown = new Set();
 const rps = require('../Buttons/rock-paper-scissors');
+const infractions = require('../Buttons/infractions');
 
 module.exports = {
     name: 'interactionCreate',
@@ -62,6 +63,12 @@ module.exports = {
 
         if (interaction.isButton()) {
             if (interaction.customId === 'join' || interaction.customId === 'deny') return rps.run(client, interaction);
+            if(
+                interaction.customId === 'jumpToBeginning' 
+                || interaction.customId === 'goBack' 
+                || interaction.customId === 'goForward' 
+                || interaction.customId === 'jumpToBack'
+            ) return infractions.run(client, interaction);
         }
 
         if (cooldown.has(interaction.user.id)) return interaction.reply({ content: 'You are on cooldown', ephemeral: true });

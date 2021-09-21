@@ -35,9 +35,6 @@ class AutomodChecks {
             const extraAllowedChars = message.content.split('').filter(char => !allowedChars.includes(char) && filterList.some(word => word.includes(char)));
             const joinedCharacters = messageCharacters.join('');
 
-            console.log(joinedCharacters);
-            console.log(joinedCharacters.split('').filter(char => !extraAllowedChars.includes(char)).join('').toLowerCase())
-
 
             if (
                 filterList.some(word => 

@@ -1,10 +1,13 @@
 const settingsSchema = require('../schemas/settings-schema');
 const punishmentSchema = require('../schemas/punishment-schema');
 const Punishment = require('../structures/Punishment');
+const Discord = require('discord.js');
 
 module.exports = {
     name: 'guildMemberUpdate',
     async execute(client, oldMember, newMember) {
+
+        if(!oldMember.guild.me.permissions.has(Discord.Permissions.FLAGS.VIEW_AUDIT_LOG)) return;
 
         if((Date.now() - oldMember.joinedTimestamp) <= 5000) return;
 
