@@ -46,6 +46,7 @@
         "bad_input_number": "bad input: where a number was expected, something was provided that was not a number!  ",
         "missing_argument_number": "a number argument was expected but was not provided!",
         "my_channel_access_denied": "the action could not be completed because I have insufficient permissions in the channel you are targetting!",
+        "your_channel_access_denied": "you do not have permission to use this channel as an argument",
         "cannot_punish_myself": "the action was refused because I cannot target myself",
         "cannot_punish_yourself": "You cannot perform this action against yourself!",
         "time_too_long": "the provided duration exceeded the **10 year** duration limit!",

@@ -13,17 +13,15 @@ module.exports = {
     .addStringOption(option => option.setName('reason').setDescription('The shown reason for locking the channel')),
     async execute(client, interaction, args) {
 
-        const sleep = async (ms) => {
-            return new Promise(resolve => {
-                setTimeout(resolve, ms)
-            })
-        }
-
         let channel = client.util.getChannel(interaction.guild, args['channel']) || interaction.channel
         let reason = args['reason'] || 'Unspecified';
 
         if (channel.type !== 'GUILD_TEXT') return client.util.throwError(interaction, client.config.errors.not_type_text_channel);
-        if (!channel.permissionsFor(interaction.guild.me).has(Discord.Permissions.FLAGS.MANAGE_MESSAGES)) return client.util.throwError(interaction, client.config.errors.my_channel_access_denied);
+        if (!channel.permissionsFor(interaction.guild.me).has(Discord.Permissions.FLAGS.MANAGE_CHANNELS)) return client.util.throwError(interaction, client.config.errors.my_channel_access_denied);
+        if(!channel.permissionsFor(interaction.member).has(Discord.Permissions.FLAGS.MANAGE_CHANNELS) || !channel.permissionsFor(interaction.member).has(Discord.Permissions.FLAGS.SEND_MESSAGES)) return client.util.throwError(interaction, client.config.errors.your_channel_access_denied);
+        if(!interaction.member.permissions.has(Discord.Permissions.FLAGS.ADMINISTRATOR) && !interaction.member.roles.cache.some(role => channel.permissionOverwrites.cache.some(overwrite => overwrite.id === role.id && overwrite.allow.has(Discord.Permissions.FLAGS.SEND_MESSAGES)))) {
+            return client.util.throwError(interaction, 'the action was refused because after the channel had been locked, you would have not had permission to send messages in the channel. Please have an administrator add an permission override in the channel for one of the moderation roles you have and set the Send Messages permission to true')
+        }
 
         const alreadyLocked = await lockSchema.findOne({
             guildID: interaction.guild.id,
@@ -43,38 +41,30 @@ module.exports = {
 
         try {
 
-            const enabledOverwrites = [];
-            const neutralOverwrites = [];
+            const foundEveryoneOverwrite = permissionOverwrites.some(overwrite => overwrite.id === interaction.guild.roles.everyone.id);
+            const enabledOverwrites = permissionOverwrites.filter(overwrite => 
+                overwrite.type === 'role' &&
+                !channel.permissionsFor(overwrite.id).has(Discord.Permissions.FLAGS.MANAGE_MESSAGES) &&
+                !(neutralOverwrites.includes(role.id) || enabledOverwrites.includes(role.id)) && 
+                !role.deny.has(Discord.Permissions.FLAGS.SEND_MESSAGES) &&
+                !modRoles.includes(role.id) &&
+                role.allow.has(Discord.Permissions.FLAGS.SEND_MESSAGES)
+            );
+            const neutralOverwrites = permissionOverwrites.filter(overwrite => 
+                overwrite.type === 'role' &&
+                !channel.permissionsFor(overwrite.id).has(Discord.Permissions.FLAGS.MANAGE_MESSAGES) &&
+                !(neutralOverwrites.includes(role.id) || enabledOverwrites.includes(role.id)) && 
+                !role.deny.has(Discord.Permissions.FLAGS.SEND_MESSAGES) &&
+                !modRoles.includes(role.id) &&
+                !role.deny.has(Discord.Permissions.FLAGS.SEND_MESSAGES) && !role.allow.has(Discord.Permissions.FLAGS.SEND_MESSAGES)
+            );
 
-            let foundEveryoneOverwrite = false;
+            if (!foundEveryoneOverwrite) neutralOverwrites.push(interaction.guild.id);
 
-            for (let i = 0; i !== permissionOverwrites.length; ++i) {
-                const r = permissionOverwrites[i];
-                if (r.id === interaction.guild.roles.everyone.id) foundEveryoneOverwrite = true;
-            }
-
-            if (!foundEveryoneOverwrite) {
-                if (!foundEveryoneOverwrite) {
-                    await channel.permissionOverwrites.edit(interaction.guild.roles.everyone.id, {
-                        SEND_MESSAGES: false,
-                    }, `Responsible Moderator: ${interaction.user.tag}`).catch(e => false)
-                    neutralOverwrites.push(interaction.guild.id)
-                }
-            } else if (
-                !channel.permissionOverwrites.cache.get(interaction.guild.roles.everyone.id).allow.has(Discord.Permissions.FLAGS.SEND_MESSAGES) &&
-                !channel.permissionOverwrites.cache.get(interaction.guild.roles.everyone.id).deny.has(Discord.Permissions.FLAGS.SEND_MESSAGES)
-            ) {
-                await channel.permissionOverwrites.edit(interaction.guild.roles.everyone.id, {
-                    SEND_MESSAGES: false,
-                }, `Channel Lock | Moderator: ${interaction.user.tag}`).catch(() => {})
-                neutralOverwrites.push(interaction.guild.id)
-            } else if (!channel.permissionOverwrites.cache.get(interaction.guild.roles.everyone.id).deny.has(Discord.Permissions.FLAGS.SEND_MESSAGES)) {
-                await channel.permissionOverwrites.edit(interaction.guild.roles.everyone.id, {
-                    SEND_MESSAGES: false,
-                }, `Channel Lock | Moderator: ${interaction.user.tag}`).catch(e => false)
-                enabledOverwrites.push(interaction.guild.id)
-            }
-
+            await channel.edit({ permissionOverwrites: [] })
+            
+            /*
+  
             for (let i = 0; i !== permissionOverwrites.length; ++i) {
                 const role = permissionOverwrites[i];
                 if (
@@ -108,6 +98,8 @@ module.exports = {
                     }
                 }
             })
+
+            */;
 
         } finally {
             const locked = new Discord.MessageEmbed()

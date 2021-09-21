@@ -26,6 +26,7 @@ module.exports.run = async(client, interaction) => {
         global.requestedCooldown.delete(requested);
 
         await interaction.reply('The request was denied by the requested user');
+        collector.stop();
         return interaction.message.edit({ content: interaction.message.content + '\n\nThis request has expired', components: [join] });
     }
 
