@@ -11,7 +11,7 @@ module.exports = {
     .addStringOption(option => option.setName('mode').setDescription('The difficulty of the minigame')
         .addChoice('Easy', 'easy')
         .addChoice('Medium', 'medium')
-        .addChoice('Hard', 'insane')
+        .addChoice('Hard', 'hard')
         .addChoice('Insane', 'insane')
         .addChoice('Extreme', 'extreme')),
     async execute(client, interaction, args) {
