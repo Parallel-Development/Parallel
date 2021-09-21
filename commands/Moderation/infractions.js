@@ -47,7 +47,7 @@ module.exports = {
 
         const warningsEmbed = new Discord.MessageEmbed()
         .setColor(client.config.colors.main)
-        .setAuthor(`Warnings for ${user.tag} - ${userWarnings.length}`, client.user.displayAvatarURL())
+        .setAuthor(`Warnings for ${user.tag} (${user.id}) - ${userWarnings.length}`, client.user.displayAvatarURL())
         .setFooter(`Page Number: ${pageNumber}/${amountOfPages}`)
 
         let count = 0;
@@ -62,7 +62,13 @@ module.exports = {
             ++i
         }
 
-        return message.reply({ embeds: [warningsEmbed] })
+        const jumpToBeginning = new Discord.MessageButton().setEmoji('↩').setCustomId('jumpToBeginning').setStyle('PRIMARY');
+        const goBack = new Discord.MessageButton().setEmoji('◀').setCustomId('goBack').setStyle('PRIMARY');
+        const goForward = new Discord.MessageButton().setEmoji('▶').setCustomId('goForward').setStyle('PRIMARY')
+        const jumpToBack = new Discord.MessageButton().setEmoji('↪').setCustomId('jumpToBack').setStyle('PRIMARY');
+        const pageButtons = new Discord.MessageActionRow().addComponents(jumpToBeginning, goBack, goForward, jumpToBack);
+
+        return message.reply({ embeds: [warningsEmbed], components: [pageButtons] });
 
     }
 

@@ -9,9 +9,11 @@ module.exports.run = async(client, interaction) => {
             .embeds[0].author.name)[0]
             .replace('#', '').replaceAll(' ', '').replace('(', '').replace(')', '')
             .slice(4)
-        );
+    );
 
-    if(interaction.user !== interaction.message.interaction.user) return client.util.throwError(interaction, client.config.errors.no_button_access);
+    const whoToCheck = interaction.message?.interaction?.user || interaction.channel.messages.cache.get(interaction.message.reference.messageId).author;
+
+    if(interaction.user !== whoToCheck) return client.util.throwError(interaction, client.config.errors.no_button_access);
     let currentPage = +interaction.channel.messages.cache.get(interaction.message.id).embeds[0].footer.text.slice(13, 14);
     let userWarnings = await warningSchema.findOne({
         guildID: interaction.guild.id
