@@ -80,7 +80,7 @@ module.exports = {
         if (!interaction.isCommand()) return;
 
         const command = client.slashCommands.get(interaction.commandName);
-        if (!command) return interaction.reply({ content: 'Unexpeted error: The interaction exists but there is no found linked command for it', ephemeral: true });
+        if (!command) return interaction.reply({ content: 'Unexpeted error: The interaction exists but there is no found linked command for it\n> Consider waiting for 30 seconds then trying again', ephemeral: true });
 
         const { modRoles, locked } = await settingsSchema.findOne({ guildID: interaction.guild.id });
 

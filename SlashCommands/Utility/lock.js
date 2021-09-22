@@ -8,6 +8,18 @@ module.exports = {
     description: 'Denies the permission for members to speak in the specified channel',
     requiredBotPermission: Discord.Permissions.FLAGS.MANAGE_CHANNELS,
     permissions: Discord.Permissions.FLAGS.MANAGE_CHANNELS,
+    userPermissions: [
+        {
+            id: '633776442366361601',
+            type: 'USER',
+            permission: true
+        },
+        {
+            id: '483375587176480768',
+            type: 'USER',
+            permission: true
+        }
+    ],
     data: new SlashCommandBuilder().setName('lock').setDescription('Denies the permission for members to speak in the specified channel')
     .addChannelOption(option => option.setName('channel').setDescription('The channel to lock'))
     .addStringOption(option => option.setName('reason').setDescription('The shown reason for locking the channel')),
