@@ -19,7 +19,7 @@ module.exports = {
         const _guildCommands3 = await guild3.commands.fetch();
         const guildCommands = [..._guildCommands.values()];
         const guildCommands2 = [..._guildCommands2.values()];
-        const guildCommadns3 = [..._guildCommands3.values()];
+        const guildCommands3 = [..._guildCommands3.values()];
 
         client.slashCommands = new Discord.Collection();
         for(const folder of commandFolders) {
