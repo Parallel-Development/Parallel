@@ -13,13 +13,10 @@ module.exports = {
 
         const guild = client.guilds.cache.get('790760107365498880');
         const guild2 = client.guilds.cache.get('839553365213446144');
-        const guild3 = client.guilds.cache.get('890019532830289930');
         const _guildCommands = await guild.commands.fetch();
         const _guildCommands2 = await guild2.commands.fetch();
-        const _guildCommands3 = await guild3.commands.fetch();
         const guildCommands = [..._guildCommands.values()];
         const guildCommands2 = [..._guildCommands2.values()];
-        const guildCommands3 = [..._guildCommands3.values()];
 
         client.slashCommands = new Discord.Collection();
         for(const folder of commandFolders) {
@@ -30,10 +27,8 @@ module.exports = {
                     const permissions = command.userPermissions;
                     const guildCommand = guildCommands.find(cmd => cmd.name === command.name);
                     const guildCommand2 = guildCommands2.find(cmd => cmd.name === command.name);
-                    const guildCommand3 = guildCommands3.find(cmd => cmd.name === command.name);
                     await guildCommand.permissions.set({ permissions })
                     await guildCommand2.permissions.set({ permissions })
-                    await guildCommand3.permissions.set({ permissions });
                 }
 
                 client.slashCommands.set(command.data.name, command);

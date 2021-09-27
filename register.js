@@ -33,13 +33,6 @@ const rest = new REST({ version: '9' }).setToken(token);
 		);
 
 		console.log('Successfully reloaded application (/) commands to irrelevant server.');
-
-		await rest.put(
-			Routes.applicationGuildCommands('745401642664460319', '890019532830289930'),
-			{ body: commands },
-		);
-
-		console.log('Successfully reloaded application (/) commands to important server.');
 	} catch (error) {
 		console.error(error);
 	}
