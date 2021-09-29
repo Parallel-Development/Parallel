@@ -2,7 +2,7 @@ const Discord = require('discord.js');
 
 module.exports.run = async(client, interaction) => {
 
-    const gameStarter = interaction.message.interaction?.member || message.channel.messages.cache.get(interaction.message.reference.messageId).member;
+    const gameStarter = interaction.message.interaction?.member || interaction.channel.messages.cache.get(interaction.message.reference.messageId).member;
 
     const joinButton = new Discord.MessageButton().setLabel('Play').setStyle('SUCCESS').setCustomId('join').setDisabled(true);
     const denyButton = new Discord.MessageButton().setLabel('Deny').setStyle('DANGER').setCustomId('deny').setDisabled(true);
