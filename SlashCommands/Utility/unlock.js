@@ -12,20 +12,12 @@ module.exports = {
     .addStringOption(option => option.setName('reason').setDescription('The shown reason for unlocking the channel')),
     async execute(client, interaction, args) {
 
-        const sleep = async (ms) => {
-            return new Promise(resolve => {
-                setTimeout(resolve, ms)
-            })
-        }
-
-        let channel = client.util.getChannel(interaction.guild, args['channel'])
-
-        let reason = args['reason'] || 'Unspecified';
-
-        if (!channel) channel = interaction.channel;
+        const channel = client.util.getChannel(interaction.guild, args['channel']) || interaction.channel
+        const reason = args['reason'] || 'Unspecified';
 
         if (channel.type !== 'GUILD_TEXT') return client.util.throwError(interaction, client.config.errors.not_type_text_channel);
         if (!channel.permissionsFor(interaction.guild.me).has(Discord.Permissions.FLAGS.MANAGE_MESSAGES)) return client.util.throwError(interaction, client.config.errors.my_channel_access_denied);
+        if(!channel.permissionsFor(interaction.member).has(Discord.Permissions.FLAGS.MANAGE_CHANNELS) || !channel.permissionsFor(interaction.member).has(Discord.Permissions.FLAGS.SEND_MESSAGES)) return client.util.throwError(interaction, client.config.errors.your_channel_access_denied);
 
         const getLockSchema = await lockSchema.findOne({
             guildID: interaction.guild.id,
@@ -34,53 +26,73 @@ module.exports = {
             }
         })
 
-        if (!getLockSchema) return interaction.reply('This channel is already unlocked! (If you manually locked, just run the lock command to register this channel as locked)')
+        if (!getLockSchema) return client.util.throwError(interaction, 'This channel is already unlocked! (If you manually locked, just run the lock command to register this channel as locked)')
 
         const enabledOverwrites = getLockSchema.channels.find(key => key.ID === channel.id).enabledOverwrites;
         const neutralOverwrites = getLockSchema.channels.find(key => key.ID === channel.id).neutralOverwrites;
 
         await interaction.deferReply({ ephemeral: interaction.channel === channel });
 
-        try {
-            for (let i = 0; i !== enabledOverwrites.length; i++) {
-                await channel.permissionOverwrites.edit(interaction.guild.roles.cache.get(enabledOverwrites[i]), {
-                    SEND_MESSAGES: true
-                }, `Channel Unlock | Moderator: ${interaction.user.tag}`).catch(e => false)
+        const permissionOverwrites = channel.permissionOverwrites.cache;
 
-                await sleep(200)
-            }
+        let newPermissionOverwrites = permissionOverwrites.filter(overwrite => 
+            !enabledOverwrites.some(enabledOverwrite => enabledOverwrite.id === overwrite.id) && 
+            !neutralOverwrites.some(neutralOverwrite => neutralOverwrite.id === overwrite.id) &&
+            overwrite.id !== interaction.guild.roles.everyone.id
+        );
 
-            for (let i = 0; i < neutralOverwrites.length; i++) {
-                await channel.permissionOverwrites.edit(interaction.guild.roles.cache.get(neutralOverwrites[i]), {
-                    SEND_MESSAGES: null
-                }, `Channel Unlock | Moderator: ${interaction.user.tag}`).catch(e => false)
+        for (let i = 0; i !== enabledOverwrites.length; ++i) {
+            const overwriteID = enabledOverwrites[i];
+            const initialPermissionOverwrite = channel.permissionOverwrites.cache.get(overwriteID);
+            const newPermissionOverwrite = {
+                id: initialPermissionOverwrite.id,
+                type: initialPermissionOverwrite.type,
+                deny: initialPermissionOverwrite.deny - Discord.Permissions.FLAGS.SEND_MESSAGES,
+                allow: initialPermissionOverwrite.allow.has(Discord.Permissions.FLAGS.SEND_MESSAGES) ?
+                    initialPermissionOverwrite.allow : 
+                    initialPermissionOverwrite.allow + Discord.Permissions.FLAGS.SEND_MESSAGES
+            };
 
-                await sleep(200)
-            }
+            newPermissionOverwrites.set(newPermissionOverwrite.id, newPermissionOverwrite);
 
-            await lockSchema.updateOne({
-                guildID: interaction.guild.id,
-                channels: {
-                    $elemMatch: { ID: channel.id }
-                }
-            },
-            {
-                $pull: { 
-                    channels: { 
-                        ID: channel.id
-                    }
-                }
-            })
-
-        } finally {
-            const unlocked = new Discord.MessageEmbed()
-                .setColor(client.config.colors.main)
-                .setAuthor('Channel Unlocked', client.user.displayAvatarURL())
-                .setDescription('This channel has been unlocked')
-                .addField('Unlock Reason', reason.length >= 1024 ? await client.util.createBin(reason) : reason)
-            await channel.send({ embeds: [unlocked] });
-            await interaction.editReply(`Successfully unlocked ${channel}`)
         }
+
+        for (let i = 0; i !== neutralOverwrites.length; ++i) {
+            const overwriteID = neutralOverwrites[i];
+            const initialPermissionOverwrite = channel.permissionOverwrites.cache.get(overwriteID);
+            const newPermissionOverwrite = {
+                id: initialPermissionOverwrite.id,
+                type: initialPermissionOverwrite.type,
+                deny: initialPermissionOverwrite.deny - Discord.Permissions.FLAGS.SEND_MESSAGES,
+                allow: initialPermissionOverwrite.allow
+            };
+
+            newPermissionOverwrites.set(newPermissionOverwrite.id, newPermissionOverwrite);
+
+        }
+
+        await channel.permissionOverwrites.set(newPermissionOverwrites);
+        
+        await lockSchema.updateOne({
+            guildID: interaction.guild.id
+        },
+        {
+            $pull: {
+                channels: {
+                    ID: channel.id,
+                }
+            }
+        })
+
+        await interaction.editReply({ content: `Successfully unlocked ${channel}`});
+
+        const lockedEmbed = new Discord.MessageEmbed()
+        .setColor(client.config.colors.main)
+        .setAuthor('Channel Unlock', client.user.displayAvatarURL())
+        .setTitle('This channel has been unlocked')
+        .setDescription('This action undoes the action the initial channel lock did to this channel')
+        if (args['reason']) lockedEmbed.addField('Reason', reason.length >= 1024 ? await client.util.createBin(reason) : reason)
+        await channel.send({ embeds: [lockedEmbed] });
 
     }
 }

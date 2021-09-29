@@ -14,6 +14,7 @@ module.exports = {
         if (oldMember.roles.cache.map(role => role.id) === newMember.roles.cache.map(role => role.id)) return;
 
         const guildSettings = await settingsSchema.findOne({ guildID: oldMember.guild.id });
+        if(!guildSettings) return;
         const { muterole, removerolesonmute } = guildSettings;
 
         if (removerolesonmute) return;

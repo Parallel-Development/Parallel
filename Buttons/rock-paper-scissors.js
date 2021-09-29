@@ -2,6 +2,8 @@ const Discord = require('discord.js');
 
 module.exports.run = async(client, interaction) => {
 
+    const gameStarter = interaction.message.interaction?.member || message.channel.messages.cache.get(interaction.message.reference.messageId).member;
+
     const joinButton = new Discord.MessageButton().setLabel('Play').setStyle('SUCCESS').setCustomId('join').setDisabled(true);
     const denyButton = new Discord.MessageButton().setLabel('Deny').setStyle('DANGER').setCustomId('deny').setDisabled(true);
 
@@ -26,13 +28,12 @@ module.exports.run = async(client, interaction) => {
         global.requestedCooldown.delete(requested);
 
         await interaction.reply('The request was denied by the requested user');
-        collector.stop();
-        return interaction.message.edit({ content: interaction.message.content + '\n\nThis request has expired', components: [join] });
+        interaction.message.edit({ content: interaction.message.content + '\n\nThis request has expired', components: [join] });
     }
 
     interaction.message.edit({ content: interaction.message.content, components: [join] });
 
-    global.openedSession.add(interaction.message.interaction.user.id);
+    global.openedSession.add(gameStarter.user.id);
     global.openedSession.add(requested);
 
     const gameBoard = new Discord.MessageEmbed()
@@ -49,7 +50,7 @@ module.exports.run = async(client, interaction) => {
     interaction.reply({ content: 'You accepted the game', ephemeral: true });
     interaction.message.edit({ content: interaction.message.content + '\n\nThis request has expired', components: [join] });
 
-    const filter = i => (i.user.id === requested || i.user.id === interaction.message.interaction.user.id);
+    const filter = i => (i.user.id === requested || i.user.id === gameStarter.user.id);
 
     const msg = await interaction.channel.send({ embeds: [gameBoard], components: [choices] });
     const collector = msg.createMessageComponentCollector({ filter: filter, time: 60000 });
@@ -66,7 +67,7 @@ module.exports.run = async(client, interaction) => {
 
         if (answers.length === 2) {
 
-            const member1 = await client.util.getMember(interaction.guild, answers.find(answer => answer.ID === interaction.message.interaction.user.id).ID);
+            const member1 = await client.util.getMember(interaction.guild, answers.find(answer => answer.ID === gameStarter.user.id).ID);
             const member2 = await client.util.getMember(interaction.guild, answers.find(answer => answer.ID === requested).ID);
 
             const member1Option = answers.find(answer => answer.ID === member1.id).answer;
@@ -95,9 +96,9 @@ module.exports.run = async(client, interaction) => {
 
     collector.on('end', (_, reason) => {
 
-        global.requestCooldown.delete(interaction.message.interaction.user.id)
+        global.requestCooldown.delete(gameStarter.user.id)
         global.requestedCooldown.delete(requested)
-        global.openedSession.delete(interaction.message.interaction.user.id);
+        global.openedSession.delete(gameStarter.user.id);
         global.openedSession.delete(requested);
 
         if (reason === 'time') return msg.edit({ embeds: [
