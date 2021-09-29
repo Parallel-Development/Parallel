@@ -4,7 +4,7 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 module.exports = {
     name: 'search',
     description: 'Search your server for a specified display name',
-    data: new SlashCommandBuilder().setName('search').setDescription('Search your server for a specified dispay name')
+    data: new SlashCommandBuilder().setName('search').setDescription('Search your server for a specified display name')
     .addStringOption(option => option.setName('query').setDescription('The display name to search for').setRequired(true))
     .addBooleanOption(option => option.setName('exact').setDescription('Exact your query')),
     permissions: Discord.Permissions.FLAGS.MANAGE_MESSAGES,
@@ -43,12 +43,13 @@ module.exports = {
         if (!members.length) return interaction.editReply({ embeds: [ new Discord.MessageEmbed().setColor(client.config.colors.main).setDescription('No results found') ] });
 
         result.setFooter(`${members.length} results`)
-        return interaction.editReply({ embeds: [result] }).catch(async() => {
+        if(members.length >= 30) {
             const newResult = await client.util.createBin(members.map(m => `${m.user.tag} | ID: ${m.id} | Username: ${m.user.username} | Display Name: \`${m.displayName}\``));
             const newResultEmbed = new Discord.MessageEmbed()
             .setColor(client.config.colors.main)
-            .setDescription(`Failed to send the result! View the result [here](${newResult}) (**${members.length}** results)`)
+            .setDescription(`The result may be too large, click to view the result [here](${newResult}) (**${members.length}** results)`)
             return interaction.editReply({ embeds: [newResultEmbed] })
-        })
+        }
+        return interaction.editReply({ embeds: [result] })
     }
 }
