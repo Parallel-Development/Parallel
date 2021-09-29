@@ -2,7 +2,7 @@ const Discord = require('discord.js');
 
 module.exports.run = async(client, interaction) => {
 
-    const gameStarter = interaction.message.interaction?.member || interaction.channel.messages.cache.get(interaction.message.reference.messageId).member;
+    const gameStarter = await client.util.getMember(interaction.message.interaction?.user) || interaction.channel.messages.cache.get(interaction.message.reference.messageId).member;
 
     const joinButton = new Discord.MessageButton().setLabel('Play').setStyle('SUCCESS').setCustomId('join').setDisabled(true);
     const denyButton = new Discord.MessageButton().setLabel('Deny').setStyle('DANGER').setCustomId('deny').setDisabled(true);
@@ -28,7 +28,7 @@ module.exports.run = async(client, interaction) => {
         global.requestedCooldown.delete(requested);
 
         await interaction.reply('The request was denied by the requested user');
-        interaction.message.edit({ content: interaction.message.content + '\n\nThis request has expired', components: [join] });
+        return interaction.message.edit({ content: interaction.message.content + '\n\nThis request has expired', components: [join] });
     }
 
     interaction.message.edit({ content: interaction.message.content, components: [join] });
