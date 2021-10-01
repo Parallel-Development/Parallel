@@ -16,7 +16,7 @@ module.exports = {
         const reason = args['reason'] || 'Unspecified';
 
         if (channel.type !== 'GUILD_TEXT') return client.util.throwError(interaction, client.config.errors.not_type_text_channel);
-        if (!channel.permissionsFor(interaction.guild.me).has(Discord.Permissions.FLAGS.MANAGE_MESSAGES)) return client.util.throwError(interaction, client.config.errors.my_channel_access_denied);
+        if (!channel.permissionsFor(interaction.guild.me).has([Discord.Permissions.FLAGS.MANAGE_MESSAGES, Discord.Permissions.FLAGS.SEND_MESSAGES])) return client.util.throwError(interaction, client.config.errors.my_channel_access_denied);
         if(!channel.permissionsFor(interaction.member).has(Discord.Permissions.FLAGS.MANAGE_CHANNELS) || !channel.permissionsFor(interaction.member).has(Discord.Permissions.FLAGS.SEND_MESSAGES)) return client.util.throwError(interaction, client.config.errors.your_channel_access_denied);
 
         const getLockSchema = await lockSchema.findOne({

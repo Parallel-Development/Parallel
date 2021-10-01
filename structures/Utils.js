@@ -24,11 +24,6 @@ class Utils {
 
     duration(ms) {
 
-        // Accounting for leap year,
-        // It is a leap year if the year is divisible by 4
-        // You skip leap year ever beginning of the century
-        // If the beginning of the century is divisible by 4, then a leap year is expected!
-
         if (!ms && ms !== 0) throw new Error('required argument \'ms\' is missing');
 
         if (ms == 0) return '0 seconds';
@@ -108,7 +103,7 @@ class Utils {
             if (!channel.permissionsFor(message.guild.me).has(Discord.Permissions.FLAGS.MANAGE_CHANNELS)) return;
             channel.permissionOverwrites.edit(role, { SEND_MESSAGES: false, ADD_REACTIONS: false, CONNECT: false });
 
-            await sleep(0); // ????
+            await sleep(0);
         }
 
         await settingsSchema.updateOne({
@@ -162,16 +157,8 @@ class Utils {
         return global.collectionPrevention.push({ guildID: guildID, member: memberID })
     }
 
-    addGuildToCollectionPrevention(guildID) {
-        return global.guildCollectionPrevention.push({ guildID: guildID  })
-    }
-
     removeMemberFromCollectionPrevention(guildID, memberID) {
         return global.collectionPrevention.pop({ guildID: guildID, memberID: memberID })
-    }
-
-    removeGuildFromCollectionPrevention(guildID) {
-        return global.guildCollectionPrevention.pop({ guildID: guildID })
     }
 
     async throwError(message, errorName) {

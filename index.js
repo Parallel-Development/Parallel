@@ -23,11 +23,11 @@ client.categories = fs.readdirSync('./commands');
 client.config = require('./config.json');
 
 global.collectionPrevention = [];
-global.guildCollectionPrevention = [];
 global.confirmationRequests = [];
 global.requestCooldown = new Set();
 global.requestedCooldown = new Set();
 global.openedSession = new Set();
+global.lockdownCooldown = new Set();
 
 const mongo = require('./mongo');
 const connectToMongoDB = async () => {
