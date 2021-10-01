@@ -74,7 +74,9 @@ module.exports = {
                     const newPermissionOverwrite = {
                         id: initialPermissionOverwrite.id,
                         type: initialPermissionOverwrite.type,
-                        deny: initialPermissionOverwrite.deny - Discord.Permissions.FLAGS.SEND_MESSAGES,
+                        deny: initialPermissionOverwrite.deny.has(Discord.Permissions.FLAGS.SEND_MESSAGES) ? 
+                            initialPermissionOverwrite.deny - Discord.Permissions.FLAGS.SEND_MESSAGES :
+                            Discord.Permissions.FLAGS.SEND_MESSAGES,
                         allow: initialPermissionOverwrite.allow.has(Discord.Permissions.FLAGS.SEND_MESSAGES) ?
                             initialPermissionOverwrite.allow : 
                             initialPermissionOverwrite.allow + Discord.Permissions.FLAGS.SEND_MESSAGES
@@ -90,7 +92,9 @@ module.exports = {
                     const newPermissionOverwrite = {
                         id: initialPermissionOverwrite.id,
                         type: initialPermissionOverwrite.type,
-                        deny: initialPermissionOverwrite.deny - Discord.Permissions.FLAGS.SEND_MESSAGES,
+                        deny: initialPermissionOverwrite.deny.has(Discord.Permissions.FLAGS.SEND_MESSAGES) ? 
+                            initialPermissionOverwrite.deny - Discord.Permissions.FLAGS.SEND_MESSAGES :
+                            Discord.Permissions.FLAGS.SEND_MESSAGES,
                         allow: initialPermissionOverwrite.allow
                     };
                 
