@@ -18,8 +18,8 @@ module.exports = {
         }
 
         if (channel.type !== 'GUILD_TEXT') return client.util.throwError(message, client.config.errors.not_type_text_channel);
-        if (!channel.permissionsFor(message.guild.me).has(Discord.Permissions.FLAGS.MANAGE_CHANNELS)) return client.util.throwError(message, client.config.errors.my_channel_access_denied);
-        if(!channel.permissionsFor(message.member).has(Discord.Permissions.FLAGS.MANAGE_CHANNELS) || !channel.permissionsFor(message.member).has(Discord.Permissions.FLAGS.SEND_MESSAGES)) return client.util.throwError(message, client.config.errors.your_channel_access_denied);
+        if (!channel.permissionsFor(message.guild.me).has([Discord.Permissions.FLAGS.MANAGE_CHANNELS, Discord.Permissions.FLAGS.SEND_MESSAGES])) return client.util.throwError(message, client.config.errors.my_channel_access_denied);
+        if(!channel.permissionsFor(message.member).has([Discord.Permissions.FLAGS.MANAGE_CHANNELS, Discord.Permissions.FLAGS.SEND_MESSAGES]) || !channel.permissionsFor(message.member).has(Discord.Permissions.FLAGS.SEND_MESSAGES)) return client.util.throwError(message, client.config.errors.your_channel_access_denied);
         if(!message.member.permissions.has(Discord.Permissions.FLAGS.ADMINISTRATOR) && !message.member.roles.cache.some(role => channel.permissionOverwrites.cache.some(overwrite => overwrite.id === role.id && overwrite.allow.has(Discord.Permissions.FLAGS.SEND_MESSAGES)))) {
             return message.reply('Error: the action was refused because after the channel had been locked, you would have not had permission to send messages in the channel. Please have an administrator add a permission override in the channel for one of the moderation roles you have and set the Send Messages permission to true')
         }
