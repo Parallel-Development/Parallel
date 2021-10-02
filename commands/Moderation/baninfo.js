@@ -5,6 +5,7 @@ module.exports = {
     name: 'baninfo',
     description: 'View the ban information of a user',
     usage: 'baninfo [user]',
+    aliases: ['baninformation', 'ban-information'],
     permissions: Discord.Permissions.FLAGS.BAN_MEMBERS,
     requiredBotPermission: Discord.Permissions.FLAGS.BAN_MEMBERS,
     async execute(client, message, args) {

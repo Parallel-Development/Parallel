@@ -1,10 +1,10 @@
 const Discord = require('discord.js');
 
 module.exports = {
-    name: 'threads',
+    name: 'thread-manager',
     description: 'Manage specific channel threads quickly and efficiently',
-    usage: 'threads [option: archiveall, deleteall]\nthreads [option: archiveall, deleteall] <channel>',
-    aliases: ['thread', 'threadmanager'],
+    usage: 'thread-manager [option: archiveall, deleteall]\nthreads [option: archiveall, deleteall] <channel>',
+    aliases: ['thread', 'threads'],
     permissions: 'MANAGE_GUILD',
     async execute(client, message, args) {
         if (!args[0]) return await client.util.throwError(message, client.config.errors.missing_argument_option);

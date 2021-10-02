@@ -3,10 +3,10 @@ const cooldown = new Set()
 const openedSession = new Set()
 
 module.exports = {
-    name: 'gtn',
+    name: 'guess-the-number',
     description: 'Game of Guess the Number!',
-    usage: 'gtn\ngtn [mode]\n\nmodes: `easy`, `medium`, `hard`, `insane`, `extreme`\n\nBy default, the mode is `normal`',
-    aliases: ['higherorlower', 'guessthenumber', 'hol'],
+    usage: 'guess-the-number\nguess-the-number [mode]\n\nmodes: `easy`, `medium`, `hard`, `insane`, `extreme`\n\nBy default, the mode is `normal`',
+    aliases: ['higher-or-lower', 'gtn', 'hol'],
     async execute(client, message, args) {
         if (openedSession.has(message.author.id)) return;
 

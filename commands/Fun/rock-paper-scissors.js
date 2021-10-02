@@ -4,9 +4,10 @@ const requestedCooldown = new Set();
 const openedSession = new Set()
 
 module.exports = {
-    name: 'rps',
+    name: 'rock-paper-scissors',
     description: 'Play someone in rock-paper-scissors',
-    usage: 'rps [player]',
+    usage: 'rock-paper-scissors [player]',
+    aliases: ['rps'],
     async execute(client, message, args) {
 
         if (global.openedSession.has(message.author.id)) return client.util.throwError(message, 'You are already in a game!')

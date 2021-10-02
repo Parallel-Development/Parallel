@@ -80,11 +80,11 @@ module.exports = {
             newPermissionOverwrites.set(message.guild.roles.everyone.id, {
                 id: message.guild.roles.everyone.id,
                 type: 'role',
-                deny: everyoneRoleOverwrite.deny + Discord.Permissions.FLAGS.SEND_MESSAGES,
-                allow: everyoneRoleOverwrite.allow
+                deny: Discord.Permissions.FLAGS.SEND_MESSAGES,
+                allow: 0n
             })
 
-            neutralOverwrites.push(everyoneRoleOverwrite.id);
+            neutralOverwrites.push(message.guild.roles.everyone.id);
         }
 
         for (let i = 0; i !== allOverwrites.length; ++i) {
