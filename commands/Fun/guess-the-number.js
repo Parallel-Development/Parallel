@@ -1,5 +1,4 @@
 const Discord = require('discord.js')
-const cooldown = new Set()
 const openedSession = new Set()
 
 module.exports = {
@@ -32,14 +31,6 @@ module.exports = {
         const filter = m => m.author.id === message.author.id;
         const collector = new Discord.MessageCollector(message.channel, { time: time, filter: filter, max: max });
         collector.on('collect', async(message) => {
-
-            if (cooldown.has(message.author.id)) return message.react('🕑')
-            else {
-                cooldown.add(message.author.id)
-                setTimeout(() => {
-                    cooldown.delete(message.author.id)
-                }, 1000)
-            }
 
             if (message.content.startsWith('cancel')) {
                 message.reply(`Ended! The number was \`${chosenNumber}\``)
