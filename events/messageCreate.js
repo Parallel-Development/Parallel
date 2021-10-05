@@ -93,7 +93,6 @@ module.exports = {
                 if (removerolesonmute && message.guild.roles.cache.get(muterole)) await message.member.roles.set([muterole, ..._unmanagableRoles])
                 else await client.util.muteMember(message, message.member, role);
 
-                if (message.channel.parent.type === "GUILD_TEXT") return;
                 const mutedEmbed = new Discord.MessageEmbed()
                     .setColor(client.config.colors.punishment[1])
                     .setAuthor(`Parallel Moderation`, client.user.displayAvatarURL())
@@ -102,7 +101,7 @@ module.exports = {
                     .addField('Duration', expires !== 'Never' ? client.util.duration(expires - Date.now()) : 'Permanent', true)
                     .addField('Expires', expires !== 'Never' ? client.util.timestamp(Date.now() + (expires - Date.now())) : 'Never', true)
                     .addField('Date', date)
-                message.member.send({ embeds: [mutedEmbed] }).catch(() => { });
+                await message.member.send({ embeds: [mutedEmbed] }).catch(() => { });
 
                 return;
             }
