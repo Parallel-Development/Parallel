@@ -18,7 +18,7 @@
     "@lukeed/ms": "^2.0.0",
     "biguint-format": "^1.0.2",
     "discord-api-types": "^0.22.0",
-    "discord.js": "^13.1.0",
+    "discord.js": "^13.2.0",
     "flake-idgen": "^1.4.0",
     "mathjs": "^9.4.4",
     "moment": "^2.29.1",
