@@ -29,14 +29,16 @@ module.exports = {
                 channel.permissionsFor(overwrite.id).has(Discord.Permissions.FLAGS.VIEW_CHANNEL)
             )
         );
-        else channels = [...allChannels.values()].filter(channel => 
-            channel.permissionOverwrites.cache.filter(overwrite => overwrite.type === 'role').some(overwrite => 
+        else channels = [...allChannels.values()].filter(channel => {
+
+            if(!channel.permissionOverwrites.cache.get(message.guild.roles.everyone.id)) return true;
+            else return channel.permissionOverwrites.cache.filter(overwrite => overwrite.type === 'role').some(overwrite => 
                 !message.guild.roles.cache.get(overwrite.id).permissions.has(Discord.Permissions.FLAGS.MANAGE_MESSAGES) &&
                 !modRoles.includes(overwrite.id) && 
                 channel.permissionsFor(overwrite.id).has(Discord.Permissions.FLAGS.SEND_MESSAGES) && 
                 channel.permissionsFor(overwrite.id).has(Discord.Permissions.FLAGS.VIEW_CHANNEL)
             )
-        );
+        });
 
         const guildLockedChannelIds = guildLocked.channels.map(info => info.ID);
         if(channels.every(channel => guildLockedChannelIds.includes(channel.id))) return client.util.throwError(message, 'all the target channels are already locked, there are none to lock!');

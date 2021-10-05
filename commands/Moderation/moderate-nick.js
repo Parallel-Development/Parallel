@@ -36,7 +36,7 @@ module.exports = {
 
         const moderatedNicknameEmbed = new Discord.MessageEmbed()
         .setColor(client.config.colors.main)
-        .setDescription(`${client.config.emotes.success} User with ID \`${member.id}\` has been moderated with identifier code \`${code}\` ${args['dm'] ? failedToSend ? '| Failed to DM them' : '| Successfully DM\'d them' : ''}`)
+        .setDescription(`${client.config.emotes.success} User with ID \`${member.id}\` has been moderated with identifier code \`${code}\` ${args[1] === '--dm' ? failedToSend ? '| Failed to DM them' : '| Successfully DM\'d them' : ''}`)
         
         await message.reply({ embeds: [moderatedNicknameEmbed] });
     }
