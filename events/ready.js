@@ -11,7 +11,7 @@ module.exports = {
         
         if (global.void === true) console.log('Bot is in void mode');
 
-        const _clientCommands = await client.commands.fetch();
+        const _clientCommands = await client.application.commands.fetch();
         const clientCommands = [..._clientCommands.values()];
 
         client.slashCommands = new Discord.Collection();
@@ -19,11 +19,6 @@ module.exports = {
             const commandFiles = fs.readdirSync(`./SlashCommands/${folder}`);
             for(const file of commandFiles) {
                 const command = require(`../SlashCommands/${folder}/${file}`);
-                if (command.userPermissions) {
-                    const permissions = command.userPermissions;
-                    await clientCommands.permissions.set({ permissions })
-                }
-
                 client.slashCommands.set(command.data.name, command);
             }
         }

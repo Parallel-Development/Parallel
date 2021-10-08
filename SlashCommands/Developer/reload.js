@@ -8,22 +8,8 @@ module.exports =  {
     description: "A command that can reload other commands!",
     usage: 'reload <directory> <file_name>',
     developer: true,
-    data: new SlashCommandBuilder().setName('reload').setDescription('Reload all commands').setDefaultPermission(false),
-    userPermissions: [
-        {
-            id: '633776442366361601',
-            type: 'USER',
-            permission: true
-        },
-        {
-            id: '483375587176480768',
-            type: 'USER',
-            permission: true
-        }
-    ],
+    data: new SlashCommandBuilder().setName('reload').setDescription('Reload all commands'),
     async execute(client, interaction, args) {
-
-        if(interaction.author.id !== '633776442366361601') return;
         
         await interaction.deferReply();
 

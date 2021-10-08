@@ -6,26 +6,12 @@ module.exports = {
     name: 'eval',
     description: 'Evaluates the specified code',
     usage: 'eval [code]\n\nFlags: `--silent`, `--delete`, `--async`',
-    data: new SlashCommandBuilder().setName('eval').setDescription('Evaluates the specified code').setDefaultPermission(false)
+    data: new SlashCommandBuilder().setName('eval').setDescription('Evaluates the specified code')
     .addStringOption(option => option.setName('code').setDescription('The code to evaluate').setRequired(true))
     .addBooleanOption(option => option.setName('async').setDescription('Run the code in an asynchronous function'))
     .addBooleanOption(option => option.setName('ephemeral').setDescription('Send the response as an ephemeral message')),
-    userPermissions: [
-        {
-            id: '633776442366361601',
-            type: 'USER',
-            permission: true
-        },
-        {
-            id: '483375587176480768',
-            type: 'USER',
-            permission: true
-        }
-    ],
     developer: true,
     async execute(client, interaction, args) {
-
-        if(interaction.author.id !== '633776442366361601') return;
 
         const isAsync = args['async'];
         const ephemeral = args['ephemeral'];

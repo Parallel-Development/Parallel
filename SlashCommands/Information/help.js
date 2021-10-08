@@ -49,7 +49,7 @@ async function getAll(client, interaction, prefix, shortcutCommands, modRoles) {
         mainHelp.addField('This server\'s shortcuts', scommands.join(', '))
     }
 
-    const linkInviteLink = new Discord.MessageButton().setLabel('Invite Link').setStyle('LINK').setURL('https://discord.com/oauth2/authorize?client_id=745401642664460319&scope=bot&permissions=2617568510');
+    const linkInviteLink = new Discord.MessageButton().setLabel('Invite Link').setStyle('LINK').setURL('https://discord.com/api/oauth2/authorize?client_id=745401642664460319&permissions=2617568510&scope=bot%20applications.commands');
     const linkSupportServer = new Discord.MessageButton().setLabel('Support Server').setStyle('LINK').setURL('https://discord.gg/v2AV3XtnBM');
     const linkDocumentation = new Discord.MessageButton().setLabel('Documentation').setStyle('LINK').setURL('https://piyeris0.gitbook.io/parallel/');
     const linkBotGuidelines = new Discord.MessageButton().setLabel('Bot Guidelines').setStyle('LINK').setURL('https://docs.google.com/document/d/1u0Z6WVS0V8D72E8cU5gUw2OwGeqW3g1OvwSkzG7odOw/edit');

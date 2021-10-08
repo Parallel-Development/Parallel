@@ -5,25 +5,11 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 module.exports = {
     name: 'blacklist-server',
     description: 'Blacklists a server from using the bot',
-    data: new SlashCommandBuilder().setName('blacklist-server').setDescription('Blacklist a server from using the bot').setDefaultPermission(false)
+    data: new SlashCommandBuilder().setName('blacklist-server').setDescription('Blacklist a server from using the bot')
     .addStringOption(option => option.setName('guild_id').setDescription('The ID of the guild to blacklist').setRequired(true))
     .addStringOption(option => option.setName('reason').setDescription('The reason for blacklisting the server').setRequired(true)),
-    userPermissions: [
-        {
-            id: '633776442366361601',
-            type: 'USER',
-            permission: true
-        },
-        {
-            id: '483375587176480768',
-            type: 'USER',
-            permission: true
-        }
-    ],
     developer: true,
     async execute(client, interaction, args) {
-
-        if(interaction.author.id !== '633776442366361601') return;
 
         const ID = args['guild_id'];
         if (ID.length !== 18) return client.util.throwError(interaction, 'The provided guild ID is not possible (not a snowflake)');

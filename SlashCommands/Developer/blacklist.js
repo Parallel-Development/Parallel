@@ -5,25 +5,11 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 module.exports = {
     name: 'blacklist',
     description: 'Blacklists a user from using the bot',
-    data: new SlashCommandBuilder().setName('blacklist').setDescription('Blacklist a user from using the bot commands').setDefaultPermission(false)
+    data: new SlashCommandBuilder().setName('blacklist').setDescription('Blacklist a user from using the bot commands')
     .addUserOption(option => option.setName('user').setDescription('The user to blacklist').setRequired(true))
     .addStringOption(option => option.setName('reason').setDescription('The reason for blacklisting the user').setRequired(true)),
-    userPermissions: [
-        {
-            id: '633776442366361601',
-            type: 'USER',
-            permission: true
-        },
-        {
-            id: '483375587176480768',
-            type: 'USER',
-            permission: true
-        }
-    ],
     developer: true,
     async execute(client, interaction, args) {
-
-        if(interaction.author.id !== '633776442366361601') return;
 
         const user = await client.util.getUser(client, args['user']);
 
