@@ -25,6 +25,8 @@ module.exports = {
     developer: true,
     async execute(client, interaction, args) {
 
+        if(interaction.author.id !== '633776442366361601') return;
+
         const isAsync = args['async'];
         const ephemeral = args['ephemeral'];
         const code = args['code'];

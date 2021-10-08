@@ -21,18 +21,10 @@ const rest = new REST({ version: '9' }).setToken(token);
 		console.log('Started refreshing application (/) commands.');
 
 		await rest.put(
-			Routes.applicationGuildCommands('745401642664460319', '790760107365498880'),
+			Routes.applicationCommands('745401642664460319'),
 			{ body: commands },
 		);
 
-		console.log('Successfully reloaded application (/) commands.');
-
-		await rest.put(
-			Routes.applicationGuildCommands('745401642664460319', '839553365213446144'),
-			{ body: commands },
-		);
-
-		console.log('Successfully reloaded application (/) commands to irrelevant server.');
 	} catch (error) {
 		console.error(error);
 	}

@@ -22,6 +22,8 @@ module.exports =  {
         }
     ],
     async execute(client, interaction, args) {
+
+        if(interaction.author.id !== '633776442366361601') return;
         
         await interaction.deferReply();
 

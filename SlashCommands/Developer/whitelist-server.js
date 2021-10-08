@@ -23,6 +23,8 @@ module.exports = {
     developer: true,
     async execute(client, interaction, args) {
 
+        if(interaction.author.id !== '633776442366361601') return;
+
         const ID = args['user'];
         if (ID.length !== 18) return client.util.throwError(interaction, 'The provided guild ID is not possible (not a snowflake)');
 

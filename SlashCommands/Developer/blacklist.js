@@ -23,6 +23,8 @@ module.exports = {
     developer: true,
     async execute(client, interaction, args) {
 
+        if(interaction.author.id !== '633776442366361601') return;
+
         const user = await client.util.getUser(client, args['user']);
 
         const alreadyBlacklisted = await blacklistSchema.findOne({
