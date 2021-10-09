@@ -121,7 +121,7 @@ module.exports = {
         punishedEmbed.setDescription(`✅ **${member.user ? member.toString() : member.tag}** has been ${(stype.charAt(0).toUpperCase() + stype.slice(1) + (stype.endsWith('e') ? '' : stype.endsWith('ban') ? 'ne' : 'e')).toLowerCase()}d with ID \`${punishmentID}\``);
 
         if (delModCmds) {
-            interaction.reply(`Successfully ${(stype.charAt(0).toUpperCase() + stype.slice(1) + (stype.endsWith('e') ? '' : stype.endsWith('ban') ? 'ne' : 'e')).toLowerCase()}d ${member.user ? member.toString() : member.tag}`)
+            interaction.reply({ content: `Successfully ${(stype.charAt(0).toUpperCase() + stype.slice(1) + (stype.endsWith('e') ? '' : stype.endsWith('ban') ? 'ne' : 'e')).toLowerCase()}d ${member.user ? member.toString() : member.tag}`, ephemeral: true});
             return interaction.channel.send({ embeds: [punishedEmbed] });
         } else return interaction.reply({ embeds: [punishedEmbed] })
 
