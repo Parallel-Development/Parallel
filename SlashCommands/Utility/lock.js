@@ -28,11 +28,14 @@ module.exports = {
         const channel = client.util.getChannel(interaction.guild, args['channel']) || interaction.channel
         const reason = args['reason'] || 'Unspecified';
 
+        const guildSettings = await settingsSchema.findOne({ guildID: interaction.guild.id })
+        const { modRoles } = guildSettings;
+
         if (channel.type !== 'GUILD_TEXT') return client.util.throwError(interaction, client.config.errors.not_type_text_channel);
         if (!channel.permissionsFor(interaction.guild.me).has([Discord.Permissions.FLAGS.MANAGE_CHANNELS, Discord.Permissions.FLAGS.SEND_MESSAGES])) return client.util.throwError(interaction, client.config.errors.my_channel_access_denied);
-        if(!channel.permissionsFor(interaction.member).has([Discord.Permissions.FLAGS.MANAGE_CHANNELS, Discord.Permissions.FLAGS.SEND_MESSAGES]) || !channel.permissionsFor(interaction.member).has(Discord.Permissions.FLAGS.SEND_MESSAGES)) return client.util.throwError(interaction, client.config.errors.your_channel_access_denied);
+        if(!channel.permissionsFor(interaction.member).has([Discord.Permissions.FLAGS.MANAGE_CHANNELS, Discord.Permissions.FLAGS.SEND_MESSAGES]) && !interaction.member.roles.cache.some(role => modRoles.includes(role.id))) return client.util.throwError(interaction, client.config.errors.your_channel_access_denied);
         if(!interaction.member.permissions.has(Discord.Permissions.FLAGS.ADMINISTRATOR) && !interaction.member.roles.cache.some(role => channel.permissionOverwrites.cache.some(overwrite => overwrite.id === role.id && overwrite.allow.has(Discord.Permissions.FLAGS.SEND_MESSAGES)))) {
-            return client.util.throwError(interaction, 'the action was refused because after the channel had been locked, you would have not had permission to send messages in the channel. Please have an administrator add a permission override in the channel for one of the moderation roles you have and set the Send Messages permission to true')
+            return interaction.reply('Error: the action was refused because after the channel had been locked, you would have not had permission to send messages in the channel. Please have an administrator add a permission override in the channel for one of the moderation roles you have and set the Send Messages permission to true')
         }
 
         const alreadyLocked = await lockSchema.findOne({
@@ -43,9 +46,6 @@ module.exports = {
         })
 
         if (alreadyLocked) return interaction.reply('This channel is already locked! (If you manually unlocked, just run the unlock command to register this channel as unlocked)');
-
-        const guildSettings = await settingsSchema.findOne({ guildID: interaction.guild.id })
-        const { modRoles } = guildSettings;
 
         await interaction.deferReply({ ephemeral: interaction.channel === channel });
 

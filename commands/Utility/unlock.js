@@ -1,5 +1,6 @@
 const Discord = require('discord.js')
-const lockSchema = require('../../schemas/lock-schema')
+const lockSchema = require('../../schemas/lock-schema');
+const settingsSchema = require('../../schemas/settings-schema');
 
 module.exports = {
     name: 'unlock',
@@ -16,9 +17,12 @@ module.exports = {
             reason = args.join(' ') || 'Unspecified';
         }
 
+        const guildSettings = await settingsSchema.findOne({ guildID: message.guild.id })
+        const { modRoles } = guildSettings;
+
         if (channel.type !== 'GUILD_TEXT') return client.util.throwError(message, client.config.errors.not_type_text_channel);
-        if (!channel.permissionsFor(message.guild.me).has(Discord.Permissions.FLAGS.MANAGE_MESSAGES)) return client.util.throwError(message, client.config.errors.my_channel_access_denied);
-        if(!channel.permissionsFor(message.member).has(Discord.Permissions.FLAGS.MANAGE_CHANNELS) || !channel.permissionsFor(message.member).has(Discord.Permissions.FLAGS.SEND_MESSAGES)) return client.util.throwError(message, client.config.errors.your_channel_access_denied);
+        if (!channel.permissionsFor(message.guild.me).has([Discord.Permissions.FLAGS.MANAGE_MESSAGES, Discord.Permissions.FLAGS.SEND_MESSAGES])) return client.util.throwError(message, client.config.errors.my_channel_access_denied);
+        if(!channel.permissionsFor(message.member).has([Discord.Permissions.FLAGS.MANAGE_CHANNELS, Discord.Permissions.FLAGS.SEND_MESSAGES]) && !message.member.roles.cache.some(role => modRoles.includes(role.id))) return client.util.throwError(message, client.config.errors.your_channel_access_denied);
 
         const getLockSchema = await lockSchema.findOne({
             guildID: message.guild.id,

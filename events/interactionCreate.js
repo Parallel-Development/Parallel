@@ -78,6 +78,7 @@ module.exports = {
         }
 
         if (!interaction.isCommand()) return;
+        if(global.void && !client.config.developers.includes(interaction.user.id)) return;
 
         const command = client.slashCommands.get(interaction.commandName);
         if (!command) return interaction.reply({ content: 'Unexpeted error: The interaction exists but there is no found linked command for it\n> Consider waiting for 30 seconds then trying again', ephemeral: true });
