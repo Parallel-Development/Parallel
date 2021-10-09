@@ -72,7 +72,9 @@ class Utils {
         if (minutes > 0) product.push(`${Math.floor(minutes)} ${minutes < 2 ? 'minute' : 'minutes'}`)
         if (seconds > 0) product.push(`${Math.floor(seconds)} ${seconds < 2 ? 'second' : 'seconds'}`)
 
-        return product.join(', ')
+        product.splice(-1, 1, `and ${product[product.length - 1]}`)
+
+        return product.length > 2 ? product.join(', ') : product.join(' ');
     }
 
     timestamp(time = Date.now()) {
