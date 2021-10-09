@@ -37,9 +37,8 @@ class Utils {
             }
         } 
 
-        if (ms < 1000) return `${Math.floor(ms)} ${ms == 1 ? 'millisecond' : 'milliseconds'}`
+        if (ms < 1000) return `${Math.floor(ms)} ${ms < 2 ? 'millisecond' : 'milliseconds'}`
 
-        let years = 0;;
         let weeks = 0;
         let days = 0;
         let hours = 0;
