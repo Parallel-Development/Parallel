@@ -16,8 +16,11 @@ module.exports = {
             .addStringOption(option => option.setName('tag_name').setDescription('The tag to edit').setRequired(true))
             .addStringOption(option => option.setName('new_content').setDescription('The new tag\'s content').setRequired(true)))
         .addSubcommand(command => command.setName('allowed_roles').setDescription('Manage the allowed roles to use tags')
-            .addStringOption(option => option.setName('method').setDescription('To add, remove, or view the allowed roles').setRequired(true))
-            .addStringOption(option => option.setName('role').setDescription('The role to target')))
+            .addStringOption(option => option.setName('method').setDescription('To add, remove, or view the allowed roles').setRequired(true)
+                .addChoice('Add', 'add')
+                .addChoice('Remove', 'remove')
+                .addChoice('View', 'view'))
+            .addRoleOption(option => option.setName('role').setDescription('The role to target')))
         .addSubcommand(command => command.setName('get').setDescription('Get information on a tag')
             .addStringOption(option => option.setName('tag_name').setDescription('The tag to get information on').setRequired(true))),
     permissions: Discord.Permissions.FLAGS.MANAGE_GUILD,
@@ -136,7 +139,7 @@ module.exports = {
             const guildTagSettings = await tagSchema.findOne({ guildID: interaction.guild.id });
             const { allowedRoleList } = guildTagSettings;
 
-            if(allowedRolesArgs['add']) {
+            if(allowedRolesArgs['method'] === 'add') {
                 const role = client.util.getRole(interaction.guild, allowedRolesArgs['role'])
                 if(allowedRoleList.includes(role.id)) return client.util.throwError(interaction, 'this role is already on the allowed role list');
 
@@ -149,7 +152,7 @@ module.exports = {
 
                 return interaction.reply(`Anyone with the role \`${role.name}\` may now use tags`);
 
-            } else if (allowedRolesArgs['remove']) {
+            } else if (allowedRolesArgs['method'] === 'remove') {
                 const role = client.util.getRole(interaction.guild, allowedRolesArgs['role'])
                 if(allowedRoleList.includes(role.id)) return client.util.throwError(interaction, 'this role is already on the allowed role list');
                 if(!allowedRoleList.includes(role.id)) return client.util.throwError(interaction, 'this role is not on the allowed role list');
@@ -163,7 +166,7 @@ module.exports = {
 
                 return interaction.reply(`The role \`${role.name}\` no longer grants the permission for users to use tags`);
 
-            } else if (args[1] === 'view') {
+            } else if (allowedRolesArgs['method'] === 'view') {
 
                 if(!allowedRoleList.length) return interaction.reply('No roles on are on the allowed roles list for tags');
 
