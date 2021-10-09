@@ -492,7 +492,7 @@ module.exports = {
                 locked: message.channel?.parentId
             })
         ) {
-            if (!message.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_MESSAGES) && !isModerator && !command.developer && !command.name !== 'tag') {
+            if (!message.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_MESSAGES) && !isModerator && !command.developer && command.name !== 'tag') {
                 const msg = await message.reply('Commands are disabled in this channel');
                 setTimeout(() => {
                     message.delete();
