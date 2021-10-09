@@ -19,7 +19,7 @@ class MessageLogger {
             if (oldMessage) {
 
                 const binnedOldContent = await client.util.createBin(oldMessage.content);
-                const binnedNewContent = await client.util.createBin(message.content);
+                const binnedContent = await client.util.createBin(message.content);
                 logEmbed.setDescription(`[Jump to message](${message.url})`);
                 logEmbed.setTitle('Message Update');
                 logEmbed.addField('Old Message', oldMessage.content.length <= 1024 ? oldMessage.content : binnedOldContent);
