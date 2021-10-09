@@ -76,12 +76,12 @@ module.exports.run = async(client, interaction) => {
             let beats;
 
             let winner;
-            if (member1Option === 'rock' && member2Option === 'scissors') winner = member1, beats = '**rock** crushes **scissors**';
-            if (member1Option === 'rock' && member2Option === 'paper') winner = member2, beats = '**paper** covers **rock**';
-            if (member1Option === 'scissors' && member2Option === 'rock') winner = member2, beats = '**rock** crushes **scissors**';
-            if (member1Option === 'scissors' && member2Option === 'paper') winner = member1, beats = '**scissors** cuts **paper**';
-            if (member1Option === 'paper' && member2Option === 'rock') winner = member1, beats = '**paper** covers **rock**';
-            if (member1Option === 'paper' && member2Option === 'scissors') winner = member2, beats = '**scissors** cuts **paper**';
+            if (member1Option === 'rock' && member2Option === 'scissors') winner = member1, beats = '**rock** _crushes_ **scissors**';
+            if (member1Option === 'rock' && member2Option === 'paper') winner = member2, beats = '**paper** _covers_ **rock**';
+            if (member1Option === 'scissors' && member2Option === 'rock') winner = member2, beats = '**rock** _crushes_ **scissors**';
+            if (member1Option === 'scissors' && member2Option === 'paper') winner = member1, beats = '**scissors** _cuts_ **paper**';
+            if (member1Option === 'paper' && member2Option === 'rock') winner = member1, beats = '**paper** _covers_ **rock**';
+            if (member1Option === 'paper' && member2Option === 'scissors') winner = member2, beats = '**scissors** _cuts_ **paper**';
 
             if (!winner) winner = 'tie', beats = `**${member1Option}** ties against **${member2Option}**`;
 
