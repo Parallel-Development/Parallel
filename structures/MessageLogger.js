@@ -17,10 +17,13 @@ class MessageLogger {
                 .setAuthor('Parallel Logging', client.user.displayAvatarURL())
                 .addField(`User`, `**${message.author.tag}** - \`${message.author.id}\``);
             if (oldMessage) {
+
+                const binnedOldContent = await client.util.createBin(oldMessage.content);
+                const binnedNewContent = await client.util.createBin(message.content);
                 logEmbed.setDescription(`[Jump to message](${message.url})`);
                 logEmbed.setTitle('Message Update');
-                logEmbed.addField('Old Message', oldMessage.content.length <= 1024 ? oldMessage.content : await client.util.createBin(oldMessage.content));
-                logEmbed.addField('Updated Message', message.content.length <= 1024 ? message.content : await client.util.createBin(message.content));
+                logEmbed.addField('Old Message', oldMessage.content.length <= 1024 ? oldMessage.content : binnedOldContent);
+                logEmbed.addField('Updated Message', message.content.length <= 1024 ? message.content : binnedContent);
                 logEmbed.addField('Edited in', message.channel.toString());
             } else {
                 logEmbed.setTitle('Message Deleted');
