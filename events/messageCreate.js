@@ -5,6 +5,7 @@ const punishmentSchema = require('../schemas/punishment-schema');
 const warningSchema = require('../schemas/warning-schema');
 const lockSchema = require('../schemas/lock-schema');
 const systemSchema = require('../schemas/system-schema');
+const tagSchema = require('../schemas/tag-schema');
 
 
 const cooldown = new Set();
@@ -168,6 +169,17 @@ module.exports = {
                 guildname: message.guild.name,
                 guildID: message.guild.id,
                 channels: []
+            }).save()
+        }
+
+        const tagCheck = await tagSchema.findOne({ guildID: message.guild.id });
+        if(!tagCheck) {
+            await new tagSchema({
+                guildname: message.guild.name,
+                guildID: message.guild.id,
+                allowedRoleList: [],
+                allowedChannelList: [],
+                tags: []
             }).save()
         }
 
@@ -480,7 +492,7 @@ module.exports = {
                 locked: message.channel?.parentId
             })
         ) {
-            if (!message.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_MESSAGES) && !isModerator && !command.developer) {
+            if (!message.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_MESSAGES) && !isModerator && !command.developer && !command.name !== 'tag') {
                 const msg = await message.reply('Commands are disabled in this channel');
                 setTimeout(() => {
                     message.delete();

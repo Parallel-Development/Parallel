@@ -21,33 +21,8 @@ module.exports = {
 
         if (!userWarnings.length) return message.reply('This user has no infractions');
 
-        message.reply(`Are you sure? This will delete all warnings from **${user.tag}**. If you are sure, respond with the user's discriminator (the 4 digits after their username)`);
-        const collectorFilter = m => m.author.id === message.author.id;
-        const collector = new Discord.MessageCollector(message.channel, { filter: collectorFilter, time: 30000 })
-        collector.on('collect', async(message) => {
-            if (message.content === `#${user.discriminator}` || message.content === user.discriminator) {
-                await warningSchema.updateOne({
-                    guildID: message.guild.id,
-                },
-                {
-                    $pull: {
-                        warnings: {
-                            userID: user.id
-                        }
-                     }
-                })
-
-                const all = new Discord.MessageEmbed()
-                .setColor(client.config.colors.main)
-                .setDescription(`${client.config.emotes.success} All infractions have been removed from **${user.tag}**`)
-
-                message.reply({ embeds: [all] });
-                collector.stop();
-
-            } else {
-                collector.stop();
-                return message.reply('Action Cancelled')
-            }
-        })
+        if (global.confirmationRequests.some(request => request.ID === message.author.id)) global.confirmationRequests.pop({ ID: message.author.id })
+        global.confirmationRequests.push({ ID: message.author.id, guildID: message.guild.id, request: 'clearInfractions', at: Date.now(), data: { ID: user.id } });
+        return message.reply(`Are you sure? This will delete all warnings from **${user.tag}**. To confirm, run \`confirm\`. To cancel, run \`>cancel\``);
     }
 }

@@ -21,7 +21,7 @@ module.exports = {
         if (!userWarnings.length) return interaction.reply('This user has no infractions');
 
         if (global.confirmationRequests.some(request => request.ID === interaction.user.id)) global.confirmationRequests.pop({ ID: interaction.user.id })
-        global.confirmationRequests.push({ ID: interaction.user.id, request: 'clearInfractions', at: Date.now(), data: { ID: user.id } });
+        global.confirmationRequests.push({ ID: interaction.user.id, guildID: interaction.guild.id, request: 'clearInfractions', at: Date.now(), data: { ID: user.id } });
         return interaction.reply(`Are you sure? This will delete all warnings from **${user.tag}**. To confirm, run \`/confirm\`. To cancel, run \`/cancel\``);
 
     }

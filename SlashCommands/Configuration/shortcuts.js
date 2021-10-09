@@ -91,9 +91,9 @@ module.exports = {
             if (!shortcutCommands.length) return client.util.throwError(interaction, 'This server has no shortcuts')
 
             if (global.confirmationRequests.some(request => request.ID === interaction.user.id)) global.confirmationRequests.pop({ ID: interaction.user.id })
-            global.confirmationRequests.push({ ID: interaction.user.id, request: 'deleteAllShortcuts', at: Date.now() });
-
+            global.confirmationRequests.push({ ID: interaction.user.id, guildID: interaction.guild.id, request: 'deleteAllShortcuts', at: Date.now() });
             return interaction.reply('Are you sure? This will delete all shortcut commands. To confirm, run `/confirm`. To cancel, run `/cancel`');
+            
         } else if (subArgs['view']) {
 
             if (!shortcutCommands?.length) return client.util.throwError(interaction, 'No shortcut commands are setup for this server!')

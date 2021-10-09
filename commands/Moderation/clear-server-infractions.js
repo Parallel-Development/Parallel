@@ -19,28 +19,8 @@ module.exports = {
 
         if (!guildWarnings || !guildWarnings.warnings.length) return message.reply('This server has no warnings')
 
-        message.reply('Are you sure? This will remove all warnings from the server and there is no way to get them back. To confirm, respond with the server name')
-        const filter = m => m.author.id === message.author.id;
-        const collector = new Discord.MessageCollector(message.channel, { filter: filter, time: 30000 });
-        collector.on('collect', async(message) => {
-            if (message.content === message.guild.name) {
-                await warningSchema.deleteOne({
-                    guildID: message.guild.id
-                })
-                const deletedAllWarnings = new Discord.MessageEmbed()
-                .setColor(client.config.colors.main)
-                .setDescription(`${client.config.emotes.success} All warnings have been deleted`)
-                message.reply({ embeds: [deletedAllWarnings] })
-                return collector.stop();
-            } else {
-                message.reply('Action Cancelled');
-                return collector.stop();
-            }
-        })
-
-        collector.on('end', (collected, reason) => {
-            restricted.delete(message.guild.id)
-            if (reason === 'time') return message.reply('No response was received in time, cancelled')
-        })
+        if (global.confirmationRequests.some(request => request.ID === message.author.id)) global.confirmationRequests.pop({ ID: message.author.id })
+        global.confirmationRequests.push({ ID: message.author.id, guildID: message.guild.id, request: 'clearServerInfractions', at: Date.now() });
+        message.reply('Are you sure? This will remove all warnings from the server and there is no way to get them back. To confirm, run `confirm`. To cancel, run `cancel`');
     }
 }

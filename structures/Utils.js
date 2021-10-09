@@ -8,7 +8,7 @@ const ms_ = require('ms');
 
 class Utils {
     
-    async createBin(data, ext) {
+    async createBin(data) {
         
         if (!data) throw new Error('required argument \'text\' is missing');
 

@@ -97,14 +97,9 @@ module.exports = {
         } else if (option === 'removeall') {
             if (!shortcutCommands.length) return message.reply('There are no shortcuts');
 
-            await settingsSchema.updateOne({
-                guildID: message.guild.id
-            },
-                {
-                    shortcutCommands: []
-                })
-
-            return message.reply(`Successfully removed all shortcuts`)
+            if (global.confirmationRequests.some(request => request.ID === message.author.id)) global.confirmationRequests.pop({ ID: message.author.id })
+            global.confirmationRequests.push({ ID: message.author.id, guildID: message.guild.id, request: 'deleteAllShortcuts', at: Date.now() });
+            return message.reply('Are you sure? This will delete all shortcut commands. To confirm, run `confirm`. To cancel, run `>cancel`');
         }
     }
 }

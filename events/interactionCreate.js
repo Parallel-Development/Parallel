@@ -1,7 +1,12 @@
 const Discord = require('discord.js');
 const { MessageButton, MessageActionRow } = Discord;
-const blacklistSchema = require('../schemas/blacklist-schema');
 const settingsSchema = require('../schemas/settings-schema');
+const automodSchema = require('../schemas/automod-schema');
+const blacklistSchema = require('../schemas/blacklist-schema');
+const warningSchema = require('../schemas/warning-schema');
+const lockSchema = require('../schemas/lock-schema');
+const systemSchema = require('../schemas/system-schema');
+const tagSchema = require('../schemas/tag-schema');
 const cooldown = new Set();
 const rps = require('../Buttons/rock-paper-scissors');
 const infractions = require('../Buttons/infractions');
@@ -59,6 +64,81 @@ module.exports = {
             }
 
             return;
+        }
+
+        const automodCheck = await automodSchema.findOne({
+            guildID: interaction.guild.id
+        })
+
+        if (!automodCheck) {
+            await new automodSchema({
+                guildname: interaction.guild.name,
+                guildID: interaction.guild.id,
+                filter: 'disabled',
+                filterList: [],
+                fast: 'disabled',
+                walltext: 'disabled',
+                flood: 'disabled',
+                links: 'disabled',
+                allowTenor: {
+                    enabled: false,
+                    attachmentPermsOnly: false
+                },
+                invites: 'disabled',
+                massmention: 'disabled',
+                filterTempMuteDuration: 0,
+                fastTempMuteDuration: 0,
+                walltextTempMuteDuration: 0,
+                linksTempMuteDuration: 0,
+                invitesTempMuteDuration: 0,
+                massmentionTempMuteDuration: 0,
+                filterTempBanDuration: 0,
+                fastTempBanDuration: 0,
+                walltextTempBanDuration: 0,
+                linksTempBanDuration: 0,
+                invitesTempBanDuration: 0,
+                massmentionTempBanDuration: 0,
+                bypassChannels: [],
+                bypassRoles: []
+            }).save();
+        }
+
+        const warningsCheck = await warningSchema.findOne({ guildID: interaction.guild.id }) 
+        if (!warningsCheck) {
+            await new warningSchema({
+                guildname: interaction.guild.name,
+                guildID: interaction.guild.id,
+                warnings: []
+            }).save()
+        }
+
+        const systemCheck = await systemSchema.findOne({ guildID: interaction.guild.id });
+        if (!systemCheck) {
+            await new systemSchema({
+                guildname: interaction.guild.name,
+                guildID: interaction.guild.id,
+                system: []
+            }).save()
+        }
+
+        const lockCheck = await lockSchema.findOne({ guildID: interaction.guild.id });
+        if (!lockCheck) {
+            await new lockSchema({
+                guildname: interaction.guild.name,
+                guildID: interaction.guild.id,
+                channels: []
+            }).save()
+        }
+
+        const tagCheck = await tagSchema.findOne({ guildID: interaction.guild.id });
+        if(!tagCheck) {
+            await new tagSchema({
+                guildname: interaction.guild.name,
+                guildID: interaction.guild.id,
+                allowedRoleList: [],
+                allowedChannelList: [],
+                tags: []
+            }).save()
         }
 
         if (interaction.isButton()) {
@@ -131,6 +211,7 @@ module.exports = {
             (locked.includes(interaction.channel.id) || locked.includes(interaction.parent?.id))
             && !interaction.member.roles.cache.some(role => modRoles.includes(role)) 
             && !interaction.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_MESSAGES)
+            && command.name !== 'tag'
         ) return interaction.reply({ content: 'Commands are disabled in this channel', ephemeral: true })
 
         try {
