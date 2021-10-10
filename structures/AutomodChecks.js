@@ -22,15 +22,6 @@ class AutomodChecks {
             const { filterList } = automodSettings;
             const allowedChars = 'abcdefghjiklmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ ';
 
-            /*
-            for (let i = 0; i !== message.content.length; ++i) {
-                if (allowedChars.includes(message.content[i]) || filterList.some(word => word.includes(message.content[i]))) {
-                    messageCharacters.push(message.content[i].toLowerCase());
-                    if (!allowedChars.includes(message.content[i].toLowerCase()) && filterList.some(word => word.includes(message.content[i].toLowerCase()))) 
-                        extraAllowedChars.push(message.content[i].toLowerCase());
-                }
-            }*/
-
             const messageCharacters = message.content.split('').filter(char => allowedChars.includes(char) || filterList.some(word => word.includes(char)))
             const extraAllowedChars = message.content.split('').filter(char => !allowedChars.includes(char) && filterList.some(word => word.includes(char)));
             const joinedCharacters = messageCharacters.join('');
@@ -64,7 +55,7 @@ class AutomodChecks {
                 if (userMap.has(message.author.id)) {
                     const userData = userMap.get(message.author.id)
                     let msgCount = userData.msgCount
-                    if (parseInt(msgCount) === 5) {
+                    if (parseInt(msgCount) === 4) { 
                         userMap.delete(message.author.id);
                         let punished = await new Automod(client, message, 'fast').punished;
                         if (punished) return;
@@ -81,7 +72,7 @@ class AutomodChecks {
                     })
                     setTimeout(() => {
                         userMap.delete(message.author.id)
-                    }, 4000)
+                    }, 3000)
                 }
             }
 

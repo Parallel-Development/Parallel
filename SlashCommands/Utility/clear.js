@@ -29,7 +29,7 @@ module.exports = {
                 if (!messages.length) break;
                 for (let i = 0; i !== messages.length && userMessages.length !== amount - purgedMessages; ++i) {
                     const msg = messages[i];
-                    if (msg.author === user) userMessages.push(msg);
+                    if (msg.author.id === user.id) userMessages.push(msg);
                 }
                 const deletedMessages = await interaction.channel.bulkDelete(userMessages, true).catch(() => {});
                 if (!deletedMessages.size) break;

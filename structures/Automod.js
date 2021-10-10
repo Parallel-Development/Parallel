@@ -181,7 +181,18 @@ class Automod {
                 return setTimeout(async() => await msg2.delete(), 5000);
             }
 
-            if (type === 'fast') await message.channel.bulkDelete(7, true).catch(() => {})
+            if (type === 'fast') {
+                const userMessages = [];
+                const _messages = await message.channel.messages.fetch({ limit: 100 });
+                const messages = [..._messages.values()];
+                for (let i = 0; i !== 5; ++i) {
+                    const msg = messages[i];
+                    if (msg.author.id === message.author.id) userMessages.push(msg);
+                }
+
+                message.channel.bulkDelete(userMessages).catch(() => {});
+                
+            }
 
             switch (type) {
                 case 'filter':

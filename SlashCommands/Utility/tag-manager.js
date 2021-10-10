@@ -20,7 +20,7 @@ module.exports = {
                 .addChoice('Add', 'add')
                 .addChoice('Remove', 'remove')
                 .addChoice('View', 'view'))
-            .addRoleOption(option => option.setName('role').setDescription('The role to target')))
+            .addRoleOption(option => option.setName('role').setDescription('The role to target').setRequired(true)))
         .addSubcommand(command => command.setName('get').setDescription('Get information on a tag')
             .addStringOption(option => option.setName('tag_name').setDescription('The tag to get information on').setRequired(true))),
     permissions: Discord.Permissions.FLAGS.MANAGE_GUILD,
@@ -154,7 +154,6 @@ module.exports = {
 
             } else if (allowedRolesArgs['method'] === 'remove') {
                 const role = client.util.getRole(interaction.guild, allowedRolesArgs['role'])
-                if(allowedRoleList.includes(role.id)) return client.util.throwError(interaction, 'this role is already on the allowed role list');
                 if(!allowedRoleList.includes(role.id)) return client.util.throwError(interaction, 'this role is not on the allowed role list');
 
                 await tagSchema.updateOne({
