@@ -22,7 +22,8 @@ module.exports = {
                 .addChoice('View', 'view'))
             .addRoleOption(option => option.setName('role').setDescription('The role to target').setRequired(true)))
         .addSubcommand(command => command.setName('get').setDescription('Get information on a tag')
-            .addStringOption(option => option.setName('tag_name').setDescription('The tag to get information on').setRequired(true))),
+            .addStringOption(option => option.setName('tag_name').setDescription('The tag to get information on').setRequired(true)))
+        .addSubcommand(command => command.setName('view').setDescription('View all the tags on the server')),
     permissions: Discord.Permissions.FLAGS.MANAGE_GUILD,
     async execute(client, interaction, args) {
 
