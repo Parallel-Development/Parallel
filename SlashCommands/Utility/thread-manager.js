@@ -24,14 +24,14 @@ module.exports = {
         if (option === 'archive') {
             for (let i = 0; i !== threads.length; ++i) {
                 const thread = threads[i];
-                if (!thread.archived) thread.setArchived(true);
+                if (!thread.archived) await thread.setArchived(true);
             }
 
             await interaction.editReply(`Successfully archived all threads in ${channel}`).catch(() => {});
         } else if (option === 'delete') {
             for (let i = 0; i !== threads.length; ++i) {
                 const _thread = threads[i];
-                if (!_thread.archived) _thread.delete();
+                if (!_thread.archived) await _thread.delete();
             }
 
             await interaction.editReply(`Successfully deleted all threads in ${channel}`).catch(() => {})

@@ -21,7 +21,7 @@ module.exports = {
             const archiving = await message.reply(`Archiving all threads in ${channel}...`)
             for (let i = 0; i !== threads.length; ++i) {
                 const thread = threads[i];
-                if (!thread.archived) thread.setArchived(true);
+                if (!thread.archived) await thread.setArchived(true);
             }
 
             await archiving.edit(`${client.config.emotes.success} All threads in ${channel} have been archived`).catch(() => {});
@@ -29,7 +29,7 @@ module.exports = {
             const deleting = await message.reply(`Deleting all threads in ${channel}...`)
             for (let i = 0; i !== threads.length; ++i) {
                 const _thread = threads[i];
-                if (!_thread.archived) _thread.delete()
+                if (!_thread.archived) await _thread.delete()
             }
 
             await deleting.edit(`${client.config.emotes.success} All threads in ${channel} have been deleted`).catch(() => {});
