@@ -23,6 +23,6 @@ module.exports = {
 
         if (global.confirmationRequests.some(request => request.ID === message.author.id)) global.confirmationRequests.pop({ ID: message.author.id })
         global.confirmationRequests.push({ ID: message.author.id, guildID: message.guild.id, request: 'clearInfractions', at: Date.now(), data: { ID: user.id } });
-        return message.reply(`Are you sure? This will delete all warnings from **${user.tag}**. To confirm, run \`confirm\`. To cancel, run \`>cancel\``);
+        return message.reply(`Are you sure? This will delete all warnings from **${user.tag}**. To confirm, run the \`confirm\` command. To cancel, run the \`cancel\` command`);
     }
 }

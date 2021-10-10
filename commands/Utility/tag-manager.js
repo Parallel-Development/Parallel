@@ -61,7 +61,7 @@ module.exports = {
 
             if (global.confirmationRequests.some(request => request.ID === message.author.id)) global.confirmationRequests.pop({ ID: message.author.id })
             global.confirmationRequests.push({ ID: message.author.id, guildID: message.guild.id, request: 'removeAllTags', at: Date.now() });
-            return message.reply(`Are you sure? This will remove all all tags in this server. To confirm, run \`confirm\`. To cancel, run \`>cancel\``);
+            return message.reply(`Are you sure? This will remove all all tags in this server. To confirm, run the \`confirm\` command. To cancel, run the \`cancel\` command`);
         } else if (option === 'edit') {
             const tagName = args[1];
             const validateTag = await tagSchema.findOne({ guildID: message.guild.id, tags: { $elemMatch: { name: tagName } }});

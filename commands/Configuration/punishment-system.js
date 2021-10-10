@@ -25,7 +25,7 @@ module.exports = {
         } else if (warningsCount === 'reset') {
             if (global.confirmationRequests.some(request => request.ID === message.author.id)) global.confirmationRequests.pop({ ID: message.author.id })
             global.confirmationRequests.push({ ID: message.author.id, guildID: message.guild.id, request: 'resetSystem', at: Date.now() });
-            return message.reply('Are you sure? This will reset the **entire** punishment system. To confirm, run `confirm`. To cancel. run `>cancel`')
+            return message.reply('Are you sure? This will reset the **entire** punishment system. To confirm, run the `confirm` command. To cancel. run the `cancel` command')
         }
         if (warningsCount && !ms(warningsCount)) return await client.util.throwError(message, client.config.errors.bad_input_number);
         warningsCount = Math.floor(warningsCount)

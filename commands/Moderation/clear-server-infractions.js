@@ -21,6 +21,6 @@ module.exports = {
 
         if (global.confirmationRequests.some(request => request.ID === message.author.id)) global.confirmationRequests.pop({ ID: message.author.id })
         global.confirmationRequests.push({ ID: message.author.id, guildID: message.guild.id, request: 'clearServerInfractions', at: Date.now() });
-        message.reply('Are you sure? This will remove all warnings from the server and there is no way to get them back. To confirm, run `confirm`. To cancel, run `cancel`');
+        message.reply('Are you sure? This will remove all warnings from the server and there is no way to get them back. To confirm, run the `confirm` command. To cancel, run the `cancel` command');
     }
 }

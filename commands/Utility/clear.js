@@ -46,7 +46,7 @@ module.exports = {
             if (!deletedAmount.size) return message.channel.send('Deleted 0 messages; either there are no messages in this channel or the messages are too old')
             const _bulkDeleteEmbed = new Discord.MessageEmbed()
             .setColor(client.config.colors.main)
-            .setDescription(`${client.config.emotes.success} Successfully purged \`${deletedAmount.size}\` ${deletedAmount.size === 1 ? 'message' : 'message'}`);
+            .setDescription(`${client.config.emotes.success} Successfully purged \`${deletedAmount.size}\` ${deletedAmount.size === 1 ? 'message' : 'messages'}`);
             const _bulkDeleteMessage = await message.channel.send({ embeds: [_bulkDeleteEmbed] })
             setTimeout(() => { _bulkDeleteMessage.delete() }, 5000);
         }

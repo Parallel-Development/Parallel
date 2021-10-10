@@ -91,7 +91,7 @@ module.exports = {
                 break;
             case 'allowtenor':
                 if (!args[1]) return message.reply({ embeds: [settingsHelp('Allow Tenor Links',
-                'allowtenor <option: enable, disable, current> <only for users with attachment perms boolean: true, false>',
+                'allowtenor <option: enable, disable, current> <only for users with attachment perms: true, false>',
                 'If the link automod is enabled, it will allow tenor links to go by')]})
                 require('../../settings/allowtenor').run(client, message, args);
                 break;
