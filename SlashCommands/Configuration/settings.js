@@ -15,7 +15,7 @@ module.exports = {
         .addChannelOption(option => option.setName('channel').setDescription('The channel to manage'))),
     async execute(client, interaction, args) {
 
-        return interaction.reply('Please use the message command version of this command!');
+        return interaction.reply({ content: 'Please use the message command version of this command!', ephemeral: true });
 
         const subArgs = interaction.options.data.reduce((map, arg) => (map[arg.name] = arg, map), {})
         const _subArgs = Object.keys(subArgs).toString()
