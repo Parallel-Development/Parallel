@@ -87,6 +87,7 @@ module.exports = {
         } else if (option === 'view') {
 
             const guildTags = await tagSchema.findOne({ guildID: message.guild.id });
+            if(!guildTags.tags.length) return interaction.reply('There are no tags setup on this server')
             const tagList = guildTags.tags.map(tag => tag.name).join(', ').length <= 2000 ?
             guildTags.tags.map(tag => `\`${tag.name}\``).join(', ') :
             await client.util.craeteBin(guildTags.tags.map(tag => tag.name).join(', '));
