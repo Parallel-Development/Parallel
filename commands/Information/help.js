@@ -45,6 +45,7 @@ async function getAll(client, message, prefix, shortcutCommands, modRoles) {
         const commands = []
         const commandFiles = fs.readdirSync(`./commands/${folder}`).filter(file => file.endsWith('.js'))
         for(const file of commandFiles) {
+            console.log(file);
             const cmd = client.commands.get(path.parse(file).name);
             if (cmd.developer && client.config.developers.includes(message.author.id)) commands.push(`\`${path.parse(file).name}\``)
             else if (!cmd.developer && !cmd.hidden) commands.push(`\`${path.parse(file).name}\``);
