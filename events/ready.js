@@ -11,8 +11,7 @@ module.exports = {
         
         if (global.void === true) console.log('Bot is in void mode');
 
-        const _clientCommands = await client.application.commands.fetch();
-        const clientCommands = [..._clientCommands.values()];
+        await client.application.commands.fetch();
 
         client.slashCommands = new Discord.Collection();
         for(const folder of commandFolders) {

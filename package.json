@@ -17,6 +17,7 @@
     "@discordjs/rest": "^0.1.0-canary.0",
     "@lukeed/ms": "^2.0.0",
     "biguint-format": "^1.0.2",
+    "chess-analysis-api": "^1.0.1",
     "discord-api-types": "^0.22.0",
     "discord.js": "^13.2.0",
     "flake-idgen": "^1.4.0",
