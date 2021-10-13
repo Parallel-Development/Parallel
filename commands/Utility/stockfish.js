@@ -1,5 +1,6 @@
 const Discord = require('discord.js');
 const { chessAnalysisApi } = require('chess-analysis-api');
+const chess = require('chess.js').Chess();
 
 module.exports = {
     name: 'stockfish',
@@ -11,6 +12,10 @@ module.exports = {
         if(!FEN) return client.util.throwError(message, 'a FEN is required')
 
         let stop = false;
+
+        const isPossibleFEN = chess.load(FEN);
+        if(!isPossibleFEN) return message.reply('Invalid FEN! Is the position impossible? Is the position a draw?');
+        if (chess.moves().every(move => move.endsWith('#'))) return message.reply('Invalid FEN! Is the position impossible? Is the position a draw?')
 
         const msg = await message.reply('Calculating...');
         const result = await chessAnalysisApi.getAnalysis({

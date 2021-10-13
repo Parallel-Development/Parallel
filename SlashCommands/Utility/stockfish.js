@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 const { chessAnalysisApi } = require('chess-analysis-api');
 const { SlashCommandBuilder } = require('@discordjs/builders');
+const chess = require('chess.js').Chess();
 
 module.exports = {
     name: 'stockfish',
@@ -15,6 +16,11 @@ module.exports = {
         let stop = false;
 
         await interaction.deferReply();
+
+        const isPossibleFEN = chess.load(FEN);
+        if(!isPossibleFEN) return interaction.editReply('Invalid FEN! Is the position impossible? Is the position a draw?');
+        if (chess.moves().every(move => move.endsWith('#'))) return interaction.editReply('Invalid FEN! Is the position impossible? Is the position a draw?')
+
         const result = await chessAnalysisApi.getAnalysis({
             fen: FEN,
             depth: 20,

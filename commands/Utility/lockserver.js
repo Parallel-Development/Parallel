@@ -8,6 +8,7 @@ module.exports = {
     usage: 'lockserver\nlockserver --include-staff-channels',
     permissions: Discord.Permissions.FLAGS.ADMINISTRATOR,
     requiredBotPermission: Discord.Permissions.FLAGS.ADMINISTRATOR,
+    aliases: ['lockall'],
     async execute(client, message, args) {
 
         if(global.lockdownCooldown.has(message.guild.id)) return client.util.throwError(message, 'this server is currently under a lock or unlock process, please wait for it to complete before running this command')
