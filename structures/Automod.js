@@ -96,7 +96,7 @@ class Automod {
 
                 new Infraction(client, `${name.charAt(0).toUpperCase() + name.slice(1)}`, message, message.guild.me, message.member, { reason: reason, punishmentID: punishmentID, time: time, auto: true });
                 if (name !== 'warn') new Punishment(message.guild.name, message.guild.id, name, message.member.id, { reason: reason, time: time ? Date.now() + time : 'Never', roles: memberRoles });
-                await new DMUserInfraction(client, `${name.endsWith('e') ? name : name.endsWith('ban') ? name + 'ne' : name + 'e'}d`, color, message, message.member, { reason: reason, punishmentID: punishmentID, time: time, baninfo: name === 'ban' ? baninfo !== 'none' ? baninfo : null : null })
+                new DMUserInfraction(client, `${name.endsWith('e') ? name : name.endsWith('ban') ? name + 'ne' : name + 'e'}d`, color, message, message.member, { reason: reason, punishmentID: punishmentID, time: time, baninfo: name === 'ban' ? baninfo !== 'none' ? baninfo : null : null })
                 new ModerationLogger(client, `${name.charAt(0).toUpperCase() + name.slice(1) + (name.endsWith('e') ? '' : name.endsWith('ban') ? 'ne' : 'e')}d`, message.guild.me, message.member, message.channel, { reason: reason, duration: time, punishmentID: punishmentID, auto: true });
 
                 if (name === 'kick') await message.member.kick({ reason: reason })
@@ -135,11 +135,11 @@ class Automod {
                 punishmentID = client.util.generateID();
 
                 if (instance.punishment === 'ban' || instance.punishment === 'tempban') {
-                    await new DMUserInfraction(client, 'banned', client.config.colors.punishment[2], message, message.member, { reason: _reason, punishmentID: punishmentID, time: time, baninfo: baninfo !== 'none' ? baninfo : null });
+                    new DMUserInfraction(client, 'banned', client.config.colors.punishment[2], message, message.member, { reason: _reason, punishmentID: punishmentID, time: instance.duration, baninfo: baninfo !== 'none' ? baninfo : null });
 
                     new ModerationLogger(client, 'Banned', message.guild.me, message.member, message.channel, { reason: _reason, duration: instance.duration, punishmentID: punishmentID, auto: true });
                     new Infraction(client, 'Ban', message, message.guild.me, message.member, { reason: _reason, punishmentID: punishmentID, time: instance.duration, auto: true });
-                    if (time) new Punishment(message.guild.name, message.guild.id, 'ban', message.member.id, { reason: _reason, time: instance.duration ? Date.now() + instance.duration : 'Never' });
+                    if (instance.duration) new Punishment(message.guild.name, message.guild.id, 'ban', message.member.id, { reason: _reason, time: instance.duration ? Date.now() + instance.duration : 'Never' });
 
                     await message.guild.members.ban(message.member, { reason: _reason });
                 } else if (instance.punishment === 'mute' || instance.punishment === 'tempmute') {

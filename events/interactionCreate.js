@@ -165,7 +165,8 @@ module.exports = {
 
         if(command.developer && !client.config.developers.includes(interaction.user.id)) return client.util.throwError(interaction, 'You cannot run this command.');
 
-        const { modRoles, locked } = await settingsSchema.findOne({ guildID: interaction.guild.id });
+        const guildSettings = await settingsSchema.findOne({ guildID: interaction.guild.id });
+        const { modRoles, locked } = guildSettings;
 
         const denyAccess = (commandName) => {
             const errorMessage = new Discord.MessageEmbed()
