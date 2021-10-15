@@ -35,8 +35,8 @@ module.exports = {
             const punishment = setArgs['type'];
             const duration = setArgs['duration'] ? ms(setArgs['duration']) : null;
 
-            if (!punishment.startsWith('temp') && !setArgs['duration']) return client.util.throwError(interaction, client.config.errors.missing_argument_duration);
-            if (!punishment.startsWith('temp') && !duration) return client.util.throwError(interaction, client.config.errors.bad_duration);
+            if (punishment.startsWith('temp') && !setArgs['duration']) return client.util.throwError(interaction, client.config.errors.missing_argument_duration);
+            if (punishment.startsWith('temp') && !duration) return client.util.throwError(interaction, client.config.errors.bad_duration);
             if (duration && !(punishment.startsWith('temp') || punishment === 'warn')) return client.util.throwError(interaction, `Warning at argument \`duration\`: a duration was specified but not expected. A duration can only be input for types \`warn\`, \`tempmute\` and \`tempban\``);
             if (duration && duration > 315576000000) return client.util.throwError(interaction, client.config.errors.time_too_long);
 
