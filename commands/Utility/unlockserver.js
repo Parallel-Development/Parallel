@@ -71,6 +71,8 @@ module.exports = {
                 for (let i = 0; i !== enabledOverwrites.length; ++i) {
                     const overwriteID = enabledOverwrites[i];
                     const initialPermissionOverwrite = channel.permissionOverwrites.cache.get(overwriteID);
+
+                    if(initialPermissionOverwrite) {
                     const newPermissionOverwrite = {
                         id: initialPermissionOverwrite.id,
                         type: initialPermissionOverwrite.type,
@@ -83,26 +85,32 @@ module.exports = {
                     };
                 
                     newPermissionOverwrites.set(newPermissionOverwrite.id, newPermissionOverwrite);
+
+                    }
                 
                 }
             
                 for (let i = 0; i !== neutralOverwrites.length; ++i) {
                     const overwriteID = neutralOverwrites[i];
                     const initialPermissionOverwrite = channel.permissionOverwrites.cache.get(overwriteID);
-                    const newPermissionOverwrite = {
-                        id: initialPermissionOverwrite.id,
-                        type: initialPermissionOverwrite.type,
-                        deny: initialPermissionOverwrite.deny.has(Discord.Permissions.FLAGS.SEND_MESSAGES) ? 
-                            initialPermissionOverwrite.deny - Discord.Permissions.FLAGS.SEND_MESSAGES :
-                            Discord.Permissions.FLAGS.SEND_MESSAGES,
-                        allow: initialPermissionOverwrite.allow
-                    };
+                    if(initialPermissionOverwrite) {
+
+                        const newPermissionOverwrite = {
+                            id: initialPermissionOverwrite.id,
+                            type: initialPermissionOverwrite.type,
+                            deny: initialPermissionOverwrite.deny.has(Discord.Permissions.FLAGS.SEND_MESSAGES) ? 
+                                initialPermissionOverwrite.deny - Discord.Permissions.FLAGS.SEND_MESSAGES :
+                                Discord.Permissions.FLAGS.SEND_MESSAGES,
+                            allow: initialPermissionOverwrite.allow
+                        };
                 
-                    newPermissionOverwrites.set(newPermissionOverwrite.id, newPermissionOverwrite);
+                        newPermissionOverwrites.set(newPermissionOverwrite.id, newPermissionOverwrite);
+
+                    }
                 
                 }
             
-                await channel.permissionOverwrites.set(newPermissionOverwrites);
+                await channel.permissionOverwrites.set(newPermissionOverwrites).catch(async() => await msg.edit('Hmm...'));
 
                 await lockSchema.updateOne({
                     guildID: message.guild.id
