@@ -110,7 +110,7 @@ module.exports = {
                 
                 }
             
-                await channel.permissionOverwrites.set(newPermissionOverwrites);
+                await channel.permissionOverwrites.set(newPermissionOverwrites).catch(async() => await msg.edit('Hmm...'));
 
                 await lockSchema.updateOne({
                     guildID: message.guild.id
