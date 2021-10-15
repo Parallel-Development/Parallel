@@ -111,7 +111,7 @@ module.exports = {
                 
                 }
             
-                await channel.permissionOverwrites.set(newPermissionOverwrites);
+                await channel.permissionOverwrites.set(newPermissionOverwrites).catch(async() => await interaction.editReply('Hmm...'));
 
                 await lockSchema.updateOne({
                     guildID: interaction.guild.id
