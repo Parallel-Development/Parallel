@@ -49,6 +49,7 @@ module.exports = {
         for (let i = 0; i !== enabledOverwrites.length; ++i) {
             const overwriteID = enabledOverwrites[i];
             const initialPermissionOverwrite = channel.permissionOverwrites.cache.get(overwriteID);
+            if(initialPermissionOverwrite) {
             const newPermissionOverwrite = {
                 id: initialPermissionOverwrite.id,
                 type: initialPermissionOverwrite.type,
@@ -60,11 +61,14 @@ module.exports = {
 
             newPermissionOverwrites.set(newPermissionOverwrite.id, newPermissionOverwrite);
 
+            }
+
         }
 
         for (let i = 0; i !== neutralOverwrites.length; ++i) {
             const overwriteID = neutralOverwrites[i];
             const initialPermissionOverwrite = channel.permissionOverwrites.cache.get(overwriteID);
+            if(initialPermissionOverwrite) {
             const newPermissionOverwrite = {
                 id: initialPermissionOverwrite.id,
                 type: initialPermissionOverwrite.type,
@@ -73,6 +77,8 @@ module.exports = {
             };
 
             newPermissionOverwrites.set(newPermissionOverwrite.id, newPermissionOverwrite);
+
+            }
 
         }
 
