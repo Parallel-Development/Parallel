@@ -4,7 +4,7 @@ const warningSchema = require('../../schemas/warning-schema');
 module.exports = {
     name: 'reason',
     description: 'Change the reason of an infraction',
-    usage: 'reason [punishment ID] <new punishment ID>',
+    usage: 'reason [punishment ID] <new reason>',
     aliases: ['changereason'],
     permissions: Discord.Permissions.FLAGS.MANAGE_MESSAGES,
     async execute(client, message, args) {
