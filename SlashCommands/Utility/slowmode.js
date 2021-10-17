@@ -1,4 +1,5 @@
 const Discord = require('discord.js');
+const ms = require('ms');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
 module.exports = {
@@ -7,26 +8,34 @@ module.exports = {
     permissions: Discord.Permissions.FLAGS.MANAGE_CHANNELS,
     requiredBotPermission: Discord.Permissions.FLAGS.MANAGE_CHANNELS,
     data: new SlashCommandBuilder().setName('slowmode').setDescription('Set the slowmode for the channel')
-    .addIntegerOption(option => option.setName('seconds').setDescription('The seconds to set the slowmode to'))
+    .addStringOption(option => option.setName('slowmode').setDescription('The slowmode to set the slowmode to'))
     .addChannelOption(option => option.setName('channel').setDescription('The channel to set the slowmode in')),
     async execute(client, interaction, args) {
 
-        const slowmode = Math.floor(args['seconds']);
-        const channel = interaction.guild.channels.cache.get(args['channel']) || interaction.channel;
-        if (!channel.isText()) return client.util.throwError(interaction, client.config.errors.not_type_text_channel)
-        if (!slowmode && slowmode !== 0) return interaction.reply(`The current slowmode for ${channel} is set at \`${channel.rateLimitPerUser} seconds\``)
-        if (slowmode > 21600) return client.util.throwError(interaction, 'Number must be less than or equal to 21,600 seconds');
-        if (!channel.permissionsFor(interaction.guild.me).has(Discord.Permissions.FLAGS.MANAGE_CHANNELS)) return client.util.throwError(interaction, client.config.errors.my_channel_access_denied);
+        if (!args['slowmode']) return interaction.reply(`The current slowmode is \`${client.util.duration(interaction.channel.rateLimitPerUser * 1000)}\``);
+        let slowmode = args['slowmode'];
 
-        if (slowmode < .5) {
-            channel.setRateLimitPerUser(0);
-        } else {
-            channel.setRateLimitPerUser(slowmode);
-        }
+        if(!Math.round(slowmode) && slowmode != 0) {
+            if(!ms((slowmode.startsWith('+') || slowmode.startsWith('-')) ? slowmode.slice(1) : slowmode)) return client.util.throwError(interaction, 'an invalid slowmode was provided');
+            else slowmode = ms((slowmode.startsWith('+') || slowmode.startsWith('-')) ? slowmode.slice(1) : slowmode) / 1000;
+        } else if(slowmode.startsWith('+') || slowmode.startsWith('-')) slowmode = ms((slowmode.startsWith('+') || slowmode.startsWith('-')) ? slowmode.slice(1) : slowmode);
+
+        if (slowmode > 21600) return await client.util.throwError(interaction, 'slowmode must be less than or equal to 21,600 seconds');
+
+        const channel = client.util.getChannel(interaction.guild, args[1]) || interaction.channel;
+        if (!channel.permissionsFor(interaction.guild.me).has(Discord.Permissions.FLAGS.MANAGE_CHANNELS)) return await client.util.throwError(interaction, client.config.errors.my_channel_access_denied);
+
+        if(args['slowmode'].startsWith('+')) slowmode = channel.rateLimitPerUser + parseInt(slowmode);
+        else if (args['slowmode'].startsWith('-')) slowmode = channel.rateLimitPerUser - parseInt(slowmode);
+
+        if (slowmode > 21600) return await client.util.throwError(interaction, 'the current slowmode + the slowmode increment exceeds the 21,600 second limit!');
+
+        if (slowmode < .5) channel.setRateLimitPerUser(0); 
+        else channel.setRateLimitPerUser(slowmode);
 
         const slowmodeEmbed = new Discord.MessageEmbed()
         .setColor(client.config.colors.main)
-        .setDescription(`✅ Set the slowmode for ${channel} to \`${slowmode > 0 ? client.util.duration(slowmode * 1000) : '0 seconds'}\``);
+        .setDescription(`✅ Set the slowmode for ${channel} to \`${slowmode >= 0 ? client.util.duration(slowmode * 1000) : '0 seconds'}\``);
 
         return interaction.reply({ embeds: [slowmodeEmbed] });
     }

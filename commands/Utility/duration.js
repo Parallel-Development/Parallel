@@ -8,7 +8,7 @@ module.exports = {
 
         const inSeconds = args[0] === '--seconds' ? true : false;
         const input = inSeconds ? parseFloat(args[1]) * 1000 : parseFloat(args[0])
-        if (!input) return await client.util.throwError(message, client.config.errors.missing_argument_number);
+        if (!input && input !== 0) return await client.util.throwError(message, client.config.errors.missing_argument_number);
         if (!input && input !== 0) return await client.util.throwError(message, client.config.errors.bad_input_number)
         if (input > 315576000000) return await client.util.throwError(message, client.config.errors.time_too_long);
         const duration = client.util.duration(input)

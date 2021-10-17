@@ -24,7 +24,7 @@ class Utils {
 
     duration(ms) {
 
-        if (!ms && ms !== 0) throw new Error('required argument \'ms\' is missing');
+        if (!ms && ms != 0) throw new Error('required argument \'ms\' is missing');
 
         if (ms == 0) return '0 seconds';
         if (ms < 0) return 'Less than 0 seconds';
