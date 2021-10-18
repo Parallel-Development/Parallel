@@ -20,6 +20,14 @@ module.exports.run = async(client, interaction) => {
         guildID: interaction.guild.id
     })
     userWarnings = userWarnings?.warnings?.filter(warning => warning.userID === user.id);
+    if(!userWarnings.length) {
+        const noWarningsEmbed = new Discord.MessageEmbed()
+        .setColor(client.config.colors.main)
+        .setAuthor(`Warnings for ${user.tag} (${user.id}) - ${userWarnings.length}`, client.user.displayAvatarURL())
+        .setDescription('This user does not have any infractions');
+
+        return interaction.update({ embeds: [noWarningsEmbed] });
+    }
 
     let amountOfPages = Math.floor(userWarnings.length / 7);
     if (amountOfPages < userWarnings.length / 7) amountOfPages++;
