@@ -15,7 +15,7 @@ class ExpiredHandler {
                 expires: { $lte: currentDate },
             })
 
-            for(const expired of expiredDate) {
+            for (const expired of expiredDate) {
                 const { type, userID, guildID, _id, roles } = expired;
 
                 const settings = await settingsSchema.findOne({ guildID: guildID })

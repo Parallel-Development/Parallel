@@ -20,9 +20,9 @@ module.exports =  {
         if (args[0] === "--all") {
 
             const msg = await message.reply('Reloading...')
-            for(const folder of commandFolders) {
+            for (const folder of commandFolders) {
                 const commandFiles = fs.readdirSync(`./commands/${folder}`).filter(file => file.endsWith('.js'))
-                for(const file of commandFiles) {
+                for (const file of commandFiles) {
                     try {
                         delete require.cache[require.resolve(`../${folder}/${file}`)]
                         client.commands.delete(path.parse(file).name)

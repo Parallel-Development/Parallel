@@ -13,9 +13,9 @@ module.exports =  {
         
         await interaction.deferReply();
 
-        for(const folder of commandFolders) {
+        for (const folder of commandFolders) {
             const commandFiles = fs.readdirSync(`./SlashCommands/${folder}`).filter(file => file.endsWith('.js'))
-            for(const file of commandFiles) {
+            for (const file of commandFiles) {
                 try {
                     delete require.cache[require.resolve(`../${folder}/${file}`)]
                     client.slashCommands.delete(path.parse(file).name)

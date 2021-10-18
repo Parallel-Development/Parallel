@@ -29,7 +29,7 @@ module.exports = {
             .setColor(client.config.colors.main)
             .setAuthor(`Shortcut commands for ${message.guild.name}`, client.user.displayAvatarURL())
             const scommands = [];
-            for(const command of shortcutCommands) scommands.push(`\`${command.name}\``)
+            for (const command of shortcutCommands) scommands.push(`\`${command.name}\``)
             viewEmbed.setDescription(`You can get more information about a shortcut command by running \`>help (shortcut command name)\`\n\n${scommands.join(', ')}`)
 
             return message.reply({ embeds: [viewEmbed] })

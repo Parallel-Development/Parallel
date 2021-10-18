@@ -26,7 +26,7 @@ module.exports = {
 
         await done();
 
-        for(let i = 0; i !== channels.length; ++i) {
+        for (let i = 0; i !== channels.length; ++i) {
             const channel = channels[i];
 
             if (!client.guilds.cache.get(message.guild.id).me.permissions.has(Discord.Permissions.FLAGS.ADMINISTRATOR)) {

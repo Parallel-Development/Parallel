@@ -33,10 +33,10 @@ async function getAll(client, interaction, prefix, shortcutCommands, modRoles) {
     .setAuthor('Help | Parallel', client.user.displayAvatarURL())
     .setFooter(`To get specific information about a command, run ${prefix}help <command>`)
 
-    for(const folder of commandFolders) {
+    for (const folder of commandFolders) {
         const commands = []
         const commandFiles = fs.readdirSync(`./SlashCommands/${folder}`).filter(file => file.endsWith('.js'))
-        for(const file of commandFiles) {
+        for (const file of commandFiles) {
             const cmd = client.slashCommands.get(path.parse(file).name);
             if (cmd.developer && client.config.developers.includes(interaction.user.id)) commands.push(`\`${path.parse(file).name}\``)
             else if (!cmd.developer && !cmd.hidden) commands.push(`\`${path.parse(file).name}\``);
@@ -45,7 +45,7 @@ async function getAll(client, interaction, prefix, shortcutCommands, modRoles) {
     }
     if (shortcutCommands.length && (interaction.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_MESSAGES) || interaction.member.roles.cache.some(role => modRoles.includes(role)))) {
         const scommands = [];
-        for(const command of shortcutCommands) scommands.push(`\`${command.name}\``);
+        for (const command of shortcutCommands) scommands.push(`\`${command.name}\``);
         mainHelp.addField('This server\'s shortcuts', scommands.join(', '))
     }
 

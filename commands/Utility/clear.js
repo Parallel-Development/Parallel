@@ -21,7 +21,7 @@ module.exports = {
         if (user) {
 
             let purgedMessages = 0;
-            while(purgedMessages < amount) {
+            while (purgedMessages < amount) {
                 const userMessages = [];
                 const _messages = await message.channel.messages.fetch({ limit: 100 })
                 const messages = [..._messages.values()];

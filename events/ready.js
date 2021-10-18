@@ -14,9 +14,9 @@ module.exports = {
         await client.application.commands.fetch();
 
         client.slashCommands = new Discord.Collection();
-        for(const folder of commandFolders) {
+        for (const folder of commandFolders) {
             const commandFiles = fs.readdirSync(`./SlashCommands/${folder}`);
-            for(const file of commandFiles) {
+            for (const file of commandFiles) {
                 const command = require(`../SlashCommands/${folder}/${file}`);
                 client.slashCommands.set(command.data.name, command);
             }
