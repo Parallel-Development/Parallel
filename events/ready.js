@@ -7,9 +7,9 @@ module.exports = {
     once: true,
     async execute(client) { 
         client.user.setActivity('>help', { type: 'LISTENING'} )
-        console.log(`Logged in as ${client.user.tag}!`);
+        process.stdout.write(`Logged in as ${client.user.tag}!\n`);
         
-        if (global.void === true) console.log('Bot is in void mode');
+        if (global.void === true) process.stdout.write('Bot is in void mode\n');
 
         await client.application.commands.fetch();
 
@@ -22,8 +22,8 @@ module.exports = {
             }
         }
 
-        console.log('All commands have been loaded!');
-        console.log(`Completed in: ${Math.floor(process.uptime())} seconds`)
+        process.stdout.write('All commands have been loaded!\n');
+        process.stdout.write(`Completed in: ${Math.floor(process.uptime())} seconds\n`)
 
         return;
     }
