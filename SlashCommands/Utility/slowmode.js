@@ -14,6 +14,7 @@ module.exports = {
 
         if (!args['slowmode']) return interaction.reply(`The current slowmode is \`${client.util.duration(interaction.channel.rateLimitPerUser * 1000)}\``);
         let slowmode = args['slowmode'];
+        if(!parseInt(slowmode)) return client.util.throwError(interaction, 'an invalid slowmode was provided');
 
         if(!Math.round(slowmode) && slowmode != 0) {
             if(!ms((slowmode.startsWith('+') || slowmode.startsWith('-')) ? slowmode.slice(1) : slowmode)) return client.util.throwError(interaction, 'an invalid slowmode was provided');
