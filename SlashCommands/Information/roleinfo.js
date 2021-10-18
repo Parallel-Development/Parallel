@@ -10,7 +10,7 @@ module.exports = {
 
         const role = client.util.getRole(interaction.guild, args['role']);
 
-        await interaction.defer()
+        await interaction.deferReply()
         await interaction.guild.members.fetch();
 
         const roleInfoEmbed = new Discord.MessageEmbed()
