@@ -4,9 +4,8 @@ module.exports = {
     aliases: ['pong'],
     usage: 'ping',
     async execute(client, message, args) {
-        message.reply('Pinging...')
-        .then(result => {
-            return result.edit(`Pong! Websocket: \`${client.ws.ping}ms\`, Bot latency: \`${result.createdTimestamp - message.createdTimestamp}ms\``)
-        })
+        const now = performance.now()
+        const msg = await message.reply('Pinging...')
+        return msg.edit(`Pong! Websocket: \`${client.ws.ping}ms\`, Bot latency: \`${Math.round(performance.now() - now)}ms\``)
     }
 }
