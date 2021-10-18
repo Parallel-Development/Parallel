@@ -134,7 +134,7 @@ module.exports = {
                     
                     }
                 
-                    await channel.permissionOverwrites.set(newPermissionOverwrites, `Command /lockserver ran by ${interaction.author.tag} (${interaction.author.id})`).catch(async() => await interaction.editReply('Hmm...'));
+                    await channel.permissionOverwrites.set(newPermissionOverwrites, `Command /lockserver ran by ${interaction.user.tag} (${interaction.user.id})`).catch(async() => await interaction.editReply('Hmm...'));
 
                     await lockSchema.updateOne({
                         guildID: interaction.guild.id
