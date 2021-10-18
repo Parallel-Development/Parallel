@@ -24,6 +24,6 @@ module.exports = {
             .addField('Created on', client.util.timestamp(role.createdAt))
             .setFooter(`Information requested by ${interaction.user.tag}`, interaction.user.displayAvatarURL())
 
-        return interaction.reply({ embeds: [roleInfoEmbed] })
+        return interaction.editReply({ embeds: [roleInfoEmbed] })
     }
 }
