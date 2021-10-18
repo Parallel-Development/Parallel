@@ -7,9 +7,7 @@ const reqString = {
 
 const warningSchema = mongoose.Schema({
     guildname: reqString,
-    guildID: String,
-    guildid: String,
-    userid: String,
+    guildID: reqString,
     warnings: [Object]
 })
 

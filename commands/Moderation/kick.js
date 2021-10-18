@@ -12,16 +12,16 @@ module.exports = {
     permissions: Discord.Permissions.FLAGS.KICK_MEMBERS,
     requiredBotPermission: Discord.Permissions.FLAGS.KICK_MEMBERS,
     async execute(client, message, args) {
-        if (!args[0]) return await client.util.throwError(message, client.config.errors.missing_argument_member);
+        if (!args[0]) return client.util.throwError(message, client.config.errors.missing_argument_member);
 
         const member = await client.util.getMember(message.guild, args[0])
-        if (!member) return await client.util.throwError(message, client.config.errors.invalid_member);
+        if (!member) return client.util.throwError(message, client.config.errors.invalid_member);
 
-        if (member.id === client.user.id) return await client.util.throwError(message, client.config.errors.cannot_punish_myself);
-            if (member.id === message.member.id) return await client.util.throwError(message, client.config.errors.cannot_punish_yourself);
-            if (member.roles.highest.position >= message.member.roles.highest.position && message.member.id !== message.guild.ownerId) return await client.util.throwError(message, client.config.errors.hierarchy);
-            if (member.roles.highest.position >= message.guild.me.roles.highest.position) return await client.util.throwError(message, client.config.errors.my_hierarchy);
-            if (member.id === message.guild.ownerId) return await client.util.throwError(message, client.config.errors.cannot_punish_owner)
+        if (member.id === client.user.id) return client.util.throwError(message, client.config.errors.cannot_punish_myself);
+            if (member.id === message.member.id) return client.util.throwError(message, client.config.errors.cannot_punish_yourself);
+            if (member.roles.highest.position >= message.member.roles.highest.position && message.member.id !== message.guild.ownerId) return client.util.throwError(message, client.config.errors.hierarchy);
+            if (member.roles.highest.position >= message.guild.me.roles.highest.position) return client.util.throwError(message, client.config.errors.my_hierarchy);
+            if (member.id === message.guild.ownerId) return client.util.throwError(message, client.config.errors.cannot_punish_owner)
 
         const punishmentID = client.util.generateID();
 

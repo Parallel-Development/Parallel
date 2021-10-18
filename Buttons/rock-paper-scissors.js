@@ -11,7 +11,7 @@ module.exports.run = async(client, interaction) => {
 
     if (Date.now() - interaction.message.createdAt > 30000) {
         interaction.message.edit({ content: interaction.message.content, components: [join] })
-        return await client.util.throwError(interaction, 'This request has already expired');
+        return client.util.throwError(interaction, 'This request has already expired');
     }
 
     let requested = interaction.message.content.split(' ')[0].replace(',', '');
@@ -20,7 +20,7 @@ module.exports.run = async(client, interaction) => {
         if (requested.startsWith('!')) requested = requested.slice(1);
     }
 
-     if (interaction.user.id !== requested) return await client.util.throwError(interaction, client.config.errors.no_button_access);
+     if (interaction.user.id !== requested) return client.util.throwError(interaction, client.config.errors.no_button_access);
 
     if (interaction.customId === 'deny') {
         
@@ -60,7 +60,7 @@ module.exports.run = async(client, interaction) => {
 
 
     collector.on('collect', async(_interaction) => {
-        if (answers.some(answer => answer.ID === _interaction.user.id)) return await client.util.throwError(_interaction, 'You already answered!');
+        if (answers.some(answer => answer.ID === _interaction.user.id)) return client.util.throwError(_interaction, 'You already answered!');
         answers.push({ ID: _interaction.user.id, answer: _interaction.customId });
         await _interaction.reply({ content: `Your answer ${_interaction.customId} has been collected`, ephemeral: true });
 

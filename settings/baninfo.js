@@ -16,7 +16,7 @@ exports.run = async (client, message, args) => {
         return message.reply({ embeds: [banInfoCurrentMessage] })
     }
 
-    if (banInfoMessage.length > 1000) return await client.util.throwError(message, 'Ban information field must be less than or equal to 1000 characters!')
+    if (banInfoMessage.length > 1000) return client.util.throwError(message, 'Ban information field must be less than or equal to 1000 characters!')
 
     await settingsSchema.updateOne({
         guildID: message.guild.id

@@ -138,7 +138,7 @@ class Utils {
             mention = mention.slice(2, -1);
             if (mention.startsWith('!')) mention = mention.slice(1);
         }
-        return await client.users.fetch(mention).catch(() => {})
+        return client.users.fetch(mention).catch(() => {})
     }
 
     getRole(guild, mention) {

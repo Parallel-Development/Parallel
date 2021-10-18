@@ -43,12 +43,12 @@ module.exports = {
         if (!members.length) return msg.edit({ embeds: [ new Discord.MessageEmbed().setColor(client.config.colors.main).setDescription('No results found') ] });
 
         result.setFooter(`${members.length} results`)
-        return await msg.edit({ embeds: [result] }).catch(async() => {
+        return msg.edit({ embeds: [result] }).catch(async() => {
             const newResult = await client.util.createBin(members.map(m => `${m.user.tag} | ID: ${m.id} | Username: ${m.user.username} | Display Name: \`${m.displayName}\``));
             const newResultEmbed = new Discord.MessageEmbed()
             .setColor(client.config.colors.main)
             .setDescription(`Failed to send the result! View the result [here](${newResult}) (**${members.length}** results)`)
-            return await msg.edit({ embeds: [newResultEmbed] })
+            return msg.edit({ embeds: [newResultEmbed] })
         })
     }
 }

@@ -5,6 +5,8 @@ const ModerationLogger = require('../../structures/ModerationLogger');
 const DMUserInfraction = require('../../structures/DMUserInfraction');
 const Infraction = require('../../structures/Infraction');
 const Punishment = require('../../structures/Punishment');
+const warningSchema = require('../../schemas/warning-schema');
+const punishmentSchema = require('../../schemas/punishment-schema');
 
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
@@ -18,22 +20,22 @@ module.exports = {
     async execute(client, message, args) {
 
         const member = await client.util.getMember(message.guild, args[0]) || await client.util.getUser(client, args[0]);
-        if (!member) return await client.util.throwError(message, client.config.errors.invalid_member);
+        if (!member) return client.util.throwError(message, client.config.errors.invalid_member);
 
         const alreadyBanned = await message.guild.bans.fetch().then(bans => bans.find(ban => ban.user.id === member.id));
-        if (alreadyBanned) return await client.util.throwError(message, 'This user is already banned')
+        if (alreadyBanned) return client.util.throwError(message, 'This user is already banned')
 
         const __time = args[1];
         const time = parseInt(__time) && __time !== '' ? ms(__time) : null
-        if (time && time > 315576000000) return await client.util.throwError(message, client.config.errors.time_too_long);
+        if (time && time > 315576000000) return client.util.throwError(message, client.config.errors.time_too_long);
         const reason = time ? args.slice(2).join(' ') || 'Unspecified' : args.slice(1).join(' ') || 'Unspecified'
 
         if (member.user) {
-            if (member.id === client.user.id) return await client.util.throwError(message, client.config.errors.cannot_punish_myself);
-            if (member.id === message.member.id) return await client.util.throwError(message, client.config.errors.cannot_punish_yourself);
-            if (member.roles.highest.position >= message.member.roles.highest.position && message.member.id !== message.guild.ownerId) return await client.util.throwError(message, client.config.errors.hierarchy);
-            if (member.roles.highest.position >= message.guild.me.roles.highest.position) return await client.util.throwError(message, client.config.errors.my_hierarchy);
-            if (member.id === message.guild.ownerId) return await client.util.throwError(message, client.config.errors.cannot_punish_owner)
+            if (member.id === client.user.id) return client.util.throwError(message, client.config.errors.cannot_punish_myself);
+            if (member.id === message.member.id) return client.util.throwError(message, client.config.errors.cannot_punish_yourself);
+            if (member.roles.highest.position >= message.member.roles.highest.position && message.member.id !== message.guild.ownerId) return client.util.throwError(message, client.config.errors.hierarchy);
+            if (member.roles.highest.position >= message.guild.me.roles.highest.position) return client.util.throwError(message, client.config.errors.my_hierarchy);
+            if (member.id === message.guild.ownerId) return client.util.throwError(message, client.config.errors.cannot_punish_owner)
         };
 
         const punishmentID = client.util.generateID();
@@ -44,6 +46,31 @@ module.exports = {
         const { baninfo } = settings;
         const { delModCmds } = settings;
         if (delModCmds) message.delete();
+
+        const guildWarnings = await warningSchema.findOne({ guildID: message.guild.id });
+        const bansToExpire = guildWarnings.warnings.filter(warning => warning.expires > Date.now() && warning.type === 'Ban');
+        for (let i = 0; i !== bansToExpire.length; ++i) {
+            const ban = bansToExpire[i];
+            await warningSchema.updateOne({
+            guildID: message.guild.id,
+            warnings: {
+                $elemMatch: {
+                    punishmentID: ban.punishmentID
+                }
+            }
+            },
+            {
+                $set: {
+                    "warnings.$.expires": Date.now()
+                }
+            })
+        }
+
+        await punishmentSchema.deleteMany({
+            guildID: message.guild.id,
+            type: 'ban',
+            userID: member.id
+        })
 
         
         if (member.user) await new DMUserInfraction(client, 'banned', client.config.colors.punishment[2], message, member, { reason: reason, punishmentID: punishmentID, time: time, baninfo: baninfo !== 'none' ? baninfo : null });

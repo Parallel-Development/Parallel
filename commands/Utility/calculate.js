@@ -7,7 +7,7 @@ module.exports = {
     usage: 'calculate <calculation>',
     aliases: ['calc'],
     async execute(client, message, args) {
-        if (!args[0]) return await client.util.throwError(message, 'Please input a calculation')
+        if (!args[0]) return client.util.throwError(message, 'Please input a calculation')
 
         let resp;
         try {

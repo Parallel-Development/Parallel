@@ -38,7 +38,7 @@ module.exports = {
                 return answered = true;
             }
 
-            if (!parseInt(message.content) && parseInt(message.content) !== 0) return await client.util.throwError(message, client.config.errors.bad_input_number);
+            if (!parseInt(message.content) && parseInt(message.content) !== 0) return client.util.throwError(message, client.config.errors.bad_input_number);
             if (parseInt(message.content) > 1000 || parseInt(message.content) < 0) return message.reply('Number must be within the range of 0 to 1,000')
 
             tries++;

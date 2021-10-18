@@ -53,7 +53,7 @@ module.exports = {
             removerolesonmute: false
         }).save()
 
-        let prefix = settings.prefix || client.config.prefix;
+        let prefix = global.perpendicular ? '%' : settings.prefix || client.config.prefix;
         if (new RegExp(`^<@!?${client.user.id}>`).exec(message.content)?.index === 0) prefix = message.content.split(' ')[0] + ' ';
         const { muterole, removerolesonmute } = settings;
 
@@ -291,21 +291,21 @@ module.exports = {
             if (!message.guild.me.permissions.has(permissions) && permissions !== 'warn') return missingPerms(permissions.replace(pemissions.toUpperCase().replace('_', ' ').replace('_', ' ')));
 
             if (shortcmd.type === 'mute' || shortcmd.type === 'tempmute' || shortcmd.type === 'ban' || shortcmd.type === 'tempban') {
-                if (!args[0]) return await client.util.throwError(message, client.config.errors.missing_argument_user)
+                if (!args[0]) return client.util.throwError(message, client.config.errors.missing_argument_user)
                 member = await client.util.getMember(message.guild, args[0]) || await client.util.getUser(client, args[0])
-                if (!member) return await client.util.throwError(message, client.config.errors.missing_argument_user);
+                if (!member) return client.util.throwError(message, client.config.errors.missing_argument_user);
 
                 if (member.user) {
-                    if (member.id === client.user.id) return await client.util.throwError(message, client.config.errors.cannot_punish_myself);
-                    if (member.id === message.member.id) return await client.util.throwError(message, client.config.errors.cannot_punish_yourself);
-                    if (member.roles.highest.position >= message.member.roles.highest.position && message.member.id !== message.guild.ownerId) return await client.util.throwError(message, client.config.errors.hierarchy);
-                    if (member.roles.highest.position >= message.guild.me.roles.highest.position) return await client.util.throwError(message, client.config.errors.my_hierarchy);
-                    if (member === message.guild.owner) return await client.util.throwError(message, client.config.errors.cannot_punish_owner)
+                    if (member.id === client.user.id) return client.util.throwError(message, client.config.errors.cannot_punish_myself);
+                    if (member.id === message.member.id) return client.util.throwError(message, client.config.errors.cannot_punish_yourself);
+                    if (member.roles.highest.position >= message.member.roles.highest.position && message.member.id !== message.guild.ownerId) return client.util.throwError(message, client.config.errors.hierarchy);
+                    if (member.roles.highest.position >= message.guild.me.roles.highest.position) return client.util.throwError(message, client.config.errors.my_hierarchy);
+                    if (member === message.guild.owner) return client.util.throwError(message, client.config.errors.cannot_punish_owner)
                 }
 
                 if (shortcmd.type === 'ban' || shortcmd.type === 'tempban') {
                     const alreadyBanned = await message.guild.bans.fetch().then(bans => bans.find(ban => ban.user.id === member.id));
-                    if (alreadyBanned) return await client.util.throwError(message, 'This user is already banned');
+                    if (alreadyBanned) return client.util.throwError(message, 'This user is already banned');
 
                     const { baninfo } = settings;
 
@@ -323,13 +323,13 @@ module.exports = {
                         type: 'mute'
                     })
 
-                    if (member.permissions.has(Discord.Permissions.FLAGS.MANAGE_ROLES) && !removerolesonmute) return await client.util.throwError(message, 'This command may not be effective on this member | If you have the **Remove Roles On Mute** module enabled, this may work');
+                    if (member.permissions.has(Discord.Permissions.FLAGS.MANAGE_ROLES) && !removerolesonmute) return client.util.throwError(message, 'This command may not be effective on this member | If you have the **Remove Roles On Mute** module enabled, this may work');
 
                     const role = message.guild.roles.cache.get(muterole) || await client.util.createMuteRole(message);
 
-                    if (role.position >= message.guild.me.roles.highest.position) return await client.util.throwError(message, 'My hierarchy is too low to manage the muted role')
+                    if (role.position >= message.guild.me.roles.highest.position) return client.util.throwError(message, 'My hierarchy is too low to manage the muted role')
 
-                    if (member?.roles?.cache?.has(role.id)) return await client.util.throwError(message, 'This user already currently muted');
+                    if (member?.roles?.cache?.has(role.id)) return client.util.throwError(message, 'This user already currently muted');
                     else if (hasMuteRecord) {
                         await punishmentSchema.deleteMany({
                             guildID: message.guild.id,
@@ -353,15 +353,15 @@ module.exports = {
 
 
             } else {
-                if (!args[0]) return await client.util.throwError(message, client.config.errors.missing_argument_member)
+                if (!args[0]) return client.util.throwError(message, client.config.errors.missing_argument_member)
                 member = await client.util.getMember(message.guild, args[0])
-                if (!member) return await client.util.throwError(message, client.config.errors.missing_argument_member);
+                if (!member) return client.util.throwError(message, client.config.errors.missing_argument_member);
 
-                if (member.id === client.user.id) return await client.util.throwError(message, client.config.errors.cannot_punish_myself);
-                if (member.id === message.member.id) return await client.util.throwError(message, client.config.errors.cannot_punish_yourself);
-                if (member.roles.highest.position >= message.member.roles.highest.position && message.member.id !== message.guild.ownerId) return await client.util.throwError(message, client.config.errors.hierarchy);
-                if (shortcmd.type === 'kick') if (member.roles.highest.position >= message.guild.me.roles.highest.position) return await client.util.throwError(message, client.config.errors.my_hierarchy);
-                if (member === message.guild.owner) return await client.util.throwError(message, client.config.errors.cannot_punish_owner);
+                if (member.id === client.user.id) return client.util.throwError(message, client.config.errors.cannot_punish_myself);
+                if (member.id === message.member.id) return client.util.throwError(message, client.config.errors.cannot_punish_yourself);
+                if (member.roles.highest.position >= message.member.roles.highest.position && message.member.id !== message.guild.ownerId) return client.util.throwError(message, client.config.errors.hierarchy);
+                if (shortcmd.type === 'kick') if (member.roles.highest.position >= message.guild.me.roles.highest.position) return client.util.throwError(message, client.config.errors.my_hierarchy);
+                if (member === message.guild.owner) return client.util.throwError(message, client.config.errors.cannot_punish_owner);
 
                 if (shortcmd.type === 'kick') {
                     new DMUserInfraction(client, 'kicked', client.config.colors.punishment[1], message, member, { reason: shortcmd.reason, punishmentID: punishmentID, time: 'ignore' });
@@ -461,7 +461,7 @@ module.exports = {
 
 
         if (command.developing && !client.config.developers.includes(message.author.id)) return;
-        if (command.developer && !client.config.developers.includes(message.author.id)) return await client.util.throwError(message, 'You do not have access to run this command; this command is restricted to a specific set of users');
+        if (command.developer && !client.config.developers.includes(message.author.id)) return client.util.throwError(message, 'You do not have access to run this command; this command is restricted to a specific set of users');
 
         if (
             command.permissions &&

@@ -9,9 +9,9 @@ exports.run = async (client, message, args) => {
 
     switch (args[1].toLowerCase()) {
         case 'enable':
-            if (!args[0]) return await client.util.throwError(message, client.config.errors.missing_argument_channel);
+            if (!args[0]) return client.util.throwError(message, client.config.errors.missing_argument_channel);
             const enableChannel = client.util.getChannel(message.guild, args[2])
-            if (!enableChannel) return await client.util.throwError(message, client.config.errors.invalid_channel);
+            if (!enableChannel) return client.util.throwError(message, client.config.errors.invalid_channel);
             if (enableChannel?.type !== 'GUILD_TEXT') return client.util.throwError(message, client.config.errors.not_type_text_channel);
 
             var prevent = false
@@ -59,8 +59,8 @@ exports.run = async (client, message, args) => {
             break;
         case 'enablecategory':
             const enableCategory = message.guild.channels.cache.find(c => c.name === args.slice(2).join(' ')) || message.guild.channels.cache.find(c => c.id === args[2])
-            if (!enableCategory) return await client.util.throwError(message, 'Please specify the category you want to enable commands in')
-            if (enableCategory.type !== 'GUILD_CATEGORY') return await client.util.throwError(message, 'Please specify a category only')
+            if (!enableCategory) return client.util.throwError(message, 'Please specify the category you want to enable commands in')
+            if (enableCategory.type !== 'GUILD_CATEGORY') return client.util.throwError(message, 'Please specify a category only')
 
             const alreadyEnabledCategory = await settingsSchema.findOne({
                 guildID: message.guild.id,
@@ -111,8 +111,8 @@ exports.run = async (client, message, args) => {
 
         case 'disable':
             const disableChannel = client.util.getChannel(message.guild, args[2]);
-            if (disableChannel?.type !== 'GUILD_TEXT') return await client.util.throwError(message, 'The channel must only be a text channel!')
-            if (!disableChannel) return await client.util.throwError(message, 'Please specify the channel you wish to manage')
+            if (disableChannel?.type !== 'GUILD_TEXT') return client.util.throwError(message, 'The channel must only be a text channel!')
+            if (!disableChannel) return client.util.throwError(message, 'Please specify the channel you wish to manage')
 
             var prevent = false
             for (let i = 0; i !== locked.length; ++i) {
@@ -158,8 +158,8 @@ exports.run = async (client, message, args) => {
             break;
         case 'disablecategory':
             const disableCategory = message.guild.channels.cache.find(c => c.name === args.slice(2).join(' ')) || message.guild.channels.cache.find(c => c.id === args[2])
-            if (!disableCategory) return await client.util.throwError(message, 'Please specify the category you want to disable commands in')
-            if (disableCategory.type !== 'GUILD_CATEGORY') return await client.util.throwError(message, 'Please specify a category only')
+            if (!disableCategory) return client.util.throwError(message, 'Please specify the category you want to disable commands in')
+            if (disableCategory.type !== 'GUILD_CATEGORY') return client.util.throwError(message, 'Please specify a category only')
 
             const alreadyDisabledCategory = await settingsSchema.findOne({
                 guildID: message.guild.id,

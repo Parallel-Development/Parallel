@@ -54,9 +54,9 @@ module.exports = {
 
         const duration = args[2] ? ms(args[2]) : null
         if (!duration && (args[1] === 'tempmute' || args[1] === 'temban')) {
-            if (!args[2]) return await client.util.throwError(message, client.config.errors.missing_argument_duration)
-            else return await client.util.throwError(message, client.config.errors.bad_duration)
-        } else if (duration && duration > 315576000000 && (args[1] === 'tempmute' || args[1] === 'tempban')) return await client.util.throwError(message, client.config.errors.time_too_long);
+            if (!args[2]) return client.util.throwError(message, client.config.errors.missing_argument_duration)
+            else return client.util.throwError(message, client.config.errors.bad_duration)
+        } else if (duration && duration > 315576000000 && (args[1] === 'tempmute' || args[1] === 'tempban')) return client.util.throwError(message, client.config.errors.time_too_long);
 
         // FUNCTIONS ================================================================================
 
@@ -364,9 +364,9 @@ module.exports = {
                         break;
                     default:
                         if (!args[1]) {
-                            return await client.util.throwError(message, client.config.errors.missing_argument_option)
+                            return client.util.throwError(message, client.config.errors.missing_argument_option)
                         } else {
-                            return await client.util.throwError(message, client.config.errors.invalid_option)
+                            return client.util.throwError(message, client.config.errors.invalid_option)
                         }
                 }
                 break;
@@ -374,7 +374,7 @@ module.exports = {
             case 'filterlist':
 
                 const word = args.slice(2).join(' ');
-                if (!args[2] && (args[1] && args[1] !== 'remove' && args[1] !== 'removeall' && args[1] !== 'view')) return await client.util.throwError(message, 'Please specify a word');
+                if (!args[2] && (args[1] && args[1] !== 'remove' && args[1] !== 'removeall' && args[1] !== 'view')) return client.util.throwError(message, 'Please specify a word');
 
                 switch (toggle) {
                     case 'add':
@@ -434,9 +434,9 @@ module.exports = {
                         break;
                     default:
                         if (!args[1]) {
-                            return await client.util.throwError(message, client.config.errors.missing_argument_option)
+                            return client.util.throwError(message, client.config.errors.missing_argument_option)
                         } else {
-                            return await client.util.throwError(message, client.config.errors.invalid_option)
+                            return client.util.throwError(message, client.config.errors.invalid_option)
                         }
                 }
                 break;
@@ -526,9 +526,9 @@ module.exports = {
                         break;
                     default:
                         if (!args[1]) {
-                            return await client.util.throwError(message, client.config.errors.missing_argument_option)
+                            return client.util.throwError(message, client.config.errors.missing_argument_option)
                         } else {
-                            return await client.util.throwError(message, client.config.errors.invalid_option)
+                            return client.util.throwError(message, client.config.errors.invalid_option)
                         }
                 }
                 break;
@@ -608,9 +608,9 @@ module.exports = {
                         break;
                     default:
                         if (!args[1]) {
-                            return await client.util.throwError(message, client.config.errors.missing_argument_option)
+                            return client.util.throwError(message, client.config.errors.missing_argument_option)
                         } else {
-                            return await client.util.throwError(message, client.config.errors.invalid_option)
+                            return client.util.throwError(message, client.config.errors.invalid_option)
                         }
                 }
                 break;
@@ -690,9 +690,9 @@ module.exports = {
                         break;
                     default:
                         if (!args[1]) {
-                            return await client.util.throwError(message, client.config.errors.missing_argument_option)
+                            return client.util.throwError(message, client.config.errors.missing_argument_option)
                         } else {
-                            return await client.util.throwError(message, client.config.errors.invalid_option)
+                            return client.util.throwError(message, client.config.errors.invalid_option)
                         }
                 }
                 break;
@@ -774,9 +774,9 @@ module.exports = {
                         break;
                     default:
                         if (!args[1]) {
-                            return await client.util.throwError(message, client.config.errors.missing_argument_option)
+                            return client.util.throwError(message, client.config.errors.missing_argument_option)
                         } else {
-                            return await client.util.throwError(message, client.config.errors.invalid_option)
+                            return client.util.throwError(message, client.config.errors.invalid_option)
                         }
                 }
                 break;
@@ -856,9 +856,9 @@ module.exports = {
                         break;
                     default:
                         if (!args[1]) {
-                            return await client.util.throwError(message, client.config.errors.missing_argument_option)
+                            return client.util.throwError(message, client.config.errors.missing_argument_option)
                         } else {
-                            return await client.util.throwError(message, client.config.errors.invalid_option)
+                            return client.util.throwError(message, client.config.errors.invalid_option)
                         }
                 }
                 break;
@@ -867,8 +867,8 @@ module.exports = {
 
                 switch (toggle) {
                     case 'add':
-                        if (!bypassChannel) return await client.util.throwError(message, client.config.errors.missing_argument_channel)
-                        if (bypassChannel.type !== 'GUILD_TEXT') return await client.util.throwError(message, client.config.errors.not_type_text_channel)
+                        if (!bypassChannel) return client.util.throwError(message, client.config.errors.missing_argument_channel)
+                        if (bypassChannel.type !== 'GUILD_TEXT') return client.util.throwError(message, client.config.errors.not_type_text_channel)
                         const alreadyInBypassList0 = await automodSchema.findOne({
                             guildID: message.guild.id,
                             bypassChannels: bypassChannel.id
@@ -885,7 +885,7 @@ module.exports = {
                         await message.reply(`${bypassChannel} has been added to the automod bypass list`)
                         break;
                     case 'remove':
-                        if (!bypassChannel) return await client.util.throwError(message, client.config.errors.missing_argument_channel)
+                        if (!bypassChannel) return client.util.throwError(message, client.config.errors.missing_argument_channel)
                         const alreadyInBypassList1 = await automodSchema.findOne({
                             guildID: message.guild.id,
                             bypassChannels: bypassChannel.id
@@ -942,9 +942,9 @@ module.exports = {
                         break;
                     default:
                         if (!args[1]) {
-                            return await client.util.throwError(message, client.config.errors.missing_argument_option)
+                            return client.util.throwError(message, client.config.errors.missing_argument_option)
                         } else {
-                            return await client.util.throwError(message, client.config.errors.invalid_option)
+                            return client.util.throwError(message, client.config.errors.invalid_option)
                         }
 
                 }
@@ -954,7 +954,7 @@ module.exports = {
                 switch (toggle) {
                     case 'add':
                         var bypassRole = client.util.getRole(message.guild, args[2]) || message.guild.roles.cache.find(r => r.name === args.slice(2).join(' '))
-                        if (!bypassRole) return await client.util.throwError(message, client.config.errors.missing_argument_role)
+                        if (!bypassRole) return client.util.throwError(message, client.config.errors.missing_argument_role)
                         const alreadyInBypassList0 = await automodSchema.findOne({
                             guildID: message.guild.id,
                             bypassRoles: bypassRole.id
@@ -972,7 +972,7 @@ module.exports = {
                         break;
                     case 'remove':
                         var bypassRole = client.util.getRole(args[2]) || message.guild.roles.cache.find(r => r.name === args.slice(2).join(' '))
-                        if (!bypassRole) return await client.util.throwError(message, client.config.errors.missing_argument_role)
+                        if (!bypassRole) return client.util.throwError(message, client.config.errors.missing_argument_role)
                         const alreadyInBypassList1 = await automodSchema.findOne({
                             guildID: message.guild.id,
                             bypassRoles: bypassRole.id
@@ -1030,9 +1030,9 @@ module.exports = {
                         break;
                     default:
                         if (!args[1]) {
-                            return await client.util.throwError(message, client.config.errors.missing_argument_option)
+                            return client.util.throwError(message, client.config.errors.missing_argument_option)
                         } else {
-                            return await client.util.throwError(message, client.config.errors.invalid_option)
+                            return client.util.throwError(message, client.config.errors.invalid_option)
                         }
 
                 }

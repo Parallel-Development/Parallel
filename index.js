@@ -1,6 +1,9 @@
 if (process.argv.slice(2).includes('--v') || process.argv.slice(2).includes('--void')) {
     global.void = true;
 }
+if (process.argv.slice(2).includes('--perpendicular') || process.argv.slice(2).includes('--p')) {
+    global.perpendicular = true;
+}
 
 const Discord = require('discord.js');
 const client = new Discord.Client({ intents: [
@@ -41,4 +44,4 @@ new EventHandler(client), new CommandHandler(client), new ExpiredHandler(client)
 
 process.on('uncaughtException', (error) => console.error(error));
 
-client.login(client.config.token);
+client.login(global.perpendicular ? client.config.perpendicularToken : client.config.token);

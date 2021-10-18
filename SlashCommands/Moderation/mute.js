@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 const ms = require('ms');
 const settingsSchema = require('../../schemas/settings-schema');
+const warningSchema = require('../../schemas/warning-schema');
 const punishmentSchema = require('../../schemas/punishment-schema');
 
 const ModerationLogger = require('../../structures/ModerationLogger');
@@ -81,6 +82,28 @@ module.exports = {
                 userID: member.id,
                 type: 'mute'
             })
+
+            const guildWarnings = await warningSchema.findOne({ guildID: interaction.guild.id });
+            const mutesToExpire = guildWarnings.warnings.filter(warning => warning.expires > Date.now() && warning.type === 'Mute');
+
+            for (let i = 0; i !== mutesToExpire.length; ++i) {
+
+                const mute = mutesToExpire[i];
+
+                await warningSchema.updateOne({
+                guildID: interaction.guild.id,
+                warnings: {
+                    $elemMatch: {
+                        punishmentID: mute.punishmentID
+                    }
+                }
+                },
+                {
+                    $set: {
+                        "warnings.$.expires": Date.now()
+                    }
+                })
+            }
         }
 
         const memberRoles = removerolesonmute ? member.roles.cache.map(roles => roles.id) : [];

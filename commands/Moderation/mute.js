@@ -2,6 +2,7 @@ const Discord = require('discord.js');
 const ms = require('ms');
 const settingsSchema = require('../../schemas/settings-schema');
 const punishmentSchema = require('../../schemas/punishment-schema');
+const warningSchema = require('../../schemas/warning-schema');
 
 const ModerationLogger = require('../../structures/ModerationLogger');
 const DMUserInfraction = require('../../structures/DMUserInfraction');
@@ -23,14 +24,14 @@ module.exports = {
 
         const { muterole, delModCmds, removerolesonmute } = settings;
 
-        if (!args[0]) return await client.util.throwError(message, client.config.errors.missing_argument_user);
+        if (!args[0]) return client.util.throwError(message, client.config.errors.missing_argument_user);
 
         const member = await client.util.getMember(message.guild, args[0])
-        if (member && member.permissions.has(Discord.Permissions.FLAGS.MANAGE_ROLES) && !removerolesonmute) return await client.util.throwError(message, 'This command may not be effective on this member | If you have the **Remove Roles On Mute** module enabled, this may work');
+        if (member && member.permissions.has(Discord.Permissions.FLAGS.MANAGE_ROLES) && !removerolesonmute) return client.util.throwError(message, 'This command may not be effective on this member | If you have the **Remove Roles On Mute** module enabled, this may work');
 
         const __time = args[1];
         const time = parseInt(__time) && __time !== '' ? ms(__time) : null
-        if (time && time > 315576000000) return await client.util.throwError(message, client.config.errors.time_too_long);
+        if (time && time > 315576000000) return client.util.throwError(message, client.config.errors.time_too_long);
         const reason = time ? args.slice(2).join(' ') || 'Unspecified' : args.slice(1).join(' ') || 'Unspecified';
 
         const punishmentID = client.util.generateID();
@@ -45,7 +46,7 @@ module.exports = {
                 type: 'mute'
             })
 
-            if (hasMuteRecord) return await client.util.throwError(message, 'This user already currently muted');
+            if (hasMuteRecord) return client.util.throwError(message, 'This user already currently muted');
 
             new Infraction(client, 'Mute', message, message.member, user, { reason: reason, punishmentID: punishmentID, time: time, auto: false });
             new Punishment(message.guild.name, message.guild.id, 'mute', user.id, { reason: reason, time: time ? Date.now() + time : 'Never' });
@@ -54,14 +55,14 @@ module.exports = {
             return message.reply(`**${user.tag}** has been muted. They are not currently on the server, but when they rejoin they will be muted`);
         }
 
-        if (!member) return await client.util.throwError(message, client.config.errors.invalid_member);
+        if (!member) return client.util.throwError(message, client.config.errors.invalid_member);
 
         if (member.user) {
-            if (member.id === client.user.id) return await client.util.throwError(message, client.config.errors.cannot_punish_myself);
-            if (member.id === message.member.id) return await client.util.throwError(message, client.config.errors.cannot_punish_yourself);
-            if (member.roles.highest.position >= message.member.roles.highest.position && message.member.id !== message.guild.ownerId) return await client.util.throwError(message, client.config.errors.hierarchy);
-            if (member.roles.highest.position >= message.guild.me.roles.highest.position) return await client.util.throwError(message, client.config.errors.my_hierarchy);
-            if (member.id === message.guild.ownerId) return await client.util.throwError(message, client.config.errors.cannot_punish_owner)
+            if (member.id === client.user.id) return client.util.throwError(message, client.config.errors.cannot_punish_myself);
+            if (member.id === message.member.id) return client.util.throwError(message, client.config.errors.cannot_punish_yourself);
+            if (member.roles.highest.position >= message.member.roles.highest.position && message.member.id !== message.guild.ownerId) return client.util.throwError(message, client.config.errors.hierarchy);
+            if (member.roles.highest.position >= message.guild.me.roles.highest.position) return client.util.throwError(message, client.config.errors.my_hierarchy);
+            if (member.id === message.guild.ownerId) return client.util.throwError(message, client.config.errors.cannot_punish_owner)
         }
 
         let hasMuteRecord = await punishmentSchema.findOne({
@@ -72,15 +73,37 @@ module.exports = {
         
         const role = message.guild.roles.cache.get(muterole) || await client.util.createMuteRole(message);
 
-        if (role.position >= message.guild.me.roles.highest.position) return await client.util.throwError(message, 'My hierarchy is too low to manage the muted role')
+        if (role.position >= message.guild.me.roles.highest.position) return client.util.throwError(message, 'My hierarchy is too low to manage the muted role')
 
-        if (member.roles.cache.has(role.id)) return await client.util.throwError(message, 'This user is already currently muted!');
+        if (member.roles.cache.has(role.id)) return client.util.throwError(message, 'This user is already currently muted!');
         else if (hasMuteRecord) {
             await punishmentSchema.deleteMany({
                 guildID: message.guild.id,
                 userID: member.id,
                 type: 'mute'
             })
+
+            const guildWarnings = await warningSchema.findOne({ guildID: interaction.guild.id });
+            const mutesToExpire = guildWarnings.warnings.filter(warning => warning.expires > Date.now() && warning.type === 'Mute');
+
+            for (let i = 0; i !== mutesToExpire.length; ++i) {
+
+                const mute = mutesToExpire[i];
+
+                await warningSchema.updateOne({
+                guildID: interaction.guild.id,
+                warnings: {
+                    $elemMatch: {
+                        punishmentID: mute.punishmentID
+                    }
+                }
+                },
+                {
+                    $set: {
+                        "warnings.$.expires": Date.now()
+                    }
+                })
+            }
         }
 
         if (delModCmds) message.delete();

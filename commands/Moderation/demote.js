@@ -9,18 +9,18 @@ module.exports = {
     requiredBotPermission: Discord.Permissions.FLAGS.MANAGE_ROLES,
     async execute(client, message, args) {
 
-        if (!args[0]) return await client.util.throwError(message, client.config.errors.missing_argument_member);
+        if (!args[0]) return client.util.throwError(message, client.config.errors.missing_argument_member);
 
         const member = await client.util.getMember(message.guild, args[0])
-        if (!member) return await client.util.throwError(message, client.config.errors.invalid_member);
+        if (!member) return client.util.throwError(message, client.config.errors.invalid_member);
 
-        if (member.id === client.user.id) return await client.util.throwError(message, client.config.errors.cannot_punish_myself);
-        if (member.id === message.member.id) return await client.util.throwError(message, client.config.errors.cannot_punish_yourself);
-        if (member.roles.highest.position >= message.member.roles.highest.position && message.member.id !== message.guild.ownerId) return await client.util.throwError(message, client.config.errors.hierarchy);
-        if (member.roles.highest.position >= message.guild.me.roles.highest.position) return await client.util.throwError(message, client.config.errors.my_hierarchy);
-        if (member === message.guild.owner) return await client.util.throwError(message, client.config.errors.cannot_punish_owner);
+        if (member.id === client.user.id) return client.util.throwError(message, client.config.errors.cannot_punish_myself);
+        if (member.id === message.member.id) return client.util.throwError(message, client.config.errors.cannot_punish_yourself);
+        if (member.roles.highest.position >= message.member.roles.highest.position && message.member.id !== message.guild.ownerId) return client.util.throwError(message, client.config.errors.hierarchy);
+        if (member.roles.highest.position >= message.guild.me.roles.highest.position) return client.util.throwError(message, client.config.errors.my_hierarchy);
+        if (member === message.guild.owner) return client.util.throwError(message, client.config.errors.cannot_punish_owner);
 
-        if (!member.roles.cache.size) return await client.util.throwError(message, 'This user does not have any roles');
+        if (!member.roles.cache.size) return client.util.throwError(message, 'This user does not have any roles');
 
         const memberRoles = [];
         for (let i = 0; i !== [...member.roles.cache.values()].length; ++i) {
@@ -40,7 +40,7 @@ module.exports = {
             )) memberRoles.push(role);
         };
 
-        if (member.roles.cache.size === memberRoles.length) return await client.util.throwError(message, 'This user does not have any roles with staff permissions');
+        if (member.roles.cache.size === memberRoles.length) return client.util.throwError(message, 'This user does not have any roles with staff permissions');
         member.roles.set(memberRoles, `Administrator: ${message.author.tag}`);
 
         const demotedEmbed = new Discord.MessageEmbed()

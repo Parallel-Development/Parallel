@@ -2,6 +2,7 @@ const Discord = require('discord.js');
 const Infraction = require('../../structures/Infraction');
 const ModerationLogger = require('../../structures/ModerationLogger');
 const punishmentSchema = require('../../schemas/punishment-schema');
+const warningSchema = require('../../schemas/warning-schema');
 
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
@@ -33,6 +34,25 @@ module.exports = {
             userID: user.id,
             type: 'ban'
         })
+
+        const guildWarnings = await warningSchema.findOne({ guildID: interaction.guild.id });
+        const bansToExpire = guildWarnings.warnings.filter(warning => warning.expires > Date.now() && warning.type === 'Ban');
+        for (let i = 0; i !== bansToExpire.length; ++i) {
+            const ban = bansToExpire[i];
+            await warningSchema.updateOne({
+            guildID: interaction.guild.id,
+            warnings: {
+                $elemMatch: {
+                    punishmentID: ban.punishmentID
+                }
+            }
+            },
+            {
+                $set: {
+                    "warnings.$.expires": Date.now()
+                }
+            })
+        }
 
         const punishmentID = client.util.generateID();
 

@@ -19,15 +19,15 @@ module.exports = {
             else slowmode = ms((slowmode.startsWith('+') || slowmode.startsWith('-')) ? slowmode.slice(1) : slowmode) / 1000;
         } else if(slowmode.startsWith('+') || slowmode.startsWith('-')) slowmode = ms((slowmode.startsWith('+') || slowmode.startsWith('-')) ? slowmode.slice(1) : slowmode);
 
-        if (slowmode > 21600) return await client.util.throwError(message, 'slowmode must be less than or equal to 21,600 seconds');
+        if (slowmode > 21600) return client.util.throwError(message, 'slowmode must be less than or equal to 21,600 seconds');
 
         const channel = client.util.getChannel(message.guild, args[1]) || message.channel;
-        if (!channel.permissionsFor(message.guild.me).has(Discord.Permissions.FLAGS.MANAGE_CHANNELS)) return await client.util.throwError(message, client.config.errors.my_channel_access_denied);
+        if (!channel.permissionsFor(message.guild.me).has(Discord.Permissions.FLAGS.MANAGE_CHANNELS)) return client.util.throwError(message, client.config.errors.my_channel_access_denied);
 
         if(args[0].startsWith('+')) slowmode = channel.rateLimitPerUser + parseInt(slowmode);
         else if (args[0].startsWith('-')) slowmode = channel.rateLimitPerUser - parseInt(slowmode);
 
-        if (slowmode > 21600) return await client.util.throwError(message, 'the current slowmode + the slowmode increment exceeds the 21,600 second limit!');
+        if (slowmode > 21600) return client.util.throwError(message, 'the current slowmode + the slowmode increment exceeds the 21,600 second limit!');
 
         if (slowmode < .5) channel.setRateLimitPerUser(0); 
         else channel.setRateLimitPerUser(slowmode);

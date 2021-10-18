@@ -5,6 +5,8 @@ const ModerationLogger = require('../../structures/ModerationLogger');
 const DMUserInfraction = require('../../structures/DMUserInfraction');
 const Infraction = require('../../structures/Infraction');
 const Punishment = require('../../structures/Punishment');
+const warningSchema = require('../../schemas/warning-schema');
+const punishmentSchema = require('../../schemas/punishment-schema');
 
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
@@ -44,6 +46,31 @@ module.exports = {
         })
         const { baninfo } = settings;
         const { delModCmds } = settings;
+
+        const guildWarnings = await warningSchema.findOne({ guildID: interaction.guild.id });
+        const bansToExpire = guildWarnings.warnings.filter(warning => warning.expires > Date.now() && warning.type === 'Ban');
+        for (let i = 0; i !== bansToExpire.length; ++i) {
+            const ban = bansToExpire[i];
+            await warningSchema.updateOne({
+            guildID: interaction.guild.id,
+            warnings: {
+                $elemMatch: {
+                    punishmentID: ban.punishmentID
+                }
+            }
+            },
+            {
+                $set: {
+                    "warnings.$.expires": Date.now()
+                }
+            })
+        }
+
+        await punishmentSchema.deleteMany({
+            guildID: interaction.guild.id,
+            type: 'ban',
+            userID: member.id
+        })
 
         
         if (member.user) await new DMUserInfraction(client, 'banned', client.config.colors.punishment[2], interaction, member, { reason: reason, punishmentID: punishmentID, time: time, baninfo: baninfo !== 'none' ? baninfo : null });

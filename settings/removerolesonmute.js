@@ -33,6 +33,6 @@ exports.run = async(client, message, args) => {
 
         return message.reply(`${client.config.emotes.success} I will now only add the muted role to a user when they are muted`)
     } else {
-        return await client.util.throwError(message, client.config.errors.invalid_option);
+        return client.util.throwError(message, client.config.errors.invalid_option);
     }
 }

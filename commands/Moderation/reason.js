@@ -8,7 +8,7 @@ module.exports = {
     aliases: ['changereason'],
     permissions: Discord.Permissions.FLAGS.MANAGE_MESSAGES,
     async execute(client, message, args) {
-        if (!args[0]) return await client.util.throwError(message, client.config.errors.missing_argument_punishmentID);
+        if (!args[0]) return client.util.throwError(message, client.config.errors.missing_argument_punishmentID);
         const ID = args[0];
 
         const findPunishmentID = await warningSchema.findOne({
@@ -20,17 +20,17 @@ module.exports = {
             }
         })
 
-        if (!findPunishmentID) return await client.util.throwError(message, client.config.errors.invalid_punishmentID);
+        if (!findPunishmentID) return client.util.throwError(message, client.config.errors.invalid_punishmentID);
 
         const moderatorID = findPunishmentID.warnings.find(key => key.punishmentID === ID).moderatorID;
         const userID = findPunishmentID.warnings.find(key => key.punishmentID === ID).userID;
         const reason = findPunishmentID.warnings.find(key => key.punishmentID === ID).reason;
 
-        if (moderatorID !== message.author.id && !message.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_MESSAGES)) return await client.util.throwError(message, 'You can only delete warnings that you distributed');
+        if (moderatorID !== message.author.id && !message.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_MESSAGES)) return client.util.throwError(message, 'You can only delete warnings that you distributed');
 
         const newReason = args.slice(1).join(' ');
-        if (!newReason) return await client.util.throwError(message, 'Please specify a new reason');
-        if (newReason === reason) return await client.util.throwError(message, 'The new reason must be different from the old reason!');
+        if (!newReason) return client.util.throwError(message, 'Please specify a new reason');
+        if (newReason === reason) return client.util.throwError(message, 'The new reason must be different from the old reason!');
 
         await warningSchema.updateOne({
             guildID: message.guild.id,

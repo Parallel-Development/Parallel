@@ -9,10 +9,10 @@ module.exports = {
     permissions: Discord.Permissions.FLAGS.MANAGE_GUILD,
     async execute(client, message, args)  {
 
-        if (!args[0]) return await client.util.throwError(message, client.config.errors.missing_argument_user);
+        if (!args[0]) return client.util.throwError(message, client.config.errors.missing_argument_user);
 
         const user = await client.util.getUser(client, args[0])
-        if (!user) return await client.util.throwError(message, client.config.errors.invalid_user);
+        if (!user) return client.util.throwError(message, client.config.errors.invalid_user);
 
         const guildWarnings = await warningSchema.findOne({
             guildID: message.guild.id,

@@ -3,7 +3,7 @@ const Discord = require('discord.js');
 
 exports.run = async(client, message, args) => {
     const option = args[1].toLowerCase();
-    if (!option) return await client.util.throwError(message, 'Please specify a toggle');
+    if (!option) return client.util.throwError(message, 'Please specify a toggle');
 
     if (option === 'current') {
         const guildSettings = await automodSchema.findOne({ guildID: message.guild.id });
@@ -16,7 +16,7 @@ exports.run = async(client, message, args) => {
         return message.reply({ embeds: [currentAllowTenorStateEmbed] })
     }
 
-    if (!(option === 'enable' || option === 'disable')) return await client.util.throwError(message, client.config.errors.invalid_option);
+    if (!(option === 'enable' || option === 'disable')) return client.util.throwError(message, client.config.errors.invalid_option);
     const attachmentPermsOnly = args[2] === 'true' ? true : false;
 
     await automodSchema.updateOne({

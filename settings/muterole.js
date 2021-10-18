@@ -14,9 +14,9 @@ exports.run = async(client, message, args) => {
     }
 
     const role = client.util.getRole(message.guild, args[1]) || message.guild.roles.cache.find(r => r.name === args.slice(1).join(' '));
-    if (!role) return await client.util.throwError(message, client.config.errors.invalid_role);
-    if (role.position >= message.guild.me.roles.highest.position) return await client.util.throwError(message, client.config.errors.my_hierarchy);
-    if (role === message.guild.roles.everyone || role.managed) return await client.util.throwError(message, client.config.errors.unmanagable_role);
+    if (!role) return client.util.throwError(message, client.config.errors.invalid_role);
+    if (role.position >= message.guild.me.roles.highest.position) return client.util.throwError(message, client.config.errors.my_hierarchy);
+    if (role === message.guild.roles.everyone || role.managed) return client.util.throwError(message, client.config.errors.unmanagable_role);
 
     await settingsSchema.updateOne({
         guildID: message.guild.id

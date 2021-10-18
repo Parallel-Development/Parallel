@@ -37,7 +37,7 @@ module.exports = {
                 break;
             case 'additional-baninfo':
                 if (!args[1]) return message.reply({ embeds: [settingsHelp('Ban Information',
-                    'additional-baninfo <message, current: gets the current ban info message>',
+                    'additional-baninfo <message, current: gets the current ban info message, disable>',
                     'Adds an additional embed field to the DM sent to a user when banned of whatever you like. Input `none` to disable the module\nTip: you can make a hyperlink by formatting your text as the following: `[text](link)`')]})
                 require('../../settings/baninfo').run(client, message, args)
                 break;
@@ -49,13 +49,13 @@ module.exports = {
                 break;
             case 'automod-warning-expiration':
                 if (!args[1]) return message.reply({ embeds: [settingsHelp('Automod Warning Expiration',
-                    'automod-warning-expiration <duration, current>',
+                    'automod-warning-expiration <duration, current, disable>',
                     'Sets an expiration date for all automod warnings')]})
                 require('../../settings/autowarnexpire').run(client, message, args)
                 break;
             case 'manual-warning-expiration':
                 if (!args[1]) return message.reply({ embeds: [settingsHelp('Manual Warning Expiration',
-                    'manual-warning-expiration <duration, current>',
+                    'manual-warning-expiration <duration, current, disable>',
                     'Sets a default expiration date for manual warnings')]})
                 require('../../settings/manualwarnexpire').run(client, message, args);
                 break;
@@ -108,7 +108,7 @@ module.exports = {
                 require('../../settings/removerolesonmute').run(client, message, args);
                 break;
             default:
-                return await client.util.throwError(message, client.config.errors.invalid_option);
+                return client.util.throwError(message, client.config.errors.invalid_option);
         }
 
     }

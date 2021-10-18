@@ -17,7 +17,7 @@ module.exports = {
 
         if (!member) member = message.author;
 
-        if (member !== message.author && !message.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_MESSAGES)) return await client.util.throwError(message, 'You do not have the permission to view the infractions of other members');
+        if (member !== message.author && !message.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_MESSAGES)) return client.util.throwError(message, 'You do not have the permission to view the infractions of other members');
 
         let userWarnings = await warningSchema.findOne({
             guildID: message.guild.id

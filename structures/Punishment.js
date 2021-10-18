@@ -15,7 +15,7 @@ class Punishment {
         if (typeof userID !== 'string') throw new Error('userID must be a string');
 
         const main = async() => {
-            return await new punishmentSchema({
+            return new punishmentSchema({
                 guildname: guildname,
                 guildID: guildID,
                 type: type,

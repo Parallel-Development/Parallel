@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 const punishmentSchema = require('../../schemas/punishment-schema');
 const settingsSchema = require('../../schemas/settings-schema');
+const warningSchema = require('../../schemas/warning-schema');
 
 const ModerationLogger = require('../../structures/ModerationLogger');
 const DMUserInfraction = require('../../structures/DMUserInfraction');
@@ -76,6 +77,28 @@ module.exports = {
             userID: member.id,
             type: 'mute'
         });
+
+        const guildWarnings = await warningSchema.findOne({ guildID: interaction.guild.id });
+        const mutesToExpire = guildWarnings.warnings.filter(warning => warning.expires > Date.now() && warning.type === 'Mute');
+
+        for (let i = 0; i !== mutesToExpire.length; ++i) {
+
+            const mute = mutesToExpire[i];
+
+            await warningSchema.updateOne({
+            guildID: interaction.guild.id,
+            warnings: {
+                $elemMatch: {
+                    punishmentID: mute.punishmentID
+                }
+            }
+            },
+            {
+                $set: {
+                    "warnings.$.expires": Date.now()
+                }
+            })
+        }
 
 
         new Infraction(client, 'Unmute', interaction, interaction.member, member, { reason: reason, punishmentID: punishmentID, time: null, auto: false });

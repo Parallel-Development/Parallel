@@ -9,19 +9,19 @@ module.exports = {
     developer: true,
     async execute(client, message, args) {
 
-        if (!args[0]) return await client.util.throwError(message, client.config.errors.missing_argument_user);
+        if (!args[0]) return client.util.throwError(message, client.config.errors.missing_argument_user);
         const member = await client.util.getUser(client, args[0])
-        if (!member) return await client.util.throwError(message, client.config.errors.invalid_user);
+        if (!member) return client.util.throwError(message, client.config.errors.invalid_user);
 
         const alreadyBlacklisted = await blacklistSchema.findOne({
             ID: member.id,
             server: false
         })
 
-        if (alreadyBlacklisted) return await client.util.throwError(message, 'This user is already on the blacklist');
+        if (alreadyBlacklisted) return client.util.throwError(message, 'This user is already on the blacklist');
 
         const reason = args.slice(1).join(' ');
-        if (!reason) return await client.util.throwError(message, 'A reason is required!');
+        if (!reason) return client.util.throwError(message, 'A reason is required!');
 
         await new blacklistSchema({
             ID: member.id,

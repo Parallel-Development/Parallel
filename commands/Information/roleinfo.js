@@ -7,11 +7,11 @@ module.exports = {
     aliases: ['roleinformation'],
     async execute(client, message, args) {
 
-        if (!args[0]) return await client.util.throwError(message, 'Please specify a role to get information on!');
+        if (!args[0]) return client.util.throwError(message, 'Please specify a role to get information on!');
         const role = client.util.getRole(message.guild, args[0])
         || message.guild.roles.cache.find(r => r.name == args.join(' '))
 
-        if (!role) return await client.util.throwError(message, client.config.errors.invalid_role);
+        if (!role) return client.util.throwError(message, client.config.errors.invalid_role);
 
         await message.guild.members.fetch();
 

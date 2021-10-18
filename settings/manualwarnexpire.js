@@ -32,9 +32,9 @@ exports.run = async (client, message, args) => {
     }
 
     const duration = ms(args[1])
-    if (!duration) return await client.util.throwError(message, client.config.errors.missing_argument_duration);
-    if (duration > 315576000000) return await client.util.throwError(message, client.config.errors.time_too_long);
-    if (duration < 5000) return await client.util.throwError(message, 'The minimum time allowed is 5 seconds');
+    if (!duration) return client.util.throwError(message, client.config.errors.missing_argument_duration);
+    if (duration > 315576000000) return client.util.throwError(message, client.config.errors.time_too_long);
+    if (duration < 5000) return client.util.throwError(message, 'The minimum time allowed is 5 seconds');
 
     await settingsSchema.updateOne({
         guildID: message.guild.id

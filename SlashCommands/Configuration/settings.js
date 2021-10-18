@@ -100,7 +100,7 @@ module.exports = {
                 require('../../settings/removerolesonmute').run(client, interaction, args);
                 break;
             default:
-                return await client.util.throwError(interaction, client.config.errors.invalid_option);
+                return client.util.throwError(interaction, client.config.errors.invalid_option);
         }
 
     }

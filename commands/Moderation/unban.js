@@ -2,6 +2,7 @@ const Discord = require('discord.js');
 const Infraction = require('../../structures/Infraction');
 const ModerationLogger = require('../../structures/ModerationLogger');
 const punishmentSchema = require('../../schemas/punishment-schema');
+const warningSchema = require('../../schemas/warning-schema');
 
 module.exports = {
     name: 'unban',
@@ -12,18 +13,18 @@ module.exports = {
     requiredBotPermission: Discord.Permissions.FLAGS.BAN_MEMBERS,
     async execute(client, message, args) {
 
-        if (!args[0]) return await client.util.throwError(message, client.config.errors.missing_argument_user);
+        if (!args[0]) return client.util.throwError(message, client.config.errors.missing_argument_user);
 
         const user = await client.util.getUser(client, args[0]);
-        if (!user) return await client.util.throwError(message, client.config.errors.invalid_user);
+        if (!user) return client.util.throwError(message, client.config.errors.invalid_user);
 
         const reason = args.slice(1).join(' ') || 'Unspecified';
 
         const serverBans = await message.guild.bans.fetch();
-        if (!serverBans.size) return await client.util.throwError(message, 'There are no users banned from this server');
-        if (!await client.util.getUser(client, args[0])) return await client.util.throwError(message, client.config.errors.invalid_user)
+        if (!serverBans.size) return client.util.throwError(message, 'There are no users banned from this server');
+        if (!await client.util.getUser(client, args[0])) return client.util.throwError(message, client.config.errors.invalid_user)
         const userBanned = await message.guild.bans.fetch().then(bans => bans.find(ban => ban.user.id === user.id));
-        if (!userBanned) return await client.util.throwError(message, 'This user is not banned');
+        if (!userBanned) return client.util.throwError(message, 'This user is not banned');
 
         await message.guild.members.unban(user.id);
 
@@ -32,6 +33,25 @@ module.exports = {
             userID: user.id,
             type: 'ban'
         })
+
+        const guildWarnings = await warningSchema.findOne({ guildID: message.guild.id });
+        const bansToExpire = guildWarnings.warnings.filter(warning => warning.expires > Date.now() && warning.type === 'Ban');
+        for (let i = 0; i !== bansToExpire.length; ++i) {
+            const ban = bansToExpire[i];
+            await warningSchema.updateOne({
+            guildID: message.guild.id,
+            warnings: {
+                $elemMatch: {
+                    punishmentID: ban.punishmentID
+                }
+            }
+            },
+            {
+                $set: {
+                    "warnings.$.expires": Date.now()
+                }
+            })
+        }
 
         const punishmentID = client.util.generateID();
 

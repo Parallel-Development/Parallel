@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 const punishmentSchema = require('../../schemas/punishment-schema');
 const settingsSchema = require('../../schemas/settings-schema');
+const warningSchema = require('../../schemas/warning-schema');
 
 const ModerationLogger = require('../../structures/ModerationLogger');
 const DMUserInfraction = require('../../structures/DMUserInfraction');
@@ -15,7 +16,7 @@ module.exports = {
     aliases: ['unshut', 'um'],
     async execute(client, message, args) {
 
-        if (!args[0]) return await client.util.throwError(message, client.config.errors.missing_argument_member);
+        if (!args[0]) return client.util.throwError(message, client.config.errors.missing_argument_member);
 
         const reason = args.slice(1).join(' ') || 'Unspecified';
         const punishmentID = client.util.generateID();
@@ -35,7 +36,7 @@ module.exports = {
                 type: 'mute'
             })
 
-            if (!hasMuteRecord) return await client.util.throwError(message, 'This user is not currently muted');
+            if (!hasMuteRecord) return client.util.throwError(message, 'This user is not currently muted');
             if (delModCmds) message.delete();
 
             new Infraction(client, 'Unmute', message, message.member, user, { reason: reason, punishmentID: punishmentID, time: null, auto: false });
@@ -50,13 +51,13 @@ module.exports = {
             return message.reply(`**${user.tag}** has been unmuted. They are not currently on this server`)
 
         }
-        if (!member) return await client.util.throwError(message, client.config.errors.invalid_member);
+        if (!member) return client.util.throwError(message, client.config.errors.invalid_member);
 
         const { muterole, removerolesonmute } = settings;
         const role = message.guild.roles.cache.get(muterole);
 
-        if (!role) return await client.util.throwError(message, 'The muted role does not exist');
-        if (role.position >= message.guild.me.roles.highest.position) return await client.util.throwError(message, client.config.errors.my_hierarchy);
+        if (!role) return client.util.throwError(message, 'The muted role does not exist');
+        if (role.position >= message.guild.me.roles.highest.position) return client.util.throwError(message, client.config.errors.my_hierarchy);
 
         let hasMuteRecord = await punishmentSchema.findOne({
             guildID: message.guild.id,
@@ -68,7 +69,7 @@ module.exports = {
         if (removerolesonmute && hasMuteRecord?.roles?.length) await member.roles.set(rolesToAdd);
         else member.roles.remove(role);
 
-        if (!member.roles.cache.has(role.id) && !hasMuteRecord) return await client.util.throwError(message, 'This user is not currently muted');
+        if (!member.roles.cache.has(role.id) && !hasMuteRecord) return client.util.throwError(message, 'This user is not currently muted');
         if (delModCmds) message.delete();
 
         await punishmentSchema.deleteMany({
@@ -77,6 +78,27 @@ module.exports = {
             type: 'mute'
         });
 
+        const guildWarnings = await warningSchema.findOne({ guildID: message.guild.id });
+        const mutesToExpire = guildWarnings.warnings.filter(warning => warning.expires > Date.now() && warning.type === 'Mute');
+
+        for (let i = 0; i !== mutesToExpire.length; ++i) {
+
+            const mute = mutesToExpire[i];
+
+            await warningSchema.updateOne({
+            guildID: message.guild.id,
+            warnings: {
+                $elemMatch: {
+                    punishmentID: mute.punishmentID
+                }
+            }
+            },
+            {
+                $set: {
+                    "warnings.$.expires": Date.now()
+                }
+            })
+        }
 
         new Infraction(client, 'Unmute', message, message.member, member, { reason: reason, punishmentID: punishmentID, time: null, auto: false });
         new DMUserInfraction(client, 'unmuted', client.config.colors.main, message, member, { reason: reason, time: 'ignore', punishmentID: 'ignore' });

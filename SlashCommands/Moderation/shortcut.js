@@ -49,17 +49,17 @@ module.exports = {
 
         if (shortcmd.type === 'mute' || shortcmd.type === 'tempmute' || shortcmd.type === 'ban' || shortcmd.type === 'tempban') {
             member = await client.util.getMember(interaction.guild, args['target']) || await client.util.getUser(client, args['target'])
-            if (!member) return await client.util.throwError(interaction, client.config.errors.missing_argument_user);
+            if (!member) return client.util.throwError(interaction, client.config.errors.missing_argument_user);
             if (member.user) {
-                if (member.id === client.user.id) return await client.util.throwError(interaction, client.config.errors.cannot_punish_myself);
-                if (member.id === interaction.member.id) return await client.util.throwError(interaction, client.config.errors.cannot_punish_yourself);
-                if (member.roles.highest.position >= interaction.member.roles.highest.position && interaction.member.id !== interaction.guild.ownerId) return await client.util.throwError(interaction, client.config.errors.hierarchy);
-                if (member.roles.highest.position >= interaction.guild.me.roles.highest.position) return await client.util.throwError(interaction, client.config.errors.my_hierarchy);
-                if (member === interaction.guild.owner) return await client.util.throwError(interaction, client.config.errors.cannot_punish_owner)
+                if (member.id === client.user.id) return client.util.throwError(interaction, client.config.errors.cannot_punish_myself);
+                if (member.id === interaction.member.id) return client.util.throwError(interaction, client.config.errors.cannot_punish_yourself);
+                if (member.roles.highest.position >= interaction.member.roles.highest.position && interaction.member.id !== interaction.guild.ownerId) return client.util.throwError(interaction, client.config.errors.hierarchy);
+                if (member.roles.highest.position >= interaction.guild.me.roles.highest.position) return client.util.throwError(interaction, client.config.errors.my_hierarchy);
+                if (member === interaction.guild.owner) return client.util.throwError(interaction, client.config.errors.cannot_punish_owner)
             }
             if (shortcmd.type === 'ban' || shortcmd.type === 'tempban') {
                 const alreadyBanned = await interaction.guild.bans.fetch().then(bans => bans.find(ban => ban.user.id === member.id));
-                if (alreadyBanned) return await client.util.throwError(interaction, 'This user is already banned');
+                if (alreadyBanned) return client.util.throwError(interaction, 'This user is already banned');
                 const { baninfo } = settings;
                 if (member.user) await new DMUserInfraction(client, 'banned', client.config.colors.punishment[2], interaction, member, { reason: shortcmd.reason, punishmentID: punishmentID, time: duration, baninfo: baninfo !== 'none' ? baninfo : null });
                 new ModerationLogger(client, 'Banned', interaction.member, member, interaction.channel, { reason: shortcmd.reason, duration: shortcmd.duration, punishmentID: punishmentID });
@@ -72,10 +72,10 @@ module.exports = {
                     userID: member.id,
                     type: 'mute'
                 })
-                if (member.permissions.has(Discord.Permissions.FLAGS.MANAGE_ROLES) && !removerolesonmute) return await client.util.throwError(interaction, 'This command may not be effective on this member | If you have the **Remove Roles On Mute** module enabled, this may work');
+                if (member.permissions.has(Discord.Permissions.FLAGS.MANAGE_ROLES) && !removerolesonmute) return client.util.throwError(interaction, 'This command may not be effective on this member | If you have the **Remove Roles On Mute** module enabled, this may work');
                 const role = interaction.guild.roles.cache.get(muterole) || await client.util.createMuteRole(interaction);
-                if (role.position >= interaction.guild.me.roles.highest.position) return await client.util.throwError(interaction, 'My hierarchy is too low to manage the muted role')
-                if (member?.roles?.cache?.has(role.id)) return await client.util.throwError(interaction, 'This user already currently muted');
+                if (role.position >= interaction.guild.me.roles.highest.position) return client.util.throwError(interaction, 'My hierarchy is too low to manage the muted role')
+                if (member?.roles?.cache?.has(role.id)) return client.util.throwError(interaction, 'This user already currently muted');
                 else if (hasMuteRecord) {
                     await punishmentSchema.deleteMany({
                         guildID: interaction.guild.id,
@@ -94,12 +94,12 @@ module.exports = {
             }
         } else {
             member = await client.util.getMember(interaction.guild, args['target'])
-            if (!member) return await client.util.throwError(interaction, client.config.errors.missing_argument_member);
-            if (member.id === client.user.id) return await client.util.throwError(interaction, client.config.errors.cannot_punish_myself);
-            if (member.id === interaction.member.id) return await client.util.throwError(interaction, client.config.errors.cannot_punish_yourself);
-            if (member.roles.highest.position >= interaction.member.roles.highest.position && interaction.member.id !== interaction.guild.ownerId) return await client.util.throwError(interaction, client.config.errors.hierarchy);
-            if (shortcmd.type === 'kick') if (member.roles.highest.position >= interaction.guild.me.roles.highest.position) return await client.util.throwError(interaction, client.config.errors.my_hierarchy);
-            if (member === interaction.guild.owner) return await client.util.throwError(interaction, client.config.errors.cannot_punish_owner);
+            if (!member) return client.util.throwError(interaction, client.config.errors.missing_argument_member);
+            if (member.id === client.user.id) return client.util.throwError(interaction, client.config.errors.cannot_punish_myself);
+            if (member.id === interaction.member.id) return client.util.throwError(interaction, client.config.errors.cannot_punish_yourself);
+            if (member.roles.highest.position >= interaction.member.roles.highest.position && interaction.member.id !== interaction.guild.ownerId) return client.util.throwError(interaction, client.config.errors.hierarchy);
+            if (shortcmd.type === 'kick') if (member.roles.highest.position >= interaction.guild.me.roles.highest.position) return client.util.throwError(interaction, client.config.errors.my_hierarchy);
+            if (member === interaction.guild.owner) return client.util.throwError(interaction, client.config.errors.cannot_punish_owner);
             if (shortcmd.type === 'kick') {
                 new DMUserInfraction(client, 'kicked', client.config.colors.punishment[1], interaction, member, { reason: shortcmd.reason, punishmentID: punishmentID, time: 'ignore' });
                 await interaction.guild.members.kick(member, { reason: shortcmd.reason});

@@ -12,7 +12,7 @@ module.exports = {
 
         if (global.collectionPrevention.some(information => information.userID === message.author.id)) return;
         
-        if (!args[0]) return await client.util.throwError(message, client.config.errors.missing_argument_option);
+        if (!args[0]) return client.util.throwError(message, client.config.errors.missing_argument_option);
         const option = args[0];
 
         const guildSettings = await settingsSchema.findOne({
@@ -20,7 +20,7 @@ module.exports = {
         })
         const { shortcutCommands } = guildSettings
 
-        if (!(option === 'create' || option === 'remove' || option === 'removeall' || option === 'view')) return await client.util.throwError(message, client.config.errors.invalid_option);
+        if (!(option === 'create' || option === 'remove' || option === 'removeall' || option === 'view')) return client.util.throwError(message, client.config.errors.invalid_option);
 
         if (option === 'view') {
 

@@ -17,7 +17,7 @@ module.exports = {
         let startTime;
         let endTime;
 
-        if (!code) return await client.util.throwError(message, 'Please input something to run');
+        if (!code) return client.util.throwError(message, 'Please input something to run');
         if (delMessage) message.delete();
 
         const tryingToEval = new Discord.MessageEmbed()
