@@ -18,11 +18,11 @@ module.exports = {
 
         if (channel.type !== 'GUILD_TEXT') return client.util.throwError(interaction, client.config.errors.not_type_text_channel);
         if (!channel.permissionsFor(interaction.guild.me).has([Discord.Permissions.FLAGS.MANAGE_MESSAGES, Discord.Permissions.FLAGS.SEND_MESSAGES])) return client.util.throwError(interaction, client.config.errors.my_channel_access_denied);
-        if(!channel.permissionsFor(interaction.member).has([Discord.Permissions.FLAGS.MANAGE_CHANNELS, Discord.Permissions.FLAGS.SEND_MESSAGES]) && !interaction.member.roles.cache.some(role => modRoles.includes(role.id))) return client.util.throwError(interaction, client.config.errors.your_channel_access_denied);
+        if (!channel.permissionsFor(interaction.member).has([Discord.Permissions.FLAGS.MANAGE_CHANNELS, Discord.Permissions.FLAGS.SEND_MESSAGES]) && !interaction.member.roles.cache.some(role => modRoles.includes(role.id))) return client.util.throwError(interaction, client.config.errors.your_channel_access_denied);
 
         if (channel.type !== 'GUILD_TEXT') return client.util.throwError(interaction, client.config.errors.not_type_text_channel);
         if (!channel.permissionsFor(interaction.guild.me).has([Discord.Permissions.FLAGS.MANAGE_MESSAGES, Discord.Permissions.FLAGS.SEND_MESSAGES])) return client.util.throwError(interaction, client.config.errors.my_channel_access_denied);
-        if(!channel.permissionsFor(interaction.member).has([Discord.Permissions.FLAGS.MANAGE_CHANNELS, Discord.Permissions.FLAGS.SEND_MESSAGES]) || !channel.permissionsFor(interaction.member).has(Discord.Permissions.FLAGS.SEND_MESSAGES)) return client.util.throwError(interaction, client.config.errors.your_channel_access_denied);
+        if (!channel.permissionsFor(interaction.member).has([Discord.Permissions.FLAGS.MANAGE_CHANNELS, Discord.Permissions.FLAGS.SEND_MESSAGES]) || !channel.permissionsFor(interaction.member).has(Discord.Permissions.FLAGS.SEND_MESSAGES)) return client.util.throwError(interaction, client.config.errors.your_channel_access_denied);
 
         const getLockSchema = await lockSchema.findOne({
             guildID: interaction.guild.id,
@@ -49,7 +49,7 @@ module.exports = {
         for (let i = 0; i !== enabledOverwrites.length; ++i) {
             const overwriteID = enabledOverwrites[i];
             const initialPermissionOverwrite = channel.permissionOverwrites.cache.get(overwriteID);
-            if(initialPermissionOverwrite) {
+            if (initialPermissionOverwrite) {
             const newPermissionOverwrite = {
                 id: initialPermissionOverwrite.id,
                 type: initialPermissionOverwrite.type,
@@ -68,7 +68,7 @@ module.exports = {
         for (let i = 0; i !== neutralOverwrites.length; ++i) {
             const overwriteID = neutralOverwrites[i];
             const initialPermissionOverwrite = channel.permissionOverwrites.cache.get(overwriteID);
-            if(initialPermissionOverwrite) {
+            if (initialPermissionOverwrite) {
             const newPermissionOverwrite = {
                 id: initialPermissionOverwrite.id,
                 type: initialPermissionOverwrite.type,

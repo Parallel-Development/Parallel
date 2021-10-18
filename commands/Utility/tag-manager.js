@@ -10,18 +10,18 @@ module.exports = {
     async execute(client, message, args) {
 
         const option = args[0]?.toLowerCase()?.replaceAll('-', '');
-        if(!option) return client.util.throwError(message, client.config.errors.missing_argument_option);
+        if (!option) return client.util.throwError(message, client.config.errors.missing_argument_option);
 
         if (option === 'create') {
 
             const tagName = args[1];
-            if(!tagName) return client.util.throwError(message, 'a tag name is required')
+            if (!tagName) return client.util.throwError(message, 'a tag name is required')
             const validateTag = await tagSchema.findOne({ guildID: message.guild.id, tags: { $elemMatch: { name: tagName } }});
 
-            if(validateTag) return client.util.throwError(message, 'a tag with this name already exists');
+            if (validateTag) return client.util.throwError(message, 'a tag with this name already exists');
             const tagText = args.slice(2).join(' ');
-            if(!tagText) return client.util.throwError(message, client.config.errors.missing_argument_text);
-            if(tagText.length > 2000) return message.reply('Error: the tag text length exceeded the limit of **2000** characters');
+            if (!tagText) return client.util.throwError(message, client.config.errors.missing_argument_text);
+            if (tagText.length > 2000) return message.reply('Error: the tag text length exceeded the limit of **2000** characters');
 
             await tagSchema.updateOne({ 
                 guildID: message.guild.id 
@@ -38,10 +38,10 @@ module.exports = {
             return message.reply(`Successfully created tag with name \`${tagName}\``);
         } else if (option === 'remove') {
             const tagName = args[1];
-            if(!tagName) return client.util.throwError(message, 'a tag name is required')
+            if (!tagName) return client.util.throwError(message, 'a tag name is required')
             const validateTag = await tagSchema.findOne({ guildID: message.guild.id, tags: { $elemMatch: { name: tagName } }});
 
-            if(!validateTag) return client.util.throwError(message, 'tag not found');
+            if (!validateTag) return client.util.throwError(message, 'tag not found');
 
             await tagSchema.updateOne({ 
                 guildID: message.guild.id
@@ -57,7 +57,7 @@ module.exports = {
         } else if (option === 'removeall') {
 
             const guildTags = await tagSchema.findOne({ guildID: message.guild.id });
-            if(!guildTags.tags.length) return client.util.throwError(message, 'there are no tags in this server');
+            if (!guildTags.tags.length) return client.util.throwError(message, 'there are no tags in this server');
 
             if (global.confirmationRequests.some(request => request.ID === message.author.id)) global.confirmationRequests.pop({ ID: message.author.id })
             global.confirmationRequests.push({ ID: message.author.id, guildID: message.guild.id, request: 'removeAllTags', at: Date.now() });
@@ -66,7 +66,7 @@ module.exports = {
             const tagName = args[1];
             const validateTag = await tagSchema.findOne({ guildID: message.guild.id, tags: { $elemMatch: { name: tagName } }});
 
-            if(!validateTag) return client.util.throwError(message, 'tag not found');
+            if (!validateTag) return client.util.throwError(message, 'tag not found');
 
             const newTagText = args.slice(2).join(' ');
             if (newTagText.length > 2000) return message.reply('Error: the tag text length exceeded the limit of **2000** characters');
@@ -87,7 +87,7 @@ module.exports = {
         } else if (option === 'view') {
 
             const guildTags = await tagSchema.findOne({ guildID: message.guild.id });
-            if(!guildTags.tags.length) return message.reply('There are no tags setup on this server')
+            if (!guildTags.tags.length) return message.reply('There are no tags setup on this server')
             const tagList = guildTags.tags.map(tag => tag.name).join(', ').length <= 2000 ?
             guildTags.tags.map(tag => `\`${tag.name}\``).join(', ') :
             await client.util.craeteBin(guildTags.tags.map(tag => tag.name).join(', '));
@@ -101,9 +101,9 @@ module.exports = {
         }  else if (option === 'get') {
 
             const guildTags = await tagSchema.findOne({ guildID: message.guild.id });
-            if(!args[1]) return client.util.throwError(message, 'no tag provided');
+            if (!args[1]) return client.util.throwError(message, 'no tag provided');
             const tag = guildTags.tags.find(key => key.name === args[1]);
-            if(!tag) return client.util.throwError(message, 'no tag found');
+            if (!tag) return client.util.throwError(message, 'no tag found');
 
             const tagInfo = new Discord.MessageEmbed()
             .setAuthor(`Tag - ${tag.name}`, client.user.displayAvatarURL())
@@ -117,12 +117,12 @@ module.exports = {
             const guildTagSettings = await tagSchema.findOne({ guildID: message.guild.id });
             const { allowedRoleList } = guildTagSettings;
 
-            if(args[1] === 'add') {
-                if(!args[2]) return client.util.throwError(message, client.config.errors.missing_argument_role);
+            if (args[1] === 'add') {
+                if (!args[2]) return client.util.throwError(message, client.config.errors.missing_argument_role);
                 let role = client.util.getRole(message.guild, args[2]) || message.guild.roles.cache.find(role => role.name === args.slice(2).join(' '));
-                if(args[2].toLowerCase() === 'everyone') role = message.guild.roles.everyone;
-                if(!role) return client.util.throwError(message, client.config.errors.invalid_role);
-                if(allowedRoleList.includes(role.id)) return client.util.throwError(message, 'this role is already on the allowed role list');
+                if (args[2].toLowerCase() === 'everyone') role = message.guild.roles.everyone;
+                if (!role) return client.util.throwError(message, client.config.errors.invalid_role);
+                if (allowedRoleList.includes(role.id)) return client.util.throwError(message, 'this role is already on the allowed role list');
 
                 await tagSchema.updateOne({
                     guildID: message.guild.id
@@ -135,11 +135,11 @@ module.exports = {
 
             } else if (args[1] === 'remove') {
 
-                if(!args[2]) return client.util.throwError(message, client.config.errors.missing_argument_role);
+                if (!args[2]) return client.util.throwError(message, client.config.errors.missing_argument_role);
                 let role = client.util.getRole(message.guild, args[2]) || message.guild.roles.cache.find(role => role.name === args.slice(2).join(' '));
-                if(args[2].toLowerCase() === 'everyone') role = message.guild.roles.everyone;
-                if(!role) return client.util.throwError(message, client.config.errors.invalid_role);
-                if(!allowedRoleList.includes(role.id)) return client.util.throwError(message, 'this role is not on the allowed role list');
+                if (args[2].toLowerCase() === 'everyone') role = message.guild.roles.everyone;
+                if (!role) return client.util.throwError(message, client.config.errors.invalid_role);
+                if (!allowedRoleList.includes(role.id)) return client.util.throwError(message, 'this role is not on the allowed role list');
 
                 await tagSchema.updateOne({
                     guildID: message.guild.id
@@ -152,7 +152,7 @@ module.exports = {
 
             } else if (args[1] === 'view') {
 
-                if(!allowedRoleList.length) return message.reply('No roles on are on the allowed roles list for tags');
+                if (!allowedRoleList.length) return message.reply('No roles on are on the allowed roles list for tags');
 
                 const roleList = allowedRoleList.map(role => message.guild.roles.cache.get(role.id)).join(' ').length <= 2000 ? 
                 allowedRoleList.map(role => message.guild.roles.cache.get(role)).join(' ') : 

@@ -11,7 +11,7 @@ module.exports = {
     aliases: ['lockall'],
     async execute(client, message, args) {
 
-        if(global.lockdownCooldown.has(message.guild.id)) return client.util.throwError(message, 'this server is currently under a lock or unlock process, please wait for it to complete before running this command')
+        if (global.lockdownCooldown.has(message.guild.id)) return client.util.throwError(message, 'this server is currently under a lock or unlock process, please wait for it to complete before running this command')
 
         const includeStaffChannels = args[0] === '--include-staff-channels';
 
@@ -24,7 +24,7 @@ module.exports = {
 
         // We check if the channel is not locked now, however we also check in the loop in case a channel is locked while channels are being locked
 
-        if(includeStaffChannels) channels = [...allChannels.values()].filter(channel => 
+        if (includeStaffChannels) channels = [...allChannels.values()].filter(channel => 
             channel.permissionOverwrites.cache.filter(overwrite => overwrite.type === 'role').some(overwrite => 
                 channel.permissionsFor(overwrite.id).has(Discord.Permissions.FLAGS.SEND_MESSAGES) && 
                 channel.permissionsFor(overwrite.id).has(Discord.Permissions.FLAGS.VIEW_CHANNEL)
@@ -32,7 +32,7 @@ module.exports = {
         );
         else channels = [...allChannels.values()].filter(channel => {
 
-            if(!channel.permissionOverwrites.cache.get(message.guild.roles.everyone.id)) return true;
+            if (!channel.permissionOverwrites.cache.get(message.guild.roles.everyone.id)) return true;
             else return channel.permissionOverwrites.cache.filter(overwrite => overwrite.type === 'role').some(overwrite => 
                 !message.guild.roles.cache.get(overwrite.id).permissions.has(Discord.Permissions.FLAGS.MANAGE_MESSAGES) &&
                 !modRoles.includes(overwrite.id) && 
@@ -42,8 +42,8 @@ module.exports = {
         });
 
         const guildLockedChannelIds = guildLocked.channels.map(info => info.ID);
-        if(channels.every(channel => guildLockedChannelIds.includes(channel.id))) return client.util.throwError(message, 'all the target channels are already locked, there are none to lock!');
-        if(!channels.length) return client.util.throwError(message, 'none of the target channels will change after locked');
+        if (channels.every(channel => guildLockedChannelIds.includes(channel.id))) return client.util.throwError(message, 'all the target channels are already locked, there are none to lock!');
+        if (!channels.length) return client.util.throwError(message, 'none of the target channels will change after locked');
 
         const done = async() => new Promise((resolve) => setTimeout(resolve, 1000));
 
@@ -61,7 +61,7 @@ module.exports = {
             const checkIfLocked = await lockSchema.findOne({ guildID: message.guild.id, channels: { $elemMatch: { ID: channel.id}} });
             const me = client.guilds.cache.get(message.guild.id).me;
 
-            if(!me.permissions.has(Discord.Permissions.FLAGS.ADMINISTRATOR)) {
+            if (!me.permissions.has(Discord.Permissions.FLAGS.ADMINISTRATOR)) {
                 msg.edit('The locking process has been automatically halted! I require Administrator to ensure I can update channel overrides. Please give me the administrator permission and run the command again').catch(() => 
                     message.channel.send('The locking process has been automatically halted! I require Administrator to ensure I can update channel overrides. Please give me the administrator permission and run the command again').catch(() => {})
                 );
@@ -69,7 +69,7 @@ module.exports = {
                 return;
             } 
 
-            if(!checkIfLocked && client.guilds.cache.get(message.guild.id).channels.cache.get(channel.id)) {
+            if (!checkIfLocked && client.guilds.cache.get(message.guild.id).channels.cache.get(channel.id)) {
                 const permissionOverwrites = channel.permissionOverwrites.cache;
 
                 // The permissions that the channel will be set to in the end;
@@ -96,7 +96,7 @@ module.exports = {
                 // It is not unexpected that this returns undefined!
                 const everyoneRoleOverwrite = channel.permissionOverwrites.cache.get(message.guild.roles.everyone.id);
                 
-                if(!allOverwrites.length && everyoneRoleOverwrite); 
+                if (!allOverwrites.length && everyoneRoleOverwrite); 
                     else {
                         newPermissionOverwrites = permissionOverwrites.filter(overwrite => 
                         !enabledOverwrites.some(enabledOverwrite => enabledOverwrite.id === overwrite.id) && 
@@ -104,7 +104,7 @@ module.exports = {
                         overwrite.id !== message.guild.roles.everyone.id
                     );
                         
-                    if(!everyoneRoleOverwrite) {
+                    if (!everyoneRoleOverwrite) {
                         newPermissionOverwrites.set(message.guild.roles.everyone.id, {
                             id: message.guild.roles.everyone.id,
                             type: 'role',

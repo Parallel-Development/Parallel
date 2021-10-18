@@ -19,10 +19,10 @@ module.exports = {
         ) return client.util.throwError(interaction, 'you do not have permission to use the server tags');
 
         const tag = args['tag_name'];
-        if(!tag) return client.util.throwError(interaction, 'please specify a tag name');
+        if (!tag) return client.util.throwError(interaction, 'please specify a tag name');
 
         const validateTag = await tagSchema.findOne({ guildID: interaction.guild.id, tags: { $elemMatch: { name: tag }}});
-        if(!validateTag) return client.util.throwError(interaction, 'no tag found');
+        if (!validateTag) return client.util.throwError(interaction, 'no tag found');
 
         const content = validateTag.tags.find(key => key.name === tag).content;
 

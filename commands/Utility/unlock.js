@@ -22,7 +22,7 @@ module.exports = {
 
         if (channel.type !== 'GUILD_TEXT') return client.util.throwError(message, client.config.errors.not_type_text_channel);
         if (!channel.permissionsFor(message.guild.me).has([Discord.Permissions.FLAGS.MANAGE_MESSAGES, Discord.Permissions.FLAGS.SEND_MESSAGES])) return client.util.throwError(message, client.config.errors.my_channel_access_denied);
-        if(!channel.permissionsFor(message.member).has([Discord.Permissions.FLAGS.MANAGE_CHANNELS, Discord.Permissions.FLAGS.SEND_MESSAGES]) && !message.member.roles.cache.some(role => modRoles.includes(role.id))) return client.util.throwError(message, client.config.errors.your_channel_access_denied);
+        if (!channel.permissionsFor(message.member).has([Discord.Permissions.FLAGS.MANAGE_CHANNELS, Discord.Permissions.FLAGS.SEND_MESSAGES]) && !message.member.roles.cache.some(role => modRoles.includes(role.id))) return client.util.throwError(message, client.config.errors.your_channel_access_denied);
 
         const getLockSchema = await lockSchema.findOne({
             guildID: message.guild.id,
@@ -48,7 +48,7 @@ module.exports = {
             const overwriteID = enabledOverwrites[i];
             const initialPermissionOverwrite = channel.permissionOverwrites.cache.get(overwriteID);
 
-            if(initialPermissionOverwrite) {
+            if (initialPermissionOverwrite) {
             const newPermissionOverwrite = {
                 id: initialPermissionOverwrite.id,
                 type: initialPermissionOverwrite.type,
@@ -68,7 +68,7 @@ module.exports = {
             const overwriteID = neutralOverwrites[i];
             const initialPermissionOverwrite = channel.permissionOverwrites.cache.get(overwriteID);
 
-            if(initialPermissionOverwrite) {
+            if (initialPermissionOverwrite) {
             const newPermissionOverwrite = {
                 id: initialPermissionOverwrite.id,
                 type: initialPermissionOverwrite.type,
@@ -95,7 +95,7 @@ module.exports = {
             }
         })
 
-        if(channel !== message.channel) message.reply({ content: `Successfully unlocked ${channel}`});
+        if (channel !== message.channel) message.reply({ content: `Successfully unlocked ${channel}`});
 
         const lockedEmbed = new Discord.MessageEmbed()
         .setColor(client.config.colors.main)

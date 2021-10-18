@@ -7,14 +7,14 @@ module.exports = {
     name: 'guildMemberUpdate',
     async execute(client, oldMember, newMember) {
 
-        if(!oldMember.guild.me.permissions.has(Discord.Permissions.FLAGS.VIEW_AUDIT_LOG)) return;
+        if (!oldMember.guild.me.permissions.has(Discord.Permissions.FLAGS.VIEW_AUDIT_LOG)) return;
 
-        if((Date.now() - oldMember.joinedTimestamp) <= 5000) return;
+        if ((Date.now() - oldMember.joinedTimestamp) <= 5000) return;
 
         if (oldMember.roles.cache.map(role => role.id) === newMember.roles.cache.map(role => role.id)) return;
 
         const guildSettings = await settingsSchema.findOne({ guildID: oldMember.guild.id });
-        if(!guildSettings) return;
+        if (!guildSettings) return;
         const { muterole, removerolesonmute } = guildSettings;
 
         if (removerolesonmute) return;
@@ -30,7 +30,7 @@ module.exports = {
 
         const log = fetchedLogs.entries.first();
         const { executor } = log;
-        if(executor.id === client.user.id) return;
+        if (executor.id === client.user.id) return;
 
         if (oldMember.roles.cache.has(muterole)) {
             await punishmentSchema.deleteOne({ guildID: oldMember.guild.id, userID: oldMember.id })

@@ -173,7 +173,7 @@ module.exports = {
         }
 
         const tagCheck = await tagSchema.findOne({ guildID: message.guild.id });
-        if(!tagCheck) {
+        if (!tagCheck) {
             await new tagSchema({
                 guildname: message.guild.name,
                 guildID: message.guild.id,

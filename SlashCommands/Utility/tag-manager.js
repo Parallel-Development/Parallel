@@ -35,9 +35,9 @@ module.exports = {
             const tagName = createArgs['tag_name'];
             const validateTag = await tagSchema.findOne({ guildID: interaction.guild.id, tags: { $elemMatch: { name: tagName } }});
 
-            if(validateTag) return client.util.throwError(interaction, 'a tag with this name already exists');
+            if (validateTag) return client.util.throwError(interaction, 'a tag with this name already exists');
             const tagText = createArgs['tag_content'];
-            if(tagText.length > 2000) return interaction.reply('Error: the tag text length exceeded the limit of **2000** characters');
+            if (tagText.length > 2000) return interaction.reply('Error: the tag text length exceeded the limit of **2000** characters');
 
             await tagSchema.updateOne({ 
                 guildID: interaction.guild.id 
@@ -59,7 +59,7 @@ module.exports = {
             const tagName = removeArgs['tag_name'];
             const validateTag = await tagSchema.findOne({ guildID: interaction.guild.id, tags: { $elemMatch: { name: tagName } }});
 
-            if(!validateTag) return client.util.throwError(interaction, 'tag not found');
+            if (!validateTag) return client.util.throwError(interaction, 'tag not found');
 
             await tagSchema.updateOne({ 
                 guildID: interaction.guild.id
@@ -75,7 +75,7 @@ module.exports = {
         } else if (subArgs['remove_all']) {
 
             const guildTags = await tagSchema.findOne({ guildID: interaction.guild.id });
-            if(!guildTags.tags.length) return client.util.throwError(interaction, 'there are no tags in this server');
+            if (!guildTags.tags.length) return client.util.throwError(interaction, 'there are no tags in this server');
 
             if (global.confirmationRequests.some(request => request.ID === interaction.user.id)) global.confirmationRequests.pop({ ID: interaction.user.id })
             global.confirmationRequests.push({ ID: interaction.user.id, guildID: interaction.guild.id, request: 'removeAllTags', at: Date.now() });
@@ -87,7 +87,7 @@ module.exports = {
             const tagName = editArgs['tag_name'];
             const validateTag = await tagSchema.findOne({ guildID: interaction.guild.id, tags: { $elemMatch: { name: tagName } }});
 
-            if(!validateTag) return client.util.throwError(interaction, 'tag not found');
+            if (!validateTag) return client.util.throwError(interaction, 'tag not found');
 
             const newTagText = editArgs['new_content'];
             if (newTagText.length > 2000) return interaction.reply('Error: the tag text length exceeded the limit of **2000** characters');
@@ -108,7 +108,7 @@ module.exports = {
         } else if (subArgs['view']) {
 
             const guildTags = await tagSchema.findOne({ guildID: interaction.guild.id });
-            if(!guildTags.tags.length) return interaction.reply('There are no tags setup on this server')
+            if (!guildTags.tags.length) return interaction.reply('There are no tags setup on this server')
             const tagList = guildTags.tags.map(tag => tag.name).join(', ').length <= 2000 ?
             guildTags.tags.map(tag => `\`${tag.name}\``).join(', ') :
             await client.util.craeteBin(guildTags.tags.map(tag => tag.name).join(', '));
@@ -125,7 +125,7 @@ module.exports = {
 
             const guildTags = await tagSchema.findOne({ guildID: interaction.guild.id });
             const tag = guildTags.tags.find(key => key.name === getArgs['tag_name']);
-            if(!tag) return client.util.throwError(interaction, 'no tag found');
+            if (!tag) return client.util.throwError(interaction, 'no tag found');
 
             const tagInfo = new Discord.MessageEmbed()
             .setAuthor(`Tag - ${tag.name}`, client.user.displayAvatarURL())
@@ -141,9 +141,9 @@ module.exports = {
             const guildTagSettings = await tagSchema.findOne({ guildID: interaction.guild.id });
             const { allowedRoleList } = guildTagSettings;
 
-            if(allowedRolesArgs['method'] === 'add') {
+            if (allowedRolesArgs['method'] === 'add') {
                 const role = client.util.getRole(interaction.guild, allowedRolesArgs['role'])
-                if(allowedRoleList.includes(role.id)) return client.util.throwError(interaction, 'this role is already on the allowed role list');
+                if (allowedRoleList.includes(role.id)) return client.util.throwError(interaction, 'this role is already on the allowed role list');
 
                 await tagSchema.updateOne({
                     guildID: interaction.guild.id
@@ -156,7 +156,7 @@ module.exports = {
 
             } else if (allowedRolesArgs['method'] === 'remove') {
                 const role = client.util.getRole(interaction.guild, allowedRolesArgs['role'])
-                if(!allowedRoleList.includes(role.id)) return client.util.throwError(interaction, 'this role is not on the allowed role list');
+                if (!allowedRoleList.includes(role.id)) return client.util.throwError(interaction, 'this role is not on the allowed role list');
 
                 await tagSchema.updateOne({
                     guildID: interaction.guild.id
@@ -169,7 +169,7 @@ module.exports = {
 
             } else if (allowedRolesArgs['method'] === 'view') {
 
-                if(!allowedRoleList.length) return interaction.reply('No roles on are on the allowed roles list for tags');
+                if (!allowedRoleList.length) return interaction.reply('No roles on are on the allowed roles list for tags');
 
                 const roleList = allowedRoleList.map(role => interaction.guild.roles.cache.get(role.id)).join(' ').length <= 2000 ? 
                 allowedRoleList.map(role => interaction.guild.roles.cache.get(role)).join(' ') : 

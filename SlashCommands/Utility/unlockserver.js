@@ -11,11 +11,11 @@ module.exports = {
     requiredBotPermission: Discord.Permissions.FLAGS.ADMINISTRATOR,
     async execute(client, interaction, args) {
 
-        if(global.lockdownCooldown.has(interaction.guild.id)) return client.util.throwError(interaction, 'this server is currently under a lock or unlock process, please wait for it to complete before running this command')
+        if (global.lockdownCooldown.has(interaction.guild.id)) return client.util.throwError(interaction, 'this server is currently under a lock or unlock process, please wait for it to complete before running this command')
 
         const guildLocked = await lockSchema.findOne({ guildID: interaction.guild.id });
         const channels = guildLocked.channels.map(locked => interaction.guild.channels.cache.get(locked.ID) || locked.ID);
-        if(!channels.length) return client.util.throwError(interaction, 'there are no locked channels')
+        if (!channels.length) return client.util.throwError(interaction, 'there are no locked channels')
         const done = async() => new Promise((resolve) => setTimeout(resolve, 1000));
 
         let lockedChannelsCount = 0;
@@ -31,7 +31,7 @@ module.exports = {
         for(let i = 0; i !== channels.length; ++i) {
             const channel = channels[i];
 
-            if(!client.guilds.cache.get(interaction.guild.id).me.permissions.has(Discord.Permissions.FLAGS.ADMINISTRATOR)) {
+            if (!client.guilds.cache.get(interaction.guild.id).me.permissions.has(Discord.Permissions.FLAGS.ADMINISTRATOR)) {
                 interaction.editReply('The unlocking process has been automatically halted! I require Administrator to ensure I can update channel overrides. Please give me the administrator permission and run the command again').catch(() => 
                     interaction.channel.send('The unlocking process has been automatically halted! I require Administrator to ensure I can update channel overrides. Please give me the administrator permission and run the command again').catch(() => {})
                 );
@@ -46,7 +46,7 @@ module.exports = {
                 }
             })
 
-            if(channel.type === 'number' || !getLockSchema) {
+            if (channel.type === 'number' || !getLockSchema) {
                 --displayChannelsToLock
                 await lockSchema.updateOne({
                     guildID: interaction.guild.id
@@ -73,7 +73,7 @@ module.exports = {
                 for (let i = 0; i !== enabledOverwrites.length; ++i) {
                     const overwriteID = enabledOverwrites[i];
                     const initialPermissionOverwrite = channel.permissionOverwrites.cache.get(overwriteID);
-                    if(initialPermissionOverwrite) {
+                    if (initialPermissionOverwrite) {
                     const newPermissionOverwrite = {
                         id: initialPermissionOverwrite.id,
                         type: initialPermissionOverwrite.type,
@@ -95,7 +95,7 @@ module.exports = {
                     const overwriteID = neutralOverwrites[i];
                     const initialPermissionOverwrite = channel.permissionOverwrites.cache.get(overwriteID);
 
-                    if(initialPermissionOverwrite) {
+                    if (initialPermissionOverwrite) {
                     const newPermissionOverwrite = {
                         id: initialPermissionOverwrite.id,
                         type: initialPermissionOverwrite.type,

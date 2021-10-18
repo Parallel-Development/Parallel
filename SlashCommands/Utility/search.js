@@ -43,7 +43,7 @@ module.exports = {
         if (!members.length) return interaction.editReply({ embeds: [ new Discord.MessageEmbed().setColor(client.config.colors.main).setDescription('No results found') ] });
 
         result.setFooter(`${members.length} results`)
-        if(members.length >= 30) {
+        if (members.length >= 30) {
             const newResult = await client.util.createBin(members.map(m => `${m.user.tag} | ID: ${m.id} | Username: ${m.user.username} | Display Name: \`${m.displayName}\``));
             const newResultEmbed = new Discord.MessageEmbed()
             .setColor(client.config.colors.main)

@@ -131,7 +131,7 @@ module.exports = {
         }
 
         const tagCheck = await tagSchema.findOne({ guildID: interaction.guild.id });
-        if(!tagCheck) {
+        if (!tagCheck) {
             await new tagSchema({
                 guildname: interaction.guild.name,
                 guildID: interaction.guild.id,
@@ -143,7 +143,7 @@ module.exports = {
 
         if (interaction.isButton()) {
             if (interaction.customId === 'join' || interaction.customId === 'deny') return rps.run(client, interaction);
-            if(
+            if (
                 interaction.customId === 'jumpToBeginning' 
                 || interaction.customId === 'goBack' 
                 || interaction.customId === 'goForward' 
@@ -158,12 +158,12 @@ module.exports = {
         }
 
         if (!interaction.isCommand()) return;
-        if(global.void && !client.config.developers.includes(interaction.user.id)) return;
+        if (global.void && !client.config.developers.includes(interaction.user.id)) return;
 
         const command = client.slashCommands.get(interaction.commandName);
-        if(!command) return // i guess?
+        if (!command) return // i guess?
 
-        if(command.developer && !client.config.developers.includes(interaction.user.id)) return client.util.throwError(interaction, 'You cannot run this command.');
+        if (command.developer && !client.config.developers.includes(interaction.user.id)) return client.util.throwError(interaction, 'You cannot run this command.');
 
         const guildSettings = await settingsSchema.findOne({ guildID: interaction.guild.id });
         const { modRoles, locked } = guildSettings;

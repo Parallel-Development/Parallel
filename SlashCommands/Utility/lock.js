@@ -33,8 +33,8 @@ module.exports = {
 
         if (channel.type !== 'GUILD_TEXT') return client.util.throwError(interaction, client.config.errors.not_type_text_channel);
         if (!channel.permissionsFor(interaction.guild.me).has([Discord.Permissions.FLAGS.MANAGE_CHANNELS, Discord.Permissions.FLAGS.SEND_MESSAGES])) return client.util.throwError(interaction, client.config.errors.my_channel_access_denied);
-        if(!channel.permissionsFor(interaction.member).has([Discord.Permissions.FLAGS.MANAGE_CHANNELS, Discord.Permissions.FLAGS.SEND_MESSAGES]) && !interaction.member.roles.cache.some(role => modRoles.includes(role.id))) return client.util.throwError(interaction, client.config.errors.your_channel_access_denied);
-        if(!interaction.member.permissions.has(Discord.Permissions.FLAGS.ADMINISTRATOR) && !interaction.member.roles.cache.some(role => channel.permissionOverwrites.cache.some(overwrite => overwrite.id === role.id && overwrite.allow.has(Discord.Permissions.FLAGS.SEND_MESSAGES)))) {
+        if (!channel.permissionsFor(interaction.member).has([Discord.Permissions.FLAGS.MANAGE_CHANNELS, Discord.Permissions.FLAGS.SEND_MESSAGES]) && !interaction.member.roles.cache.some(role => modRoles.includes(role.id))) return client.util.throwError(interaction, client.config.errors.your_channel_access_denied);
+        if (!interaction.member.permissions.has(Discord.Permissions.FLAGS.ADMINISTRATOR) && !interaction.member.roles.cache.some(role => channel.permissionOverwrites.cache.some(overwrite => overwrite.id === role.id && overwrite.allow.has(Discord.Permissions.FLAGS.SEND_MESSAGES)))) {
             return interaction.reply('Error: the action was refused because after the channel had been locked, you would have not had permission to send messages in the channel. Please have an administrator add a permission override in the channel for one of the moderation roles you have and set the Send Messages permission to true')
         }
 
@@ -75,7 +75,7 @@ module.exports = {
         // It is not unexpected that this returns undefined!
         const everyoneRoleOverwrite = channel.permissionOverwrites.cache.get(interaction.guild.roles.everyone.id);
 
-        if(!allOverwrites.length && everyoneRoleOverwrite) return client.util.throwError(interaction, 'this channel will end up with the same after the lock! No non-moderator can currently send messages in this channel')
+        if (!allOverwrites.length && everyoneRoleOverwrite) return client.util.throwError(interaction, 'this channel will end up with the same after the lock! No non-moderator can currently send messages in this channel')
 
         /* Momentarily removing the permission overwrites we are affecting. We also remove the everyone role overwrite
         because there are instances where the everyone role overwrite isn't even a marked overwrite until a permission has been udpated;
@@ -88,7 +88,7 @@ module.exports = {
             overwrite.id !== interaction.guild.roles.everyone.id
         );
 
-        if(!everyoneRoleOverwrite) {
+        if (!everyoneRoleOverwrite) {
             newPermissionOverwrites.set(interaction.guild.roles.everyone.id, {
                 id: interaction.guild.roles.everyone.id,
                 type: 'role',

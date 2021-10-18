@@ -12,15 +12,15 @@ module.exports.run = async(client, interaction) => {
     );
 
     let whoToCheck = interaction.message?.interaction?.user || interaction.channel.messages.cache.get(interaction.message?.reference.messageId)?.author;
-    if(!whoToCheck) whoToCheck = await interaction.channel.messages.fetch(interaction.message.reference.messageId).then(message => interaction.channel.messages.cache.get(message.id).author);
+    if (!whoToCheck) whoToCheck = await interaction.channel.messages.fetch(interaction.message.reference.messageId).then(message => interaction.channel.messages.cache.get(message.id).author);
 
-    if(interaction.user !== whoToCheck) return client.util.throwError(interaction, client.config.errors.no_button_access);
+    if (interaction.user !== whoToCheck) return client.util.throwError(interaction, client.config.errors.no_button_access);
     let currentPage = +interaction.channel.messages.cache.get(interaction.message.id).embeds[0].footer.text.slice(13, 14);
     let userWarnings = await warningSchema.findOne({
         guildID: interaction.guild.id
     })
     userWarnings = userWarnings?.warnings?.filter(warning => warning.userID === user.id);
-    if(!userWarnings.length) {
+    if (!userWarnings.length) {
         const noWarningsEmbed = new Discord.MessageEmbed()
         .setColor(client.config.colors.main)
         .setAuthor(`Warnings for ${user.tag} (${user.id}) - ${userWarnings.length}`, client.user.displayAvatarURL())
@@ -36,11 +36,11 @@ module.exports.run = async(client, interaction) => {
     switch (interaction.customId) {
         case 'jumpToBeginning': currentPage = 1; break;
         case 'goBack':
-            if(currentPage === 1) currentPage = amountOfPages;
+            if (currentPage === 1) currentPage = amountOfPages;
             else --currentPage;
             break;
         case 'goForward':
-            if(currentPage === amountOfPages) currentPage = 1;
+            if (currentPage === amountOfPages) currentPage = 1;
             else ++currentPage;
             break;
         case 'jumpToBack': currentPage = amountOfPages; break;

@@ -21,7 +21,7 @@ module.exports = {
         const punishmentID = args['id'];
         const newDuration = args['new_duration'];
         
-        if(!punishmentID) return client.util.throwError(interaction, client.config.errors.missing_argument_punishmentID);
+        if (!punishmentID) return client.util.throwError(interaction, client.config.errors.missing_argument_punishmentID);
 
         const punishmentInformation = await warningSchema.findOne({ 
             guildID: interaction.guild.id, 
@@ -31,16 +31,16 @@ module.exports = {
             }} 
         })
 
-        if(!punishmentInformation) return client.util.throwError(interaction, client.config.errors.invalid_punishmentID);
+        if (!punishmentInformation) return client.util.throwError(interaction, client.config.errors.invalid_punishmentID);
 
         const punishment = punishmentInformation.warnings.find(key => key.punishmentID === punishmentID);
-        if(punishment.type !== 'Mute' && punishment.type !== 'Ban' && punishment.type !== 'Warn') return client.util.throwError(interaction, `can only edit punishment durations with punishment type \`warn\`, \`mute\`, or \`ban\``);
-        if(punishment.type === 'Mute' && !interaction.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_ROLES) && !isModerator) return client.util.throwError(interaction, `you need the \`Manage Roles\` permission or a moderator role to edit this punishment duration`);
-        if(punishment.type === 'Ban' && !interaction.member.permissions.has(Discord.Permissions.FLAGS.BAN_MEMBERS) && !isModerator) return client.util.throwError(interaction, `you need the \`Ban Members\` permission or a moderator role to edit this punishment duration`);
+        if (punishment.type !== 'Mute' && punishment.type !== 'Ban' && punishment.type !== 'Warn') return client.util.throwError(interaction, `can only edit punishment durations with punishment type \`warn\`, \`mute\`, or \`ban\``);
+        if (punishment.type === 'Mute' && !interaction.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_ROLES) && !isModerator) return client.util.throwError(interaction, `you need the \`Manage Roles\` permission or a moderator role to edit this punishment duration`);
+        if (punishment.type === 'Ban' && !interaction.member.permissions.has(Discord.Permissions.FLAGS.BAN_MEMBERS) && !isModerator) return client.util.throwError(interaction, `you need the \`Ban Members\` permission or a moderator role to edit this punishment duration`);
 
         if (punishment.expires - Date.now() <= 0) return client.util.throwError(interaction, 'this punishment has already expired');
-        if(!ms(newDuration)) return client.util.throwError(interaction, client.config.errors.bad_duration);
-        if(ms(newDuration) > 315576000000) return client.util.throwError(interaction, client.config.errors.time_too_long);
+        if (!ms(newDuration)) return client.util.throwError(interaction, client.config.errors.bad_duration);
+        if (ms(newDuration) > 315576000000) return client.util.throwError(interaction, client.config.errors.time_too_long);
 
         await warningSchema.updateOne({
                 guildID: interaction.guild.id,
@@ -57,7 +57,7 @@ module.exports = {
                 }
             })
         
-        if(punishment.type !== 'Warn') {
+        if (punishment.type !== 'Warn') {
             await punishmentSchema.updateOne({
                 guildID: interaction.guild.id,
                 type: punishment.type[0].toLowerCase() + punishment.type.slice(1),
