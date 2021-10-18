@@ -24,7 +24,8 @@ module.exports.run = async(client, interaction) => {
         const noWarningsEmbed = new Discord.MessageEmbed()
         .setColor(client.config.colors.main)
         .setAuthor(`Warnings for ${user.tag} (${user.id}) - ${userWarnings.length}`, client.user.displayAvatarURL())
-        .setDescription('This user does not have any infractions');
+        .setDescription('This user does not have any infractions')
+        .setFooter(`Page Number: 1/1`)
 
         return interaction.update({ embeds: [noWarningsEmbed] });
     }
