@@ -82,7 +82,7 @@ module.exports = {
 
         }
 
-        await channel.permissionOverwrites.set(newPermissionOverwrites);
+        await channel.permissionOverwrites.set(newPermissionOverwrites, `Command unlock ran by ${message.author.tag} (${message.author.id})`);
         
         await lockSchema.updateOne({
             guildID: message.guild.id

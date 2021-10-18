@@ -110,7 +110,7 @@ module.exports = {
                 
                 }
             
-                await channel.permissionOverwrites.set(newPermissionOverwrites).catch(async() => await msg.edit('Hmm...'));
+                await channel.permissionOverwrites.set(newPermissionOverwrites, `Command unlockserver ran by ${message.author.tag} (${message.author.id})`).catch(async() => await msg.edit('Hmm...'));
 
                 await lockSchema.updateOne({
                     guildID: message.guild.id

@@ -31,7 +31,7 @@ module.exports = {
         if (args[1] === '--dm') {
             let reason = args.slice(2).join(' ');
             if (reason.length >= 1024) reason = await client.util.createBin(reason);
-            await member.send(`Your username was moderated in **${message.guild.name}** ${reason ? "| Reason: " + reason : ""}`).catch(() => failedtoSend = true )
+            await member.send(`Your username was moderated in **${message.guild.name}** ${reason ? "| Reason: " + reason : ""}`).catch(() => failedToSend = true )
         }
 
         const moderatedNicknameEmbed = new Discord.MessageEmbed()
