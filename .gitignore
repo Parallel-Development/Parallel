@@ -2,3 +2,4 @@ node_modules
 register.js
 guild_register.js
 perpendicular_register.js
+.DS_Store
