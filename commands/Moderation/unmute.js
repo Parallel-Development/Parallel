@@ -15,7 +15,6 @@ module.exports = {
     requiredBotPermission: Discord.Permissions.FLAGS.MANAGE_ROLES,
     aliases: ['unshut', 'um'],
     async execute(client, message, args) {
-
         if (!args[0]) return client.util.throwError(message, client.config.errors.missing_argument_member);
 
         const reason = args.slice(1).join(' ') || 'Unspecified';
@@ -23,33 +22,41 @@ module.exports = {
 
         const settings = await settingsSchema.findOne({
             guildID: message.guild.id
-        })
+        });
         const { delModCmds } = settings;
 
-        const member = await client.util.getMember(message.guild, args[0])
-        if (!member && await client.util.getUser(client, args[0])) {
-            const user = await client.util.getUser(client, args[0])
+        const member = await client.util.getMember(message.guild, args[0]);
+        if (!member && (await client.util.getUser(client, args[0]))) {
+            const user = await client.util.getUser(client, args[0]);
 
             let hasMuteRecord = await punishmentSchema.findOne({
                 guildID: message.guild.id,
                 userID: user.id,
                 type: 'mute'
-            })
+            });
 
             if (!hasMuteRecord) return client.util.throwError(message, 'This user is not currently muted');
             if (delModCmds) message.delete();
 
-            new Infraction(client, 'Unmute', message, message.member, user, { reason: reason, punishmentID: punishmentID, time: null, auto: false });
-            new ModerationLogger(client, 'Unmuted', message.member, user, message.channel, { reason: reason, duration: null, punishmentID: punishmentID });
+            new Infraction(client, 'Unmute', message, message.member, user, {
+                reason: reason,
+                punishmentID: punishmentID,
+                time: null,
+                auto: false
+            });
+            new ModerationLogger(client, 'Unmuted', message.member, user, message.channel, {
+                reason: reason,
+                duration: null,
+                punishmentID: punishmentID
+            });
 
             await punishmentSchema.deleteMany({
                 guildID: message.guild.id,
                 userID: user.id,
                 type: 'mute'
-            })
+            });
 
-            return message.reply(`**${user.tag}** has been unmuted. They are not currently on this server`)
-
+            return message.reply(`**${user.tag}** has been unmuted. They are not currently on this server`);
         }
         if (!member) return client.util.throwError(message, client.config.errors.invalid_member);
 
@@ -57,19 +64,26 @@ module.exports = {
         const role = message.guild.roles.cache.get(muterole);
 
         if (!role) return client.util.throwError(message, 'The muted role does not exist');
-        if (role.position >= message.guild.me.roles.highest.position) return client.util.throwError(message, client.config.errors.my_hierarchy);
+        if (role.position >= message.guild.me.roles.highest.position)
+            return client.util.throwError(message, client.config.errors.my_hierarchy);
 
         let hasMuteRecord = await punishmentSchema.findOne({
             guildID: message.guild.id,
             userID: member.id,
             type: 'mute'
-        })
+        });
 
-        const rolesToAdd = hasMuteRecord?.roles?.filter(role => message.guild.roles.cache.get(role) && !(role.managed && !member.roles.cache.has(role)) && message.guild.roles.cache.get(role).position < message.guild.me.roles.highest.position)
+        const rolesToAdd = hasMuteRecord?.roles?.filter(
+            role =>
+                message.guild.roles.cache.get(role) &&
+                !(role.managed && !member.roles.cache.has(role)) &&
+                message.guild.roles.cache.get(role).position < message.guild.me.roles.highest.position
+        );
         if (removerolesonmute && hasMuteRecord?.roles?.length) await member.roles.set(rolesToAdd);
         else member.roles.remove(role);
 
-        if (!member.roles.cache.has(role.id) && !hasMuteRecord) return client.util.throwError(message, 'This user is not currently muted');
+        if (!member.roles.cache.has(role.id) && !hasMuteRecord)
+            return client.util.throwError(message, 'This user is not currently muted');
         if (delModCmds) message.delete();
 
         await punishmentSchema.deleteMany({
@@ -79,36 +93,51 @@ module.exports = {
         });
 
         const guildWarnings = await warningSchema.findOne({ guildID: message.guild.id });
-        const mutesToExpire = guildWarnings.warnings.filter(warning => warning.expires > Date.now() && warning.type === 'Mute');
+        const mutesToExpire = guildWarnings.warnings.filter(
+            warning => warning.expires > Date.now() && warning.type === 'Mute'
+        );
 
         for (let i = 0; i !== mutesToExpire.length; ++i) {
-
             const mute = mutesToExpire[i];
 
-            await warningSchema.updateOne({
-            guildID: message.guild.id,
-            warnings: {
-                $elemMatch: {
-                    punishmentID: mute.punishmentID
+            await warningSchema.updateOne(
+                {
+                    guildID: message.guild.id,
+                    warnings: {
+                        $elemMatch: {
+                            punishmentID: mute.punishmentID
+                        }
+                    }
+                },
+                {
+                    $set: {
+                        'warnings.$.expires': Date.now()
+                    }
                 }
-            }
-            },
-            {
-                $set: {
-                    "warnings.$.expires": Date.now()
-                }
-            })
+            );
         }
 
-        new Infraction(client, 'Unmute', message, message.member, member, { reason: reason, punishmentID: punishmentID, time: null, auto: false });
-        new DMUserInfraction(client, 'unmuted', client.config.colors.main, message, member, { reason: reason, time: 'ignore', punishmentID: 'ignore' });
-        new ModerationLogger(client, 'Unmuted', message.member, member, message.channel, { reason: reason, duration: null, punishmentID: punishmentID });
+        new Infraction(client, 'Unmute', message, message.member, member, {
+            reason: reason,
+            punishmentID: punishmentID,
+            time: null,
+            auto: false
+        });
+        new DMUserInfraction(client, 'unmuted', client.config.colors.main, message, member, {
+            reason: reason,
+            time: 'ignore',
+            punishmentID: 'ignore'
+        });
+        new ModerationLogger(client, 'Unmuted', message.member, member, message.channel, {
+            reason: reason,
+            duration: null,
+            punishmentID: punishmentID
+        });
 
         const unmutedEmbed = new Discord.MessageEmbed()
-        .setColor(client.config.colors.main)
-        .setDescription(`${client.config.emotes.success} ${member.toString()} has been unmuted`)
-        
+            .setColor(client.config.colors.main)
+            .setDescription(`${client.config.emotes.success} ${member.toString()} has been unmuted`);
+
         return message.channel.send({ embeds: [unmutedEmbed] });
-        
     }
-}
+};

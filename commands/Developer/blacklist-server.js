@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const blacklistSchema = require(`../../schemas/blacklist-schema`)
+const blacklistSchema = require(`../../schemas/blacklist-schema`);
 
 module.exports = {
     name: 'blacklist-server',
@@ -8,14 +8,13 @@ module.exports = {
     aliases: ['fuck-server'],
     developer: true,
     async execute(client, message, args) {
-
         if (!args[0]) return client.util.throwError(message, client.config.errors.missing_argument_number);
         const ID = args[0];
 
         const alreadyBlacklisted = await blacklistSchema.findOne({
             ID: ID,
             server: true
-        })
+        });
 
         if (alreadyBlacklisted) return client.util.throwError(message, 'This server is already on the blacklist');
 
@@ -30,20 +29,19 @@ module.exports = {
             server: true
         }).save();
 
-        const channel = client.channels.cache.get('821901486984265797')
+        const channel = client.channels.cache.get('821901486984265797');
         const blacklistLogEmbed = new Discord.MessageEmbed()
             .setColor(client.config.colors.log)
             .setAuthor('Server Blacklisted', client.user.displayAvatarURL())
             .addField('Server ID', ID, true)
             .addField('Reason', reason, true)
             .addField('Blacklist Manager ID', message.author.id)
-            .addField('Date', client.util.timestamp(), true)
-        channel.send({ embeds: [blacklistLogEmbed] })
+            .addField('Date', client.util.timestamp(), true);
+        channel.send({ embeds: [blacklistLogEmbed] });
 
         const blacklistEmbed = new Discord.MessageEmbed()
             .setColor(client.config.colors.punishment[2])
-            .setDescription(`${client.config.emotes.success} Server ID **${ID}** has been added to the blacklist`)
+            .setDescription(`${client.config.emotes.success} Server ID **${ID}** has been added to the blacklist`);
         return message.reply({ embeds: [blacklistEmbed] });
-
     }
-}
+};

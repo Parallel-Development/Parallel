@@ -8,21 +8,20 @@ module.exports = {
     data: new SlashCommandBuilder().setName('cancel').setDescription('Cancel a pending for confirmation action'),
     permissions: Discord.Permissions.FLAGS.MANAGE_GUILD,
     async execute(client, interaction, args) {
-
-        if (!global.confirmationRequests.some(request => request.ID === interaction.user.id)) return client.util.throwError(interaction, 'You have no pending confirmation request!');
+        if (!global.confirmationRequests.some(request => request.ID === interaction.user.id))
+            return client.util.throwError(interaction, 'You have no pending confirmation request!');
         if (Date.now() - global.confirmationRequests.find(request => request.ID === interaction.user.id).at > 10000) {
-            global.confirmationRequests.pop({ ID: interaction.user.id })
-            return client.util.throwError(interaction, 'Your confirmation request has already expired')
+            global.confirmationRequests.pop({ ID: interaction.user.id });
+            return client.util.throwError(interaction, 'Your confirmation request has already expired');
         }
 
         global.confirmationRequests.pop({ ID: interaction.user.id });
 
         const cancelEmbed = new Discord.MessageEmbed()
-        .setColor(client.config.colors.main)
-        .setAuthor('Action Cancelled!', client.user.displayAvatarURL())
-        .setDescription(`✅ Successfully cancelled your pending confirmation request`);
+            .setColor(client.config.colors.main)
+            .setAuthor('Action Cancelled!', client.user.displayAvatarURL())
+            .setDescription(`✅ Successfully cancelled your pending confirmation request`);
 
-        return interaction.reply({ embeds:[cancelEmbed] })
-        
+        return interaction.reply({ embeds: [cancelEmbed] });
     }
-}
+};

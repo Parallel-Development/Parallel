@@ -8,7 +8,6 @@ const Discord = require('discord.js');
 module.exports = {
     name: 'messageUpdate',
     async execute(client, oldMessage, message) {
-
         if (global.void === true && !client.config.developers.includes(message.author.id)) return;
 
         if (message.author.bot || !message.guild || oldMessage.content === message.content) return;
@@ -20,13 +19,13 @@ module.exports = {
         const channelBypassed = await automodSchema.findOne({
             guildID: message.guild.id,
             bypassChannels: message.channel.id
-        })
+        });
 
         let roleBypassed = false;
 
         const x = await automodSchema.findOne({
             guildID: message.guild.id
-        })
+        });
         const { bypassRoles } = x;
         if ([...message.member.roles.cache.values()].some(role => bypassRoles.includes(role.id))) roleBypassed = true;
 
@@ -35,27 +34,29 @@ module.exports = {
             !isModerator &&
             !channelBypassed &&
             !roleBypassed
-        ) new AutomodChecks(client, message, true);
+        )
+            new AutomodChecks(client, message, true);
 
         const settings = await settingsSchema.findOne({
-            guildID: message.guild.id,
-        })
+            guildID: message.guild.id
+        });
         const { messageLogging } = settings;
 
         if (!message.guild.channels.cache.get(messageLogging) && messageLogging !== 'none') {
-            await settingsSchema.updateOne({
-                guildID: message.guild.id
-            },
+            await settingsSchema.updateOne(
+                {
+                    guildID: message.guild.id
+                },
                 {
                     messageLogging: 'none'
-                })
+                }
+            );
 
             return;
         }
 
         if (messageLogging === 'none') return;
 
-        new MessageLogger(client, message.guild.channels.cache.get(messageLogging), message, oldMessage)
-
+        new MessageLogger(client, message.guild.channels.cache.get(messageLogging), message, oldMessage);
     }
-}
+};

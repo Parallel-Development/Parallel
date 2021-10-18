@@ -1,9 +1,9 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
 const reqString = {
     type: String,
     required: true
-}
+};
 
 const systemSchema = mongoose.Schema({
     guildname: reqString,
@@ -12,6 +12,6 @@ const systemSchema = mongoose.Schema({
         type: [Object],
         required: true
     }
-})
+});
 
-module.exports = mongoose.model('system', systemSchema)
+module.exports = mongoose.model('system', systemSchema);

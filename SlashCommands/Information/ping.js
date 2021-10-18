@@ -7,9 +7,10 @@ module.exports = {
     async execute(client, interaction, args) {
         await interaction.deferReply();
         const now = performance.now();
-        interaction.editReply('Pinging...')
-        .then(() => {
-            return interaction.editReply(`Pong! Websocket: \`${client.ws.ping}ms\`, Bot latency: \`${Math.floor(performance.now() - now)}ms\``)
-        })
+        interaction.editReply('Pinging...').then(() => {
+            return interaction.editReply(
+                `Pong! Websocket: \`${client.ws.ping}ms\`, Bot latency: \`${Math.floor(performance.now() - now)}ms\``
+            );
+        });
     }
-}
+};

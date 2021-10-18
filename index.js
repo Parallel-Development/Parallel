@@ -6,14 +6,17 @@ if (process.argv.slice(2).includes('--perpendicular') || process.argv.slice(2).i
 }
 
 const Discord = require('discord.js');
-const client = new Discord.Client({ intents: [
-    Discord.Intents.FLAGS.GUILDS, 
-    Discord.Intents.FLAGS.GUILD_MESSAGES,
-    Discord.Intents.FLAGS.GUILD_MEMBERS, 
-    Discord.Intents.FLAGS.DIRECT_MESSAGES, 
-    Discord.Intents.FLAGS.GUILD_BANS,
-    Discord.Intents.FLAGS.GUILD_VOICE_STATES
-], allowedMentions: { parse: [ 'users' ], repliedUser: false  } });
+const client = new Discord.Client({
+    intents: [
+        Discord.Intents.FLAGS.GUILDS,
+        Discord.Intents.FLAGS.GUILD_MESSAGES,
+        Discord.Intents.FLAGS.GUILD_MEMBERS,
+        Discord.Intents.FLAGS.DIRECT_MESSAGES,
+        Discord.Intents.FLAGS.GUILD_BANS,
+        Discord.Intents.FLAGS.GUILD_VOICE_STATES
+    ],
+    allowedMentions: { parse: ['users'], repliedUser: false }
+});
 
 const fs = require('fs');
 const Utils = require('./structures/Utils');
@@ -34,14 +37,16 @@ global.lockdownCooldown = new Set();
 
 const mongo = require('./mongo');
 const connectToMongoDB = async () => {
-    await mongo().then(async() => {
+    await mongo().then(async () => {
         process.stdout.write('Connected to mongoDB!\n');
-    })
-}
+    });
+};
 connectToMongoDB();
-const EventHandler = require('./handlers/EventHandler'), CommandHandler = require('./handlers/CommandHandler'), ExpiredHandler = require('./handlers/ExpiredHandler');
+const EventHandler = require('./handlers/EventHandler'),
+    CommandHandler = require('./handlers/CommandHandler'),
+    ExpiredHandler = require('./handlers/ExpiredHandler');
 new EventHandler(client), new CommandHandler(client), new ExpiredHandler(client);
 
-process.on('uncaughtException', (error) => console.error(error));
+process.on('uncaughtException', error => console.error(error));
 
 client.login(global.perpendicular ? client.config.perpendicularToken : client.config.token);

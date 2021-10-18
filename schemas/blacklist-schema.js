@@ -1,9 +1,9 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
 const reqString = {
     type: String,
     required: true
-}
+};
 
 const blacklistSchema = mongoose.Schema({
     ID: reqString,
@@ -17,6 +17,6 @@ const blacklistSchema = mongoose.Schema({
         type: Boolean,
         required: true
     }
-})
+});
 
-module.exports = mongoose.model('blacklist', blacklistSchema)
+module.exports = mongoose.model('blacklist', blacklistSchema);

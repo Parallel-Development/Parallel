@@ -5,10 +5,10 @@ const commandFolders = fs.readdirSync('./SlashCommands');
 module.exports = {
     name: 'ready',
     once: true,
-    async execute(client) { 
-        client.user.setActivity('>help', { type: 'LISTENING'} )
+    async execute(client) {
+        client.user.setActivity('>help', { type: 'LISTENING' });
         process.stdout.write(`Logged in as ${client.user.tag}!\n`);
-        
+
         if (global.void === true) process.stdout.write('Bot is in void mode\n');
 
         await client.application.commands.fetch();
@@ -23,8 +23,8 @@ module.exports = {
         }
 
         process.stdout.write('All commands have been loaded!\n');
-        process.stdout.write(`Completed in: ${Math.floor(process.uptime())} seconds\n`)
+        process.stdout.write(`Completed in: ${Math.floor(process.uptime())} seconds\n`);
 
         return;
     }
-}
+};

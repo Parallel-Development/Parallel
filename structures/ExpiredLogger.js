@@ -2,9 +2,7 @@ const Discord = require('discord.js');
 const settingsSchema = require('../schemas/settings-schema');
 
 class ExpiredLogger {
-
     constructor(client, type, server, user, reason) {
-
         if (!client) throw new Error('required argument `client` is missing');
         if (!type) throw new Error('required argument `user` is missing');
         if (!server) throw new Error('required argument `server` is missing');
@@ -15,22 +13,24 @@ class ExpiredLogger {
         if (typeof user !== 'object') throw new Error('user must be a object');
         if (typeof reason !== 'string') throw new Error('reason must be a string');
 
-        const main = async() => {
+        const main = async () => {
             const getAutomodLogChannel = await settingsSchema.findOne({
                 guildID: server.id
-            })
+            });
 
             const { automodLogging } = getAutomodLogChannel;
 
             if (automodLogging === 'none') return;
 
             if (!server.channels.cache.get(automodLogging)) {
-                await settingsSchema.updateOne({
-                    guildID: server.id
-                },
+                await settingsSchema.updateOne(
+                    {
+                        guildID: server.id
+                    },
                     {
                         automodLogging: 'none'
-                    })
+                    }
+                );
                 return;
             }
 
@@ -39,11 +39,11 @@ class ExpiredLogger {
                 .setAuthor('Parallel Logging', client.user.displayAvatarURL())
                 .setTitle(`User automatically ${type}`)
                 .addField('User', `**${user.tag}** - \`${user.id}\``, true)
-                .addField('Reason', reason)
+                .addField('Reason', reason);
 
             const automodLogChannel = server.channels.cache.get(automodLogging);
-            automodLogChannel.send({ embeds: [expiredLog] })
-        }
+            automodLogChannel.send({ embeds: [expiredLog] });
+        };
 
         return main();
     }

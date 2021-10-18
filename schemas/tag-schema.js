@@ -1,9 +1,9 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
 const reqString = {
     type: String,
     required: true
-}
+};
 
 const tagSchema = mongoose.Schema({
     guildname: reqString,
@@ -16,7 +16,6 @@ const tagSchema = mongoose.Schema({
         type: [Object],
         required: true
     }
-    
-})
+});
 
-module.exports = mongoose.model('tags', tagSchema)
+module.exports = mongoose.model('tags', tagSchema);

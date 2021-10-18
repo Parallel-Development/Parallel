@@ -1,51 +1,48 @@
 const fs = require('fs');
-const commandFolders = fs.readdirSync('./commands')
-const path = require('path')
+const commandFolders = fs.readdirSync('./commands');
+const path = require('path');
 
-module.exports =  {
+module.exports = {
     name: 'reload',
-    description: "A command that can reload other commands!",
+    description: 'A command that can reload other commands!',
     usage: 'reload <directory> <file_name>',
     developer: true,
     async execute(client, message, args) {
-  
         const directory = args[0];
-        const fileName = args[1]
+        const fileName = args[1];
 
-        if (!directory) return client.util.throwError(message, 'A directory name must be provided')
-        if (!fileName && directory !== '--all') return client.util.throwError(message, 'A file name must be provided')
-        
-        const commandPath = `./${directory}/${fileName}`
+        if (!directory) return client.util.throwError(message, 'A directory name must be provided');
+        if (!fileName && directory !== '--all') return client.util.throwError(message, 'A file name must be provided');
 
-        if (args[0] === "--all") {
+        const commandPath = `./${directory}/${fileName}`;
 
-            const msg = await message.reply('Reloading...')
+        if (args[0] === '--all') {
+            const msg = await message.reply('Reloading...');
             for (const folder of commandFolders) {
-                const commandFiles = fs.readdirSync(`./commands/${folder}`).filter(file => file.endsWith('.js'))
+                const commandFiles = fs.readdirSync(`./commands/${folder}`).filter(file => file.endsWith('.js'));
                 for (const file of commandFiles) {
                     try {
-                        delete require.cache[require.resolve(`../${folder}/${file}`)]
-                        client.commands.delete(path.parse(file).name)
-                        const pull = require(`../${folder}/${file}`)
-                        client.commands.set(path.parse(file).name, pull)
+                        delete require.cache[require.resolve(`../${folder}/${file}`)];
+                        client.commands.delete(path.parse(file).name);
+                        const pull = require(`../${folder}/${file}`);
+                        client.commands.set(path.parse(file).name, pull);
                     } catch (e) {
-                        message.reply(`Could not reload: \`${folder}/${file}\``)
+                        message.reply(`Could not reload: \`${folder}/${file}\``);
                     }
                 }
-
             }
 
-            return msg.edit(`All commands have been reloaded!`)
+            return msg.edit(`All commands have been reloaded!`);
         }
 
         try {
-            delete require.cache[require.resolve(`../${commandPath}.js`)]
-            client.commands.delete(fileName)
-            const pull = require(`../${commandPath}.js`)
-            client.commands.set(fileName, pull)
-        } catch(e) {
-            return message.reply(`Could not reload: \`${commandPath}\``)
+            delete require.cache[require.resolve(`../${commandPath}.js`)];
+            client.commands.delete(fileName);
+            const pull = require(`../${commandPath}.js`);
+            client.commands.set(fileName, pull);
+        } catch (e) {
+            return message.reply(`Could not reload: \`${commandPath}\``);
         }
-        message.reply(`The file \`${commandPath}\` has been reloaded!`)
+        message.reply(`The file \`${commandPath}\` has been reloaded!`);
     }
-}
+};

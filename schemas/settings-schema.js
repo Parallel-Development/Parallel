@@ -1,19 +1,19 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
 const reqString = {
     type: String,
     required: true
-}
+};
 
 const reqBool = {
     type: Boolean,
     required: true
-}
+};
 
 const reqStringArray = {
     type: [String],
     required: true
-}
+};
 
 const settingsSchema = mongoose.Schema({
     guildname: reqString,
@@ -34,6 +34,6 @@ const settingsSchema = mongoose.Schema({
     },
     muterole: reqString,
     removerolesonmute: reqBool
-})
+});
 
-module.exports = mongoose.model('settings', settingsSchema)
+module.exports = mongoose.model('settings', settingsSchema);

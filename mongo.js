@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 const mongoPath = require('./config.json').mongoURL;
 
 module.exports = async () => {
@@ -6,7 +6,7 @@ module.exports = async () => {
         keepAlive: true,
         useNewUrlParser: true,
         useUnifiedTopology: true
-    })
+    });
 
-    return mongoose
-}
+    return mongoose;
+};

@@ -8,7 +8,6 @@ module.exports = {
     aliases: ['delwarn', 'rmpunish', 'removepunish', 'rminfraction'],
     permissions: Discord.Permissions.FLAGS.MANAGE_MESSAGES,
     async execute(client, message, args) {
-
         if (!args[0]) return client.util.throwError(message, client.config.errors.missing_argument_punishmentID);
         const ID = args[0];
 
@@ -19,35 +18,45 @@ module.exports = {
                     punishmentID: ID
                 }
             }
-        })
+        });
 
         if (!findPunishmentID) return client.util.throwError(message, client.config.errors.invalid_punishmentID);
 
         const moderatorID = findPunishmentID.warnings.find(key => key.punishmentID === ID).moderatorID;
-        const userID = findPunishmentID.warnings.find(key => key.punishmentID === ID).userID
+        const userID = findPunishmentID.warnings.find(key => key.punishmentID === ID).userID;
 
-        if (message.author.id !== moderatorID && !message.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD)) return client.util.throwError(message, 'You can only delete warnings that you distributed');
+        if (
+            message.author.id !== moderatorID &&
+            !message.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD)
+        )
+            return client.util.throwError(message, 'You can only delete warnings that you distributed');
 
-        await warningSchema.updateOne({
-            guildID: message.guild.id,
-            warnings: {
-                $elemMatch: {
-                    punishmentID: ID
-                }
-            }
-        },
-        {
-            $pull: {
+        await warningSchema.updateOne(
+            {
+                guildID: message.guild.id,
                 warnings: {
-                    punishmentID: ID
+                    $elemMatch: {
+                        punishmentID: ID
+                    }
+                }
+            },
+            {
+                $pull: {
+                    warnings: {
+                        punishmentID: ID
+                    }
                 }
             }
-        })
+        );
 
         const removedInfractionEmbed = new Discord.MessageEmbed()
-        .setColor(client.config.colors.main)
-        .setDescription(`${client.config.emotes.success} Infraction \`${ID}\` has been removed from **${(await client.users.fetch(userID)).tag}**`)
+            .setColor(client.config.colors.main)
+            .setDescription(
+                `${client.config.emotes.success} Infraction \`${ID}\` has been removed from **${
+                    (await client.users.fetch(userID)).tag
+                }**`
+            );
 
         return message.reply({ embeds: [removedInfractionEmbed] });
     }
-}
+};

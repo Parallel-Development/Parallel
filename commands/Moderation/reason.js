@@ -18,7 +18,7 @@ module.exports = {
                     punishmentID: ID
                 }
             }
-        })
+        });
 
         if (!findPunishmentID) return client.util.throwError(message, client.config.errors.invalid_punishmentID);
 
@@ -26,30 +26,41 @@ module.exports = {
         const userID = findPunishmentID.warnings.find(key => key.punishmentID === ID).userID;
         const reason = findPunishmentID.warnings.find(key => key.punishmentID === ID).reason;
 
-        if (moderatorID !== message.author.id && !message.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_MESSAGES)) return client.util.throwError(message, 'You can only delete warnings that you distributed');
+        if (
+            moderatorID !== message.author.id &&
+            !message.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_MESSAGES)
+        )
+            return client.util.throwError(message, 'You can only delete warnings that you distributed');
 
         const newReason = args.slice(1).join(' ');
         if (!newReason) return client.util.throwError(message, 'Please specify a new reason');
-        if (newReason === reason) return client.util.throwError(message, 'The new reason must be different from the old reason!');
+        if (newReason === reason)
+            return client.util.throwError(message, 'The new reason must be different from the old reason!');
 
-        await warningSchema.updateOne({
-            guildID: message.guild.id,
-            warnings: {
-                $elemMatch: {
-                    punishmentID: ID
+        await warningSchema.updateOne(
+            {
+                guildID: message.guild.id,
+                warnings: {
+                    $elemMatch: {
+                        punishmentID: ID
+                    }
                 }
-            }
-        },
+            },
             {
                 $set: {
-                    "warnings.$.reason": newReason
+                    'warnings.$.reason': newReason
                 }
-            })
+            }
+        );
 
         const changedInfractionReasonEmbed = new Discord.MessageEmbed()
-        .setColor(client.config.colors.main)
-        .setDescription(`${client.config.emotes.success} Reason for infraction \`${ID}\` has been updated to ${newReason.length <= 1024 ? newReason : await client.util.createBin(newReason)} for **${(await client.users.fetch(userID)).tag}**`)
+            .setColor(client.config.colors.main)
+            .setDescription(
+                `${client.config.emotes.success} Reason for infraction \`${ID}\` has been updated to ${
+                    newReason.length <= 1024 ? newReason : await client.util.createBin(newReason)
+                } for **${(await client.users.fetch(userID)).tag}**`
+            );
 
         return message.reply({ embeds: [changedInfractionReasonEmbed] });
     }
-}
+};

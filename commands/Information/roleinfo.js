@@ -6,10 +6,10 @@ module.exports = {
     usage: 'roleinfo [role]',
     aliases: ['roleinformation'],
     async execute(client, message, args) {
-
         if (!args[0]) return client.util.throwError(message, 'Please specify a role to get information on!');
-        const role = client.util.getRole(message.guild, args[0])
-        || message.guild.roles.cache.find(r => r.name == args.join(' '))
+        const role =
+            client.util.getRole(message.guild, args[0]) ||
+            message.guild.roles.cache.find(r => r.name == args.join(' '));
 
         if (!role) return client.util.throwError(message, client.config.errors.invalid_role);
 
@@ -22,10 +22,10 @@ module.exports = {
             .addField('Role ID', role.id, true)
             .addField('Role Hex Color', `${role.hexColor}`)
             .addField('Amount of members with this role', `${role.members.size}`)
-            .addField('Hoisted?', role.hoist ? "Yes" : "No", true)
+            .addField('Hoisted?', role.hoist ? 'Yes' : 'No', true)
             .addField('Created on', client.util.timestamp(role.createdAt))
-            .setFooter(`Information requested by ${message.author.tag}`, message.author.displayAvatarURL())
+            .setFooter(`Information requested by ${message.author.tag}`, message.author.displayAvatarURL());
 
-        return message.reply({ embeds: [roleInfoEmbed] })
+        return message.reply({ embeds: [roleInfoEmbed] });
     }
-}
+};

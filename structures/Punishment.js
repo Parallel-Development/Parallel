@@ -2,9 +2,7 @@ const punishmentSchema = require('../schemas/punishment-schema');
 const moment = require('moment');
 
 class Punishment {
-
     constructor(guildname, guildID, type, userID, { reason, time, roles } = {}) {
-
         if (!guildname) throw new Error('required argument `guildname` is missing');
         if (!guildID) throw new Error('required argument `guildID` is missing');
         if (!type) throw new Error('required argument `guildname` is missing');
@@ -14,7 +12,7 @@ class Punishment {
         if (typeof type !== 'string') throw new Error('type must be a string');
         if (typeof userID !== 'string') throw new Error('userID must be a string');
 
-        const main = async() => {
+        const main = async () => {
             return new punishmentSchema({
                 guildname: guildname,
                 guildID: guildID,
@@ -25,7 +23,7 @@ class Punishment {
                 date: `<t:${Math.floor(Date.now() / 1000)}>`,
                 roles: roles
             }).save();
-        }
+        };
 
         return main();
     }

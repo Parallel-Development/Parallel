@@ -1,10 +1,9 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
 const reqString = {
     type: String,
     required: true
-}
-
+};
 
 const punishmentSchema = mongoose.Schema({
     guildname: reqString,
@@ -18,6 +17,6 @@ const punishmentSchema = mongoose.Schema({
         type: [String],
         required: true
     }
-})
+});
 
-module.exports = mongoose.model('punishments', punishmentSchema)
+module.exports = mongoose.model('punishments', punishmentSchema);

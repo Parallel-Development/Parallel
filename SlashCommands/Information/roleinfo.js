@@ -4,13 +4,16 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 module.exports = {
     name: 'roleinfo',
     description: 'Get information on a role',
-    data: new SlashCommandBuilder().setName('roleinfo').setDescription('Get information on a role')
-    .addRoleOption(option => option.setName('role').setDescription('The role you are getting information on').setRequired(true)),
+    data: new SlashCommandBuilder()
+        .setName('roleinfo')
+        .setDescription('Get information on a role')
+        .addRoleOption(option =>
+            option.setName('role').setDescription('The role you are getting information on').setRequired(true)
+        ),
     async execute(client, interaction, args) {
-
         const role = client.util.getRole(interaction.guild, args['role']);
 
-        await interaction.deferReply()
+        await interaction.deferReply();
         await interaction.guild.members.fetch();
 
         const roleInfoEmbed = new Discord.MessageEmbed()
@@ -20,10 +23,10 @@ module.exports = {
             .addField('Role ID', role.id, true)
             .addField('Role Hex Color', `${role.hexColor}`)
             .addField('Amount of members with this role', `${role.members.size}`)
-            .addField('Hoisted?', role.hoist ? "Yes" : "No", true)
+            .addField('Hoisted?', role.hoist ? 'Yes' : 'No', true)
             .addField('Created on', client.util.timestamp(role.createdAt))
-            .setFooter(`Information requested by ${interaction.user.tag}`, interaction.user.displayAvatarURL())
+            .setFooter(`Information requested by ${interaction.user.tag}`, interaction.user.displayAvatarURL());
 
-        return interaction.editReply({ embeds: [roleInfoEmbed] })
+        return interaction.editReply({ embeds: [roleInfoEmbed] });
     }
-}
+};

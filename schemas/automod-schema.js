@@ -1,15 +1,15 @@
 const { string } = require('mathjs');
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
 const reqString = {
     type: String,
     required: true
-}
+};
 
 const reqInt = {
     type: Number,
     required: true
-}
+};
 
 const automodSchema = mongoose.Schema({
     guildname: reqString,
@@ -48,4 +48,4 @@ const automodSchema = mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model('automod', automodSchema)
+module.exports = mongoose.model('automod', automodSchema);

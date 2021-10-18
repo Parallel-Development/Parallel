@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const blacklistSchema = require(`../../schemas/blacklist-schema`)
+const blacklistSchema = require(`../../schemas/blacklist-schema`);
 
 module.exports = {
     name: 'blacklist',
@@ -8,15 +8,14 @@ module.exports = {
     aliases: ['fuck'],
     developer: true,
     async execute(client, message, args) {
-
         if (!args[0]) return client.util.throwError(message, client.config.errors.missing_argument_user);
-        const member = await client.util.getUser(client, args[0])
+        const member = await client.util.getUser(client, args[0]);
         if (!member) return client.util.throwError(message, client.config.errors.invalid_user);
 
         const alreadyBlacklisted = await blacklistSchema.findOne({
             ID: member.id,
             server: false
-        })
+        });
 
         if (alreadyBlacklisted) return client.util.throwError(message, 'This user is already on the blacklist');
 
@@ -31,20 +30,19 @@ module.exports = {
             server: false
         }).save();
 
-        const channel = client.channels.cache.get('821901486984265797')
+        const channel = client.channels.cache.get('821901486984265797');
         const blacklistLogEmbed = new Discord.MessageEmbed()
             .setColor(client.config.colors.log)
             .setAuthor('User Blacklisted', client.user.displayAvatarURL())
             .addField('User ID', member.id, true)
             .addField('Reason', reason, true)
             .addField('Blacklist Manager ID', message.author.id)
-            .addField('Date', client.util.timestamp(), true)
-        channel.send({ embeds: [blacklistLogEmbed] })
+            .addField('Date', client.util.timestamp(), true);
+        channel.send({ embeds: [blacklistLogEmbed] });
 
         const blacklistEmbed = new Discord.MessageEmbed()
-        .setColor(client.config.colors.punishment[2])
-        .setDescription(`${client.config.emotes.success} **${member.tag}** has been added to the blacklist`)
-        return message.reply({ embeds: [blacklistEmbed]  });
-
+            .setColor(client.config.colors.punishment[2])
+            .setDescription(`${client.config.emotes.success} **${member.tag}** has been added to the blacklist`);
+        return message.reply({ embeds: [blacklistEmbed] });
     }
-}
+};
