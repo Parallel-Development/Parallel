@@ -16,14 +16,14 @@ module.exports = {
         let slowmode = args['slowmode'];
         if(!parseInt(slowmode)) return client.util.throwError(interaction, 'an invalid slowmode was provided');
 
-        if(!Math.round(slowmode) && slowmode != 0) {
+        if(!Math.round(slowmode) && parseInt(slowmode) !== 0) {
             if(!ms((slowmode.startsWith('+') || slowmode.startsWith('-')) ? slowmode.slice(1) : slowmode)) return client.util.throwError(interaction, 'an invalid slowmode was provided');
             else slowmode = ms((slowmode.startsWith('+') || slowmode.startsWith('-')) ? slowmode.slice(1) : slowmode) / 1000;
         } else if(slowmode.startsWith('+') || slowmode.startsWith('-')) slowmode = ms((slowmode.startsWith('+') || slowmode.startsWith('-')) ? slowmode.slice(1) : slowmode);
 
         if (slowmode > 21600) return await client.util.throwError(interaction, 'slowmode must be less than or equal to 21,600 seconds');
 
-        const channel = client.util.getChannel(interaction.guild, args[1]) || interaction.channel;
+        const channel = client.util.getChannel(interaction.guild, args['channel']) || interaction.channel;
         if (!channel.permissionsFor(interaction.guild.me).has(Discord.Permissions.FLAGS.MANAGE_CHANNELS)) return await client.util.throwError(interaction, client.config.errors.my_channel_access_denied);
 
         if(args['slowmode'].startsWith('+')) slowmode = channel.rateLimitPerUser + parseInt(slowmode);

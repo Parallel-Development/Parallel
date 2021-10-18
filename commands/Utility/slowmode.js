@@ -14,7 +14,7 @@ module.exports = {
         let slowmode = args[0];
         if(!parseInt(slowmode)) return client.util.throwError(message, 'an invalid slowmode was provided');
 
-        if(!Math.round(slowmode) && slowmode != 0) {
+        if(!Math.round(slowmode) && parseInt(slowmode) !== 0) {
             if(!ms((slowmode.startsWith('+') || slowmode.startsWith('-')) ? slowmode.slice(1) : slowmode)) return client.util.throwError(message, 'an invalid slowmode was provided');
             else slowmode = ms((slowmode.startsWith('+') || slowmode.startsWith('-')) ? slowmode.slice(1) : slowmode) / 1000;
         } else if(slowmode.startsWith('+') || slowmode.startsWith('-')) slowmode = ms((slowmode.startsWith('+') || slowmode.startsWith('-')) ? slowmode.slice(1) : slowmode);
