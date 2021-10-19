@@ -36,17 +36,6 @@ module.exports = {
                 : await message.channel.send({ embeds: [tryingToEval] })
             : null;
 
-        const logEvaluationChannel = client.channels.cache.get('822853570213838849');
-        const evalLog = new Discord.MessageEmbed()
-            .setColor(client.config.colors.log)
-            .setTitle('Evaluation Log')
-            .addField('User Tag', message.author.tag)
-            .addField('User ID', message.author.id)
-            .addField('Server ID', message.guild.id)
-            .setDescription(code.length <= 1024 ? `Input: \`\`\`js\n${code}\`\`\`` : await client.util.createBin(code));
-
-        logEvaluationChannel.send({ embeds: [evalLog] });
-
         try {
             startTime = performance.now();
             output = isAsync ? await eval(`(async() => { ${code} })()`) : await eval(code);
