@@ -163,7 +163,7 @@ module.exports = {
                         embeds: [
                             settingsHelp(
                                 'Mod Role Permissions',
-                                'mod-role-permissions add <permission name>\nmod-role-permissions remove <permission name>\nmod-role-permissions set <[permission int](https://discordapi.com/permissions.html#0)>',
+                                'mod-role-permissions add <permission name>\nmod-role-permissions remove <permission name>\nmod-role-permissions set <[permission int](https://discordapi.com/permissions.html#0)>\n mod-role-permissions view',
                                 'Change the permissions the bot treats members with a moderator role to have'
                             )
                         ]
