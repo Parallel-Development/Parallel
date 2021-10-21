@@ -24,6 +24,7 @@ module.exports = {
                 .addField('Moderation Logging Channel', 'moderation-log-channel', true)
                 .addField('Auto-Moderation Log Channel', 'automod-log-channel', true)
                 .addField('Moderation Roles', 'modroles', true)
+                .addField('Moderation Role Permissions', 'mod-role-permissions', true)
                 .addField('Allow Tenor Links', 'allowtenor', true)
                 .addField('Mute Role', 'muterole', true)
                 .addField('Remove Roles On Mute', 'remove-roles-on-mute', true);
