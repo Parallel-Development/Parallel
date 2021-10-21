@@ -28,6 +28,7 @@ const settingsSchema = mongoose.Schema({
     moderationLogging: reqString,
     automodLogging: reqString,
     modRoles: reqStringArray,
+    modRolePermissions: reqString,
     shortcutCommands: {
         type: [Object],
         required: true

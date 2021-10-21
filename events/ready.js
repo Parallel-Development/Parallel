@@ -23,7 +23,6 @@ module.exports = {
         }
 
         process.stdout.write('All commands have been loaded!\n');
-        process.stdout.write(`Completed in: ${Math.floor(process.uptime())} seconds\n`);
 
         return;
     }

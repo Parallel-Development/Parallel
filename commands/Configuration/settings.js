@@ -156,6 +156,19 @@ module.exports = {
                     });
                 require('../../settings/modroles').run(client, message, args);
                 break;
+            case 'mod-role-permissions':
+                if (!args[1])
+                    return message.reply({
+                        embeds: [
+                            settingsHelp(
+                                'Mod Role Permissions',
+                                'mod-role-permissions add <permission name>\nmod-role-permissions remove <permission name>\nmod-role-permissions set <[permission int](https://discordapi.com/permissions.html#0)>',
+                                'Change the permissions the bot treats members with a moderator role to have'
+                            )
+                        ]
+                    });
+                require('../../settings/mod-role-permissions').run(client, message, args);
+                break;
             case 'allowtenor':
                 if (!args[1])
                     return message.reply({

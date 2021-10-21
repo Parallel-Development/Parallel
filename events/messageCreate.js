@@ -50,6 +50,7 @@ module.exports = {
                 moderationLogging: 'none',
                 automodLogging: 'none',
                 modRoles: [],
+                modRolePermissions: '402661398',
                 shortCommands: [],
                 muterole: 'none',
                 removerolesonmute: false
@@ -58,7 +59,7 @@ module.exports = {
         let prefix = global.perpendicular ? '%' : settings.prefix || client.config.prefix;
         if (new RegExp(`^<@!?${client.user.id}>`).exec(message.content)?.index === 0)
             prefix = message.content.split(' ')[0] + ' ';
-        const { muterole, removerolesonmute } = settings;
+        const { muterole, removerolesonmute, modRoles, modRolePermissions } = settings;
 
         const findMuteRole =
             message.guild.roles.cache.find(r => r.name.toLowerCase() === 'mute') ||
@@ -209,10 +210,7 @@ module.exports = {
             }).save();
         }
 
-        const getModerators = await settingsSchema.findOne({
-            guildID: message.guild.id
-        });
-        const isModerator = getModerators.modRoles.some(role => message.member.roles.cache.has(role));
+        const isModerator = modRoles.some(role => message.member.roles.cache.has(role));
         const channelBypassed = await automodSchema.findOne({
             guildID: message.guild.id,
             bypassChannels: message.channel.id
@@ -321,7 +319,11 @@ module.exports = {
             const punishmentID = client.util.generateID();
             const duration = shortcmd.duration !== 'Permanent' ? shortcmd.duration : null;
 
-            if (!message.member.permissions.has(permissions) && !isModerator) return denyAccess(shortcmd.name);
+            if (
+                !message.member.permissions.has(permissions) &&
+                (!isModerator || !new Discord.Permissions(modRolePermissions).has(permissions))
+            )
+                return denyAccess(shortcmd.name);
             if (!message.guild.me.permissions.has(permissions) && permissions !== 'warn')
                 return missingPerms(permissions.replace(pemissions.toUpperCase().replace('_', ' ').replace('_', ' ')));
 
@@ -613,18 +615,12 @@ module.exports = {
                 'You do not have access to run this command; this command is restricted to a specific set of users'
             );
 
-        if (command.permissions && !message.member.permissions.has(command.permissions)) {
-            if (
-                command.permissions === Discord.Permissions.FLAGS.MANAGE_MESSAGES ||
-                command.permissions === Discord.Permissions.FLAGS.BAN_MEMBERS ||
-                command.permissions === Discord.Permissions.FLAGS.KICK_MEMBERS ||
-                command.permissions === Discord.Permissions.FLAGS.MANAGE_NICKNAMES ||
-                command.permissions === Discord.Permissions.FLAGS.MANAGE_ROLES ||
-                command.permissions === Discord.Permissions.FLAGS.MANAGE_CHANNELS
-            ) {
-                if (!isModerator) return denyAccess(command.name);
-            } else return denyAccess(command.name);
-        }
+        if (
+            command.permissions &&
+            !message.member.permissions.has(command.permissions) &&
+            (!isModerator || !new Discord.Permissions(modRolePermissions).has(command.permissions))
+        )
+            return denyAccess(command.name);
 
         if (command.requiredBotPermission && !message.guild.me.permissions.has(command.requiredBotPermission))
             return missingPerms(command.requiredBotPermission);

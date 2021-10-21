@@ -73,6 +73,29 @@ module.exports = {
             return;
         }
 
+        const settingsCheck = await settingsSchema.findOne({ guildID: interaction.guild.id });
+        if (!settingsCheck) {
+            await new settingsSchema({
+                guildname: interaction.guild.name,
+                guildID: interaction.guild.id,
+                prefix: client.config.prefix,
+                baninfo: 'none',
+                delModCmds: false,
+                locked: [],
+                autowarnexpire: 'disabled',
+                manualwarnexpire: 'disabled',
+                messageLogging: 'none',
+                messageLoggingIgnored: [],
+                moderationLogging: 'none',
+                automodLogging: 'none',
+                modRoles: [],
+                modRolePermissions: '402661398',
+                shortCommands: [],
+                muterole: 'none',
+                removerolesonmute: false
+            }).save();
+        }
+
         const automodCheck = await automodSchema.findOne({
             guildID: interaction.guild.id
         });
@@ -178,7 +201,9 @@ module.exports = {
             return client.util.throwError(interaction, 'You cannot run this command.');
 
         const guildSettings = await settingsSchema.findOne({ guildID: interaction.guild.id });
-        const { modRoles, locked } = guildSettings;
+        const { modRoles, locked, modRolePermissions } = guildSettings;
+
+        const isModerator = modRoles.some(role => interaction.member.roles.cache.has(role));
 
         const denyAccess = commandName => {
             const errorMessage = new Discord.MessageEmbed()
@@ -188,19 +213,12 @@ module.exports = {
             return interaction.reply({ embeds: [errorMessage], ephemeral: true });
         };
 
-        if (command.permissions && !interaction.member.permissions.has(command.permissions)) {
-            if (
-                command.permissions === Discord.Permissions.FLAGS.MANAGE_MESSAGES ||
-                command.permissions === Discord.Permissions.FLAGS.BAN_MEMBERS ||
-                command.permissions === Discord.Permissions.FLAGS.KICK_MEMBERS ||
-                command.permissions === Discord.Permissions.FLAGS.MANAGE_NICKNAMES ||
-                command.permissions === Discord.Permissions.FLAGS.MANAGE_ROLES ||
-                command.permissions === Discord.Permissions.FLAGS.MANAGE_CHANNELS
-            ) {
-                if (!interaction.member.roles.cache.some(role => modRoles.includes(role)))
-                    return denyAccess(command.name);
-            } else return denyAccess(command.name);
-        }
+        if (
+            command.permissions &&
+            !interaction.member.permissions.has(command.permissions) &&
+            (!isModerator || !new Discord.Permissions(modRolePermissions).has(command.permissions))
+        )
+            return denyAccess(command.name);
 
         if (command.requiredBotPermission && !interaction.guild.me.permissions.has(command.requiredBotPermission)) {
             let missingPermission = new Discord.Permissions(command.requiredBotPermission);
