@@ -54,7 +54,7 @@ module.exports = {
         );
 
         const changedInfractionReasonEmbed = new Discord.MessageEmbed()
-            .setColor(client.config.colors.main)
+            .setColor(client.util.mainColor(message.guild))
             .setDescription(
                 `${client.config.emotes.success} Reason for infraction \`${ID}\` has been updated to ${
                     newReason.length <= 1024 ? newReason : await client.util.createBin(newReason)

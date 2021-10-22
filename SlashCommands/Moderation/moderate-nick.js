@@ -58,7 +58,7 @@ module.exports = {
         }
 
         const moderatedNicknameEmbed = new Discord.MessageEmbed()
-            .setColor(client.config.colors.main)
+            .setColor(client.util.mainColor(interaction.guild))
             .setDescription(
                 `✅ User with ID \`${member.id}\` has been moderated with identifier code \`${code}\` ${
                     args['dm'] ? (failedToSend ? '| Failed to DM them' : "| Successfully DM'd them") : ''

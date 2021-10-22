@@ -33,7 +33,7 @@ module.exports = {
         if (args['dm'] === true) {
             const reason = args['reason'] || 'Unspecified';
             const addedRoleDM = new Discord.MessageEmbed()
-                .setColor(client.config.colors.main)
+                .setColor(client.util.mainColor(message.guild))
                 .setAuthor('Parallel Role Management', client.user.displayAvatarURL())
                 .setTitle(`A role has been revoked from you in ${message.guild.name}!`)
                 .addField('Removed Role', `${role.name} - \`${role.id}\``)
@@ -45,7 +45,7 @@ module.exports = {
         }
 
         const removedRole = new Discord.MessageEmbed()
-            .setColor(client.config.colors.main)
+            .setColor(client.util.mainColor(message.guild))
             .setDescription(
                 `${
                     client.config.emotes.success

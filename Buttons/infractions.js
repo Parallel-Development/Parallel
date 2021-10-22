@@ -32,7 +32,7 @@ module.exports.run = async (client, interaction) => {
     userWarnings = userWarnings?.warnings?.filter(warning => warning.userID === user.id);
     if (!userWarnings.length) {
         const noWarningsEmbed = new Discord.MessageEmbed()
-            .setColor(client.config.colors.main)
+            .setColor(client.util.mainColor(interaction.guild))
             .setAuthor(`Warnings for ${user.tag} (${user.id}) - ${userWarnings.length}`, client.user.displayAvatarURL())
             .setDescription('This user does not have any infractions')
             .setFooter(`Page Number: 1/1`);
@@ -61,7 +61,7 @@ module.exports.run = async (client, interaction) => {
     }
 
     const warningsEmbed = new Discord.MessageEmbed()
-        .setColor(client.config.colors.main)
+        .setColor(client.util.mainColor(interaction.guild))
         .setAuthor(`Warnings for ${user.tag} (${user.id}) - ${userWarnings.length}`, client.user.displayAvatarURL())
         .setFooter(`Page Number: ${currentPage}/${amountOfPages}`);
 

@@ -51,7 +51,7 @@ module.exports = {
         if (args['dm'] === true) {
             const reason = args['reason'] || 'Unspecified';
             const addedRoleDM = new Discord.MessageEmbed()
-                .setColor(client.config.colors.main)
+                .setColor(client.util.mainColor(interaction.guild))
                 .setAuthor('Parallel Role Management', client.user.displayAvatarURL())
                 .setTitle(`You were assigned a role in ${interaction.guild.name}!`)
                 .addField('Added Role', `${role.name} - \`${role.id}\``)
@@ -63,7 +63,7 @@ module.exports = {
         }
 
         const assignedRole = new Discord.MessageEmbed()
-            .setColor(client.config.colors.main)
+            .setColor(client.util.mainColor(interaction.guild))
             .setDescription(
                 `✅ Role ${role.toString()} successfully assigned to ${member.toString()} ${
                     args['dm'] ? (didNotSend ? '| Failed to DM them' : "| Successfully DM'd them") : ''

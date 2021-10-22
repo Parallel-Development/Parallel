@@ -40,7 +40,7 @@ module.exports = {
         await member.setNickname(nickname);
 
         const successEmbed = new Discord.MessageEmbed()
-            .setColor(client.config.colors.main)
+            .setColor(client.util.mainColor(interaction.guild))
             .setDescription(`✅ Nickname for ${member} set ${nickname ? `to \`${nickname}\`` : 'back to normal'}`);
         return interaction.reply({ embeds: [successEmbed] });
     }

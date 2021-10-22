@@ -8,7 +8,7 @@ module.exports = {
     aliases: ['time'],
     async execute(client, message, args) {
         const time = new Discord.MessageEmbed()
-            .setColor(client.config.colors.main)
+            .setColor(client.util.mainColor(message.guild))
             .setAuthor('Date', client.user.displayAvatarURL())
             .addField('Your current date', client.util.timestamp(Date.now()))
             .addField('Date in UTC', moment.utc(Date.now()).format('dddd, MMMM Do YYYY, h:mm:ss A'))

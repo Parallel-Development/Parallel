@@ -45,7 +45,7 @@ module.exports = {
         if (typeof output !== 'string') output = util.inspect(output, { depth: 0 });
 
         let outputEmbed = new Discord.MessageEmbed()
-            .setColor(client.config.colors.main)
+            .setColor(client.util.mainColor(interaction.guild))
             .setDescription(`Input:\`\`\`js\n${code}\`\`\`\nOutput:\`\`\`js\n` + output + `\`\`\``)
             .setAuthor('Evaluation', client.user.displayAvatarURL())
             .setTitle(`Completed in ${client.util.duration(endTime - startTime)}`)
@@ -63,7 +63,7 @@ module.exports = {
                 const buttons = new Discord.MessageActionRow().addComponents(_output);
 
                 const newOutputEmbed = new Discord.MessageEmbed()
-                    .setColor(client.config.colors.main)
+                    .setColor(client.util.mainColor(interaction.guild))
                     .setDescription(`Failed to send output, click the button below to view the returned output`);
                 return interaction.editReply({ embeds: [newOutputEmbed], components: [buttons] });
             })

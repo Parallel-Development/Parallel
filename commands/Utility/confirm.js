@@ -37,7 +37,7 @@ module.exports = {
             );
 
             const clearedInfractionsEmbed = new Discord.MessageEmbed()
-                .setColor(client.config.colors.main)
+                .setColor(client.util.mainColor(message.guild))
                 .setAuthor('Action Confirmed!', client.user.displayAvatarURL())
                 .setDescription(
                     `All warnings have been cleared from **${
@@ -52,7 +52,7 @@ module.exports = {
             });
 
             const clearedServerInfractionsEmbed = new Discord.MessageEmbed()
-                .setColor(client.config.colors.main)
+                .setColor(client.util.mainColor(message.guild))
                 .setAuthor('Action Confirmed!', client.user.displayAvatarURL())
                 .setDescription(`All server warnings have been cleared`);
             await message.reply({ embeds: [clearedServerInfractionsEmbed] });
@@ -68,7 +68,7 @@ module.exports = {
             );
 
             const deletedAllShortcutsEmbed = new Discord.MessageEmbed()
-                .setColor(client.config.colors.main)
+                .setColor(client.util.mainColor(message.guild))
                 .setAuthor('Action Confirmed!', client.user.displayAvatarURL())
                 .setDescription(`All server shortcuts have been removed`);
             await message.reply({ embeds: [deletedAllShortcutsEmbed] });
@@ -84,7 +84,7 @@ module.exports = {
             );
 
             const clearedSystem = new Discord.MessageEmbed()
-                .setColor(client.config.colors.main)
+                .setColor(client.util.mainColor(message.guild))
                 .setAuthor('Action Confirmed!', client.user.displayAvatarURL())
                 .setDescription(`Reset the punishment system`);
             await message.reply({ embeds: [clearedSystem] });

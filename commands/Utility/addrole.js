@@ -33,7 +33,7 @@ module.exports = {
         if (args[2] === '--dm') {
             const reason = args.slice(3).join(' ') || 'Unspecified';
             const addedRoleDM = new Discord.MessageEmbed()
-                .setColor(client.config.colors.main)
+                .setColor(client.util.mainColor(message.guild))
                 .setAuthor('Parallel Role Management', client.user.displayAvatarURL())
                 .setTitle(`You were assigned a role in ${message.guild.name}!`)
                 .addField('Added Role', `${role.name} - \`${role.id}\``)
@@ -46,7 +46,7 @@ module.exports = {
 
         await member.roles.add(role, `Responsible Member: ${message.author.tag}`);
         const assignedRole = new Discord.MessageEmbed()
-            .setColor(client.config.colors.main)
+            .setColor(client.util.mainColor(message.guild))
             .setDescription(
                 `${
                     client.config.emotes.success

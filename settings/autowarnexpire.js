@@ -8,7 +8,7 @@ exports.run = async (client, message, args) => {
         const { autowarnexpire } = guildSettings;
 
         const autowarnexpireEmbed = new Discord.MessageEmbed()
-            .setColor(client.config.colors.main)
+            .setColor(client.util.mainColor(message.guild))
             .setDescription(
                 autowarnexpire === 'disabled'
                     ? 'Auto-warnings are **not** currently set to expire'
@@ -29,7 +29,7 @@ exports.run = async (client, message, args) => {
         );
 
         const disableSuccess = new Discord.MessageEmbed()
-            .setColor(client.config.colors.main)
+            .setColor(client.util.mainColor(message.guild))
             .setDescription(`${client.config.emotes.success} Success! Automod warnings will now never expire`);
 
         return message.reply({ embeds: [disableSuccess] });
@@ -50,7 +50,7 @@ exports.run = async (client, message, args) => {
     );
 
     const success = new Discord.MessageEmbed()
-        .setColor(client.config.colors.main)
+        .setColor(client.util.mainColor(message.guild))
         .setDescription(
             ` ${client.config.emotes.success} Success! Automod warnings will now expire in \`${client.util.duration(
                 duration

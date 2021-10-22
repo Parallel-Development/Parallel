@@ -156,7 +156,7 @@ module.exports = {
                 return client.util.throwError(interaction, 'No shortcut commands are setup for this server!');
 
             const viewEmbed = new Discord.MessageEmbed()
-                .setColor(client.config.colors.main)
+                .setColor(client.util.mainColor(interaction.guild))
                 .setAuthor(`Shortcut commands for ${interaction.guild.name}`, client.user.displayAvatarURL());
             viewEmbed.setDescription(
                 `You can get more information about a shortcut command by running \`/help (shortcut command name)\`\n\n${shortcutCommands

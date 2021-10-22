@@ -44,7 +44,7 @@ module.exports = {
         }
 
         const moderatedNicknameEmbed = new Discord.MessageEmbed()
-            .setColor(client.config.colors.main)
+            .setColor(client.util.mainColor(message.guild))
             .setDescription(
                 `${client.config.emotes.success} User with ID \`${
                     member.id

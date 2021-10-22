@@ -10,7 +10,7 @@ exports.run = async (client, message, args) => {
         });
         if (!getModRoles.modRoles.length) return message.reply('No moderation roles are setup for this server');
         const viewModRoles = new Discord.MessageEmbed()
-            .setColor(client.config.colors.main)
+            .setColor(client.util.mainColor(message.guild))
             .setAuthor(`Moderation roles for ${message.guild.name}`, client.user.displayAvatarURL());
         const descriptionArr = [];
         for (let i = 0; i !== getModRoles.modRoles.length; ++i) {
@@ -53,7 +53,7 @@ exports.run = async (client, message, args) => {
             }
         );
         const addedRole = new Discord.MessageEmbed()
-            .setColor(client.config.colors.main)
+            .setColor(client.util.mainColor(message.guild))
             .setDescription(
                 `Role ${role.toString()} has been added to the moderator roles list. This role now has moderator permissions`
             );
@@ -82,7 +82,7 @@ exports.run = async (client, message, args) => {
             }
         );
         const removedRole = new Discord.MessageEmbed()
-            .setColor(client.config.colors.main)
+            .setColor(client.util.mainColor(message.guild))
             .setDescription(
                 `Role ${role.toString()} has been removed to the moderator roles list. This role no longer has moderator permissions`
             );

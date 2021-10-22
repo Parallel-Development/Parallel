@@ -45,7 +45,7 @@ module.exports = {
         channel.send({ embeds: [blacklistLogEmbed] });
 
         const blacklistEmbed = new Discord.MessageEmbed()
-            .setColor(client.config.colors.main)
+            .setColor(client.util.mainColor(interaction.guild))
             .setDescription(`✅ Server ID **${ID}** has been whitelisted`);
         return interaction.reply({ embeds: [blacklistEmbed] });
     }

@@ -32,7 +32,7 @@ module.exports = {
         await member.setNickname(nickname);
 
         const successEmbed = new Discord.MessageEmbed()
-            .setColor(client.config.colors.main)
+            .setColor(client.util.mainColor(message.guild))
             .setDescription(
                 `${client.config.emotes.success} Nickname for ${member} set ${
                     nickname ? `to \`${nickname}\`` : 'back to normal'

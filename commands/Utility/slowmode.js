@@ -46,7 +46,7 @@ module.exports = {
         else channel.setRateLimitPerUser(slowmode);
 
         const slowmodeEmbed = new Discord.MessageEmbed()
-            .setColor(client.config.colors.main)
+            .setColor(client.util.mainColor(message.guild))
             .setDescription(
                 `${client.config.emotes.success} Set the slowmode for ${channel} to \`${
                     slowmode >= 0 ? client.util.duration(slowmode * 1000) : '0 seconds'

@@ -40,7 +40,7 @@ module.exports = {
             );
 
             const clearedInfractionsEmbed = new Discord.MessageEmbed()
-                .setColor(client.config.colors.main)
+                .setColor(client.util.mainColor(interaction.guild))
                 .setAuthor('Action Confirmed!', client.user.displayAvatarURL())
                 .setDescription(
                     `All warnings have been cleared from **${
@@ -55,7 +55,7 @@ module.exports = {
             });
 
             const clearedServerInfractionsEmbed = new Discord.MessageEmbed()
-                .setColor(client.config.colors.main)
+                .setColor(client.util.mainColor(interaction.guild))
                 .setAuthor('Action Confirmed!', client.user.displayAvatarURL())
                 .setDescription(`All server warnings have been cleared`);
             await interaction.reply({ embeds: [clearedServerInfractionsEmbed] });
@@ -71,7 +71,7 @@ module.exports = {
             );
 
             const deletedAllShortcutsEmbed = new Discord.MessageEmbed()
-                .setColor(client.config.colors.main)
+                .setColor(client.util.mainColor(interaction.guild))
                 .setAuthor('Action Confirmed!', client.user.displayAvatarURL())
                 .setDescription(`All server shortcuts have been removed`);
             await interaction.reply({ embeds: [deletedAllShortcutsEmbed] });
@@ -87,7 +87,7 @@ module.exports = {
             );
 
             const clearedSystem = new Discord.MessageEmbed()
-                .setColor(client.config.colors.main)
+                .setColor(client.util.mainColor(interaction.guild))
                 .setAuthor('Action Confirmed!', client.user.displayAvatarURL())
                 .setDescription(`Reset the punishment system`);
             await interaction.reply({ embeds: [clearedSystem] });
@@ -103,7 +103,7 @@ module.exports = {
             );
 
             const clearedSystem = new Discord.MessageEmbed()
-                .setColor(client.config.colors.main)
+                .setColor(client.util.mainColor(interaction.guild))
                 .setAuthor('Action Confirmed!', client.user.displayAvatarURL())
                 .setDescription(`Reset the punishment system`);
             await interaction.reply({ embeds: [clearedSystem] });

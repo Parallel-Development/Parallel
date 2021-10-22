@@ -12,7 +12,7 @@ module.exports = {
         if (!displayName) return message.reply('Please specify a display name to search for!');
 
         const searchingEmbed = new Discord.MessageEmbed()
-            .setColor(client.config.colors.main)
+            .setColor(client.util.mainColor(message.guild))
             .setDescription(`Searching... ${client.config.emotes.loading}`);
         const msg = await message.reply({ embeds: [searchingEmbed] });
 
@@ -20,7 +20,7 @@ module.exports = {
         const members = [];
 
         const result = new Discord.MessageEmbed()
-            .setColor(client.config.colors.main)
+            .setColor(client.util.mainColor(message.guild))
             .setAuthor(
                 `Results for ${displayName} ${
                     exact ? '| The results shown are for users with the exact display name as specified' : ''
@@ -55,7 +55,7 @@ module.exports = {
         if (!members.length)
             return msg.edit({
                 embeds: [
-                    new Discord.MessageEmbed().setColor(client.config.colors.main).setDescription('No results found')
+                    new Discord.MessageEmbed().setColor(client.util.mainColor(message.guild)).setDescription('No results found')
                 ]
             });
 
@@ -68,7 +68,7 @@ module.exports = {
                 )
             );
             const newResultEmbed = new Discord.MessageEmbed()
-                .setColor(client.config.colors.main)
+                .setColor(client.util.mainColor(message.guild))
                 .setDescription(
                     `Failed to send the result! View the result [here](${newResult}) (**${members.length}** results)`
                 );

@@ -135,7 +135,7 @@ module.exports = {
         });
 
         const unmutedEmbed = new Discord.MessageEmbed()
-            .setColor(client.config.colors.main)
+            .setColor(client.util.mainColor(message.guild))
             .setDescription(`${client.config.emotes.success} ${member.toString()} has been unmuted`);
 
         return message.channel.send({ embeds: [unmutedEmbed] });

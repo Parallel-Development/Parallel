@@ -18,7 +18,7 @@ module.exports = {
             if (systemCheck.system.length === 0)
                 return message.reply('No warning amount instances are set for this server');
             const pSystem = new Discord.MessageEmbed()
-                .setColor(client.config.colors.main)
+                .setColor(client.util.mainColor(message.guild))
                 .setAuthor(`Punishment system for ${message.guild.name}`, client.user.displayAvatarURL());
             pSystem.setDescription(
                 systemCheck.system

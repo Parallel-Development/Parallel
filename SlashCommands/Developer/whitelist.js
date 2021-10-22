@@ -41,7 +41,7 @@ module.exports = {
         channel.send({ embeds: [blacklistLogEmbed] });
 
         const blacklistEmbed = new Discord.MessageEmbed()
-            .setColor(client.config.colors.main)
+            .setColor(client.util.mainColor(interaction.guild))
             .setDescription(`✅ **${user.tag}** has been removed from the blacklist`);
         return interaction.reply({ embeds: [blacklistEmbed] });
     }

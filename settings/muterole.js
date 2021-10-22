@@ -10,7 +10,7 @@ exports.run = async (client, message, args) => {
                 'There is no mute role. Mute a user to have the bot automatically create one, or just set the new muted role'
             );
         const currentMuteroleEmbed = new Discord.MessageEmbed()
-            .setColor(client.config.colors.main)
+            .setColor(client.util.mainColor(message.guild))
             .setDescription(`The current muted role is set to ${message.guild.roles.cache.get(muterole)}`);
         return message.reply({ embeds: [currentMuteroleEmbed] });
     }
@@ -34,7 +34,7 @@ exports.run = async (client, message, args) => {
     );
 
     const successEmbed = new Discord.MessageEmbed()
-        .setColor(client.config.colors.main)
+        .setColor(client.util.mainColor(message.guild))
         .setDescription(`${client.config.emotes.success} Successfully set the muted role to ${role}`);
 
     return message.reply({ embeds: [successEmbed] });

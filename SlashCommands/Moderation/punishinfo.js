@@ -37,7 +37,7 @@ module.exports = {
         const reason = findPunishmentID.warnings.find(key => key.punishmentID === ID).reason;
 
         const punishInfoEmbed = new Discord.MessageEmbed()
-            .setColor(client.config.colors.main)
+            .setColor(client.util.mainColor(interaction.guild))
             .setAuthor(`Punishment information`, client.user.displayAvatarURL())
             .setDescription(`Case information for punishment ID \`${ID}\`\nType: **${type}**`)
             .addField('User Mention', user.toString())

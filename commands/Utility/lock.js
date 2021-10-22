@@ -156,7 +156,7 @@ module.exports = {
         if (channel !== message.channel) message.reply({ content: `Successfully locked ${channel}` });
 
         const lockedEmbed = new Discord.MessageEmbed()
-            .setColor(client.config.colors.main)
+            .setColor(client.util.mainColor(message.guild))
             .setAuthor('Channel Lock', client.user.displayAvatarURL())
             .setTitle('This channel has been locked')
             .setDescription(

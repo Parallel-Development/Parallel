@@ -72,7 +72,7 @@ module.exports = {
         });
 
         const unbannedEmbed = new Discord.MessageEmbed()
-            .setColor(client.config.colors.main)
+            .setColor(client.util.mainColor(message.guild))
             .setDescription(`${client.config.emotes.success} **${user.tag}** has been unbanned`);
 
         return message.reply({ embeds: [unbannedEmbed] });

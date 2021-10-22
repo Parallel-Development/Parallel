@@ -12,7 +12,7 @@ module.exports = {
         const user = (await client.util.getUser(client, args['user'])) || interaction.user;
 
         const avatar = new Discord.MessageEmbed()
-            .setColor(client.config.colors.main)
+            .setColor(client.util.mainColor(interaction.guild))
             .setAuthor(`${user.tag}'s avatar`, client.user.displayAvatarURL())
             .setImage(user.displayAvatarURL({ dynamic: true, size: 1024 }).replace('.webp', '.png'))
             .setFooter(`Information requested by ${interaction.user.tag}`, interaction.user.displayAvatarURL());

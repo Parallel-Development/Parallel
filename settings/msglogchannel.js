@@ -7,7 +7,7 @@ exports.run = async (client, message, args) => {
         const { messageLogging } = guildSettings;
 
         const messageLoggingChannelEmbed = new Discord.MessageEmbed()
-            .setColor(client.config.colors.main)
+            .setColor(client.util.mainColor(message.guild))
             .setDescription(
                 messageLogging === 'none'
                     ? 'There is no channel set for logging updated message content or deleted messages'

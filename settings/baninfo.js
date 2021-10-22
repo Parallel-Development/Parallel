@@ -10,7 +10,7 @@ exports.run = async (client, message, args) => {
         const { baninfo } = getBanInfo;
         if (baninfo === 'none') return message.reply('You have no current ban information field set');
         const banInfoCurrentMessage = new Discord.MessageEmbed()
-            .setColor(client.config.colors.main)
+            .setColor(client.util.mainColor(message.guild))
             .setDescription(`Your current ban information field: ${baninfo}`);
         return message.reply({ embeds: [banInfoCurrentMessage] });
     }
@@ -27,7 +27,7 @@ exports.run = async (client, message, args) => {
         }
     );
 
-    const successMessage = new Discord.MessageEmbed().setColor(client.config.colors.main);
+    const successMessage = new Discord.MessageEmbed().setColor(client.util.mainColor(message.guild));
     if (banInfoMessage !== 'none') successMessage.setDescription(`Success! Message: ${banInfoMessage}`);
     else successMessage.setDescription(`Success! The ban info module has been disabled!`);
     return message.reply({ embeds: [successMessage] });

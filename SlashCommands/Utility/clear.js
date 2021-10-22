@@ -45,7 +45,7 @@ module.exports = {
                     'Deleted 0 messages; either failed to fetch any messages from the user, or the messages were too old to be bulk deleted'
                 );
             const bulkDeleteEmbed = new Discord.MessageEmbed()
-                .setColor(client.config.colors.main)
+                .setColor(client.util.mainColor(interaction.guild))
                 .setDescription(
                     `✅ Successfully purged \`${purgedMessages}\` ${
                         purgedMessages === 1 ? 'message' : 'messages'
@@ -59,7 +59,7 @@ module.exports = {
                     'Deleted 0 messages; either there are no messages in this channel or the messages are too old'
                 );
             const _bulkDeleteEmbed = new Discord.MessageEmbed()
-                .setColor(client.config.colors.main)
+                .setColor(client.util.mainColor(interaction.guild))
                 .setDescription(
                     `✅ Successfully purged \`${deletedAmount.size}\` ${
                         deletedAmount.size === 1 ? 'message' : 'messages'

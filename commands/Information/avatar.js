@@ -9,7 +9,7 @@ module.exports = {
         const user = (await client.util.getUser(client, args[0])) || message.author;
 
         const avatar = new Discord.MessageEmbed()
-            .setColor(client.config.colors.main)
+            .setColor(client.util.mainColor(message.guild))
             .setAuthor(`${user.tag}'s avatar`, client.user.displayAvatarURL())
             .setImage(user.displayAvatarURL({ dynamic: true, size: 1024 }).replace('.webp', '.png'))
             .setFooter(`Information requested by ${message.author.tag}`, message.author.displayAvatarURL());

@@ -137,7 +137,7 @@ module.exports = {
         });
 
         const unmutedEmbed = new Discord.MessageEmbed()
-            .setColor(client.config.colors.main)
+            .setColor(client.util.mainColor(interaction.guild))
             .setDescription(`✅ ${member.toString()} has been unmuted`);
 
         if (delModCmds) {

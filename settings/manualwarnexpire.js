@@ -8,7 +8,7 @@ exports.run = async (client, message, args) => {
         const { manualwarnexpire } = guildSettings;
 
         const manualwarnexpireEmbed = new Discord.MessageEmbed()
-            .setColor(client.config.colors.main)
+            .setColor(client.util.mainColor(message.guild))
             .setDescription(
                 manualwarnexpire === 'disabled'
                     ? 'Manual warnings are currently **not** set to expire if no duration is provided'
@@ -31,7 +31,7 @@ exports.run = async (client, message, args) => {
         );
 
         const disableSuccess = new Discord.MessageEmbed()
-            .setColor(client.config.colors.main)
+            .setColor(client.util.mainColor(message.guild))
             .setDescription(
                 `${client.config.emotes.success} Success! Manual warnings with no duration specified will now never expire`
             );
@@ -54,7 +54,7 @@ exports.run = async (client, message, args) => {
     );
 
     const success = new Discord.MessageEmbed()
-        .setColor(client.config.colors.main)
+        .setColor(client.util.mainColor(message.guild))
         .setDescription(
             `${
                 client.config.emotes.success

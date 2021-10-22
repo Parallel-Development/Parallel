@@ -20,7 +20,7 @@ module.exports = {
 
         if (args['detailed'] === true) {
             const membercountDetailed = new Discord.MessageEmbed()
-                .setColor(client.config.colors.main)
+                .setColor(client.util.mainColor(interaction.guild))
                 .setTitle('Member Count')
                 .setDescription(
                     `There are **${
@@ -39,7 +39,7 @@ module.exports = {
             return interaction.editReply({ embeds: [membercountDetailed] });
         } else {
             const membercount = new Discord.MessageEmbed()
-                .setColor(client.config.colors.main)
+                .setColor(client.util.mainColor(interaction.guild))
                 .setTitle('Member Count')
                 .setDescription(
                     `There are **${interaction.guild.memberCount}** members on this server. **${botCount}** of these members are bot accounts, and **${humanCount}** of these members are human accounts`

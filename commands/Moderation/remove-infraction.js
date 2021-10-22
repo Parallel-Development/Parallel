@@ -50,7 +50,7 @@ module.exports = {
         );
 
         const removedInfractionEmbed = new Discord.MessageEmbed()
-            .setColor(client.config.colors.main)
+            .setColor(client.util.mainColor(message.guild))
             .setDescription(
                 `${client.config.emotes.success} Infraction \`${ID}\` has been removed from **${
                     (await client.users.fetch(userID)).tag

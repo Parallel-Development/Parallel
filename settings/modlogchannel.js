@@ -7,7 +7,7 @@ exports.run = async (client, message, args) => {
         const { moderationLogging } = guildSettings;
 
         const moderationLoggingChannelEmbed = new Discord.MessageEmbed()
-            .setColor(client.config.colors.main)
+            .setColor(client.util.mainColor(message.guild))
             .setDescription(
                 moderationLogging === 'none'
                     ? 'There is no channel set for logging moderation instances with Parallel!'

@@ -270,7 +270,7 @@ exports.run = async (client, message, args) => {
                     'No channels currrently prevent commands. Want to add some? `allowcmds disable (channel)`'
                 );
             const disabledCommandChannels = new Discord.MessageEmbed()
-                .setColor(client.config.colors.main)
+                .setColor(client.util.mainColor(message.guild))
                 .setAuthor(`Disabled command channels for ${message.guild.name}`, client.user.displayAvatarURL());
 
             for (let i = 0; i !== locked.length; ++i) {

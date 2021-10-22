@@ -18,7 +18,7 @@ module.exports = {
         global.confirmationRequests.pop({ ID: interaction.user.id });
 
         const cancelEmbed = new Discord.MessageEmbed()
-            .setColor(client.config.colors.main)
+            .setColor(client.util.mainColor(interaction.guild))
             .setAuthor('Action Cancelled!', client.user.displayAvatarURL())
             .setDescription(`✅ Successfully cancelled your pending confirmation request`);
 
