@@ -160,7 +160,7 @@ module.exports = {
             .setAuthor('Channel Lock', client.user.displayAvatarURL())
             .setTitle('This channel has been locked')
             .setDescription(
-                'A channel lock serves the purpose of denying the permission for users to speak in the channel'
+                'This channel has been locked. Only moderators may speak in this channel'
             );
         if (
             (!client.util.getChannel(message.guild, args[0]) && args.join(' ')) ||

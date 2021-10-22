@@ -175,7 +175,7 @@ module.exports = {
             .setAuthor('Channel Lock', client.user.displayAvatarURL())
             .setTitle('This channel has been locked')
             .setDescription(
-                'A channel lock serves the purpose of denying the permission for users to speak in the channel'
+                'This channel has been locked. Only moderators may speak in this channel'
             );
         if (args['reason'])
             lockedEmbed.addField('Reason', reason.length >= 1024 ? await client.util.createBin(reason) : reason);
