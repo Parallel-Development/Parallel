@@ -159,9 +159,7 @@ module.exports = {
             .setColor(client.util.mainColor(message.guild))
             .setAuthor('Channel Lock', client.user.displayAvatarURL())
             .setTitle('This channel has been locked')
-            .setDescription(
-                'This channel has been locked. Only moderators may speak in this channel'
-            );
+            .setDescription('This channel has been locked. Only moderators may speak in this channel');
         if (
             (!client.util.getChannel(message.guild, args[0]) && args.join(' ')) ||
             (client.util.getChannel(message.guild, args[0]) && args.slice(1).join(' '))

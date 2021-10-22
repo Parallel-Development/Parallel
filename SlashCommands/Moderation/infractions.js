@@ -30,8 +30,10 @@ module.exports = {
                 'You do not have the permission to view the infractions of other members'
             );
 
-        if (args['automod'] && args['manual']) return client.util.throwError(interaction, 'cannot filter for both automod and manual infractions');
-        if (args['permanent'] && args['to-expire']) return client.util.throwError(interaction, 'cannot filter for both permanent and to-expire infractions');
+        if (args['automod'] && args['manual'])
+            return client.util.throwError(interaction, 'cannot filter for both automod and manual infractions');
+        if (args['permanent'] && args['to-expire'])
+            return client.util.throwError(interaction, 'cannot filter for both permanent and to-expire infractions');
 
         let userWarnings = await warningSchema.findOne({
             guildID: interaction.guild.id
@@ -72,7 +74,12 @@ module.exports = {
             .setColor(client.util.mainColor(interaction.guild))
             .setAuthor(`Warnings for ${user.tag} (${user.id}) - ${userWarnings.length}`, client.user.displayAvatarURL())
             .setFooter(`Page Number: ${pageNumber}/${amountOfPages}`);
-        if (args['automod'] || args['manual'] || args['permanent'] || args['to-expire']) warningsEmbed.setDescription(`Filters: ${Object.keys(args).filter(arg => arg === 'automod' || arg === 'manual' || arg === 'permanent' || arg === 'to-expire').map(flag => `\`${flag}\``)}`)
+        if (args['automod'] || args['manual'] || args['permanent'] || args['to-expire'])
+            warningsEmbed.setDescription(
+                `Filters: ${Object.keys(args)
+                    .filter(arg => arg === 'automod' || arg === 'manual' || arg === 'permanent' || arg === 'to-expire')
+                    .map(flag => `\`${flag}\``)}`
+            );
 
         let count = 0;
         let i = (pageNumber - 1) * 7;

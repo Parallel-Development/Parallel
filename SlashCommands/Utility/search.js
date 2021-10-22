@@ -59,7 +59,9 @@ module.exports = {
         if (!members.length)
             return interaction.editReply({
                 embeds: [
-                    new Discord.MessageEmbed().setColor(client.util.mainColor(interaction.guild)).setDescription('No results found')
+                    new Discord.MessageEmbed()
+                        .setColor(client.util.mainColor(interaction.guild))
+                        .setDescription('No results found')
                 ]
             });
 

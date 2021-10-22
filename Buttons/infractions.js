@@ -31,14 +31,18 @@ module.exports.run = async (client, interaction) => {
     });
     userWarnings = userWarnings?.warnings?.filter(warning => warning.userID === user.id);
     if (interaction.channel.messages.cache.get(interaction.message.id).embeds[0].description) {
-
         const description = interaction.channel.messages.cache.get(interaction.message.id).embeds[0].description;
-        const filterFlags = description.split(' ').slice(1).map(flag => flag.replaceAll('`', '').replaceAll('--', '').replaceAll(',', ''));
+        const filterFlags = description
+            .split(' ')
+            .slice(1)
+            .map(flag => flag.replaceAll('`', '').replaceAll('--', '').replaceAll(',', ''));
 
         if (filterFlags.includes('automod')) userWarnings = userWarnings?.filter(warning => warning.auto);
         if (filterFlags.includes('manual')) userWarnings = userWarnings?.filter(warning => !warning.auto);
-        if (filterFlags.includes('permanent')) userWarnings = userWarnings?.filter(warning => warning.expires === 'Never');
-        if (filterFlags.includes('to-expire')) userWarnings = userWarnings?.filter(warning => warning.expires !== 'Never');
+        if (filterFlags.includes('permanent'))
+            userWarnings = userWarnings?.filter(warning => warning.expires === 'Never');
+        if (filterFlags.includes('to-expire'))
+            userWarnings = userWarnings?.filter(warning => warning.expires !== 'Never');
     }
 
     if (!userWarnings.length) {
@@ -75,8 +79,10 @@ module.exports.run = async (client, interaction) => {
         .setColor(client.util.mainColor(interaction.guild))
         .setAuthor(`Warnings for ${user.tag} (${user.id}) - ${userWarnings.length}`, client.user.displayAvatarURL())
         .setFooter(`Page Number: ${currentPage}/${amountOfPages}`);
-    if (interaction.channel.messages.cache.get(interaction.message.id).embeds[0].description) 
-        warningsEmbed.setDescription(interaction.channel.messages.cache.get(interaction.message.id).embeds[0].description);
+    if (interaction.channel.messages.cache.get(interaction.message.id).embeds[0].description)
+        warningsEmbed.setDescription(
+            interaction.channel.messages.cache.get(interaction.message.id).embeds[0].description
+        );
 
     let count = 0;
     let i = (currentPage - 1) * 7;

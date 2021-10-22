@@ -55,7 +55,9 @@ module.exports = {
         if (!members.length)
             return msg.edit({
                 embeds: [
-                    new Discord.MessageEmbed().setColor(client.util.mainColor(message.guild)).setDescription('No results found')
+                    new Discord.MessageEmbed()
+                        .setColor(client.util.mainColor(message.guild))
+                        .setDescription('No results found')
                 ]
             });
 

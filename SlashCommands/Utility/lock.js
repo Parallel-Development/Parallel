@@ -174,9 +174,7 @@ module.exports = {
             .setColor(client.util.mainColor(interaction.guild))
             .setAuthor('Channel Lock', client.user.displayAvatarURL())
             .setTitle('This channel has been locked')
-            .setDescription(
-                'This channel has been locked. Only moderators may speak in this channel'
-            );
+            .setDescription('This channel has been locked. Only moderators may speak in this channel');
         if (args['reason'])
             lockedEmbed.addField('Reason', reason.length >= 1024 ? await client.util.createBin(reason) : reason);
         await channel.send({ embeds: [lockedEmbed] });
