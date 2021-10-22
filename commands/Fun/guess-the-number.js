@@ -22,7 +22,7 @@ module.exports = {
         else (max = 8), (time = 60000);
 
         openedSession.add(message.author.id);
-        const chosenNumber = Math.floor(Math.random() * 1000);
+        const chosenNumber = Math.round(Math.random() * 1000);
 
         let tries = 0;
         const startTime = performance.now();
@@ -59,7 +59,7 @@ module.exports = {
                 message.reply(
                     `Jackpot! You guessed the number in ${`\`${tries}\` ${
                         tries === 1 ? 'try' : 'tries'
-                    }`} and it took you around \`${client.util.duration(Math.floor(performance.now() - startTime))}\``
+                    }`} and it took you around \`${client.util.duration(Math.round(performance.now() - startTime))}\``
                 );
                 answered = true;
                 return collector.stop();

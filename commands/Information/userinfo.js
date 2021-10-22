@@ -27,7 +27,7 @@ module.exports = {
             .addField(
                 'Created',
                 `${client.util.timestamp(user.createdAt)} -> ${client.util.duration(
-                    Math.floor(Date.now() - user.createdAt)
+                    Math.round(Date.now() - user.createdAt)
                 )} ago`
             )
             .setFooter(`Information requested by ${message.author.tag}`, message.author.displayAvatarURL());

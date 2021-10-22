@@ -84,7 +84,7 @@ module.exports = {
                                 system: {
                                     amount: warningCount,
                                     punishment: type,
-                                    duration: Math.floor(duration)
+                                    duration: Math.round(duration)
                                 }
                             }
                         }

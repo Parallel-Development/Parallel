@@ -36,7 +36,7 @@ module.exports = {
         else (max = 8), (time = 60000);
 
         openedSession.add(interaction.user.id);
-        const chosenNumber = Math.floor(Math.random() * 1000);
+        const chosenNumber = Math.round(Math.random() * 1000);
 
         let tries = 0;
         const startTime = performance.now();
