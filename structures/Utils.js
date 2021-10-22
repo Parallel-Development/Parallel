@@ -184,7 +184,8 @@ class Utils {
 
     mainColor(guild) {
         if (!guild) return client.config.colors.main; // guild is supposed to always not be undefined, but in the bugged case that it is, something will actually be returned lol
-        return guild.me.roles.highest.hexColor !== '#000000' ? guild.me.roles.highest.hexColor : '#09ff2'
+        const botRole = guild.me.roles.cache.find(role => role.managed) || guild.me.roles.highest;
+        return botRole.hexColor !== '#000000' ? botRole.hexColor : '#09ff2';
     }
 }
 
