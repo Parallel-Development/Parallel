@@ -109,7 +109,7 @@ module.exports = {
                 type: 'mute'
             });
 
-            const guildWarnings = await warningSchema.findOne({ guildID: interaction.guild.id });
+            const guildWarnings = await warningSchema.findOne({ guildID: message.guild.id });
             const mutesToExpire = guildWarnings.warnings.filter(
                 warning => warning.expires > Date.now() && warning.type === 'Mute'
             );
