@@ -4,7 +4,7 @@ const Discord = require('discord.js');
 module.exports = {
     name: 'infractions',
     description: 'View the infractions of a member',
-    usage: 'infractions\ninfractions [page]\ninfractions [member]\ninfractions [member] <page>',
+    usage: 'infractions\ninfractions [page]\ninfractions [member]\ninfractions [member] <page>\n\nFlags: \`--automod\`, \`--manual\`, \`--permanent\`, \`--to-expire\`',
     aliases: ['warnings', 'warns', 'punishments', 'record'],
     async execute(client, message, args) {
         let member = await client.util.getUser(client, args[0]);
@@ -22,13 +22,26 @@ module.exports = {
                 'You do not have the permission to view the infractions of other members'
             );
 
+        const filterFlags = args.filter(arg => arg.startsWith('--'));
+        if(filterFlags.includes('--automod') && filterFlags.includes('--manual')) return client.util.throwError(message, 'cannot filter for both automod and manual infractions');
+        if(filterFlags.includes('--permanent') && filterFlags.includes('--to-expire')) return client.util.throwError(message, 'cannot filter for both permanent and to-expire infractions');
+
         let userWarnings = await warningSchema.findOne({
             guildID: message.guild.id
         });
+
         userWarnings = userWarnings?.warnings?.filter(warning => warning.userID === member.id);
 
         if (!userWarnings?.length)
             return message.reply(`${member === message.author ? 'You have' : 'This user has'} no infractions!`);
+
+        if (filterFlags.includes('--automod')) userWarnings = userWarnings?.filter(warning => warning.auto);
+        if (filterFlags.includes('--manual')) userWarnings = userWarnings?.filter(warning => !warning.auto);
+        if (filterFlags.includes('--permanent')) userWarnings = userWarnings?.filter(warning => warning.expires === 'Never');
+        if (filterFlags.includes('--to-expire')) userWarnings = userWarnings?.filter(warning => warning.expires !== 'Never');
+
+        if (!userWarnings?.length)
+            return message.reply(`${member === message.author ? 'You have' : 'This user has'} no infractions from the filters provided!`);
 
         if (!pageNumber) {
             if (!args[1]) pageNumber = 1;
@@ -53,6 +66,7 @@ module.exports = {
             .setColor(client.util.mainColor(message.guild))
             .setAuthor(`Warnings for ${user.tag} (${user.id}) - ${userWarnings.length}`, client.user.displayAvatarURL())
             .setFooter(`Page Number: ${pageNumber}/${amountOfPages}`);
+        if (filterFlags.includes('--automod') || filterFlags.includes('--manual') || filterFlags.includes('--permanent') || filterFlags.includes('--to-expire')) warningsEmbed.setDescription(`Filters: ${filterFlags.map(flag => `\`${flag}\``).join(', ')}`)
 
         let count = 0;
         var i = (pageNumber - 1) * 7;

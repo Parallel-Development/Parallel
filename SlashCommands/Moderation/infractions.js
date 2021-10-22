@@ -9,7 +9,11 @@ module.exports = {
         .setName('infractions')
         .setDescription('View the infractions of a member or yourself')
         .addUserOption(option => option.setName('user').setDescription('The user to get the infractions of'))
-        .addIntegerOption(option => option.setName('page').setDescription('The page number to view')),
+        .addIntegerOption(option => option.setName('page').setDescription('The page number to view'))
+        .addBooleanOption(option => option.setName('automod').setDescription('Filter for automod infractions'))
+        .addBooleanOption(option => option.setName('manual').setDescription('Filter for manual infractions'))
+        .addBooleanOption(option => option.setName('permanent').setDescription('Filter for permanent infractions'))
+        .addBooleanOption(option => option.setName('to-expire').setDescription('Filter for infractions set to expire')),
     async execute(client, interaction, args) {
         let member = await client.util.getUser(client, args['user']);
 
@@ -26,6 +30,9 @@ module.exports = {
                 'You do not have the permission to view the infractions of other members'
             );
 
+        if (args['automod'] && args['manual']) return client.util.throwError(interaction, 'cannot filter for both automod and manual infractions');
+        if (args['permanent'] && args['to-expire']) return client.util.throwError(interaction, 'cannot filter for both permanent and to-expire infractions');
+
         let userWarnings = await warningSchema.findOne({
             guildID: interaction.guild.id
         });
@@ -33,6 +40,11 @@ module.exports = {
 
         if (!userWarnings?.length)
             return interaction.reply(`${member === interaction.user ? 'You have' : 'This user has'} no infractions!`);
+
+        if (args['automod']) userWarnings = userWarnings?.filter(warning => warning.auto);
+        if (args['manual']) userWarnings = userWarnings?.filter(warning => !warning.auto);
+        if (args['permanent']) userWarnings = userWarnings?.filter(warning => warning.expires === 'Never');
+        if (args['to-expire']) userWarnings = userWarnings?.filter(warning => warning.expires !== 'Never');
 
         if (!pageNumber) {
             if (!args[1]) pageNumber = 1;
@@ -60,6 +72,7 @@ module.exports = {
             .setColor(client.util.mainColor(interaction.guild))
             .setAuthor(`Warnings for ${user.tag} (${user.id}) - ${userWarnings.length}`, client.user.displayAvatarURL())
             .setFooter(`Page Number: ${pageNumber}/${amountOfPages}`);
+        if (args['automod'] || args['manual'] || args['permanent'] || args['to-expire']) warningsEmbed.setDescription(`Filters: ${Object.keys(args).filter(arg => arg === 'automod' || arg === 'manual' || arg === 'permanent' || arg === 'to-expire').map(flag => `\`${flag}\``)}`)
 
         let count = 0;
         let i = (pageNumber - 1) * 7;

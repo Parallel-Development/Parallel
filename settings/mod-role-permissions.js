@@ -63,7 +63,7 @@ exports.run = async (client, message, args) => {
             }
         );
 
-        return message.reply(`Successfully updaeted the moderator role permissions!`);
+        return message.reply(`Successfully updated the moderator role permissions!`);
     } else if (option === 'set') {
         if (permission > 8589934591) return client.util.throwError(message, 'this permission int is to large');
         await settingsSchema.updateOne(
