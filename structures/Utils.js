@@ -184,7 +184,7 @@ class Utils {
 
     mainColor(guild) {
         if (!guild) return client.config.colors.main; // guild is supposed to always not be undefined, but in the bugged case that it is, something will actually be returned lol
-        return guild.me.displayHexColor !== '#000000' ? guild.me.displayHexColor : '#09ff2';
+        return guild.me.roles.highest.hexColor !== '#000000' ? guild.me.roles.highest.hexColor : '#09ff2'
     }
 }
 
