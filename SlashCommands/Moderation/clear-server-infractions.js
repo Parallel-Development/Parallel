@@ -7,6 +7,7 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 module.exports = {
     name: 'clear-server-infractions',
     description: 'Remove all server infractions',
+    permissions: Discord.Permissions.FLAGS.ADMINISTRATOR,
     data: new SlashCommandBuilder().setName('clear-server-infractions').setDescription('Remove all server infractions'),
     async execute(client, interaction, args) {
         if (restricted.has(interaction.guild.id)) return;

@@ -20,6 +20,7 @@ exports.run = async (client, message, args) => {
             message,
             'you can only use option `add` or `remove` with one permission at a time. To set the permissions all at once, consider using option `set`'
         );
+    if(option !== 'view' && !message.member.permissions.has(permission)) return client.util.throwError(message, 'cannot manage a permission that you don\'t have');
 
     if (!option) return client.util.throwError(message, client.config.errors.missing_argument_option);
 
