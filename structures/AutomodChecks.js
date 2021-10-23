@@ -25,17 +25,17 @@ class AutomodChecks {
             const extraAllowedChars = message.content
                 .split('')
                 .filter(char => !allowedChars.includes(char) && filterList.some(word => word.includes(char)));
+
             const joinedCharacters = messageCharacters.join('');
 
             if (
                 filterList.some(
                     word =>
-                        joinedCharacters.split(' ').join('').toLowerCase().includes(word) ||
+                        joinedCharacters.toLowerCase().split(' ').includes(word) ||
                         joinedCharacters
-                            .split('')
-                            .filter(char => !extraAllowedChars.includes(char))
-                            .join('')
                             .toLowerCase()
+                            .split(' ')
+                            .filter(char => !extraAllowedChars.includes(char))
                             .includes(word)
                 )
             ) {
