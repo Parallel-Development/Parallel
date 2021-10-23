@@ -11,7 +11,8 @@ const afkSchema = mongoose.Schema({
     afks: {
         type: [Object],
         required: true
-    }
+    },
+    allowedRoles: []
 });
 
 module.exports = mongoose.model('afks', afkSchema);

@@ -174,8 +174,25 @@ module.exports = {
             } else if (args[1] === 'view') {
                 if (!allowedRoleList.length) return message.reply('No roles on are on the allowed roles list for tags');
 
+                for (let i = 0; i !== allowedRoleList.length; ++i) {
+                    const allowedRole = allowedRoleList[i];
+                    if(!message.guild.roles.cache.get(allowedRole)) {
+                        await tagSchema.updateOne({
+                            guildID: message.guild.id
+                        },
+                        {
+                            $pull: { 
+                                allowedRoleList: allowedRole
+                            }
+                        })
+                    }
+                }
+
+                const _allowedRoleList = await tagSchema.findOne({ guildID: message.guild.id }).then(result => result.allowedRoleList);
+                if (!_allowedRoleList.length) return message.reply('No roles on are on the allowed roles list for tags');
+
                 const roleList =
-                    allowedRoleList.map(role => message.guild.roles.cache.get(role.id)).join(' ').length <= 2000
+                    _allowedRoleList.map(role => message.guild.roles.cache.get(role.id)).join(' ').length <= 2000
                         ? allowedRoleList.map(role => message.guild.roles.cache.get(role)).join(' ')
                         : await client.util.createBin(
                               allowedRoleList.map(role => message.guild.roles.cache.get(role.id))

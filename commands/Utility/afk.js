@@ -1,13 +1,24 @@
 const Discord = require('discord.js');
 const afkSchema = require('../../schemas/afk-schema');
+const settingsSchema = require('../../schemas/settings-schema');
 
 module.exports = {
     name: 'afk',
     description: "Let people know you're AFK if they try to ping you",
     usage: 'afk [reason]',
-    permissions: Discord.Permissions.FLAGS.MANAGE_MESSAGES,
     async execute(client, message, args) {
-        const afks = await afkSchema.findOne({ guildID: message.guild.id }).then(result => result.afks);
+
+        const guildAFK = await afkSchema.findOne({ guildID: message.guild.id });
+        const guildSettings = await settingsSchema.findOne({ guildID: message.guild.id }); 
+        const { modRoles } = guildSettings;
+        const { allowedRoles, afks } = guildAFK;
+
+        if (
+            !message.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_MESSAGES) && 
+            !message.member.roles.cache.some(role => modRoles.includes(role.id)) && 
+            !message.member.roles.cache.some(role => allowedRoles.includes(role.id))
+        ) return client.util.throwError(message, 'you do not have permission to use the afk command');
+
         const isAFK = afks.some(afk => afk.userID === message.author.id);
         if (isAFK) {
             await afkSchema.updateOne(

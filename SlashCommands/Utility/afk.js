@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 const afkSchema = require('../../schemas/afk-schema');
 const { SlashCommandBuilder } = require('@discordjs/builders');
+const settingsSchema = require('../../schemas/settings-schema');
 
 module.exports = {
     name: 'afk',
@@ -9,10 +10,20 @@ module.exports = {
         .setName('afk')
         .setDescription("Let people know you're AFK if they try to ping you")
         .addStringOption(option => option.setName('reason').setDescription('The reason for going AFK')),
-    permissions: Discord.Permissions.FLAGS.MANAGE_MESSAGES,
     async execute(client, interaction, args) {
-        const afks = await afkSchema.findOne({ guildID: message.guild.id }).then(result => result.afks);
-        const isAFK = afks.some(afk => afk.userID === interaction.author.id);
+
+        const guildAFK = await afkSchema.findOne({ guildID: interaction.guild.id });
+        const guildSettings = await settingsSchema.findOne({ guildID: interaction.guild.id });
+        const { modRoles } = guildSettings;
+        const { allowedRoles, afks } = guildAFK;
+
+        if (
+            !interaction.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_MESSAGES) &&
+            !interaction.member.roles.cache.some(role => modRoles.includes(role.id)) &&
+            !interaction.member.roles.cache.some(role => allowedRoles.includes(role.id))
+        ) return client.util.throwError(interaction, 'you do not have permission to use the afk command');
+
+        const isAFK = afks.some(afk => afk.userID === interaction.user.id);
         if (isAFK) {
             await afkSchema.updateOne(
                 {
@@ -21,7 +32,7 @@ module.exports = {
                 {
                     $pull: {
                         afks: {
-                            userID: interaction.author.id
+                            userID: interaction.user.id
                         }
                     }
                 }

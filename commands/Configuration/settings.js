@@ -27,7 +27,8 @@ module.exports = {
                 .addField('Moderation Role Permissions', 'mod-role-permissions', true)
                 .addField('Allow Tenor Links', 'allowtenor', true)
                 .addField('Mute Role', 'muterole', true)
-                .addField('Remove Roles On Mute', 'remove-roles-on-mute', true);
+                .addField('Remove Roles On Mute', 'remove-roles-on-mute', true)
+                .addField('AFK Role Whitelist', 'afk-role-whitelist', true);
             return message.reply({ embeds: [settingsPannel] });
         }
 
@@ -208,6 +209,19 @@ module.exports = {
                         ]
                     });
                 require('../../settings/removerolesonmute').run(client, message, args);
+                break;
+            case 'afk-role-whitelist':
+                if (!args[1])
+                    return message.reply({
+                        embeds: [
+                            settingsHelp(
+                                'AFK Role Whitelist',
+                                'afk-role-whitelist add <role>\nafk-role-whitelist remove <role>\nafk-role-whitelist removeall\nafk-role-whitelist view',
+                                'Manage the roles that are allowed to use the afk command'
+                            )
+                        ]
+                    })
+                require('../../settings/afk-role-whitelist').run(client, message, args);
                 break;
             default:
                 return client.util.throwError(message, client.config.errors.invalid_option);

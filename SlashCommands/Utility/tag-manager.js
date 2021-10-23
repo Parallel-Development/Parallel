@@ -52,7 +52,7 @@ module.exports = {
                         .addChoice('Remove', 'remove')
                         .addChoice('View', 'view')
                 )
-                .addRoleOption(option => option.setName('role').setDescription('The role to target').setRequired(true))
+                .addRoleOption(option => option.setName('role').setDescription('The role to target'))
         )
         .addSubcommand(command =>
             command
@@ -197,6 +197,7 @@ module.exports = {
 
             if (allowedRolesArgs['method'] === 'add') {
                 const role = client.util.getRole(interaction.guild, allowedRolesArgs['role']);
+                if(!role) return client.util.throwError(interaction, client.config.errors.missing_argument_role);
                 if (allowedRoleList.includes(role.id))
                     return client.util.throwError(interaction, 'this role is already on the allowed role list');
 
@@ -212,6 +213,7 @@ module.exports = {
                 return interaction.reply(`Anyone with the role \`${role.name}\` may now use tags`);
             } else if (allowedRolesArgs['method'] === 'remove') {
                 const role = client.util.getRole(interaction.guild, allowedRolesArgs['role']);
+                if (!role) return client.util.throwError(interaction, client.config.errors.missing_argument_role);
                 if (!allowedRoleList.includes(role.id))
                     return client.util.throwError(interaction, 'this role is not on the allowed role list');
 
@@ -231,8 +233,25 @@ module.exports = {
                 if (!allowedRoleList.length)
                     return interaction.reply('No roles on are on the allowed roles list for tags');
 
+                for (let i = 0; i !== allowedRoleList.length; ++i) {
+                    const allowedRole = allowedRoleList[i];
+                    if (!interaction.guild.roles.cache.get(allowedRole)) {
+                        await tagSchema.updateOne({
+                            guildID: interaction.guild.id
+                        },
+                            {
+                                $pull: {
+                                    allowedRoleList: allowedRole
+                                }
+                            })
+                    }
+                }
+
+                const _allowedRoleList = await tagSchema.findOne({ guildID: interaction.guild.id }).then(result => result.allowedRoleList);
+                if (!_allowedRoleList.length) return interaction.reply('No roles on are on the allowed roles list for tags');
+
                 const roleList =
-                    allowedRoleList.map(role => interaction.guild.roles.cache.get(role.id)).join(' ').length <= 2000
+                    _allowedRoleList.map(role => interaction.guild.roles.cache.get(role.id)).join(' ').length <= 2000
                         ? allowedRoleList.map(role => interaction.guild.roles.cache.get(role)).join(' ')
                         : await client.util.createBin(
                               allowedRoleList.map(role => interaction.guild.roles.cache.get(role.id))
