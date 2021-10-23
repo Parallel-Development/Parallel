@@ -7,6 +7,7 @@ const warningSchema = require('../schemas/warning-schema');
 const lockSchema = require('../schemas/lock-schema');
 const systemSchema = require('../schemas/system-schema');
 const tagSchema = require('../schemas/tag-schema');
+const afkSchema = require('../schemas/afk-schema');
 const cooldown = new Set();
 const rps = require('../Buttons/rock-paper-scissors');
 const infractions = require('../Buttons/infractions');
@@ -168,6 +169,15 @@ module.exports = {
                 allowedRoleList: [],
                 allowedChannelList: [],
                 tags: []
+            }).save();
+        }
+
+        const afkCheck = await afkSchema.findOne({ guildID: interaction.guild.id });
+        if (!afkCheck) {
+            await new afkSchema({
+                guildname: interaction.guild.name,
+                guildID: interaction.guild.id,
+                afks: []
             }).save();
         }
 

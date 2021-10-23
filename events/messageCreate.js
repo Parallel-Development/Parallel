@@ -6,6 +6,7 @@ const warningSchema = require('../schemas/warning-schema');
 const lockSchema = require('../schemas/lock-schema');
 const systemSchema = require('../schemas/system-schema');
 const tagSchema = require('../schemas/tag-schema');
+const afkSchema = require('../schemas/afk-schema');
 
 const cooldown = new Set();
 const doubleCooldown = new Set();
@@ -211,6 +212,15 @@ module.exports = {
             }).save();
         }
 
+        const afkCheck = await afkSchema.findOne({ guildID: message.guild.id });
+        if (!afkCheck) {
+            await new afkSchema({
+                guildname: message.guild.name,
+                guildID: message.guild.id,
+                afks: []
+            }).save();
+        }
+
         const isModerator = modRoles.some(role => message.member.roles.cache.has(role));
         const channelBypassed = await automodSchema.findOne({
             guildID: message.guild.id,
@@ -265,9 +275,11 @@ module.exports = {
                 AFKTriggerCooldown.add(message.author.id);
                 setTimeout(() => AFKTriggerCooldown.delete(message.author.id), 5000);
             }
-            if (message.mentions.users.some(mention => global.afk.some(afk => afk.ID === mention.id))) {
+
+            const afks = await afkSchema.findOne({ guildID: message.guild.id }).then(result => result.afks);
+            if (message.mentions.users.some(mention => afks.some(afk => afk.userID === mention.id))) {
                 const mentionedAFKUsers = message.mentions.users.filter(mention =>
-                    global.afk.some(afk => afk.ID === mention.id)
+                    afks.some(afk => afk.userID === mention.id)
                 );
 
                 let list = [...mentionedAFKUsers.values()];
@@ -281,18 +293,30 @@ module.exports = {
                         } are currently AFK!`,
                         allowedMentions: { users: [] }
                     });
-                const userAFKInformation = global.afk.find(afk => afk.ID === mentionedAFKUsers.first().id);
-                if (Date.now() - userAFKInformation.at <= 5000) return;
+                const userAFKInformation = afks.find(afk => afk.userID === mentionedAFKUsers.first().id);
+
+                if (Date.now() - userAFKInformation.date <= 5000) return;
                 return message.reply({
                     content: `${mentionedAFKUsers.first()} is currently AFK and has been AFK for \`${client.util.duration(
-                        Date.now() - userAFKInformation.at
+                        Date.now() - userAFKInformation.date
                     )}\` ${userAFKInformation.reason ? `-  ${userAFKInformation.reason}` : ''}`,
                     allowedMentions: { users: [] }
                 });
             }
 
-            if (global.afk.some(afk => afk.ID === message.author.id && Date.now() - afk.at >= 10000)) {
-                global.afk.pop({ ID: message.author.id });
+            if (afks.some(afk => afk.userID === message.author.id && Date.now() - afk.date >= 10000)) {
+                await afkSchema.updateOne(
+                    {
+                        guildID: message.guild.id
+                    },
+                    {
+                        $pull: {
+                            afks: {
+                                userID: message.author.id
+                            }
+                        }
+                    }
+                );
                 return message.reply(`Welcome back, I removed your AFK`);
             }
 
