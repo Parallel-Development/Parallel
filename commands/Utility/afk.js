@@ -7,7 +7,7 @@ module.exports = {
     usage: 'afk [reason]',
     permissions: Discord.Permissions.FLAGS.MANAGE_MESSAGES,
     async execute(client, message, args) {
-        const isAFK = global.afk.some(afk => afk.ID === message.author.id);
+        const isAFK = global.afk.some(afk => afk.userID === message.author.id);
         if (isAFK) {
             await afkSchema.updateOne(
                 {
