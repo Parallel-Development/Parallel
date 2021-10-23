@@ -11,7 +11,8 @@ module.exports = {
         .addStringOption(option => option.setName('reason').setDescription('The reason for going AFK')),
     permissions: Discord.Permissions.FLAGS.MANAGE_MESSAGES,
     async execute(client, interaction, args) {
-        const isAFK = global.afk.some(afk => afk.userID === interaction.author.id);
+        const afks = await afkSchema.findOne({ guildID: message.guild.id }).then(result => result.afks);
+        const isAFK = afks.some(afk => afk.userID === interaction.author.id);
         if (isAFK) {
             await afkSchema.updateOne(
                 {
