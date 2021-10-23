@@ -93,7 +93,12 @@ module.exports = {
                 modRolePermissions: '402661398',
                 shortCommands: [],
                 muterole: 'none',
-                removerolesonmute: false
+                removerolesonmute: false,
+                errorConfig: {
+                    missingPermission: 'respond',
+                    disabledCommandChannel: 'respond',
+                    deleteDelay: '5000'
+                }
             }).save();
         }
 
@@ -211,11 +216,12 @@ module.exports = {
             return client.util.throwError(interaction, 'You cannot run this command.');
 
         const guildSettings = await settingsSchema.findOne({ guildID: interaction.guild.id });
-        const { modRoles, locked, modRolePermissions } = guildSettings;
+        const { modRoles, locked, modRolePermissions, errorConfig } = guildSettings;
 
         const isModerator = modRoles.some(role => interaction.member.roles.cache.has(role));
 
         const denyAccess = commandName => {
+            if (errorConfig.missingPermission === 'delete' || errorConfig.missingPermission === 'ignore') return;
             const errorMessage = new Discord.MessageEmbed()
                 .setColor(client.config.colors.err)
                 .setAuthor('Access Denied')

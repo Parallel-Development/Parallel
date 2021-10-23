@@ -55,13 +55,18 @@ module.exports = {
                 modRolePermissions: '402661398',
                 shortCommands: [],
                 muterole: 'none',
-                removerolesonmute: false
+                removerolesonmute: false,
+                errorConfig: {
+                    missingPermission: 'respond',
+                    disabledCommandChannel: 'respond',
+                    deleteDelay: '5000'
+                }
             }).save());
 
         let prefix = global.perpendicular ? '%' : settings.prefix || client.config.prefix;
         if (new RegExp(`^<@!?${client.user.id}>`).exec(message.content)?.index === 0)
             prefix = message.content.split(' ')[0] + ' ';
-        const { muterole, removerolesonmute, modRoles, modRolePermissions } = settings;
+        const { muterole, removerolesonmute, modRoles, modRolePermissions, errorConfig } = settings;
 
         const findMuteRole =
             message.guild.roles.cache.find(r => r.name.toLowerCase() === 'mute') ||
@@ -317,7 +322,8 @@ module.exports = {
                         }
                     }
                 );
-                return message.reply(`Welcome back, I removed your AFK`);
+                const msg = await message.reply(`Welcome back, I removed your AFK`);
+                return setTimeout(() => msg.delete(), 5000);
             }
 
             return;
@@ -328,16 +334,22 @@ module.exports = {
         if (prefix.includes(' ')) args.splice(0, 2);
 
         const denyAccess = commandName => {
+
+            if (errorConfig.missingPermission === 'delete') return message.delete();
+            if (errorConfig.missingPermission === 'ignore') return;
+
             const errorMessage = new Discord.MessageEmbed()
                 .setColor(client.config.colors.err)
                 .setAuthor('Access Denied')
                 .setDescription(`You do not have permission to run the \`${commandName}\` command`);
-            return message.reply({ embeds: [errorMessage] }).then(msg => {
-                setTimeout(() => {
-                    msg.delete();
-                    message.delete().catch(() => {});
-                }, 3000);
-            });
+
+            if(errorConfig.deleteDelay !== 'never')
+                return message.reply({ embeds: [errorMessage] }).then(msg => {
+                    setTimeout(() => {
+                        msg.delete();
+                        message.delete().catch(() => { });
+                    }, 3000);
+                });
         };
 
         const missingPerms = commandRequiredBotPermission => {
@@ -704,12 +716,16 @@ module.exports = {
                 !command.developer &&
                 command.name !== 'tag'
             ) {
+                if (errorConfig.disabledCommandChannel === 'delete') return message.delete();
+                if (errorConfig.disabledCommandChannel === 'ignore') return;
+
                 const msg = await message.reply('Commands are disabled in this channel');
-                setTimeout(() => {
-                    message.delete();
-                    msg.delete();
-                }, 3000);
-                return;
+
+                if (errorConfig.deleteDelay !== 'never')
+                    return setTimeout(() => {
+                        message.delete();
+                        msg.delete();
+                    }, 3000);
             }
         }
 

@@ -175,11 +175,16 @@ class Utils {
             });
             return;
         }
+        const guildSettings = await settingsSchema.findOne({ guildID: message.guild.id });
+        const { errorConfig } = guildSettings;
         const msg = await message.reply(`Error: ${errorName}`);
-        setTimeout(() => {
-            msg.delete().catch(() => {});
-            message.delete().catch(() => {});
-        }, 5000);
+
+        if(errorConfig.deleteDelay !== 'never') {
+            setTimeout(() => {
+                msg.delete().catch(() => { });
+                message.delete().catch(() => { });
+            }, errorConfig.deleteDelay);
+        } 
     }
 
     mainColor(guild) {

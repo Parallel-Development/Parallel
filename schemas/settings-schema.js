@@ -34,7 +34,11 @@ const settingsSchema = mongoose.Schema({
         required: true
     },
     muterole: reqString,
-    removerolesonmute: reqBool
+    removerolesonmute: reqBool,
+    errorConfig: {
+        type: Object,
+        required: true
+    }
 });
 
 module.exports = mongoose.model('settings', settingsSchema);

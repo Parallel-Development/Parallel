@@ -28,7 +28,8 @@ module.exports = {
                 .addField('Allow Tenor Links', 'allowtenor', true)
                 .addField('Mute Role', 'muterole', true)
                 .addField('Remove Roles On Mute', 'remove-roles-on-mute', true)
-                .addField('AFK Role Whitelist', 'afk-role-whitelist', true);
+                .addField('AFK Role Whitelist', 'afk-role-whitelist', true)
+                .addField('Errors', 'errors', true);
             return message.reply({ embeds: [settingsPannel] });
         }
 
@@ -222,6 +223,19 @@ module.exports = {
                         ]
                     })
                 require('../../settings/afk-role-whitelist').run(client, message, args);
+                break;
+            case 'errors':
+                if (!args[1])
+                    return message.reply({
+                        embeds: [
+                            settingsHelp(
+                                'Errors',
+                                'errors missing-permission [respond, ignore, delete, current]\nerrors disabled-command-channel [respond, ignore, delete, current]\nerrors delete-delay [time, never, current]',
+                                'Change the way errors work with the bot'
+                            )
+                        ]
+                    })
+                require('../../settings/errors').run(client, message, args);
                 break;
             default:
                 return client.util.throwError(message, client.config.errors.invalid_option);
