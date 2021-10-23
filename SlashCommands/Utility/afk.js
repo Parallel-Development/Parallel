@@ -11,7 +11,6 @@ module.exports = {
         .setDescription("Let people know you're AFK if they try to ping you")
         .addStringOption(option => option.setName('reason').setDescription('The reason for going AFK')),
     async execute(client, interaction, args) {
-
         const guildAFK = await afkSchema.findOne({ guildID: interaction.guild.id });
         const guildSettings = await settingsSchema.findOne({ guildID: interaction.guild.id });
         const { modRoles } = guildSettings;
@@ -21,7 +20,8 @@ module.exports = {
             !interaction.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_MESSAGES) &&
             !interaction.member.roles.cache.some(role => modRoles.includes(role.id)) &&
             !interaction.member.roles.cache.some(role => allowedRoles.includes(role.id))
-        ) return client.util.throwError(interaction, 'you do not have permission to use the afk command');
+        )
+            return client.util.throwError(interaction, 'you do not have permission to use the afk command');
 
         const isAFK = afks.some(afk => afk.userID === interaction.user.id);
         if (isAFK) {

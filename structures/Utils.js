@@ -179,12 +179,12 @@ class Utils {
         const { errorConfig } = guildSettings;
         const msg = await message.reply(`Error: ${errorName}`);
 
-        if(errorConfig.deleteDelay !== 'never') {
+        if (errorConfig.deleteDelay !== 'never') {
             setTimeout(() => {
-                msg.delete().catch(() => { });
-                message.delete().catch(() => { });
+                msg.delete().catch(() => {});
+                message.delete().catch(() => {});
             }, errorConfig.deleteDelay);
-        } 
+        }
     }
 
     mainColor(guild) {

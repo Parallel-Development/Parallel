@@ -197,7 +197,7 @@ module.exports = {
 
             if (allowedRolesArgs['method'] === 'add') {
                 const role = client.util.getRole(interaction.guild, allowedRolesArgs['role']);
-                if(!role) return client.util.throwError(interaction, client.config.errors.missing_argument_role);
+                if (!role) return client.util.throwError(interaction, client.config.errors.missing_argument_role);
                 if (allowedRoleList.includes(role.id))
                     return client.util.throwError(interaction, 'this role is already on the allowed role list');
 
@@ -236,19 +236,24 @@ module.exports = {
                 for (let i = 0; i !== allowedRoleList.length; ++i) {
                     const allowedRole = allowedRoleList[i];
                     if (!interaction.guild.roles.cache.get(allowedRole)) {
-                        await tagSchema.updateOne({
-                            guildID: interaction.guild.id
-                        },
+                        await tagSchema.updateOne(
+                            {
+                                guildID: interaction.guild.id
+                            },
                             {
                                 $pull: {
                                     allowedRoleList: allowedRole
                                 }
-                            })
+                            }
+                        );
                     }
                 }
 
-                const _allowedRoleList = await tagSchema.findOne({ guildID: interaction.guild.id }).then(result => result.allowedRoleList);
-                if (!_allowedRoleList.length) return interaction.reply('No roles on are on the allowed roles list for tags');
+                const _allowedRoleList = await tagSchema
+                    .findOne({ guildID: interaction.guild.id })
+                    .then(result => result.allowedRoleList);
+                if (!_allowedRoleList.length)
+                    return interaction.reply('No roles on are on the allowed roles list for tags');
 
                 const roleList =
                     _allowedRoleList.map(role => interaction.guild.roles.cache.get(role.id)).join(' ').length <= 2000

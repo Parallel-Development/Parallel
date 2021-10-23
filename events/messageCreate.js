@@ -334,7 +334,6 @@ module.exports = {
         if (prefix.includes(' ')) args.splice(0, 2);
 
         const denyAccess = commandName => {
-
             if (errorConfig.missingPermission === 'delete') return message.delete();
             if (errorConfig.missingPermission === 'ignore') return;
 
@@ -343,11 +342,11 @@ module.exports = {
                 .setAuthor('Access Denied')
                 .setDescription(`You do not have permission to run the \`${commandName}\` command`);
 
-            if(errorConfig.deleteDelay !== 'never')
+            if (errorConfig.deleteDelay !== 'never')
                 return message.reply({ embeds: [errorMessage] }).then(msg => {
                     setTimeout(() => {
                         msg.delete();
-                        message.delete().catch(() => { });
+                        message.delete().catch(() => {});
                     }, 3000);
                 });
         };

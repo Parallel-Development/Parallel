@@ -7,17 +7,17 @@ module.exports = {
     description: "Let people know you're AFK if they try to ping you",
     usage: 'afk [reason]',
     async execute(client, message, args) {
-
         const guildAFK = await afkSchema.findOne({ guildID: message.guild.id });
-        const guildSettings = await settingsSchema.findOne({ guildID: message.guild.id }); 
+        const guildSettings = await settingsSchema.findOne({ guildID: message.guild.id });
         const { modRoles } = guildSettings;
         const { allowedRoles, afks } = guildAFK;
 
         if (
-            !message.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_MESSAGES) && 
-            !message.member.roles.cache.some(role => modRoles.includes(role.id)) && 
+            !message.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_MESSAGES) &&
+            !message.member.roles.cache.some(role => modRoles.includes(role.id)) &&
             !message.member.roles.cache.some(role => allowedRoles.includes(role.id))
-        ) return client.util.throwError(message, 'you do not have permission to use the afk command');
+        )
+            return client.util.throwError(message, 'you do not have permission to use the afk command');
 
         const isAFK = afks.some(afk => afk.userID === message.author.id);
         if (isAFK) {

@@ -176,20 +176,25 @@ module.exports = {
 
                 for (let i = 0; i !== allowedRoleList.length; ++i) {
                     const allowedRole = allowedRoleList[i];
-                    if(!message.guild.roles.cache.get(allowedRole)) {
-                        await tagSchema.updateOne({
-                            guildID: message.guild.id
-                        },
-                        {
-                            $pull: { 
-                                allowedRoleList: allowedRole
+                    if (!message.guild.roles.cache.get(allowedRole)) {
+                        await tagSchema.updateOne(
+                            {
+                                guildID: message.guild.id
+                            },
+                            {
+                                $pull: {
+                                    allowedRoleList: allowedRole
+                                }
                             }
-                        })
+                        );
                     }
                 }
 
-                const _allowedRoleList = await tagSchema.findOne({ guildID: message.guild.id }).then(result => result.allowedRoleList);
-                if (!_allowedRoleList.length) return message.reply('No roles on are on the allowed roles list for tags');
+                const _allowedRoleList = await tagSchema
+                    .findOne({ guildID: message.guild.id })
+                    .then(result => result.allowedRoleList);
+                if (!_allowedRoleList.length)
+                    return message.reply('No roles on are on the allowed roles list for tags');
 
                 const roleList =
                     _allowedRoleList.map(role => message.guild.roles.cache.get(role.id)).join(' ').length <= 2000

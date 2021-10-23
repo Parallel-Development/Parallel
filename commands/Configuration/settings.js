@@ -221,7 +221,7 @@ module.exports = {
                                 'Manage the roles that are allowed to use the afk command'
                             )
                         ]
-                    })
+                    });
                 require('../../settings/afk-role-whitelist').run(client, message, args);
                 break;
             case 'errors':
@@ -234,7 +234,7 @@ module.exports = {
                                 'Change the way errors work with the bot'
                             )
                         ]
-                    })
+                    });
                 require('../../settings/errors').run(client, message, args);
                 break;
             default:
