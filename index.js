@@ -34,6 +34,7 @@ global.requestCooldown = new Set();
 global.requestedCooldown = new Set();
 global.openedSession = new Set();
 global.lockdownCooldown = new Set();
+global.afk = [];
 
 const mongo = require('./mongo');
 const connectToMongoDB = async () => {

@@ -9,6 +9,7 @@ const tagSchema = require('../schemas/tag-schema');
 
 const cooldown = new Set();
 const doubleCooldown = new Set();
+const AFKTriggerCooldown = new Set();
 
 const ModerationLogger = require('../structures/ModerationLogger');
 const DMUserInfraction = require('../structures/DMUserInfraction');
@@ -258,7 +259,34 @@ module.exports = {
             );
         }
 
-        if (!message.content.startsWith(prefix)) return;
+        
+        if (!message.content.startsWith(prefix)) {
+            if (AFKTriggerCooldown.has(message.author.id)) return;
+            else {
+                AFKTriggerCooldown.add(message.author.id);
+                setTimeout(() => AFKTriggerCooldown.delete(message.author.id), 5000);
+            }
+            if (message.mentions.users.some(mention => global.afk.some(afk => afk.ID === mention.id))) {
+
+                const mentionedAFKUsers = message.mentions.users.filter(mention => global.afk.some(afk => afk.ID === mention.id));
+
+                let list = [...mentionedAFKUsers.values()];
+                if (list.length > 1) list.splice(-1, 1, `and ${list[list.length - 1]}`);
+
+                if (mentionedAFKUsers.size > 5) return // idec at that point;
+                if (mentionedAFKUsers.size > 1) return message.reply({ content: `${[...mentionedAFKUsers.values()].length === 2 ? list.join(' ') : list.join(', ')} are currently AFK!`, allowedMentions: { users: [] } });
+                const userAFKInformation = global.afk.find(afk => afk.ID === mentionedAFKUsers.first().id);
+                if (Date.now() - userAFKInformation.at <= 5000) return;
+                return message.reply({ content: `${mentionedAFKUsers.first()} is currently AFK and has been AFK for \`${client.util.duration(Date.now() - userAFKInformation.at)}\` ${userAFKInformation.reason ? `-  ${userAFKInformation.reason}` : ''}`, allowedMentions: { users: [] } });
+            }
+
+            if (global.afk.some(afk => afk.ID === message.author.id && Date.now() - afk.at >= 10000)) {
+                global.afk.pop({ ID: message.author.id });
+                return message.reply(`Welcome back, I removed your AFK`);
+            };
+
+            return;
+        }
 
         const args = message.content.split(' ');
         const cmd = prefix.includes(' ') ? args[1].toLowerCase() : args.shift().slice(prefix.length).toLowerCase();
