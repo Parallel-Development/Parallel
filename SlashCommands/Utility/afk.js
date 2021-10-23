@@ -4,8 +4,10 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 module.exports = {
     name: 'afk',
     description: 'Let people know you are AFK if they try to ping you',
-    data: new SlashCommandBuilder().setName('afk').setDescription('Let people know you\'re AFK if they try to ping you')
-    .addStringOption(option => option.setName('reason').setDescription('The reason for being AFK')),
+    data: new SlashCommandBuilder()
+        .setName('afk')
+        .setDescription("Let people know you're AFK if they try to ping you")
+        .addStringOption(option => option.setName('reason').setDescription('The reason for being AFK')),
     permissions: Discord.Permissions.FLAGS.MANAGE_MESSAGES,
     async execute(client, interaction, args) {
         const isAFK = global.afk.some(afk => afk.ID === interaction.author.id);
@@ -18,4 +20,4 @@ module.exports = {
         global.afk.push({ ID: interaction.user.id, reason: AFKReason, at: Date.now() });
         return interaction.reply(`You are now AFK ${AFKReason ? `- ${AFKReason}` : ''}`);
     }
-}
+};
