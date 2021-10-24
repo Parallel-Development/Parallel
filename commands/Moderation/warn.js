@@ -48,7 +48,7 @@ module.exports = {
         if (
             !time &&
             manualwarnexpire !== 'disabled' &&
-            __time !== 'permament' &&
+            __time !== 'permanent' &&
             __time !== 'p' &&
             __time !== 'forever'
         )
