@@ -55,8 +55,10 @@ class Automod {
 
             const structure = async (name, reason, time, color) => {
                 message.delete().catch(() => {});
-                if (name === 'disabled') that.punished = false;
+                if (name === 'disabled') return that.punished = false;
                 if (name === 'delete') return;
+
+                console.log('yo?');
 
                 if (automodCooldown.has(message.author.id)) return;
                 else {
@@ -293,8 +295,7 @@ class Automod {
                     const msg = messages[i];
                     if (msg.author.id === message.author.id) userMessages.push(msg);
                 }
-
-                message.channel.bulkDelete(userMessages).catch(() => {});
+                if(fast !== 'disabled') message.channel.bulkDelete(userMessages).catch(() => {});
             }
 
             switch (type) {
