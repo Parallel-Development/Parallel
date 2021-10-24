@@ -230,7 +230,7 @@ module.exports = {
                         embeds: [
                             settingsHelp(
                                 'Errors',
-                                'errors missing-permission [respond, ignore, delete, current]\nerrors disabled-command-channel [respond, ignore, delete, current]\nerrors delete-delay [time, never, current]',
+                                'errors missing-permission [respond, ignore, delete]\nerrors disabled-command-channel [respond, ignore, delete]\nerrors delete-delay [time, never]',
                                 'Change the way errors work with the bot'
                             )
                         ]
