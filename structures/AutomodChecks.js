@@ -36,6 +36,13 @@ class AutomodChecks {
                             .toLowerCase()
                             .split(' ')
                             .filter(char => !extraAllowedChars.includes(char))
+                            .includes(word) ||
+                        word.split(' ').length > 1 && 
+                        joinedCharacters
+                            .toLowerCase()
+                            .split('')
+                            .filter(char => !extraAllowedChars.includes(char))
+                            .join('')
                             .includes(word)
                 )
             ) {
