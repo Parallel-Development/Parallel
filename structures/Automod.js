@@ -58,8 +58,6 @@ class Automod {
                 if (name === 'disabled') return that.punished = false;
                 if (name === 'delete') return;
 
-                console.log('yo?');
-
                 if (automodCooldown.has(message.author.id)) return;
                 else {
                     automodCooldown.add(message.author.id);

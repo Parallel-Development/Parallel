@@ -6,7 +6,6 @@ module.exports = {
     name: 'shortcuts',
     description: 'Add custom punishment shortcut commands in which have can have a default reason and duration',
     usage: 'shortcuts create [shortcut name] <duration> (reason)\nshortcuts remove [shortcut name]\nshortcuts removeall\nshortcuts view',
-    permissions: Discord.Permissions.FLAGS.MANAGE_GUILD,
     aliases: ['shortcut', 'short'],
     async execute(client, message, args) {
         if (global.collectionPrevention.some(information => information.userID === message.author.id)) return;
@@ -17,7 +16,10 @@ module.exports = {
         const guildSettings = await settingsSchema.findOne({
             guildID: message.guild.id
         });
-        const { shortcutCommands } = guildSettings;
+        const { shortcutCommands, modRoles, modRolePermissions } = guildSettings;
+
+        if (!message.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_MESSAGES) && message.member.roles.cache.some(role => modRoles.includes(role.id)) || !new Discord.Permissions(modRolePermissions).has(Discord.Permissions.FLAGS.MANAGE_MESSAGES)) return client.util.throwError(message, 'no permission to manage server shortcuts');
+        if (message.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_MESSAGES) && !message.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD) && option !== 'view') return client.util.throwError(message, 'you may only view the server shortcuts');
 
         if (!(option === 'create' || option === 'remove' || option === 'removeall' || option === 'view'))
             return client.util.throwError(message, client.config.errors.invalid_option);

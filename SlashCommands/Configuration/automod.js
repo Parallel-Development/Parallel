@@ -1,12 +1,13 @@
 const Discord = require('discord.js');
 const automodSchema = require('../../schemas/automod-schema');
+const settingsSchema = require('../../schemas/settings-schema');
 const ms = require('ms');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
 module.exports = {
     name: 'automod',
     description: 'Manages the auto-moderation for the bot',
-    permissions: Discord.Permissions.FLAGS.MANAGE_GUILD,
+    permissions: Discord.Permissions.FLAGS.MANAGE_MESSAGES,
     data: new SlashCommandBuilder()
         .setName('automod')
         .setDescription('Manage the auto-moderation for the bot')
@@ -183,6 +184,10 @@ module.exports = {
         const automodGrab = await automodSchema.findOne({
             guildID: interaction.guild.id
         });
+        const guildSettings = await settingsSchema.findOne({
+            guildID: interaction.guild.id
+        });
+        const { modRoles, modRolePermissions } = guildSettings;
 
         const {
             fastTempMuteDuration,
@@ -285,9 +290,9 @@ module.exports = {
             .addField('Role-bypass', 'The list of roles that are excluded from the automod', true)
             .setAuthor(`Auto-moderation for ${interaction.guild.name}`, client.user.displayAvatarURL());
 
-        //const option = args[0] ? args[0].toLowerCase().replace('-', '') : [];
-        //const toggle = args[1] ? args[1].toLowerCase().replace('-', '') : [];
         const subArgs = interaction.options.data.reduce((map, arg) => ((map[arg.name] = arg), map), {});
+        const whitelistedArguments = [['filter-list', 'view'], ['channel-bypass', 'view'], ['role-bypass', 'view']];
+        if (Object.keys(subArgs).length && !whitelistedArguments.some(arguments => arguments.join(' ') === Object.keys(subArgs).toString() + ' ' + subArgs[Object.keys(subArgs).toString()].options.map(argument => argument.value)) && (!interaction.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD) && (!interaction.guild.roles.cache.some(role => modRoles.includes(role.id)) || !new Discord.Permissions(modRolePermissions).has(Discord.Permissions.FLAGS.MANAGE_GUILD)))) return client.util.throwError(interaction, 'no permission to edit the configuration of the automod, you may only view the toggled automod features by running this command with no additional arguments, or view lists such as the channel-bypass list');
         if (subArgs['current']) return interaction.reply({ embeds: [automodList] });
 
         // FUNCTIONS ================================================================================

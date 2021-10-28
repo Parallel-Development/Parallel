@@ -41,12 +41,15 @@ module.exports = {
         )
         .addSubcommand(command => command.setName('delete-all').setDescription('Delete all shortcut commands'))
         .addSubcommand(command => command.setName('view').setDescription('View all the existing shortcut commands')),
-    permissions: Discord.Permissions.FLAGS.MANAGE_GUILD,
     async execute(client, interaction, args) {
         const guildSettings = await settingsSchema.findOne({ guildID: interaction.guild.id });
-        const { shortcutCommands } = guildSettings;
+        const { shortcutCommands, modRoles, modRolePermissions } = guildSettings;
 
         const subArgs = interaction.options.data.reduce((map, arg) => ((map[arg.name] = arg), map), {});
+
+        if (!interaction.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_MESSAGES) && interaction.member.roles.cache.some(role => modRoles.includes(role.id)) || !new Discord.Permissions(modRolePermissions).has(Discord.Permissions.FLAGS.MANAGE_MESSAGES)) return client.util.throwError(interaction, 'no permission to manage server shortcuts');
+        if (interaction.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_MESSAGES) && !interaction.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD) && !subArgs['view']) return client.util.throwError(interaction, 'you may only view the server shortcuts');
+
         if (subArgs['create']) {
             const createArgs = subArgs['create'].options.reduce((a, b) => ({ ...a, [b['name']]: b.value }), {});
             const shortcutName = createArgs['name'];
@@ -153,7 +156,7 @@ module.exports = {
             );
         } else if (subArgs['view']) {
             if (!shortcutCommands?.length)
-                return client.util.throwError(interaction, 'No shortcut commands are setup for this server!');
+                return interaction.reply('No shortcut commands are setup for this server!');
 
             const viewEmbed = new Discord.MessageEmbed()
                 .setColor(client.util.mainColor(interaction.guild))

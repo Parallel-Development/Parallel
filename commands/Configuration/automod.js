@@ -1,16 +1,21 @@
 const Discord = require('discord.js');
 const automodSchema = require('../../schemas/automod-schema');
+const settingsSchema = require('../../schemas/settings-schema');
 const ms = require('ms');
 
 module.exports = {
     name: 'automod',
     description: 'Manages the auto-moderation for the bot',
-    permissions: Discord.Permissions.FLAGS.MANAGE_GUILD,
+    permissions: Discord.Permissions.FLAGS.MANAGE_MESSAGES,
     usage: 'automod <setting> [args]',
     async execute(client, message, args) {
         const automodGrab = await automodSchema.findOne({
             guildID: message.guild.id
         });
+        const guildSettings = await settingsSchema.findOne({
+            guildID: message.guild.id
+        });
+        const { modRoles, modRolePermissions } = guildSettings;
 
         const {
             fastTempMuteDuration,
@@ -114,6 +119,8 @@ module.exports = {
             .setAuthor(`Auto-moderation for ${message.guild.name}`, client.user.displayAvatarURL());
 
         const option = args[0] ? args[0].toLowerCase().replace('-', '') : [];
+        const whitelistedArguments = [['filterlist', 'view'], ['channelbypass', 'view'], ['rolebypass', 'view']];
+        if (args[0] && !whitelistedArguments.some(arguments => arguments.join(' ') === args[0].toLowerCase().replace('-', '') + ' ' + args.slice(1)) && (!message.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD) && (!message.member.roles.cache.some(role => modRoles.includes(role.id)) || !new Discord.Permissions(modRolePermissions).has(Discord.Permissions.FLAGS.MANAGE_GUILD)))) return client.util.throwError(message, 'no permission to edit the configuration of the automod, you may only view the toggled automod features by running this command with no additional arguments, or view lists such as the channel-bypass list');
         const toggle = args[1] ? args[1].toLowerCase().replace('-', '') : [];
         if (!option.length) return message.reply({ embeds: [automodList] });
 

@@ -55,6 +55,6 @@ module.exports = {
                 }
             }
         );
-        return interaction.reply(`You are now AFK ${AFKReason ? `- ${AFKReason}` : ''}`);
+        return interaction.reply(`You are now marked as AFK ${AFKReason ? `- ${AFKReason}` : ''}`);
     }
 };
