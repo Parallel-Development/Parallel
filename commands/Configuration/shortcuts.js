@@ -18,8 +18,18 @@ module.exports = {
         });
         const { shortcutCommands, modRoles, modRolePermissions } = guildSettings;
 
-        if (!message.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_MESSAGES) && message.member.roles.cache.some(role => modRoles.includes(role.id)) || !new Discord.Permissions(modRolePermissions).has(Discord.Permissions.FLAGS.MANAGE_MESSAGES)) return client.util.throwError(message, 'no permission to manage server shortcuts');
-        if (message.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_MESSAGES) && !message.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD) && option !== 'view') return client.util.throwError(message, 'you may only view the server shortcuts');
+        if (
+            (!message.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_MESSAGES) &&
+                message.member.roles.cache.some(role => modRoles.includes(role.id))) ||
+            !new Discord.Permissions(modRolePermissions).has(Discord.Permissions.FLAGS.MANAGE_MESSAGES)
+        )
+            return client.util.throwError(message, 'no permission to manage server shortcuts');
+        if (
+            message.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_MESSAGES) &&
+            !message.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD) &&
+            option !== 'view'
+        )
+            return client.util.throwError(message, 'you may only view the server shortcuts');
 
         if (!(option === 'create' || option === 'remove' || option === 'removeall' || option === 'view'))
             return client.util.throwError(message, client.config.errors.invalid_option);

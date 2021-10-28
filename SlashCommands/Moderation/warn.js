@@ -50,7 +50,13 @@ module.exports = {
         const { manualwarnexpire } = settings;
         const { delModCmds } = settings;
 
-        if (!time && manualwarnexpire !== 'disabled' && args['duration'] !== 'permanent' && args['duration'] !== 'p' && args['duration'] !== 'forever')
+        if (
+            !time &&
+            manualwarnexpire !== 'disabled' &&
+            args['duration'] !== 'permanent' &&
+            args['duration'] !== 'p' &&
+            args['duration'] !== 'forever'
+        )
             time = parseInt(manualwarnexpire);
 
         new Infraction(client, 'Warn', interaction, interaction.member, member, {

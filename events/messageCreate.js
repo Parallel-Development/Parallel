@@ -301,7 +301,7 @@ module.exports = {
                 const userAFKInformation = afks.find(afk => afk.userID === mentionedAFKUsers.first().id);
 
                 if (Date.now() - userAFKInformation.date <= 5000) return;
-                if (mentionedAFKUsers.first().id !== message.author.id) 
+                if (mentionedAFKUsers.first().id !== message.author.id)
                     return message.reply({
                         content: `${mentionedAFKUsers.first()} is currently AFK and has been AFK for \`${client.util.duration(
                             Date.now() - userAFKInformation.date

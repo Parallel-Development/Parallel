@@ -37,13 +37,13 @@ class AutomodChecks {
                             .split(' ')
                             .filter(char => !extraAllowedChars.includes(char))
                             .includes(word) ||
-                        word.split(' ').length > 1 && 
-                        joinedCharacters
-                            .toLowerCase()
-                            .split('')
-                            .filter(char => !extraAllowedChars.includes(char))
-                            .join('')
-                            .includes(word)
+                        (word.split(' ').length > 1 &&
+                            joinedCharacters
+                                .toLowerCase()
+                                .split('')
+                                .filter(char => !extraAllowedChars.includes(char))
+                                .join('')
+                                .includes(word))
                 )
             ) {
                 let punished = await new Automod(client, message, 'filter').punished;

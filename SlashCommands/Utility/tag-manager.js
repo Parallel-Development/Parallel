@@ -65,17 +65,28 @@ module.exports = {
         )
         .addSubcommand(command => command.setName('view').setDescription('View all the tags on the server')),
     async execute(client, interaction, args) {
-
         const guildTags = await tagSchema.findOne({ guildID: interaction.guild.id });
         const guildSettings = await settingsSchema.findOne({ guildID: interaction.guild.id });
         const { allowedRoleList } = guildTags;
         const { modRoles, modRolePermissions } = guildSettings;
 
-        if (!interaction.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD) && !interaction.member.roles.cache.some(role => allowedRoleList.includes(role.id)) && (!interaction.member.roles.cache.some(role => modRoles.includes(role.id)) || new Discord.Permissions(modRolePermissions).has(Discord.Permissions.FLAGS.MANAGE_GUILD))) return client.util.throwError(interaction, 'no permission to manage server tags');
+        if (
+            !interaction.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD) &&
+            !interaction.member.roles.cache.some(role => allowedRoleList.includes(role.id)) &&
+            (!interaction.member.roles.cache.some(role => modRoles.includes(role.id)) ||
+                new Discord.Permissions(modRolePermissions).has(Discord.Permissions.FLAGS.MANAGE_GUILD))
+        )
+            return client.util.throwError(interaction, 'no permission to manage server tags');
 
         const subArgs = interaction.options.data.reduce((map, arg) => ((map[arg.name] = arg), map), {});
 
-        if (!interaction.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD) && (!interaction.member.roles.cache.some(role => modRoles.includes(role.id)) || new Discord.Permissions(modRolePermissions).has(Discord.Permissions.FLAGS.MANAGE_GUILD)) && !subArgs['view']) return client.util.throwError(interaction, 'you may only view the server tags');
+        if (
+            !interaction.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD) &&
+            (!interaction.member.roles.cache.some(role => modRoles.includes(role.id)) ||
+                new Discord.Permissions(modRolePermissions).has(Discord.Permissions.FLAGS.MANAGE_GUILD)) &&
+            !subArgs['view']
+        )
+            return client.util.throwError(interaction, 'you may only view the server tags');
 
         if (subArgs['create']) {
             const createArgs = subArgs['create'].options.reduce((a, b) => ({ ...a, [b['name']]: b.value }), {});
