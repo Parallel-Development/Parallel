@@ -30,16 +30,6 @@ module.exports = {
             server: false
         }).save();
 
-        const channel = client.channels.cache.get('821901486984265797');
-        const blacklistLogEmbed = new Discord.MessageEmbed()
-            .setColor(client.config.colors.log)
-            .setAuthor('User Blacklisted', client.user.displayAvatarURL())
-            .addField('User ID', member.id, true)
-            .addField('Reason', reason, true)
-            .addField('Blacklist Manager ID', message.author.id)
-            .addField('Date', client.util.timestamp(), true);
-        channel.send({ embeds: [blacklistLogEmbed] });
-
         const blacklistEmbed = new Discord.MessageEmbed()
             .setColor(client.config.colors.punishment[2])
             .setDescription(`${client.config.emotes.success} **${member.tag}** has been added to the blacklist`);

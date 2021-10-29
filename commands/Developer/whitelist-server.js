@@ -26,16 +26,6 @@ module.exports = {
             server: true
         });
 
-        const channel = client.channels.cache.get('821901486984265797');
-        const blacklistLogEmbed = new Discord.MessageEmbed()
-            .setColor(client.config.colors.log)
-            .setAuthor('Server Whitelisted', client.user.displayAvatarURL())
-            .addField('Server ID', message.author.id, true)
-            .addField('Reason', reason, true)
-            .addField('Blacklist Manager ID', message.author.id)
-            .addField('Date', client.util.timestamp(), true);
-        channel.send({ embeds: [blacklistLogEmbed] });
-
         const blacklistEmbed = new Discord.MessageEmbed()
             .setColor(client.util.mainColor(message.guild))
             .setDescription(`${client.config.emotes.success} Server with ID **${ID}** has been whitelisted`);

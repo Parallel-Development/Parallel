@@ -29,17 +29,7 @@ module.exports = {
             ID: user.id,
             server: false
         });
-
-        const channel = client.channels.cache.get('821901486984265797');
-        const blacklistLogEmbed = new Discord.MessageEmbed()
-            .setColor(client.config.colors.log)
-            .setAuthor('User Whitelisted', client.user.displayAvatarURL())
-            .addField('User ID', user.id, true)
-            .addField('Reason', reason, true)
-            .addField('Blacklist Manager ID', interaction.user.id)
-            .addField('Date', client.util.timestamp(), true);
-        channel.send({ embeds: [blacklistLogEmbed] });
-
+        
         const blacklistEmbed = new Discord.MessageEmbed()
             .setColor(client.util.mainColor(interaction.guild))
             .setDescription(`✅ **${user.tag}** has been removed from the blacklist`);
