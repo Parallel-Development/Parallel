@@ -683,8 +683,8 @@ module.exports = {
             }, 1500);
         }
 
-        if (command.developing && !client.config.developers.includes(message.author.id)) return;
-        if (command.developer && !client.config.developers.includes(message.author.id))
+        if (command.developing && !client.config.developers.some(ID => ID === message.author.id)) return;
+        if (command.developer && !client.config.developers.some(ID => ID === message.author.id))
             return client.util.throwError(
                 message,
                 'You do not have access to run this command; this command is restricted to a specific set of users'

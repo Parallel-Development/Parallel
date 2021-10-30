@@ -212,7 +212,7 @@ module.exports = {
         const command = client.slashCommands.get(interaction.commandName);
         if (!command) return; // i guess?
 
-        if (command.developer && !client.config.developers.includes(interaction.user.id))
+        if (command.developer && !client.config.developers.some(ID => ID === interaction.user.id))
             return client.util.throwError(interaction, 'You cannot run this command.');
 
         const guildSettings = await settingsSchema.findOne({ guildID: interaction.guild.id });
