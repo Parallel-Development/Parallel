@@ -48,11 +48,11 @@ module.exports = {
         const subArgs = interaction.options.data.reduce((map, arg) => ((map[arg.name] = arg), map), {});
 
         if (
-            (!interaction.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_MESSAGES) &&
-                interaction.member.roles.cache.some(role => modRoles.includes(role.id))) ||
-            !new Discord.Permissions(modRolePermissions).has(Discord.Permissions.FLAGS.MANAGE_MESSAGES)
-        )
-            return client.util.throwError(interaction, 'no permission to manage server shortcuts');
+            !interaction.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_MESSAGES) &&
+            (!interaction.member.roles.cache.some(role => modRoles.includes(role.id)) ||
+                new Discord.Permissions(modRolePermissions).has(Discord.Permissions.FLAGS.MANAGE_MESSAGES))
+        ) return client.util.throwError(interaction, 'no permission to manage server shortcuts');
+
         if (
             interaction.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_MESSAGES) &&
             !interaction.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD) &&

@@ -27,8 +27,7 @@ module.exports = {
 
         const member = await client.util.getMember(message.guild, args[0]);
         if (member && member.permissions.has(Discord.Permissions.FLAGS.MANAGE_ROLES) && !removerolesonmute)
-            return client.util.throwError(
-                message,
+            return message.reply(
                 'This command may not be effective on this member | If you have the **Remove Roles On Mute** module enabled, this may work'
             );
 

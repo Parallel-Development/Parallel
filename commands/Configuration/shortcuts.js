@@ -19,11 +19,11 @@ module.exports = {
         const { shortcutCommands, modRoles, modRolePermissions } = guildSettings;
 
         if (
-            (!message.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_MESSAGES) &&
-                message.member.roles.cache.some(role => modRoles.includes(role.id))) ||
-            !new Discord.Permissions(modRolePermissions).has(Discord.Permissions.FLAGS.MANAGE_MESSAGES)
-        )
-            return client.util.throwError(message, 'no permission to manage server shortcuts');
+            !message.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_MESSAGES) &&
+            (!message.member.roles.cache.some(role => modRoles.includes(role.id)) ||
+                new Discord.Permissions(modRolePermissions).has(Discord.Permissions.FLAGS.MANAGE_MESSAGES))
+        ) return client.util.throwError(message, 'no permission to manage server shortcuts');
+
         if (
             message.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_MESSAGES) &&
             !message.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD) &&
