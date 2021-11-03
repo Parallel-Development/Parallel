@@ -221,7 +221,6 @@ module.exports = {
         const isModerator = modRoles.some(role => interaction.member.roles.cache.has(role));
 
         const denyAccess = commandName => {
-            if (errorConfig.missingPermission === 'delete' || errorConfig.missingPermission === 'ignore') return;
             const errorMessage = new Discord.MessageEmbed()
                 .setColor(client.config.colors.err)
                 .setAuthor('Access Denied')
