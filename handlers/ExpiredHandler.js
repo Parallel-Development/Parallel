@@ -16,6 +16,7 @@ class ExpiredHandler {
 
             for (const expired of expiredDate) {
                 const { type, userID, guildID, _id, roles } = expired;
+                const guild = client.guilds.cache.get(guildID);
 
                 const settings = await settingsSchema.findOne({ guildID: guildID });
                 const { muterole, removerolesonmute } = settings;
@@ -43,7 +44,7 @@ class ExpiredHandler {
                         else await member.roles.remove(role);
 
                         const unmuteDM = new Discord.MessageEmbed()
-                            .setColor(client.util.mainColor(message.guild))
+                            .setColor(client.util.mainColor(guild))
                             .setAuthor('Parallel Moderation', client.user.displayAvatarURL())
                             .setTitle(`You were unmuted in ${server.name}`)
                             .addField('Reason', '[AUTO] Mute Expired')
