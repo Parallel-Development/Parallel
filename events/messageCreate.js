@@ -303,9 +303,9 @@ module.exports = {
                 if (Date.now() - userAFKInformation.date <= 5000) return;
                 if (mentionedAFKUsers.first().id !== message.author.id)
                     return message.reply({
-                        content: `${mentionedAFKUsers.first()} is currently AFK and has been AFK for \`${client.util.timestamp(
+                        content: `${mentionedAFKUsers.first()} is currently AFK and has been AFK since ${client.util.timestamp(
                             userAFKInformation.date
-                        )}\` ${userAFKInformation.reason ? `-  ${userAFKInformation.reason}` : ''}`,
+                        )} ${userAFKInformation.reason ? `-  ${userAFKInformation.reason}` : ''}`,
                         allowedMentions: { users: [] }
                     });
             }
