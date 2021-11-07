@@ -28,6 +28,7 @@ class MessageLogger {
                 logEmbed.addField('Edited in', message.channel.toString());
             } else {
                 logEmbed.setTitle('Message Deleted');
+                logEmbed.addField('Deleted in', message.channel.toString())
                 if (message.content)
                     logEmbed.addField(
                         'Deleted Message',
