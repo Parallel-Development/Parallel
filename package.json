@@ -18,7 +18,7 @@
     "@discordjs/rest": "^0.1.0-canary.0",
     "biguint-format": "^1.0.2",
     "discord-api-types": "^0.24.0",
-    "discord.js": "^13.3.1",
+    "discord.js": "beacondiscord/discord.js#v13.3",
     "flake-idgen": "^1.4.0",
     "mathjs": "^10.0.0",
     "moment": "^2.29.1",
