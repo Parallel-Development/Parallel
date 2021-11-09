@@ -310,7 +310,7 @@ module.exports = {
                     });
             }
 
-            if (afks.some(afk => afk.userID === message.author.id && Date.now() - afk.date >= 10000)) {
+            if (afks.some(afk => afk.userID === message.author.id && Date.now() - afk.date >= 5000)) {
                 await afkSchema.updateOne(
                     {
                         guildID: message.guild.id
