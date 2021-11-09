@@ -76,15 +76,17 @@ async function getAll(client, interaction, prefix, shortcutCommands, modRoles) {
         .setStyle('LINK')
         .setURL('https://docs.google.com/document/d/1-dkGO89cDY_GeKzjKj9SMAVm8SbSvdOZlMK3WLZ6kIs/edit');
 
-    const buttons = new Discord.MessageActionRow().addComponents(
+    const row1 = new Discord.MessageActionRow().addComponents(
         linkInviteLink,
-        linkSupportServer,
+        linkSupportServer
+    );
+    const row2 = new Discord.MessageActionRow().addComponents(
         linkDocumentation,
         linkBotGuidelines,
         linkPrivacyPolicy
-    );
+    )
 
-    return interaction.reply({ embeds: [mainHelp], components: [buttons] });
+    return interaction.reply({ embeds: [mainHelp], components: [row1, row2] });
 }
 
 async function getCMD(client, interaction, input, shortcutCommands, modRoles) {
