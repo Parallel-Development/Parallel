@@ -37,6 +37,9 @@ module.exports = {
                     }
                 }
             );
+
+            if (interaction.member.displayName.startsWith('[AFK] ')) await interaction.member.setNickname(`${interaction.member.displayName.slice(5)}`).catch(() => { })
+
             return interaction.reply(`I removed your AFK status!`);
         }
         const AFKReason = args['reason'];
@@ -55,6 +58,9 @@ module.exports = {
                 }
             }
         );
+
+        if (!interaction.member.displayName.startsWith('[AFK] ')) await interaction.member.setNickname(`[AFK] ${interaction.member.displayName}`).catch(() => { })
+
         return interaction.reply(`You are now marked as AFK ${AFKReason ? `- ${AFKReason}` : ''}`);
     }
 };
