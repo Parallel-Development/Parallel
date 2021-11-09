@@ -323,8 +323,9 @@ module.exports = {
                         }
                     }
                 );
-                
-                if (message.member.displayName.startsWith('[AFK] ')) await message.member.setNickname(`${message.member.displayName.slice(5)}`).catch(() => { })
+
+                if (message.member.displayName.startsWith('[AFK] '))
+                    await message.member.setNickname(`${message.member.displayName.slice(5)}`).catch(() => {});
 
                 const msg = await message.reply(`Welcome back, I removed your AFK`);
                 return setTimeout(() => msg.delete(), 5000);

@@ -83,15 +83,8 @@ async function getAll(client, message, prefix, shortcutCommands, modRoles) {
         .setStyle('LINK')
         .setURL('https://docs.google.com/document/d/1-dkGO89cDY_GeKzjKj9SMAVm8SbSvdOZlMK3WLZ6kIs/edit');
 
-    const row1 = new Discord.MessageActionRow().addComponents(
-        linkInviteLink,
-        linkSupportServer
-    );
-    const row2 = new Discord.MessageActionRow().addComponents(
-        linkDocumentation,
-        linkBotGuidelines,
-        linkPrivacyPolicy
-    )
+    const row1 = new Discord.MessageActionRow().addComponents(linkInviteLink, linkSupportServer);
+    const row2 = new Discord.MessageActionRow().addComponents(linkDocumentation, linkBotGuidelines, linkPrivacyPolicy);
 
     return message.reply({ embeds: [mainHelp], components: [row1, row2] });
 }

@@ -29,7 +29,7 @@ module.exports = {
             ID: user.id,
             server: false
         });
-        
+
         const blacklistEmbed = new Discord.MessageEmbed()
             .setColor(client.util.mainColor(interaction.guild))
             .setDescription(`✅ **${user.tag}** has been removed from the blacklist`);

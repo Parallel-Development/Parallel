@@ -34,7 +34,8 @@ module.exports = {
                 }
             );
 
-            if (message.member.displayName.startsWith('[AFK] ')) await message.member.setNickname(`${message.member.displayName.slice(5)}`).catch(() => { })
+            if (message.member.displayName.startsWith('[AFK] '))
+                await message.member.setNickname(`${message.member.displayName.slice(5)}`).catch(() => {});
 
             return message.reply(`I removed your AFK status!`);
         }
@@ -55,7 +56,8 @@ module.exports = {
             }
         );
 
-        if (!message.member.displayName.startsWith('[AFK] ')) await message.member.setNickname(`[AFK] ${message.member.displayName}`).catch(() => {})
+        if (!message.member.displayName.startsWith('[AFK] '))
+            await message.member.setNickname(`[AFK] ${message.member.displayName}`).catch(() => {});
 
         return message.reply(`You are now marked as AFK ${AFKReason ? `- ${AFKReason}` : ''}`);
     }
