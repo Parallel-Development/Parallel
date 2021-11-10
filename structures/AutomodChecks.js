@@ -2,6 +2,7 @@ const Automod = require('./Automod');
 const automodSchema = require('../schemas/automod-schema');
 global.userMap = new Map();
 const Discord = require('discord.js');
+const fetch = require('petitio');
 
 class AutomodChecks {
     constructor(client, message, edit = false) {
@@ -13,6 +14,24 @@ class AutomodChecks {
             const automodSettings = await automodSchema.findOne({
                 guildID: message.guild.id
             });
+
+            // Malicious Link Check;
+
+            const matchRegex = /([\w-]+(?:(?:.[\w-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])/g;
+            const stripped = message.content.replace(/[^\x20-\x7E]/g, '');
+
+            if (matchRegex.test(stripped)) {
+                const res = await fetch('https://anti-fish.bitflow.dev/check', 'POST')
+                    .header('User-Agent', 'Parallel (745401642664460319)')
+                    .body({ message: message.content })
+                    .send();
+
+                const data = res.json();
+                if (data.match) {
+                    let punished = await new Automod(client, message, 'maliciouslinks').punished;
+                    if (punished) return;
+                }
+            }
 
             // Filter Check;
 

@@ -30,12 +30,15 @@ module.exports = {
             massmentionTempBanDuration,
             walltextTempMuteDuration,
             walltextTempBanDuration,
+            maliciouslinksTempMuteDuration,
+            maliciouslinksTempBanDuration,
             fast,
             filter,
             invites,
             links,
             massmention,
-            walltext
+            walltext,
+            maliciouslinks
         } = automodGrab;
 
         const automodList = new Discord.MessageEmbed()
@@ -112,6 +115,16 @@ module.exports = {
             .addField(
                 'Filter-list',
                 'The list of blacklisted words on the server that if used and the Filter automod is enabled, will be moderated',
+                true
+            )
+            .addField(
+                'Malicious-links',
+                `Toggled: \`${maliciouslinksTempMuteDuration
+                    ? maliciouslinks + ' for ' + client.util.duration(maliciouslinksTempMuteDuration)
+                    : maliciouslinksTempBanDuration
+                        ? maliciouslinks + ' for ' + client.util.duration(maliciouslinksTempBanDuration)
+                        : maliciouslinks
+                }\``,
                 true
             )
             .addField('Channel-bypass', 'The list of channels that are excluded from the automod', true)
@@ -427,6 +440,56 @@ module.exports = {
                             massmention: type,
                             massmentionTempMuteDuration: 0,
                             massmentionTempBanDuration: 0
+                        }
+                    );
+                }
+            }
+        };
+
+        const updateMalicious = async (type, duration) => {
+            if (duration) {
+                if (type === 'tempban') {
+                    await automodSchema.updateOne(
+                        {
+                            guildID: message.guild.id
+                        },
+                        {
+                            maliciouslinks: type,
+                            maliciouslinksTempBanDuration: duration
+                        }
+                    );
+                } else {
+                    await automodSchema.updateOne(
+                        {
+                            guildID: message.guild.id
+                        },
+                        {
+                            maliciouslinks: type,
+                            maliciouslinksTempMuteDuration: duration
+                        }
+                    );
+                }
+            } else {
+                if (type === 'disabled') {
+                    await automodSchema.updateOne(
+                        {
+                            guildID: message.guild.id
+                        },
+                        {
+                            maliciouslinks: type,
+                            maliciouslinksTempMuteDuration: 0,
+                            maliciouslinksTempBanDuration: 0
+                        }
+                    );
+                } else {
+                    await automodSchema.updateOne(
+                        {
+                            guildID: message.guild.id
+                        },
+                        {
+                            maliciouslinks: type,
+                            maliciouslinksTempMuteDuration: 0,
+                            maliciouslinksTempBanDuration: 0
                         }
                     );
                 }
@@ -1174,6 +1237,127 @@ module.exports = {
                                     .setColor(client.util.mainColor(message.guild))
                                     .setDescription(
                                         `${client.config.emotes.success} Members who mention 5+ users will no longer get punished`
+                                    )
+                                    .setAuthor('Automod Update', client.user.displayAvatarURL())
+                            ]
+                        });
+                        break;
+                    default:
+                        if (!args[1]) {
+                            return client.util.throwError(message, client.config.errors.missing_argument_option);
+                        } else {
+                            return client.util.throwError(message, client.config.errors.invalid_option);
+                        }
+                }
+                break;
+
+            case 'maliciouslinks':
+                switch (toggle) {
+                    case 'delete':
+                        updateMalicious('delete');
+                        message.reply({
+                            embeds: [
+                                new Discord.MessageEmbed()
+                                    .setColor(client.util.mainColor(message.guild))
+                                    .setDescription(
+                                        `${client.config.emotes.success} Members who send a malicious link will get their message deleted`
+                                    )
+                                    .setAuthor('Automod Update', client.user.displayAvatarURL())
+                            ]
+                        });
+                        break;
+                    case 'warn':
+                        updateMalicious('warn');
+                        message.reply({
+                            embeds: [
+                                new Discord.MessageEmbed()
+                                    .setColor(client.util.mainColor(message.guild))
+                                    .setDescription(
+                                        `${client.config.emotes.success} Members who send a malicious link will get warned`
+                                    )
+                                    .setAuthor('Automod Update', client.user.displayAvatarURL())
+                            ]
+                        });
+                        break;
+                    case 'kick':
+                        updateMalicious('kick');
+                        message.reply({
+                            embeds: [
+                                new Discord.MessageEmbed()
+                                    .setColor(client.util.mainColor(message.guild))
+                                    .setDescription(
+                                        `${client.config.emotes.success} Members who send a malicious link will get kicked`
+                                    )
+                                    .setAuthor('Automod Update', client.user.displayAvatarURL())
+                            ]
+                        });
+                        break;
+                    case 'mute':
+                        updateMalicious('mute');
+                        message.reply({
+                            embeds: [
+                                new Discord.MessageEmbed()
+                                    .setColor(client.util.mainColor(message.guild))
+                                    .setDescription(
+                                        `${client.config.emotes.success} Members who send a malicious link will get muted`
+                                    )
+                                    .setAuthor('Automod Update', client.user.displayAvatarURL())
+                            ]
+                        });
+                        break;
+                    case 'ban':
+                        updateMalicious('ban');
+                        message.reply({
+                            embeds: [
+                                new Discord.MessageEmbed()
+                                    .setColor(client.util.mainColor(message.guild))
+                                    .setDescription(
+                                        `${client.config.emotes.success} Members who send a malicious links will get banned`
+                                    )
+                                    .setAuthor('Automod Update', client.user.displayAvatarURL())
+                            ]
+                        });
+                        break;
+                    case 'tempban':
+                        updateMalicious('tempban', duration);
+                        message.reply({
+                            embeds: [
+                                new Discord.MessageEmbed()
+                                    .setColor(client.util.mainColor(message.guild))
+                                    .setDescription(
+                                        `${client.config.emotes.success
+                                        } Members who send a malicious link will get banned for \`${client.util.duration(
+                                            duration
+                                        )}\``
+                                    )
+                                    .setAuthor('Automod Update', client.user.displayAvatarURL())
+                            ]
+                        });
+                        break;
+                    case 'tempmute':
+                        updateMalicious('tempmute', duration);
+                        message.reply({
+                            embeds: [
+                                new Discord.MessageEmbed()
+                                    .setColor(client.util.mainColor(message.guild))
+                                    .setDescription(
+                                        `${client.config.emotes.success
+                                        } Members who send a malicious link will get muted for \`${client.util.duration(
+                                            duration
+                                        )}\``
+                                    )
+                                    .setAuthor('Automod Update', client.user.displayAvatarURL())
+                            ]
+                        });
+                        break;
+                    case 'disable':
+                        updateMalicious('disabled');
+                        message.reply({
+                            embeds: [
+                                new Discord.MessageEmbed()
+                                    .setColor(client.util.mainColor(message.guild))
+                                    .setDescription(
+                                        `${client.config.emotes.success} Members who send a malicious link will no longer get punished`
                                     )
                                     .setAuthor('Automod Update', client.user.displayAvatarURL())
                             ]

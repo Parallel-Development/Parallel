@@ -18,8 +18,8 @@ const automodSchema = mongoose.Schema({
     filterList: [String],
     fast: reqString,
     walltext: reqString,
-    flood: reqString,
     links: reqString,
+    maliciouslinks: reqString,
     allowTenor: {
         type: Object,
         required: true
@@ -38,6 +38,8 @@ const automodSchema = mongoose.Schema({
     linksTempBanDuration: reqInt,
     invitesTempBanDuration: reqInt,
     massmentionTempBanDuration: reqInt,
+    maliciouslinksTempMuteDuration: reqInt,
+    maliciouslinksTempBanDuration: reqInt,
     bypassChannels: {
         type: [String],
         required: true

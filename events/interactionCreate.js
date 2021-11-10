@@ -114,8 +114,8 @@ module.exports = {
                 filterList: [],
                 fast: 'disabled',
                 walltext: 'disabled',
-                flood: 'disabled',
                 links: 'disabled',
+                maliciouslinks: 'disabled',
                 allowTenor: {
                     enabled: false,
                     attachmentPermsOnly: false
@@ -134,6 +134,8 @@ module.exports = {
                 linksTempBanDuration: 0,
                 invitesTempBanDuration: 0,
                 massmentionTempBanDuration: 0,
+                maliciouslinksTempMuteDuration: 0,
+                maliciouslinksTempBanDuration: 0,
                 bypassChannels: [],
                 bypassRoles: []
             }).save();

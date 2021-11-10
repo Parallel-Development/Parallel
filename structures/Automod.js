@@ -33,6 +33,7 @@ class Automod {
                 invites,
                 walltext,
                 links,
+                maliciouslinks,
                 fastTempMuteDuration,
                 fastTempBanDuration,
                 massmentionTempMuteDuration,
@@ -44,7 +45,9 @@ class Automod {
                 walltextTempMuteDuration,
                 walltextTempBanDuration,
                 linksTempMuteDuration,
-                linksTempBanDuration
+                linksTempBanDuration,
+                maliciouslinksTempMuteDuration,
+                maliciouslinksTempBanDuration
             } = automod;
 
             const settings = await settingsSchema.findOne({
@@ -297,6 +300,25 @@ class Automod {
             }
 
             switch (type) {
+                case 'maliciouslinks':
+                    if (maliciouslinks === 'disabled') return;
+                    structure(
+                        maliciouslinks,
+                        `[AUTO] Sending a malicious link`,
+                        maliciouslinksTempMuteDuration
+                            ? maliciouslinksTempMuteDuration
+                            : maliciouslinksTempBanDuration
+                            ? maliciouslinksTempBanDuration
+                            : null,
+                        maliciouslinks === 'warn'
+                            ? client.config.colors.punishment[0]
+                            : maliciouslinks === 'mute' || maliciouslinks === 'tempmute'
+                            ? client.config.colors.punishment[1]
+                            : maliciouslinks === 'ban' || maliciouslinks === 'tempban'
+                            ? client.config.colors.punishment[2]
+                            : null
+                    );
+                    break;
                 case 'filter':
                     if (filter === 'disabled') return;
                     structure(
