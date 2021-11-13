@@ -21,17 +21,17 @@ class MessageLogger {
                 logEmbed.setDescription(`[Jump to message](${message.url})`);
                 logEmbed.setTitle('Message Update');
                 logEmbed.addField(
-                    'Old Message',
+                    'Old Message Content',
                     oldMessage.content.length <= 1024 ? oldMessage.content : binnedOldContent
                 );
-                logEmbed.addField('Updated Message', message.content.length <= 1024 ? message.content : binnedContent);
+                logEmbed.addField('Updated Message Content', message.content.length <= 1024 ? message.content : binnedContent);
                 logEmbed.addField('Edited in', message.channel.toString());
             } else {
                 logEmbed.setTitle('Message Deleted');
                 logEmbed.addField('Deleted in', message.channel.toString());
                 if (message.content)
                     logEmbed.addField(
-                        'Deleted Message',
+                        'Content',
                         message.content.length <= 1024 ? message.content : await client.util.createBin(message.content)
                     );
 
@@ -47,10 +47,8 @@ class MessageLogger {
                         .endsWith('mov')
                 ) {
                     logEmbed.setImage(message.attachments.map(attachment => attachment.url).join('\n'));
-                    logEmbed.addField('Deleted in', message.channel.toString());
                 } else if (message.attachments.size) {
                     logEmbed.addField('Attachments', message.attachments.map(attachment => attachment.url).join('\n'));
-                    logEmbed.addField('Deleted in', message.channel.toString());
                 }
             }
 
