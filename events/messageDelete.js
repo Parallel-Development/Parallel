@@ -11,7 +11,7 @@ module.exports = {
         const settings = await settingsSchema.findOne({
             guildID: message.guild.id
         });
-        const { messageLogging } = settings;
+        const { messageLogging, messageLoggingIgnored } = settings;
 
         if (!message.guild.channels.cache.get(messageLogging) && messageLogging !== 'none') {
             await settingsSchema.updateOne(
@@ -28,6 +28,6 @@ module.exports = {
 
         if (messageLogging === 'none') return;
 
-        new MessageLogger(client, message.guild.channels.cache.get(messageLogging), message);
+        if (!messageLoggingIgnored.includes(message.channel.id) && !messageLoggingIgnored.includes(message.channel.parentId)) new MessageLogger(client, message.guild.channels.cache.get(messageLogging), message);
     }
 };

@@ -83,9 +83,9 @@ exports.run = async (client, message, args) => {
             .then(result => result.allowedRoles);
 
         const roleList =
-            _allowedRoles.map(role => message.guild.roles.cache.get(role.id)).join(' ').length <= 2000
-                ? _allowedRoles.map(role => message.guild.roles.cache.get(role)).join(' ')
-                : await client.util.createBin(_allowedRoles.map(role => message.guild.roles.cache.get(role.id)));
+            _allowedRoles.map(role => message.guild.roles.cache.get(role)).join(', ').length <= 2000
+                ? _allowedRoles.map(role => message.guild.roles.cache.get(role)).join(', ')
+                : await client.util.createBin(_allowedRoles.map(role => message.guild.roles.cache.get(role)));
 
         const allowedRolesEmbed = new Discord.MessageEmbed()
             .setColor(client.util.mainColor(message.guild))

@@ -9,10 +9,10 @@ exports.run = async (client, message, args) => {
 
     switch (args[1].toLowerCase()) {
         case 'enable':
-            if (!args[0]) return client.util.throwError(message, client.config.errors.missing_argument_channel);
+            if (!args[2]) return client.util.throwError(message, client.config.errors.missing_argument_channel);
             const enableChannel = client.util.getChannel(message.guild, args[2]);
             if (!enableChannel) return client.util.throwError(message, client.config.errors.invalid_channel);
-            if (enableChannel?.type !== 'GUILD_TEXT')
+            if (!enableChannel.isText())
                 return client.util.throwError(message, client.config.errors.not_type_text_channel);
 
             var prevent = false;
@@ -133,11 +133,11 @@ exports.run = async (client, message, args) => {
             break;
 
         case 'disable':
+            if (!args[2]) return client.util.throwError(message, client.config.errors.missing_argument_channel);
             const disableChannel = client.util.getChannel(message.guild, args[2]);
-            if (disableChannel?.type !== 'GUILD_TEXT')
+            if (!disableChannel) return client.util.throwError(message, client.config.errors.invalid_channel);
+            if (!disableChannel.isText())
                 return client.util.throwError(message, 'The channel must only be a text channel!');
-            if (!disableChannel)
-                return client.util.throwError(message, 'Please specify the channel you wish to manage');
 
             var prevent = false;
             for (let i = 0; i !== locked.length; ++i) {

@@ -29,7 +29,8 @@ module.exports = {
                 .addField('Mute Role', 'muterole', true)
                 .addField('Remove Roles On Mute', 'remove-roles-on-mute', true)
                 .addField('AFK Role Whitelist', 'afk-role-whitelist', true)
-                .addField('Errors', 'errors', true);
+                .addField('Errors', 'errors', true)
+                .addField('Message Logging Ignored', 'message-logging-ignored', true);
             return message.reply({ embeds: [settingsPannel] });
         }
 
@@ -120,6 +121,19 @@ module.exports = {
                     });
                 require('../../settings/msglogchannel').run(client, message, args);
                 break;
+            case 'message-logging-ignored':
+                if (!args[1])
+                    return message.reply({
+                        embeds: [
+                            settingsHelp(
+                                'Message Logging Ignored',
+                                'message-logging-ignored <add, remove, view>',
+                                'Manage the channels where message updates and deletes will not be logged'
+                            )
+                        ]
+                    })
+                    require('../../settings/msgloggingignored').run(client, message, args);
+                    break;
             case 'moderation-log-channel':
                 if (!args[1])
                     return message.reply({

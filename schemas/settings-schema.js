@@ -25,6 +25,7 @@ const settingsSchema = mongoose.Schema({
     autowarnexpire: reqString,
     manualwarnexpire: reqString,
     messageLogging: reqString,
+    messageLoggingIgnored: reqStringArray,
     moderationLogging: reqString,
     automodLogging: reqString,
     modRoles: reqStringArray,
