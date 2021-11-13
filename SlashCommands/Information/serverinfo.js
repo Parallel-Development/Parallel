@@ -30,7 +30,7 @@ module.exports = {
             .addField('Server Owner', await interaction.guild.fetchOwner().then(owner => owner.toString()))
             .addField('Created', client.util.timestamp(interaction.guild.createdAt))
             .setFooter(`Information requested by ${interaction.user.tag}`, interaction.user.displayAvatarURL())
-            .setThumbnail(interaction.guild.iconURL({ dynamic: true }).replace('.webp', '.png'));
+            .setThumbnail(interaction.guild.iconURL({ dynamic: true })?.replace('.webp', '.png'));
 
         return interaction.reply({ embeds: [serverinfo] });
     }

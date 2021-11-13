@@ -31,7 +31,7 @@ module.exports = {
             .addField('Server Owner', await message.guild.fetchOwner().then(owner => owner.toString()))
             .addField('Created', client.util.timestamp(message.guild.createdAt))
             .setFooter(`Information requested by ${message.author.tag}`, message.author.displayAvatarURL())
-            .setThumbnail(message.guild.iconURL({ dynamic: true }).replace('.webp', '.png'));
+            .setThumbnail(message.guild.iconURL({ dynamic: true })?.replace('.webp', '.png'));
 
         return message.reply({ embeds: [serverinfo] });
     }
