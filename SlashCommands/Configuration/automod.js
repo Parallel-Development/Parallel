@@ -291,8 +291,8 @@ module.exports = {
             .setAuthor(`Auto-moderation for ${interaction.guild.name}`, client.user.displayAvatarURL());
 
         const subArgs = interaction.options.data.reduce((map, arg) => ((map[arg.name] = arg), map), {});
-        const whitelistedArguments = [['filter-list', 'view'], ['channel-bypass', 'view'], ['role-bypass', 'view']];
-        if (Object.keys(subArgs).length && !whitelistedArguments.some(arguments => arguments.join(' ') === Object.keys(subArgs).toString() + ' ' + subArgs[Object.keys(subArgs).toString()].options.map(argument => argument.value)) && (!interaction.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD) && (!interaction.guild.roles.cache.some(role => modRoles.includes(role.id)) || !new Discord.Permissions(modRolePermissions).has(Discord.Permissions.FLAGS.MANAGE_GUILD)))) return client.util.throwError(interaction, 'no permission to edit the configuration of the automod, you may only view the toggled automod features by running this command with no additional arguments, or view lists such as the channel-bypass list');
+        const whitelistedArguments = [['current'], ['filter-list', 'view'], ['channel-bypass', 'view'], ['role-bypass', 'view']];
+        if (Object.keys(subArgs).length && !whitelistedArguments.some(arguments => arguments.join(' ') === (Object.keys(subArgs).toString() + ' ' + (subArgs[Object.keys(subArgs).toString()].options?.map(argument => argument.value) || '')).trim()) && (!interaction.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD) && (!interaction.guild.roles.cache.some(role => modRoles.includes(role.id)) || !new Discord.Permissions(modRolePermissions).has(Discord.Permissions.FLAGS.MANAGE_GUILD)))) return client.util.throwError(interaction, 'no permission to edit the configuration of the automod, you may only view the toggled automod features by running this command with no additional arguments, or view lists such as the channel-bypass list');
         if (subArgs['current']) return interaction.reply({ embeds: [automodList] });
 
         // FUNCTIONS ================================================================================
