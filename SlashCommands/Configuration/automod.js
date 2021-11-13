@@ -21,6 +21,7 @@ module.exports = {
                         .setName('punishment')
                         .setDescription('The punishment given for triggering this automod')
                         .setRequired(true)
+                        .addChoice('Delete', 'delete')
                         .addChoice('Warn', 'warn')
                         .addChoice('Kick', 'kick')
                         .addChoice('Mute', 'mute')
@@ -40,6 +41,7 @@ module.exports = {
                         .setName('punishment')
                         .setDescription('The punishment given for triggering this automod')
                         .setRequired(true)
+                        .addChoice('Delete', 'delete')
                         .addChoice('Warn', 'warn')
                         .addChoice('Kick', 'kick')
                         .addChoice('Mute', 'mute')
@@ -59,6 +61,7 @@ module.exports = {
                         .setName('punishment')
                         .setDescription('The punishment given for triggering this automod')
                         .setRequired(true)
+                        .addChoice('Delete', 'delete')
                         .addChoice('Warn', 'warn')
                         .addChoice('Kick', 'kick')
                         .addChoice('Mute', 'mute')
@@ -78,6 +81,7 @@ module.exports = {
                         .setName('punishment')
                         .setDescription('The punishment given for triggering this automod')
                         .setRequired(true)
+                        .addChoice('Delete', 'delete')
                         .addChoice('Warn', 'warn')
                         .addChoice('Kick', 'kick')
                         .addChoice('Mute', 'mute')
@@ -97,6 +101,7 @@ module.exports = {
                         .setName('punishment')
                         .setDescription('The punishment given for triggering this automod')
                         .setRequired(true)
+                        .addChoice('Delete', 'delete')
                         .addChoice('Warn', 'warn')
                         .addChoice('Kick', 'kick')
                         .addChoice('Mute', 'mute')
@@ -116,6 +121,7 @@ module.exports = {
                         .setName('punishment')
                         .setDescription('The punishment given for triggering this automod')
                         .setRequired(true)
+                        .addChoice('Delete', 'delete')
                         .addChoice('Warn', 'warn')
                         .addChoice('Kick', 'kick')
                         .addChoice('Mute', 'mute')
@@ -125,6 +131,28 @@ module.exports = {
                         .addChoice('Disable', 'disable')
                 )
                 .addStringOption(option => option.setName('duration').setDescription('The duration of the punishment'))
+        )
+        .addSubcommand(command =>
+            command
+                .setName('malicious-links')
+                .setDescription('Manage the malicious link automod on the server')
+                .addStringOption(option =>
+                    option
+                        .setName('punishment')
+                        .setDescription('The punishment given for triggering this automod')
+                        .setRequired(true)
+                        .addChoice('Delete', 'delete')
+                        .addChoice('Warn', 'warn')
+                        .addChoice('Kick', 'kick')
+                        .addChoice('Mute', 'mute')
+                        .addChoice('Ban', 'ban')
+                        .addChoice('Temp-mute', 'tempmute')
+                        .addChoice('Temp-ban', 'tempban')
+                        .addChoice('Disable', 'disable')
+                )
+                .addStringOption(option => 
+                    option.setName('duration').setDescription('The duration of the punishment')
+                )
         )
         .addSubcommand(command =>
             command
@@ -591,6 +619,56 @@ module.exports = {
                             massmention: type,
                             massmentionTempMuteDuration: 0,
                             massmentionTempBanDuration: 0
+                        }
+                    );
+                }
+            }
+        };
+
+        const updateMalicious = async (type, duration) => {
+            if (duration) {
+                if (type === 'tempban') {
+                    await automodSchema.updateOne(
+                        {
+                            guildID: interaction.guild.id
+                        },
+                        {
+                            maliciouslinks: type,
+                            maliciouslinksTempBanDuration: duration
+                        }
+                    );
+                } else {
+                    await automodSchema.updateOne(
+                        {
+                            guildID: interaction.guild.id
+                        },
+                        {
+                            maliciouslinks: type,
+                            maliciouslinksTempMuteDuration: duration
+                        }
+                    );
+                }
+            } else {
+                if (type === 'disabled') {
+                    await automodSchema.updateOne(
+                        {
+                            guildID: interaction.guild.id
+                        },
+                        {
+                            maliciouslinks: type,
+                            maliciouslinksTempMuteDuration: 0,
+                            maliciouslinksTempBanDuration: 0
+                        }
+                    );
+                } else {
+                    await automodSchema.updateOne(
+                        {
+                            guildID: interaction.guild.id
+                        },
+                        {
+                            maliciouslinks: type,
+                            maliciouslinksTempMuteDuration: 0,
+                            maliciouslinksTempBanDuration: 0
                         }
                     );
                 }
@@ -1293,6 +1371,129 @@ module.exports = {
                                 new Discord.MessageEmbed()
                                     .setColor(client.util.mainColor(interaction.guild))
                                     .setDescription(`✅ Members who mention 5+ users will no longer get punished`)
+                                    .setAuthor('Automod Update', client.user.displayAvatarURL())
+                            ]
+                        });
+                        break;
+                }
+                break;
+            case 'malicious-links':
+
+                toggle = subArgs['malicious-links'].options.reduce((a, b) => ({ ...a, [b['name']]: b.value }), {});
+                duration = toggle['duration'] ? ms(toggle['duration']) : undefined;
+                if (toggle['duration'] && toggle['punishment'] !== 'tempban' && toggle['punishment'] !== 'tempmute')
+                    return client.util.throwError(interaction, client.config.errors.duration_not_expected);
+                if (!toggle['duration'] && (toggle['punishment'] === 'tempban' || toggle['punishment'] === 'tempmute'))
+                    return client.util.throwError(interaction, client.config.missing_argument_duration);
+                if (!duration && toggle['duration'])
+                    return client.util.throwError(interaction, client.config.bad_duration);
+                if (duration > 315576000000) return client.util.throwError(interaction, client.config.time_too_long);
+
+                switch (toggle['punishment']) {
+                    case 'delete':
+                        updateMalicious('delete');
+                        interaction.reply({
+                            embeds: [
+                                new Discord.MessageEmbed()
+                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setDescription(
+                                        `✅ Members who send a malicious link will get their message deleted`
+                                    )
+                                    .setAuthor('Automod Update', client.user.displayAvatarURL())
+                            ]
+                        });
+                        break;
+                    case 'warn':
+                        updateMalicious('warn');
+                        interaction.reply({
+                            embeds: [
+                                new Discord.MessageEmbed()
+                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setDescription(
+                                        `✅ Members who send a malicious link will get warned`
+                                    )
+                                    .setAuthor('Automod Update', client.user.displayAvatarURL())
+                            ]
+                        });
+                        break;
+                    case 'kick':
+                        updateMalicious('kick');
+                        interaction.reply({
+                            embeds: [
+                                new Discord.MessageEmbed()
+                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setDescription(
+                                        `✅ Members who send a malicious link will get kicked`
+                                    )
+                                    .setAuthor('Automod Update', client.user.displayAvatarURL())
+                            ]
+                        });
+                        break;
+                    case 'mute':
+                        updateMalicious('mute');
+                        interaction.reply({
+                            embeds: [
+                                new Discord.MessageEmbed()
+                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setDescription(
+                                        `✅ Members who send a malicious link will get muted`
+                                    )
+                                    .setAuthor('Automod Update', client.user.displayAvatarURL())
+                            ]
+                        });
+                        break;
+                    case 'ban':
+                        updateMalicious('ban');
+                        interaction.reply({
+                            embeds: [
+                                new Discord.MessageEmbed()
+                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setDescription(
+                                        `✅ Members who send a malicious links will get banned`
+                                    )
+                                    .setAuthor('Automod Update', client.user.displayAvatarURL())
+                            ]
+                        });
+                        break;
+                    case 'tempban':
+                        updateMalicious('tempban', duration);
+                        interaction.reply({
+                            embeds: [
+                                new Discord.MessageEmbed()
+                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setDescription(
+                                        `✅ Members who send a malicious link will get banned for \`${client.util.duration(
+                                            duration
+                                        )}\``
+                                    )
+                                    .setAuthor('Automod Update', client.user.displayAvatarURL())
+                            ]
+                        });
+                        break;
+                    case 'tempmute':
+                        updateMalicious('tempmute', duration);
+                        interaction.reply({
+                            embeds: [
+                                new Discord.MessageEmbed()
+                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setDescription(
+                                        `✅ Members who send a malicious link will get muted for \`${client.util.duration(
+                                            duration
+                                        )}\``
+                                    )
+                                    .setAuthor('Automod Update', client.user.displayAvatarURL())
+                            ]
+                        });
+                        break;
+                    case 'disable':
+                        updateMalicious('disabled');
+                        interaction.reply({
+                            embeds: [
+                                new Discord.MessageEmbed()
+                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setDescription(
+                                        `✅ Members who send a malicious link will no longer get punished`
+                                    )
                                     .setAuthor('Automod Update', client.user.displayAvatarURL())
                             ]
                         });
