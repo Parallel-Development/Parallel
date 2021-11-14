@@ -63,7 +63,7 @@ module.exports = {
                 }
             }).save());
 
-        let prefix = global.perpendicular ? '%' : settings.prefix || client.config.prefix;
+        let prefix = global.perpendicular ? '=' : settings.prefix || client.config.prefix;
         if (new RegExp(`^<@!?${client.user.id}>`).exec(message.content)?.index === 0)
             prefix = message.content.split(' ')[0] + ' ';
         const { muterole, removerolesonmute, modRoles, modRolePermissions, errorConfig } = settings;

@@ -16,7 +16,7 @@ module.exports = {
     async execute(client, interaction, args) {
         const user = await client.util.getUser(client, args['user']);
 
-        const banInformation = await interaction.guild.bans.fetch().then(bans => bans.find(u => u.user.id === user.id));
+        const banInformation = await interaction.guild.bans.fetch(user.id).catch(() => {});
         if (!banInformation) return interaction.reply('This user is not banned');
 
         const banInfoEmbed = new Discord.MessageEmbed()

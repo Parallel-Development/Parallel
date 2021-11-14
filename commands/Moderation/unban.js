@@ -19,11 +19,9 @@ module.exports = {
 
         const reason = args.slice(1).join(' ') || 'Unspecified';
 
-        const serverBans = await message.guild.bans.fetch();
-        if (!serverBans.size) return client.util.throwError(message, 'There are no users banned from this server');
         if (!(await client.util.getUser(client, args[0])))
             return client.util.throwError(message, client.config.errors.invalid_user);
-        const userBanned = await message.guild.bans.fetch().then(bans => bans.find(ban => ban.user.id === user.id));
+        const userBanned = await message.guild.bans.fetch(user.id).catch(() => {});
         if (!userBanned) return client.util.throwError(message, 'This user is not banned');
 
         await message.guild.members.unban(user.id);

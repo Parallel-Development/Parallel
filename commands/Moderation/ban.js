@@ -22,9 +22,7 @@ module.exports = {
             (await client.util.getMember(message.guild, args[0])) || (await client.util.getUser(client, args[0]));
         if (!member) return client.util.throwError(message, client.config.errors.invalid_member);
 
-        const alreadyBanned = await message.guild.bans
-            .fetch()
-            .then(bans => bans.find(ban => ban.user.id === member.id));
+        const alreadyBanned = await message.guild.bans.fetch(member.id).catch(() => {});
         if (alreadyBanned) return client.util.throwError(message, 'This user is already banned');
 
         const __time = args[1];

@@ -14,7 +14,7 @@ module.exports = {
         const user = await client.util.getUser(client, args[0]);
         if (!user) return client.util.throwError(message, client.config.errors.invalid_user);
 
-        const banInformation = await message.guild.bans.fetch().then(bans => bans.find(u => u.user.id === user.id));
+        const banInformation = await message.guild.bans.fetch(user.id).catch(() => {});
         if (!banInformation) return message.reply('This user is not banned');
 
         const banInfoEmbed = new Discord.MessageEmbed()
