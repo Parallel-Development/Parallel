@@ -75,8 +75,8 @@ class Utils {
         return product.length > 2 ? product.join(', ') : product.join(' ');
     }
 
-    timestamp(time = Date.now()) {
-        return `<t:${Math.floor(time / 1000)}>`;
+    timestamp(time = Date.now(), { relative = false } = {}) {
+        return `<t:${Math.floor(time / 1000)}${relative ? ':R' : ''}>`;
     }
 
     generateID() {

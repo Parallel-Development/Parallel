@@ -63,6 +63,6 @@ module.exports = {
         if (!interaction.member.displayName.startsWith('[AFK] '))
             await interaction.member.setNickname(`[AFK] ${interaction.member.displayName}`).catch(() => {});
 
-        return interaction.reply(`You are now marked as AFK ${AFKReason ? `- ${AFKReason}` : ''}`);
+        return interaction.reply({ content: `You are now marked as AFK ${AFKReason ? `- ${AFKReason}` : ''}`, allowedMentions: { users: [] } });
     }
 };

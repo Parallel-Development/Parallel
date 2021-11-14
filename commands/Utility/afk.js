@@ -59,6 +59,6 @@ module.exports = {
         if (!message.member.displayName.startsWith('[AFK] '))
             await message.member.setNickname(`[AFK] ${message.member.displayName}`).catch(() => {});
 
-        return message.reply(`You are now marked as AFK ${AFKReason ? `- ${AFKReason}` : ''}`);
+        return message.reply({ content: `You are now marked as AFK ${AFKReason ? `- ${AFKReason}` : ''}`, allowedMentions: { users: [] } });
     }
 };

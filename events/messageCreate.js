@@ -303,11 +303,10 @@ module.exports = {
                 const userAFKInformation = afks.find(afk => afk.userID === mentionedAFKUsers.first().id);
 
                 if (Date.now() - userAFKInformation.date <= 5000) return;
+                const between = Date.now() - userAFKInformation.date
                 if (mentionedAFKUsers.first().id !== message.author.id)
                     return message.reply({
-                        content: `${mentionedAFKUsers.first()} is currently AFK and has been AFK since ${client.util.timestamp(
-                            userAFKInformation.date
-                        )} ${userAFKInformation.reason ? `-  ${userAFKInformation.reason}` : ''}`,
+                        content: `${mentionedAFKUsers.first()} went AFK ${client.util.timestamp(userAFKInformation.date, { relative: true })} ${userAFKInformation.reason ? `-  ${userAFKInformation.reason}` : ''}`,
                         allowedMentions: { users: [] }
                     });
             }
