@@ -365,7 +365,12 @@ module.exports = {
 
         const { shortcutCommands } = settings;
         if (shortcutCommands.some(command => command.name === cmd)) {
-            if (isBlacklisted || isBlacklistedServer) return message.react('🛑');
+            if (!client.cache.blacklistedUsers.includes(message.author.id) || !client.cache.blacklistedServers.includes(message.author.id)) {
+                if (client.helpers.blacklist.check(message.author.id).isBlacklisted === true) return;
+                client.cache.blacklistedUsers.push(message.author.id);
+                if (client.helpers.blacklist.check(message.author.id, true).isBlacklisted) return;
+                client.cache.blacklistedServers.push(message.guild.id);
+            }
 
             const shortcmd = shortcutCommands.find(command => command.name === cmd);
 
