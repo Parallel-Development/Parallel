@@ -46,8 +46,8 @@ global.lockdownCooldown = new Set();
 
 const mongo = require('./mongo');
 const connectToMongoDB = async () => {
-    await mongo().then(async () => {
-        process.stdout.write('Connected to mongoDB!\n');
+    await mongo().then(() => {
+        console.log('Connected to mongoDB!');
     });
 };
 connectToMongoDB();

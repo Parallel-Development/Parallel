@@ -7,9 +7,9 @@ module.exports = {
     once: true,
     async execute(client) {
         client.user.setActivity('>help', { type: 'LISTENING' });
-        process.stdout.write(`Logged in as ${client.user.tag}!\n`);
+        console.log(`Logged in as ${client.user.tag}!`);
 
-        if (global.void === true) process.stdout.write('Bot is in void mode\n');
+        if (global.void === true) console.log('Bot is in void mode');
 
         await client.application.commands.fetch();
 
@@ -22,7 +22,7 @@ module.exports = {
             }
         }
 
-        process.stdout.write('All commands have been loaded!\n');
+        console.log('All commands have been loaded!');
 
         return;
     }
