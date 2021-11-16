@@ -27,10 +27,10 @@ client.aliases = new Discord.Collection();
 client.util = new Utils();
 client.cache = {
     maliciousLinks: [],
-    blacklistedUsers:[],
+    blacklistedUsers: [],
     blacklistedServers: [],
-    hasAllSchemas: [],
-}
+    hasAllSchemas: []
+};
 client.helpers = new Helpers();
 client.events = new Discord.Collection();
 

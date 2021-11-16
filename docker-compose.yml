@@ -1,10 +1,10 @@
 version: '3.9'
 
 services:
-  bot:
-    container_name: parallel_bot
-    build:
-      context: .
-      dockerfile: docker/bot/Dockerfile
-    restart: always
-    tty: true
+    bot:
+        container_name: parallel_bot
+        build:
+            context: .
+            dockerfile: docker/bot/Dockerfile
+        restart: always
+        tty: true

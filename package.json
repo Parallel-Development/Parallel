@@ -1,33 +1,32 @@
 {
-  "name": "parallel",
-  "version": "1.0.0",
-  "description": "A discord.js bot",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "format": "prettier --write **.js"
-  },
-  "keywords": [],
-  "engines": {
-    "node": "16.11.1"
-  },
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "@discordjs/builders": "^0.8.2",
-    "@discordjs/rest": "^0.1.0-canary.0",
-    "biguint-format": "^1.0.2",
-    "discord-api-types": "^0.24.0",
-    "discord.js": "^13.3.1",
-    "flake-idgen": "^1.4.0",
-    "mathjs": "^10.0.0",
-    "moment": "^2.29.1",
-    "mongoose": "^6.0.12",
-    "ms": "^2.1.3",
-    "petitio": "^1.4.0"
-  },
-  "nodeVersion": "16.11.1",
-  "devDependencies": {
-    "prettier": "^2.4.1"
-  }
+    "name": "parallel",
+    "version": "1.0.0",
+    "description": "A discord.js bot",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "format": "prettier --write **.{js,yml}"
+    },
+    "keywords": [],
+    "engines": {
+        "node": ">=16.11.1"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "@discordjs/builders": "^0.8.2",
+        "@discordjs/rest": "^0.1.0-canary.0",
+        "biguint-format": "^1.0.2",
+        "discord-api-types": "^0.24.0",
+        "discord.js": "^13.3.1",
+        "flake-idgen": "^1.4.0",
+        "mathjs": "^10.0.0",
+        "moment": "^2.29.1",
+        "mongoose": "^6.0.13",
+        "ms": "^2.1.3",
+        "petitio": "^1.4.0"
+    },
+    "devDependencies": {
+        "prettier": "^2.4.1"
+    }
 }
