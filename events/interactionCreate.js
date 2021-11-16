@@ -15,64 +15,27 @@ const infractions = require('../Buttons/infractions');
 module.exports = {
     name: 'interactionCreate',
     async execute(client, interaction) {
-        const isBlacklisted = await blacklistSchema.findOne({ ID: interaction.user.id, server: false });
-        const isBlacklistedServer = await blacklistSchema.findOne({ ID: interaction.guild.id, server: true });
-        if (isBlacklistedServer) {
-            const { reason, date, sent } = isBlacklistedServer;
-            let failedToSend = false;
-            if (!sent) {
-                await interaction
-                    .reply(`This server is blacklisted!\n\nReason: ${reason}\nDate: ${date}`)
-                    .catch(() => (failedToSend = true));
 
-                if (!failedToSend) {
-                    await blacklistSchema.updateOne(
-                        {
-                            ID: interaction.guild.id,
-                            server: true
-                        },
-                        {
-                            sent: true
-                        }
-                    );
-                }
+        if (!client.cache.blacklistedUsers.includes(interaction.user.id)) {
+            const userBlacklist = await client.helpers.blacklist.check(interaction.user.id);
+            if (userBlacklist.isBlacklisted) {
+                if (userBlacklist.sent) return;
+                return client.helpers.blacklist.DMUserBlacklist(client, interaction.user.id, userBlacklist.reason, userBlacklist.date);
             }
-
-            return interaction.guild.leave();
         }
 
-        if (isBlacklisted) {
-            const { reason, date, sent } = isBlacklisted;
-            let doNotSend = false;
-            if (sent) return;
+        client.cache.blacklistedUsers.push(interaction.user.id)
 
-            const blacklistEmbed = new Discord.MessageEmbed()
-                .setColor(client.config.colors.err)
-                .setDescription(
-                    `You cannot run any commands because you are blacklisted from Parallel. This means I will ignore all your commands. If you believe this blacklist is unjustified, you can submit an appeal [here](https://docs.google.com/forms/d/1xedhPPJONP3tGmL58xQAiTd-XVQ1V8tCkEqUu9q1LWM/edit?usp=drive_web)`
-                )
-                .setAuthor('You are blacklisted from Parallel!', client.user.displayAvatarURL())
-                .addField('Reason', reason)
-                .addField('Date', date)
-                .setFooter('You cannot appeal your ban if it is not unjustified!');
-            await interaction.user.send({ embeds: [blacklistEmbed] }).catch(() => {
-                doNotSend = true;
-            });
+        if (client.cache.blacklistedServers.includes(interaction.guild.id)) {
+            const serverBlacklist = await client.helpers.blacklist.check(interaction.guild.id, true);
 
-            if (!doNotSend) {
-                await blacklistSchema.updateOne(
-                    {
-                        ID: interaction.user.id,
-                        server: false
-                    },
-                    {
-                        sent: true
-                    }
-                );
+            if (serverBlacklist.isBlacklisted) {
+                if (serverBlacklist.sent) return interaction.guild.leave();
+                return client.helpers.blacklist.sendServerBlacklist(client, interaction, serverBlacklist.reason, serverBlacklist.date);
             }
-
-            return;
         }
+
+        client.cache.blacklistedServers.push(interaction.user.id);
 
         const settingsCheck = await settingsSchema.findOne({ guildID: interaction.guild.id });
         if (!settingsCheck) {
@@ -102,91 +65,95 @@ module.exports = {
             }).save();
         }
 
-        const automodCheck = await automodSchema.findOne({
-            guildID: interaction.guild.id
-        });
+        if (!client.cache.hasAllSchemas.includes(interaction.guild.id)) {
+            const automodCheck = await automodSchema.findOne({
+                guildID: interaction.guild.id
+            });
 
-        if (!automodCheck) {
-            await new automodSchema({
-                guildname: interaction.guild.name,
-                guildID: interaction.guild.id,
-                filter: 'disabled',
-                filterList: [],
-                fast: 'disabled',
-                walltext: 'disabled',
-                links: 'disabled',
-                maliciouslinks: 'disabled',
-                allowTenor: {
-                    enabled: false,
-                    attachmentPermsOnly: false
-                },
-                invites: 'disabled',
-                massmention: 'disabled',
-                filterTempMuteDuration: 0,
-                fastTempMuteDuration: 0,
-                walltextTempMuteDuration: 0,
-                linksTempMuteDuration: 0,
-                invitesTempMuteDuration: 0,
-                massmentionTempMuteDuration: 0,
-                filterTempBanDuration: 0,
-                fastTempBanDuration: 0,
-                walltextTempBanDuration: 0,
-                linksTempBanDuration: 0,
-                invitesTempBanDuration: 0,
-                massmentionTempBanDuration: 0,
-                maliciouslinksTempMuteDuration: 0,
-                maliciouslinksTempBanDuration: 0,
-                bypassChannels: [],
-                bypassRoles: []
-            }).save();
-        }
+            if (!automodCheck) {
+                await new automodSchema({
+                    guildname: interaction.guild.name,
+                    guildID: interaction.guild.id,
+                    filter: 'disabled',
+                    filterList: [],
+                    fast: 'disabled',
+                    walltext: 'disabled',
+                    links: 'disabled',
+                    maliciouslinks: 'disabled',
+                    allowTenor: {
+                        enabled: false,
+                        attachmentPermsOnly: false
+                    },
+                    invites: 'disabled',
+                    massmention: 'disabled',
+                    filterTempMuteDuration: 0,
+                    fastTempMuteDuration: 0,
+                    walltextTempMuteDuration: 0,
+                    linksTempMuteDuration: 0,
+                    invitesTempMuteDuration: 0,
+                    massmentionTempMuteDuration: 0,
+                    filterTempBanDuration: 0,
+                    fastTempBanDuration: 0,
+                    walltextTempBanDuration: 0,
+                    linksTempBanDuration: 0,
+                    invitesTempBanDuration: 0,
+                    massmentionTempBanDuration: 0,
+                    maliciouslinksTempMuteDuration: 0,
+                    maliciouslinksTempBanDuration: 0,
+                    bypassChannels: [],
+                    bypassRoles: []
+                }).save();
+            }
 
-        const warningsCheck = await warningSchema.findOne({ guildID: interaction.guild.id });
-        if (!warningsCheck) {
-            await new warningSchema({
-                guildname: interaction.guild.name,
-                guildID: interaction.guild.id,
-                warnings: []
-            }).save();
-        }
+            const warningsCheck = await warningSchema.findOne({ guildID: interaction.guild.id });
+            if (!warningsCheck) {
+                await new warningSchema({
+                    guildname: interaction.guild.name,
+                    guildID: interaction.guild.id,
+                    warnings: []
+                }).save();
+            }
 
-        const systemCheck = await systemSchema.findOne({ guildID: interaction.guild.id });
-        if (!systemCheck) {
-            await new systemSchema({
-                guildname: interaction.guild.name,
-                guildID: interaction.guild.id,
-                system: []
-            }).save();
-        }
+            const systemCheck = await systemSchema.findOne({ guildID: interaction.guild.id });
+            if (!systemCheck) {
+                await new systemSchema({
+                    guildname: interaction.guild.name,
+                    guildID: interaction.guild.id,
+                    system: []
+                }).save();
+            }
 
-        const lockCheck = await lockSchema.findOne({ guildID: interaction.guild.id });
-        if (!lockCheck) {
-            await new lockSchema({
-                guildname: interaction.guild.name,
-                guildID: interaction.guild.id,
-                channels: []
-            }).save();
-        }
+            const lockCheck = await lockSchema.findOne({ guildID: interaction.guild.id });
+            if (!lockCheck) {
+                await new lockSchema({
+                    guildname: interaction.guild.name,
+                    guildID: interaction.guild.id,
+                    channels: []
+                }).save();
+            }
 
-        const tagCheck = await tagSchema.findOne({ guildID: interaction.guild.id });
-        if (!tagCheck) {
-            await new tagSchema({
-                guildname: interaction.guild.name,
-                guildID: interaction.guild.id,
-                allowedRoleList: [],
-                allowedChannelList: [],
-                tags: []
-            }).save();
-        }
+            const tagCheck = await tagSchema.findOne({ guildID: interaction.guild.id });
+            if (!tagCheck) {
+                await new tagSchema({
+                    guildname: interaction.guild.name,
+                    guildID: interaction.guild.id,
+                    allowedRoleList: [],
+                    allowedChannelList: [],
+                    tags: []
+                }).save();
+            }
 
-        const afkCheck = await afkSchema.findOne({ guildID: interaction.guild.id });
-        if (!afkCheck) {
-            await new afkSchema({
-                guildname: interaction.guild.name,
-                guildID: interaction.guild.id,
-                afks: []
-            }).save();
-        }
+            const afkCheck = await afkSchema.findOne({ guildID: interaction.guild.id });
+            if (!afkCheck) {
+                await new afkSchema({
+                    guildname: interaction.guild.name,
+                    guildID: interaction.guild.id,
+                    afks: []
+                }).save();
+            }
+        };
+
+        client.cache.hasAllSchemas.push(interaction.guild.id);
 
         if (interaction.isButton()) {
             if (interaction.customId === 'join' || interaction.customId === 'deny') return rps.run(client, interaction);
@@ -199,14 +166,15 @@ module.exports = {
                 return infractions.run(client, interaction);
         }
 
-        if (cooldown.has(interaction.user.id))
-            return interaction.reply({ content: 'You are on cooldown', ephemeral: true });
-        else if (!client.config.developers.includes(interaction.user.id)) {
-            cooldown.add(interaction.user.id);
-            setTimeout(() => {
-                cooldown.delete(interaction.user.id);
-            }, 750);
-        }
+        const cooldownInformation = client.helpers.cooldown.check(interaction.user.id);
+        if (cooldownInformation.inCooldown === true) {
+            if (cooldownInformation.hard) return;
+            else {
+                if (cooldownInformation.triggered) return client.helpers.cooldown.makeHard(interaction.user.id);
+                client.helpers.cooldown.makeTriggered(interaction.user.id);
+                return client.util.throwError(interaction, `Slow down there! Please wait a few moments before running another command`);
+            }
+        } else client.helpers.cooldown.add(interaction.user.id);
 
         if (!interaction.isCommand()) return;
         if (global.void && !client.config.developers.includes(interaction.user.id)) return;

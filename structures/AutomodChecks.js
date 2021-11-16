@@ -17,6 +17,11 @@ class AutomodChecks {
 
             // Malicious Link Check;
 
+            if (client.cache.maliciousLinks.some(url => message.content.includes(url))) {
+                let punished = await new Automod(client, message, 'maliciouslinks').punished;
+                if (punished) return;
+            }
+
             const matchRegex = /([\w-]+(?:(?:.[\w-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])/g;
             const stripped = message.content.replace(/[^\x20-\x7E]/g, '');
 
@@ -28,6 +33,8 @@ class AutomodChecks {
 
                 const data = res.json();
                 if (data.match) {
+
+                    client.cache.maliciousLinks = client.cache.maliciousLinks.concat(data.matches.map(match => match.url));
                     let punished = await new Automod(client, message, 'maliciouslinks').punished;
                     if (punished) return;
                 }

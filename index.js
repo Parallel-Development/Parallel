@@ -20,11 +20,20 @@ const client = new Discord.Client({
 
 const fs = require('fs');
 const Utils = require('./structures/Utils');
+const Helpers = require('./structures/Helpers');
 
 client.commands = new Discord.Collection();
 client.aliases = new Discord.Collection();
 client.util = new Utils();
+client.cache = {
+    maliciousLinks: [],
+    blacklistedUsers:[],
+    blacklistedServers: [],
+    hasAllSchemas: [],
+}
+client.helpers = new Helpers();
 client.events = new Discord.Collection();
+
 client.categories = fs.readdirSync('./commands');
 client.config = require('./config.json');
 

@@ -8,7 +8,7 @@ module.exports = {
     aliases: ['unfuck-server', 'nuzzle-server', 'condom-server'],
     developer: true,
     async execute(client, message, args) {
-        if (!args[0]) return client.util.throwError(message, client.config.errors.missing_argument_user);
+        if (!args[0]) return client.util.throwError(message, client.config.errors.missing_argument_number);
         const ID = args[0];
 
         const alreadyBlacklisted = await blacklistSchema.findOne({
@@ -25,6 +25,8 @@ module.exports = {
             ID: ID,
             server: true
         });
+
+        if (client.cache.blacklistedServers.includes(ID)) delete client.cache.blacklistedServers[ID];
 
         const blacklistEmbed = new Discord.MessageEmbed()
             .setColor(client.util.mainColor(message.guild))

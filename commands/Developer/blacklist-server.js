@@ -29,6 +29,8 @@ module.exports = {
             server: true
         }).save();
 
+        delete client.cache.blacklistedServers[ID];
+
         const blacklistEmbed = new Discord.MessageEmbed()
             .setColor(client.config.colors.punishment[2])
             .setDescription(`${client.config.emotes.success} Server ID **${ID}** has been added to the blacklist`);

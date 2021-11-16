@@ -1,6 +1,5 @@
 const settingsSchema = require('../schemas/settings-schema');
 const automodSchema = require('../schemas/automod-schema');
-const blacklistSchema = require('../schemas/blacklist-schema');
 const punishmentSchema = require('../schemas/punishment-schema');
 const warningSchema = require('../schemas/warning-schema');
 const lockSchema = require('../schemas/lock-schema');
@@ -8,8 +7,6 @@ const systemSchema = require('../schemas/system-schema');
 const tagSchema = require('../schemas/tag-schema');
 const afkSchema = require('../schemas/afk-schema');
 
-const cooldown = new Set();
-const doubleCooldown = new Set();
 const AFKTriggerCooldown = new Set();
 
 const ModerationLogger = require('../structures/ModerationLogger');
@@ -19,10 +16,12 @@ const Punishment = require('../structures/Punishment');
 const AutomodChecks = require('../structures/AutomodChecks');
 
 const Discord = require('discord.js');
+const { cooldown } = require('../structures/Helpers');
 
 module.exports = {
     name: 'messageCreate',
     async execute(client, message) {
+
         if (global.void === true && !client.config.developers.includes(message.author.id)) return;
 
         if (
@@ -142,104 +141,100 @@ module.exports = {
             }
         }
 
-        const automodCheck = await automodSchema.findOne({
-            guildID: message.guild.id
-        });
+        if (!client.cache.hasAllSchemas.includes(message.guild.id)) {
+            const automodCheck = await automodSchema.findOne({
+                guildID: message.guild.id
+            });
 
-        if (!automodCheck) {
-            await new automodSchema({
-                guildname: message.guild.name,
-                guildID: message.guild.id,
-                filter: 'disabled',
-                filterList: [],
-                fast: 'disabled',
-                walltext: 'disabled',
-                links: 'disabled',
-                maliciouslinks: 'disabled',
-                allowTenor: {
-                    enabled: false,
-                    attachmentPermsOnly: false
-                },
-                invites: 'disabled',
-                massmention: 'disabled',
-                filterTempMuteDuration: 0,
-                fastTempMuteDuration: 0,
-                walltextTempMuteDuration: 0,
-                linksTempMuteDuration: 0,
-                invitesTempMuteDuration: 0,
-                massmentionTempMuteDuration: 0,
-                filterTempBanDuration: 0,
-                fastTempBanDuration: 0,
-                walltextTempBanDuration: 0,
-                linksTempBanDuration: 0,
-                invitesTempBanDuration: 0,
-                massmentionTempBanDuration: 0,
-                maliciouslinksTempMuteDuration: 0,
-                maliciouslinksTempBanDuration: 0,
-                bypassChannels: [],
-                bypassRoles: []
-            }).save();
+            if (!automodCheck) {
+                await new automodSchema({
+                    guildname: message.guild.name,
+                    guildID: message.guild.id,
+                    filter: 'disabled',
+                    filterList: [],
+                    fast: 'disabled',
+                    walltext: 'disabled',
+                    links: 'disabled',
+                    maliciouslinks: 'disabled',
+                    allowTenor: {
+                        enabled: false,
+                        attachmentPermsOnly: false
+                    },
+                    invites: 'disabled',
+                    massmention: 'disabled',
+                    filterTempMuteDuration: 0,
+                    fastTempMuteDuration: 0,
+                    walltextTempMuteDuration: 0,
+                    linksTempMuteDuration: 0,
+                    invitesTempMuteDuration: 0,
+                    massmentionTempMuteDuration: 0,
+                    filterTempBanDuration: 0,
+                    fastTempBanDuration: 0,
+                    walltextTempBanDuration: 0,
+                    linksTempBanDuration: 0,
+                    invitesTempBanDuration: 0,
+                    massmentionTempBanDuration: 0,
+                    maliciouslinksTempMuteDuration: 0,
+                    maliciouslinksTempBanDuration: 0,
+                    bypassChannels: [],
+                    bypassRoles: []
+                }).save();
+            }
+
+            const warningsCheck = await warningSchema.findOne({ guildID: message.guild.id });
+            if (!warningsCheck) {
+                await new warningSchema({
+                    guildname: message.guild.name,
+                    guildID: message.guild.id,
+                    warnings: []
+                }).save();
+            }
+
+            const systemCheck = await systemSchema.findOne({ guildID: message.guild.id });
+            if (!systemCheck) {
+                await new systemSchema({
+                    guildname: message.guild.name,
+                    guildID: message.guild.id,
+                    system: []
+                }).save();
+            }
+
+            const lockCheck = await lockSchema.findOne({ guildID: message.guild.id });
+            if (!lockCheck) {
+                await new lockSchema({
+                    guildname: message.guild.name,
+                    guildID: message.guild.id,
+                    channels: []
+                }).save();
+            }
+
+            const tagCheck = await tagSchema.findOne({ guildID: message.guild.id });
+            if (!tagCheck) {
+                await new tagSchema({
+                    guildname: message.guild.name,
+                    guildID: message.guild.id,
+                    allowedRoleList: [],
+                    allowedChannelList: [],
+                    tags: []
+                }).save();
+            }
+
+            const afkCheck = await afkSchema.findOne({ guildID: message.guild.id });
+            if (!afkCheck) {
+                await new afkSchema({
+                    guildname: message.guild.name,
+                    guildID: message.guild.id,
+                    afks: []
+                }).save();
+            }
         }
 
-        const warningsCheck = await warningSchema.findOne({ guildID: message.guild.id });
-        if (!warningsCheck) {
-            await new warningSchema({
-                guildname: message.guild.name,
-                guildID: message.guild.id,
-                warnings: []
-            }).save();
-        }
-
-        const systemCheck = await systemSchema.findOne({ guildID: message.guild.id });
-        if (!systemCheck) {
-            await new systemSchema({
-                guildname: message.guild.name,
-                guildID: message.guild.id,
-                system: []
-            }).save();
-        }
-
-        const lockCheck = await lockSchema.findOne({ guildID: message.guild.id });
-        if (!lockCheck) {
-            await new lockSchema({
-                guildname: message.guild.name,
-                guildID: message.guild.id,
-                channels: []
-            }).save();
-        }
-
-        const tagCheck = await tagSchema.findOne({ guildID: message.guild.id });
-        if (!tagCheck) {
-            await new tagSchema({
-                guildname: message.guild.name,
-                guildID: message.guild.id,
-                allowedRoleList: [],
-                allowedChannelList: [],
-                tags: []
-            }).save();
-        }
-
-        const afkCheck = await afkSchema.findOne({ guildID: message.guild.id });
-        if (!afkCheck) {
-            await new afkSchema({
-                guildname: message.guild.name,
-                guildID: message.guild.id,
-                afks: []
-            }).save();
-        }
+        client.cache.hasAllSchemas.push(message.guild.id);
 
         const isModerator = modRoles.some(role => message.member.roles.cache.has(role));
         const channelBypassed = await automodSchema.findOne({
             guildID: message.guild.id,
             bypassChannels: message.channel.id
-        });
-        const isBlacklisted = await blacklistSchema.findOne({
-            ID: message.author.id,
-            server: false
-        });
-        const isBlacklistedServer = await blacklistSchema.findOne({
-            ID: message.guild.id,
-            server: true
         });
 
         let roleBypassed = false;
@@ -260,16 +255,10 @@ module.exports = {
 
         if (
             new RegExp(`^<@!?${client.user.id}>`).test(message.content) &&
-            !cooldown.has(message.author.id) &&
+            client.helpers.cooldown.check(message.author.id).inCooldown === false &&
             message.content.split(' ').length === 1
         ) {
-            const cooldownWhitelist = client.config.developers;
-            if (!cooldownWhitelist.includes(message.author.id)) {
-                cooldown.add(message.author.id);
-                setTimeout(() => {
-                    cooldown.delete(message.author.id);
-                }, 1500);
-            }
+            client.helpers.cooldown.add(message.author.id);
 
             return message.reply(
                 `My prefix is \`${settings.prefix}\` | Run \`${settings.prefix}help\` for a list of commands`
@@ -617,82 +606,43 @@ module.exports = {
         const command = client.commands.get(cmd) || client.commands.get(client.aliases.get(cmd));
         if (!command) return;
 
-        if (isBlacklisted) {
-            const { reason, date, sent } = isBlacklisted;
-            let doNotSend = false;
-            if (sent) return;
-
-            const blacklistEmbed = new Discord.MessageEmbed()
-                .setColor(client.config.colors.err)
-                .setDescription(
-                    `You cannot run any commands because you are blacklisted from Parallel. This means I will ignore all your commands. If you believe this blacklist is unjustified, you can submit an appeal [here](https://docs.google.com/forms/d/1xedhPPJONP3tGmL58xQAiTd-XVQ1V8tCkEqUu9q1LWM/edit?usp=drive_web)`
-                )
-                .setAuthor('You are blacklisted from Parallel!', client.user.displayAvatarURL())
-                .addField('Reason', reason)
-                .addField('Date', date)
-                .setFooter('You cannot appeal your ban if it is not unjustified!');
-            await message.author.send({ embeds: [blacklistEmbed] }).catch(() => {
-                doNotSend = true;
-            });
-
-            if (!doNotSend) {
-                await blacklistSchema.updateOne(
-                    {
-                        ID: message.author.id,
-                        server: false
-                    },
-                    {
-                        sent: true
-                    }
-                );
+        if (!client.cache.blacklistedUsers.includes(message.author.id)) {
+            const userBlacklist = await client.helpers.blacklist.check(message.author.id);
+            if (userBlacklist.isBlacklisted) {
+                if (userBlacklist.sent) return;
+                return client.helpers.blacklist.DMUserBlacklist(client, message.author.id, userBlacklist.reason, userBlacklist.date);
             }
-
-            return;
         }
 
-        if (isBlacklistedServer) {
-            const { reason, date, sent } = isBlacklistedServer;
-            let failedToSend = false;
-            if (!sent) {
-                await message
-                    .reply(`This server is blacklisted!\n\nReason: ${reason}\nDate: ${date}`)
-                    .catch(() => (failedToSend = true));
+        client.cache.blacklistedUsers.push(message.author.id)
 
-                if (!failedToSend) {
-                    await blacklistSchema.updateOne(
-                        {
-                            ID: message.guild.id,
-                            server: true
-                        },
-                        {
-                            sent: true
-                        }
-                    );
-                }
+        if (!client.cache.blacklistedServers.includes(message.guild.id)) {
+            const serverBlacklist = await client.helpers.blacklist.check(message.guild.id, true);
+
+            if (serverBlacklist.isBlacklisted) {
+                if (serverBlacklist.sent) return message.guild.leave();
+                return client.helpers.blacklist.sendServerBlacklist(client, message, serverBlacklist.reason, serverBlacklist.date);
             }
-
-            return message.guild.leave();
         }
 
-        if (doubleCooldown.has(message.author.id)) return;
-        if (cooldown.has(message.author.id)) {
-            await client.util.throwError(message, 'You are on cooldown');
-            doubleCooldown.add(message.author.id);
-            return setTimeout(() => {
-                doubleCooldown.delete(message.author.id);
-            }, 3000);
-        } else if (!client.config.developers.includes(message.author.id)) {
-            cooldown.add(message.author.id);
-            setTimeout(() => {
-                cooldown.delete(message.author.id);
-            }, 1500);
-        }
+        client.cache.blacklistedServers.push(message.author.id);
+
+        const cooldownInformation = client.helpers.cooldown.check(message.author.id);
+        if (cooldownInformation.inCooldown === true) {
+            if (cooldownInformation.hard) return;
+            else {
+                if (cooldownInformation.triggered) return client.helpers.cooldown.makeHard(message.author.id);
+                client.helpers.cooldown.makeTriggered(message.author.id);
+                return client.util.throwError(`Slow down there! Please wait a few moments before running another command`);
+            }
+        } else client.helpers.cooldown.add(message.author.id);
+        
 
         if (command.developing && !client.config.developers.some(ID => ID === message.author.id)) return;
         if (command.developer && !client.config.developers.some(ID => ID === message.author.id))
             return client.util.throwError(
                 message,
-                'You do not have access to run this command; this command is restricted to a specific set of users'
+                'developer commands cannot be ran by non-developers'
             );
 
         if (

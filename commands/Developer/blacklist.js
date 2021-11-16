@@ -30,6 +30,8 @@ module.exports = {
             server: false
         }).save();
 
+        delete client.cache.blacklistedUsers[member.id];
+
         const blacklistEmbed = new Discord.MessageEmbed()
             .setColor(client.config.colors.punishment[2])
             .setDescription(`${client.config.emotes.success} **${member.tag}** has been added to the blacklist`);

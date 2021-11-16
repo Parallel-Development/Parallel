@@ -30,6 +30,8 @@ module.exports = {
             server: false
         });
 
+        if (client.cache.blacklistedUsers.includes(user.id)) delete client.cache.blacklistedUsers[user.id];
+
         const blacklistEmbed = new Discord.MessageEmbed()
             .setColor(client.util.mainColor(interaction.guild))
             .setDescription(`✅ **${user.tag}** has been removed from the blacklist`);
