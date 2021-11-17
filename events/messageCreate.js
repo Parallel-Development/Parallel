@@ -21,7 +21,6 @@ const notMutedCache = require('../structures/Punishment').cache;
 module.exports = {
     name: 'messageCreate',
     async execute(client, message) {
-
         if (global.void === true && !client.config.developers.includes(message.author.id)) return;
 
         if (
@@ -62,7 +61,7 @@ module.exports = {
                     deleteDelay: '5000'
                 }
             }).save());
-        
+
         if (!client.cache.settings.has(message.guild.id)) client.cache.settings.set(message.guild.id, settings);
 
         let prefix = global.perpendicular ? '=' : settings.prefix || client.config.prefix;
@@ -141,7 +140,7 @@ module.exports = {
                             true
                         )
                         .addField('Date', date);
-                    await message.member.send({ embeds: [mutedEmbed] }).catch(() => { });
+                    await message.member.send({ embeds: [mutedEmbed] }).catch(() => {});
 
                     return;
                 }
@@ -240,12 +239,14 @@ module.exports = {
 
         const isModerator = modRoles.some(role => message.member.roles.cache.has(role));
 
-        const automodSettings = client.cache.automod.get(message.guild.id) || await automodSchema.findOne({ guildID: message.guild.id});
+        const automodSettings =
+            client.cache.automod.get(message.guild.id) || (await automodSchema.findOne({ guildID: message.guild.id }));
         if (!client.cache.automod.has(message.guild.id)) client.cache.automod.set(message.guild.id, automodSettings);
         const { bypassChannels, bypassRoles } = automodSettings;
-        
-        const channelBypassed = bypassChannels.includes(message.channel.id) || bypassChannels.includes(message.channel.parentId);
-        const roleBypassed = [...message.member.roles.cache.values()].some(role => bypassRoles.includes(role.id))
+
+        const channelBypassed =
+            bypassChannels.includes(message.channel.id) || bypassChannels.includes(message.channel.parentId);
+        const roleBypassed = [...message.member.roles.cache.values()].some(role => bypassRoles.includes(role.id));
 
         if (
             !message.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_MESSAGES) &&
@@ -294,10 +295,13 @@ module.exports = {
                 const userAFKInformation = afks.find(afk => afk.userID === mentionedAFKUsers.first().id);
 
                 if (Date.now() - userAFKInformation.date <= 5000) return;
-                const between = Date.now() - userAFKInformation.date
+                const between = Date.now() - userAFKInformation.date;
                 if (mentionedAFKUsers.first().id !== message.author.id)
                     return message.reply({
-                        content: `${mentionedAFKUsers.first()} went AFK ${client.util.timestamp(userAFKInformation.date, { relative: true })} ${userAFKInformation.reason ? `-  ${userAFKInformation.reason}` : ''}`,
+                        content: `${mentionedAFKUsers.first()} went AFK ${client.util.timestamp(
+                            userAFKInformation.date,
+                            { relative: true }
+                        )} ${userAFKInformation.reason ? `-  ${userAFKInformation.reason}` : ''}`,
                         allowedMentions: { users: [] }
                     });
             }
@@ -367,7 +371,10 @@ module.exports = {
 
         const { shortcutCommands } = settings;
         if (shortcutCommands.some(command => command.name === cmd)) {
-            if (!client.cache.whitelistedUsers.includes(message.author.id) || !client.cache.whitelistedUsers.includes(message.author.id)) {
+            if (
+                !client.cache.whitelistedUsers.includes(message.author.id) ||
+                !client.cache.whitelistedUsers.includes(message.author.id)
+            ) {
                 if (client.helpers.blacklist.check(message.author.id).isBlacklisted === true) return;
                 client.cache.whitelistedUsers.push(message.author.id);
                 if (client.helpers.blacklist.check(message.author.id, true).isBlacklisted) return;
@@ -617,19 +624,28 @@ module.exports = {
             const userBlacklist = await client.helpers.blacklist.check(message.author.id);
             if (userBlacklist.isBlacklisted) {
                 if (userBlacklist.sent) return;
-                return client.helpers.blacklist.DMUserBlacklist(client, message.author.id, userBlacklist.reason, userBlacklist.date);
+                return client.helpers.blacklist.DMUserBlacklist(
+                    client,
+                    message.author.id,
+                    userBlacklist.reason,
+                    userBlacklist.date
+                );
             }
 
-            client.cache.whitelistedUsers.push(message.author.id)
+            client.cache.whitelistedUsers.push(message.author.id);
         }
-
 
         if (!client.cache.whitelistedServers.includes(message.guild.id)) {
             const serverBlacklist = await client.helpers.blacklist.check(message.guild.id, true);
 
             if (serverBlacklist.isBlacklisted) {
                 if (serverBlacklist.sent) return message.guild.leave();
-                return client.helpers.blacklist.sendServerBlacklist(client, message, serverBlacklist.reason, serverBlacklist.date);
+                return client.helpers.blacklist.sendServerBlacklist(
+                    client,
+                    message,
+                    serverBlacklist.reason,
+                    serverBlacklist.date
+                );
             }
 
             client.cache.whitelistedServers.push(message.guild.id);
@@ -641,17 +657,15 @@ module.exports = {
             else {
                 if (cooldownInformation.triggered) return client.helpers.cooldown.makeHard(message.author.id);
                 client.helpers.cooldown.makeTriggered(message.author.id);
-                return client.util.throwError(`Slow down there! Please wait a few moments before running another command`);
+                return client.util.throwError(
+                    `Slow down there! Please wait a few moments before running another command`
+                );
             }
         } else client.helpers.cooldown.add(message.author.id);
-        
 
         if (command.developing && !client.config.developers.some(ID => ID === message.author.id)) return;
         if (command.developer && !client.config.developers.some(ID => ID === message.author.id))
-            return client.util.throwError(
-                message,
-                'developer commands cannot be ran by non-developers'
-            );
+            return client.util.throwError(message, 'developer commands cannot be ran by non-developers');
 
         if (
             command.permissions &&

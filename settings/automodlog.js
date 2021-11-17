@@ -34,8 +34,7 @@ exports.run = async (client, message, args) => {
     if (!channel) return client.util.throwError(message, client.config.errors.invalid_channel);
     if (!channel) return client.util.throwError(message, client.config.errors.missing_argument_channel);
 
-    if (!channel.isText())
-        return client.util.throwError(message, client.config.errors.not_type_text_channel);
+    if (!channel.isText()) return client.util.throwError(message, client.config.errors.not_type_text_channel);
 
     if (!channel.permissionsFor(message.guild.me).has(Discord.Permissions.FLAGS.SEND_MESSAGES)) {
         return message.reply(

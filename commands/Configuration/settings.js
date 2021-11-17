@@ -133,9 +133,9 @@ module.exports = {
                                 'Manage the channels where message updates and deletes will not be logged'
                             )
                         ]
-                    })
-                    require('../../settings/msgloggingignored').run(client, message, args);
-                    break;
+                    });
+                require('../../settings/msgloggingignored').run(client, message, args);
+                break;
             case 'moderation-log-channel':
                 if (!args[1])
                     return message.reply({

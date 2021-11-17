@@ -28,6 +28,10 @@ module.exports = {
 
         if (messageLogging === 'none') return;
 
-        if (!messageLoggingIgnored.includes(message.channel.id) && !messageLoggingIgnored.includes(message.channel.parentId)) new MessageLogger(client, message.guild.channels.cache.get(messageLogging), message);
+        if (
+            !messageLoggingIgnored.includes(message.channel.id) &&
+            !messageLoggingIgnored.includes(message.channel.parentId)
+        )
+            new MessageLogger(client, message.guild.channels.cache.get(messageLogging), message);
     }
 };

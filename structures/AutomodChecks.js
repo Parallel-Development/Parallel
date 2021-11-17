@@ -33,8 +33,13 @@ class AutomodChecks {
 
                 const data = res.json();
                 if (data.match) {
-
-                    if (data.matches.length && !client.cache.maliciousLinks.some(link => data.matches.map(match => match.url).includes(link))) client.cache.maliciousLinks = client.cache.maliciousLinks.concat(data.matches.map(match => match.url));
+                    if (
+                        data.matches.length &&
+                        !client.cache.maliciousLinks.some(link => data.matches.map(match => match.url).includes(link))
+                    )
+                        client.cache.maliciousLinks = client.cache.maliciousLinks.concat(
+                            data.matches.map(match => match.url)
+                        );
                     let punished = await new Automod(client, message, 'maliciouslinks').punished;
                     if (punished) return;
                 }

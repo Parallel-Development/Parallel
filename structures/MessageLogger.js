@@ -24,7 +24,10 @@ class MessageLogger {
                     'Old Message Content',
                     oldMessage.content.length <= 1024 ? oldMessage.content : binnedOldContent
                 );
-                logEmbed.addField('Updated Message Content', message.content.length <= 1024 ? message.content : binnedContent);
+                logEmbed.addField(
+                    'Updated Message Content',
+                    message.content.length <= 1024 ? message.content : binnedContent
+                );
                 logEmbed.addField('Edited in', message.channel.toString());
             } else {
                 logEmbed.setTitle('Message Deleted');

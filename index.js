@@ -27,12 +27,12 @@ client.aliases = new Discord.Collection();
 client.util = new Utils();
 client.cache = {
     maliciousLinks: [],
-    whitelistedUsers:[],
+    whitelistedUsers: [],
     whitelistedServers: [],
     hasAllSchemas: [],
     settings: new Map(),
-    automod: new Map(),
-}
+    automod: new Map()
+};
 global.notMutedUsers = [];
 client.helpers = new Helpers();
 client.events = new Discord.Collection();
@@ -49,8 +49,8 @@ global.lockdownCooldown = new Set();
 
 const mongo = require('./mongo');
 const connectToMongoDB = async () => {
-    await mongo().then(async () => {
-        process.stdout.write('Connected to mongoDB!\n');
+    await mongo().then(() => {
+        console.log('Connected to mongoDB!');
     });
 };
 connectToMongoDB();

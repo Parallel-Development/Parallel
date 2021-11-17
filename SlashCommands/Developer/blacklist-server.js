@@ -37,8 +37,6 @@ module.exports = {
             server: true
         }).save();
 
-        
-
         delete client.cache.whitelistedServers[ID];
 
         const blacklistEmbed = new Discord.MessageEmbed()

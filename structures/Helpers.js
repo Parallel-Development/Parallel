@@ -4,27 +4,24 @@ const blacklistSchema = require('../schemas/blacklist-schema');
 
 class Helpers {
     cooldown = {
-
         check(user, keep = false) {
-            
             const isValidMember = validateUser(user);
-            if(isValidMember === undefined) return Promise.reject('expected 1 argument `user`, found undefined');
+            if (isValidMember === undefined) return Promise.reject('expected 1 argument `user`, found undefined');
             else if (isValidMember === false) return Promise.reject('invalid user/member object or snowflake provided');
 
             const ID = user?.id || user;
             const rawCooldownInformation = cooldown.get(ID);
 
             if (!rawCooldownInformation) return { inCooldown: false };
-            const cooldownInformation = { 
-                inCooldown: true, 
-                hard: rawCooldownInformation.hard, 
-                at: rawCooldownInformation.at, 
-                triggered: rawCooldownInformation.triggered 
+            const cooldownInformation = {
+                inCooldown: true,
+                hard: rawCooldownInformation.hard,
+                at: rawCooldownInformation.at,
+                triggered: rawCooldownInformation.triggered
             };
 
             if (
-                keep === false &&
-                (Date.now() - cooldownInformation.at >= 1500 && cooldownInformation.hard === false) || 
+                (keep === false && Date.now() - cooldownInformation.at >= 1500 && cooldownInformation.hard === false) ||
                 (Date.now() - cooldownInformation.at >= 3000 && cooldownInformation.hard === true)
             ) {
                 this.remove(ID);
@@ -34,7 +31,7 @@ class Helpers {
         },
 
         /**
-         * 
+         *
          * @param {Discord.User | Discord.Member | Snowflake} user - the user to add to the cooldown
          * @param {Boolean} hard - set the cooldown as hard, making it not respond to the user that they are on cooldown
          * @param {Boolean} force - ignore the developer check and add a developer to cooldown anyway
@@ -47,9 +44,9 @@ class Helpers {
             else if (isValidMember === false) return Promise.reject('invalid user/member object or snowflake provided');
 
             const ID = user?.id || user;
-            if (["633776442366361601", "671882127041626143"].includes(ID) && force === false) return false;
+            if (['633776442366361601', '671882127041626143'].includes(ID) && force === false) return false;
             return cooldown.set(ID, { at: Date.now(), hard: hard });
-        }, 
+        },
 
         remove(user) {
             const isValidMember = validateUser(user);
@@ -85,17 +82,16 @@ class Helpers {
             cooldown.delete(ID);
             return cooldown.set(ID, rawCooldownInformation);
         }
-    }
+    };
 
-        
     blacklist = {
         async check(ID, server = false) {
             const blacklistInformation = await blacklistSchema.findOne({ ID: ID, server: server });
             if (blacklistInformation === null) return { isBlackisted: false };
-            return { 
-                isBlacklisted: true, 
-                reason: blacklistInformation.reason, 
-                date: blacklistInformation.date, 
+            return {
+                isBlacklisted: true,
+                reason: blacklistInformation.reason,
+                date: blacklistInformation.date,
                 sent: blacklistInformation.sent
             };
         },
@@ -127,11 +123,13 @@ class Helpers {
             }
             return;
         },
-        
+
         async sendServerBlacklist(client, message, reason, date) {
-            const wasSent = await message.channel.send(
-                `**[IMPORTANT NOTICE]**\nPlease do not delete this message until it has been regarded!\n\nUnfortunately, this server has been blacklisted. This means the server may not use Parallel anymore. Further information is listed below:\n\n**Reason:** ${reason}\n**Date:** ${date}\n\nIf you wish to appeal this server blacklist, appeal at https://docs.google.com/forms/d/1xedhPPJONP3tGmL58xQAiTd-XVQ1V8tCkEqUu9q1LWM/edit?usp=drive_web`
-            ).catch(() => false);
+            const wasSent = await message.channel
+                .send(
+                    `**[IMPORTANT NOTICE]**\nPlease do not delete this message until it has been regarded!\n\nUnfortunately, this server has been blacklisted. This means the server may not use Parallel anymore. Further information is listed below:\n\n**Reason:** ${reason}\n**Date:** ${date}\n\nIf you wish to appeal this server blacklist, appeal at https://docs.google.com/forms/d/1xedhPPJONP3tGmL58xQAiTd-XVQ1V8tCkEqUu9q1LWM/edit?usp=drive_web`
+                )
+                .catch(() => false);
             if (wasSent) {
                 await blacklistSchema.updateOne(
                     {
@@ -141,11 +139,11 @@ class Helpers {
                     {
                         sent: true
                     }
-                )
+                );
             }
             return message.guild.leave();
         }
-    }
+    };
 }
 
 module.exports = Helpers;
@@ -156,8 +154,8 @@ function validateUser(user) {
     if (
         !user instanceof Discord.User &&
         !user instanceof Discord.GuildMember &&
-        (typeof user === 'string' ? (user.length > 17 && user.length < 19) : true)
-    ) return false;
-
+        (typeof user === 'string' ? user.length > 17 && user.length < 19 : true)
+    )
+        return false;
     else return true;
 }

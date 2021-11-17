@@ -15,15 +15,19 @@ const infractions = require('../Buttons/infractions');
 module.exports = {
     name: 'interactionCreate',
     async execute(client, interaction) {
-
         if (!client.cache.whitelistedUsers.includes(interaction.user.id)) {
             const userBlacklist = await client.helpers.blacklist.check(interaction.user.id);
             if (userBlacklist.isBlacklisted) {
                 if (userBlacklist.sent) return;
-                return client.helpers.blacklist.DMUserBlacklist(client, interaction.user.id, userBlacklist.reason, userBlacklist.date);
+                return client.helpers.blacklist.DMUserBlacklist(
+                    client,
+                    interaction.user.id,
+                    userBlacklist.reason,
+                    userBlacklist.date
+                );
             }
 
-            client.cache.whitelistedUsers.push(interaction.user.id)
+            client.cache.whitelistedUsers.push(interaction.user.id);
         }
 
         if (client.cache.whitelistedServers.includes(interaction.guild.id)) {
@@ -31,12 +35,16 @@ module.exports = {
 
             if (serverBlacklist.isBlacklisted) {
                 if (serverBlacklist.sent) return interaction.guild.leave();
-                return client.helpers.blacklist.sendServerBlacklist(client, interaction, serverBlacklist.reason, serverBlacklist.date);
+                return client.helpers.blacklist.sendServerBlacklist(
+                    client,
+                    interaction,
+                    serverBlacklist.reason,
+                    serverBlacklist.date
+                );
             }
 
             client.cache.whitelistedServers.push(interaction.user.id);
         }
-
 
         const settings =
             client.cache.settings.get(interaction.guild.id) ||
@@ -44,7 +52,7 @@ module.exports = {
                 .findOne({
                     guildID: interaction.guild.id
                 })
-                .catch(() => { })) ||
+                .catch(() => {})) ||
             (await new settingsSchema({
                 guildname: interaction.guild.name,
                 guildID: interaction.guild.id,
@@ -71,7 +79,7 @@ module.exports = {
             }).save());
 
         if (!client.cache.settings.has(interaction.guild.id)) client.cache.settings.set(interaction.guild.id, settings);
-        
+
         const { modRoles, locked, modRolePermissions, errorConfig } = settings;
 
         if (!client.cache.hasAllSchemas.includes(interaction.guild.id)) {
@@ -162,7 +170,7 @@ module.exports = {
             }
 
             client.cache.hasAllSchemas.push(interaction.guild.id);
-        };
+        }
 
         if (interaction.isButton()) {
             if (interaction.customId === 'join' || interaction.customId === 'deny') return rps.run(client, interaction);
@@ -181,7 +189,10 @@ module.exports = {
             else {
                 if (cooldownInformation.triggered) return client.helpers.cooldown.makeHard(interaction.user.id);
                 client.helpers.cooldown.makeTriggered(interaction.user.id);
-                return client.util.throwError(interaction, `Slow down there! Please wait a few moments before running another command`);
+                return client.util.throwError(
+                    interaction,
+                    `Slow down there! Please wait a few moments before running another command`
+                );
             }
         } else client.helpers.cooldown.add(interaction.user.id);
 

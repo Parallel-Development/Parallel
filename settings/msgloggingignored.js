@@ -6,7 +6,8 @@ exports.run = async (client, message, args) => {
     const { messageLoggingIgnored } = guildSettings;
 
     if (args[1].toLowerCase() === 'view') {
-        if (!messageLoggingIgnored.length) return message.reply(`There are no channels on the message logging ignored list`);
+        if (!messageLoggingIgnored.length)
+            return message.reply(`There are no channels on the message logging ignored list`);
 
         for (let i = 0; i !== messageLoggingIgnored.length; ++i) {
             const ignoredChannel = messageLoggingIgnored[i];
@@ -47,16 +48,19 @@ exports.run = async (client, message, args) => {
         const channel = client.util.getChannel(message.guild, args[2]);
         if (!channel) return client.util.throwError(message, client.config.errors.invalid_channel);
 
-        if (messageLoggingIgnored.includes(channel.id)) return client.util.throwError(message, 'channel is already in the message logging ignored list');
+        if (messageLoggingIgnored.includes(channel.id))
+            return client.util.throwError(message, 'channel is already in the message logging ignored list');
 
-        await settingsSchema.updateOne({
-            guildID: message.guild.id
-        },
-        {
-            $push: {
-                messageLoggingIgnored: channel.id
+        await settingsSchema.updateOne(
+            {
+                guildID: message.guild.id
+            },
+            {
+                $push: {
+                    messageLoggingIgnored: channel.id
+                }
             }
-        })
+        );
 
         return message.reply(`Channel ${channel} has been added to the message logging ignored list!`);
     } else if (args[1].toLowerCase() === 'remove') {
@@ -64,25 +68,30 @@ exports.run = async (client, message, args) => {
         const channel = client.util.getChannel(message.guild, args[2]);
         if (!channel) return client.util.throwError(message, client.config.errors.invalid_channel);
 
-        if (!messageLoggingIgnored.includes(channel.id)) return client.util.throwError(message, 'channel is not in the message logging ignored list');
+        if (!messageLoggingIgnored.includes(channel.id))
+            return client.util.throwError(message, 'channel is not in the message logging ignored list');
 
-        await settingsSchema.updateOne({
-            guildID: message.guild.id
-        },
+        await settingsSchema.updateOne(
+            {
+                guildID: message.guild.id
+            },
             {
                 $pull: {
                     messageLoggingIgnored: channel.id
                 }
-            })
+            }
+        );
 
         return message.reply(`Channel ${channel} has been removed from the message logging ignored list!`);
     } else if (args[1].toLowerCase() === 'removeall') {
-        await settingsSchema.updateOne({
-            guildID: message.guild.id
-        },
-        {
-            messageLoggingIgnored: []
-        })
+        await settingsSchema.updateOne(
+            {
+                guildID: message.guild.id
+            },
+            {
+                messageLoggingIgnored: []
+            }
+        );
 
         return message.reply(`Removed all channels from the message logging ignored list!`);
     } else return client.util.throwError(message, client.config.errors.invalid_option);
