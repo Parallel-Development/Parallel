@@ -1,5 +1,4 @@
 const punishmentSchema = require('../schemas/punishment-schema');
-const moment = require('moment');
 
 class Punishment {
     constructor(guildname, guildID, type, userID, { reason, time, roles } = {}) {
@@ -24,6 +23,8 @@ class Punishment {
                 roles: roles
             }).save();
         };
+
+        if (type === 'mute') delete global.notMutedUsers[userID];
 
         return main();
     }

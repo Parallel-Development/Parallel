@@ -144,6 +144,8 @@ module.exports = {
         } else if (duration && duration > 315576000000 && (args[1] === 'tempmute' || args[1] === 'tempban'))
             return client.util.throwError(message, client.config.errors.time_too_long);
 
+        client.cache.automod.delete(message.guild.id);
+
         // FUNCTIONS ================================================================================
 
         const updateFilter = async (type, duration = null) => {

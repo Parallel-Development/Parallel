@@ -30,7 +30,7 @@ module.exports = {
             server: false
         });
 
-        if (client.cache.blacklistedUsers.includes(user.id)) delete client.cache.blacklistedUsers[user.id];
+        if (client.cache.whitelistedUsers.includes(user.id)) delete client.cache.whitelistedUsers[user.id];
 
         const blacklistEmbed = new Discord.MessageEmbed()
             .setColor(client.util.mainColor(interaction.guild))

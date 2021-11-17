@@ -16,7 +16,7 @@ const Punishment = require('../structures/Punishment');
 const AutomodChecks = require('../structures/AutomodChecks');
 
 const Discord = require('discord.js');
-const { cooldown } = require('../structures/Helpers');
+const notMutedCache = require('../structures/Punishment').cache;
 
 module.exports = {
     name: 'messageCreate',
@@ -32,6 +32,7 @@ module.exports = {
             return;
 
         const settings =
+            client.cache.settings.get(message.guild.id) ||
             (await settingsSchema
                 .findOne({
                     guildID: message.guild.id
@@ -61,11 +62,13 @@ module.exports = {
                     deleteDelay: '5000'
                 }
             }).save());
+        
+        if (!client.cache.settings.has(message.guild.id)) client.cache.settings.set(message.guild.id, settings);
 
         let prefix = global.perpendicular ? '=' : settings.prefix || client.config.prefix;
         if (new RegExp(`^<@!?${client.user.id}>`).exec(message.content)?.index === 0)
             prefix = message.content.split(' ')[0] + ' ';
-        const { muterole, removerolesonmute, modRoles, modRolePermissions, errorConfig } = settings;
+        const { muterole, removerolesonmute, modRoles, modRolePermissions, errorConfig, locked } = settings;
 
         const findMuteRole =
             message.guild.roles.cache.find(r => r.name.toLowerCase() === 'mute') ||
@@ -94,50 +97,54 @@ module.exports = {
             );
         }
 
-        const punishmentCheck = await punishmentSchema.findOne({
-            userID: message.member.id,
-            guildID: message.guild.id,
-            type: 'mute'
-        });
+        if (!global.notMutedUsers.includes(message.author.id)) {
+            const punishmentCheck = await punishmentSchema.findOne({
+                userID: message.member.id,
+                guildID: message.guild.id,
+                type: 'mute'
+            });
 
-        if (punishmentCheck && !message.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_MESSAGES)) {
-            const { reason, expires, date } = punishmentCheck;
-            const role = message.guild.roles.cache.get(muterole) || (await client.util.createMuteRole(message));
-            if (!message.member.roles.cache.has(role.id)) {
-                if (
-                    [...message.channel.permissionOverwrites?.cache?.values()]?.some(
-                        overwrite => message.guild.roles.cache.get(overwrite.id)?.id === muterole
+            if (!punishmentCheck) global.notMutedUsers.push(message.author.id);
+
+            if (punishmentCheck && !message.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_MESSAGES)) {
+                const { reason, expires, date } = punishmentCheck;
+                const role = message.guild.roles.cache.get(muterole) || (await client.util.createMuteRole(message));
+                if (!message.member.roles.cache.has(role.id)) {
+                    if (
+                        [...message.channel.permissionOverwrites?.cache?.values()]?.some(
+                            overwrite => message.guild.roles.cache.get(overwrite.id)?.id === muterole
+                        )
                     )
-                )
-                    message.delete();
-                if (Date.now() - message.member.joinedAt < 2000) return;
+                        message.delete();
+                    if (Date.now() - message.member.joinedAt < 2000) return;
 
-                const _unmanagableRoles = message.member.roles.cache
-                    .filter(role => role.managed)
-                    .map(roles => roles.id);
-                if (removerolesonmute && message.guild.roles.cache.get(muterole))
-                    await message.member.roles.set([muterole, ..._unmanagableRoles]);
-                else await client.util.muteMember(message, message.member, role);
+                    const _unmanagableRoles = message.member.roles.cache
+                        .filter(role => role.managed)
+                        .map(roles => roles.id);
+                    if (removerolesonmute && message.guild.roles.cache.get(muterole))
+                        await message.member.roles.set([muterole, ..._unmanagableRoles]);
+                    else await client.util.muteMember(message, message.member, role);
 
-                const mutedEmbed = new Discord.MessageEmbed()
-                    .setColor(client.config.colors.punishment[1])
-                    .setAuthor(`Parallel Moderation`, client.user.displayAvatarURL())
-                    .setTitle(`You are currently muted in ${message.member.guild.name}!`)
-                    .addField('Reason', reason)
-                    .addField(
-                        'Duration',
-                        expires !== 'Never' ? client.util.duration(expires - Date.now()) : 'Permanent',
-                        true
-                    )
-                    .addField(
-                        'Expires',
-                        expires !== 'Never' ? client.util.timestamp(Date.now() + (expires - Date.now())) : 'Never',
-                        true
-                    )
-                    .addField('Date', date);
-                await message.member.send({ embeds: [mutedEmbed] }).catch(() => {});
+                    const mutedEmbed = new Discord.MessageEmbed()
+                        .setColor(client.config.colors.punishment[1])
+                        .setAuthor(`Parallel Moderation`, client.user.displayAvatarURL())
+                        .setTitle(`You are currently muted in ${message.member.guild.name}!`)
+                        .addField('Reason', reason)
+                        .addField(
+                            'Duration',
+                            expires !== 'Never' ? client.util.duration(expires - Date.now()) : 'Permanent',
+                            true
+                        )
+                        .addField(
+                            'Expires',
+                            expires !== 'Never' ? client.util.timestamp(Date.now() + (expires - Date.now())) : 'Never',
+                            true
+                        )
+                        .addField('Date', date);
+                    await message.member.send({ embeds: [mutedEmbed] }).catch(() => { });
 
-                return;
+                    return;
+                }
             }
         }
 
@@ -227,23 +234,18 @@ module.exports = {
                     afks: []
                 }).save();
             }
+
+            client.cache.hasAllSchemas.push(message.guild.id);
         }
 
-        client.cache.hasAllSchemas.push(message.guild.id);
-
         const isModerator = modRoles.some(role => message.member.roles.cache.has(role));
-        const channelBypassed = await automodSchema.findOne({
-            guildID: message.guild.id,
-            bypassChannels: message.channel.id
-        });
 
-        let roleBypassed = false;
-
-        const x = await automodSchema.findOne({
-            guildID: message.guild.id
-        });
-        const { bypassRoles } = x;
-        if ([...message.member.roles.cache.values()].some(role => bypassRoles.includes(role.id))) roleBypassed = true;
+        const automodSettings = client.cache.automod.get(message.guild.id) || await automodSchema.findOne({ guildID: message.guild.id});
+        if (!client.cache.automod.has(message.guild.id)) client.cache.automod.set(message.guild.id, automodSettings);
+        const { bypassChannels, bypassRoles } = automodSettings;
+        
+        const channelBypassed = bypassChannels.includes(message.channel.id) || bypassChannels.includes(message.channel.parentId);
+        const roleBypassed = [...message.member.roles.cache.values()].some(role => bypassRoles.includes(role.id))
 
         if (
             !message.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_MESSAGES) &&
@@ -365,11 +367,11 @@ module.exports = {
 
         const { shortcutCommands } = settings;
         if (shortcutCommands.some(command => command.name === cmd)) {
-            if (!client.cache.blacklistedUsers.includes(message.author.id) || !client.cache.blacklistedServers.includes(message.author.id)) {
+            if (!client.cache.whitelistedUsers.includes(message.author.id) || !client.cache.whitelistedUsers.includes(message.author.id)) {
                 if (client.helpers.blacklist.check(message.author.id).isBlacklisted === true) return;
-                client.cache.blacklistedUsers.push(message.author.id);
+                client.cache.whitelistedUsers.push(message.author.id);
                 if (client.helpers.blacklist.check(message.author.id, true).isBlacklisted) return;
-                client.cache.blacklistedServers.push(message.guild.id);
+                client.cache.whitelistedUsers.push(message.guild.id);
             }
 
             const shortcmd = shortcutCommands.find(command => command.name === cmd);
@@ -611,26 +613,27 @@ module.exports = {
         const command = client.commands.get(cmd) || client.commands.get(client.aliases.get(cmd));
         if (!command) return;
 
-        if (!client.cache.blacklistedUsers.includes(message.author.id)) {
+        if (!client.cache.whitelistedUsers.includes(message.author.id)) {
             const userBlacklist = await client.helpers.blacklist.check(message.author.id);
             if (userBlacklist.isBlacklisted) {
                 if (userBlacklist.sent) return;
                 return client.helpers.blacklist.DMUserBlacklist(client, message.author.id, userBlacklist.reason, userBlacklist.date);
             }
+
+            client.cache.whitelistedUsers.push(message.author.id)
         }
 
-        client.cache.blacklistedUsers.push(message.author.id)
 
-        if (!client.cache.blacklistedServers.includes(message.guild.id)) {
+        if (!client.cache.whitelistedServers.includes(message.guild.id)) {
             const serverBlacklist = await client.helpers.blacklist.check(message.guild.id, true);
 
             if (serverBlacklist.isBlacklisted) {
                 if (serverBlacklist.sent) return message.guild.leave();
                 return client.helpers.blacklist.sendServerBlacklist(client, message, serverBlacklist.reason, serverBlacklist.date);
             }
-        }
 
-        client.cache.blacklistedServers.push(message.author.id);
+            client.cache.whitelistedServers.push(message.guild.id);
+        }
 
         const cooldownInformation = client.helpers.cooldown.check(message.author.id);
         if (cooldownInformation.inCooldown === true) {
@@ -660,16 +663,7 @@ module.exports = {
         if (command.requiredBotPermission && !message.guild.me.permissions.has(command.requiredBotPermission))
             return missingPerms(command.requiredBotPermission);
 
-        if (
-            (await settingsSchema.findOne({
-                guildID: message.guild.id,
-                locked: message.channel?.id
-            })) ||
-            (await settingsSchema.findOne({
-                guildID: message.guild.id,
-                locked: message.channel?.parentId
-            }))
-        ) {
+        if (locked.includes(message.channel.id) || locked.includes(message.channel.parentId)) {
             if (
                 !message.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_MESSAGES) &&
                 !isModerator &&

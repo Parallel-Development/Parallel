@@ -34,7 +34,7 @@ module.exports = {
             server: true
         });
 
-        if (client.cache.blacklistedServers.includes(ID)) delete client.cache.blacklistedServers[ID];
+        if (client.cache.whitelistedServers.includes(ID)) delete client.cache.whitelistedServers[ID];
 
         const blacklistEmbed = new Discord.MessageEmbed()
             .setColor(client.util.mainColor(interaction.guild))

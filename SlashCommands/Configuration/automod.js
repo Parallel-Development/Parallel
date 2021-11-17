@@ -238,6 +238,8 @@ module.exports = {
             walltext
         } = automodGrab;
 
+        client.cache.automod.delete(message.guild.id);
+        
         const automodList = new Discord.MessageEmbed()
             .setColor(client.util.mainColor(interaction.guild))
             .setDescription(

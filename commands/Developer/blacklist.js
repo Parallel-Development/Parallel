@@ -30,7 +30,7 @@ module.exports = {
             server: false
         }).save();
 
-        delete client.cache.blacklistedUsers[member.id];
+        delete client.cache.whitelistedUsers[member.id];
 
         const blacklistEmbed = new Discord.MessageEmbed()
             .setColor(client.config.colors.punishment[2])

@@ -34,6 +34,8 @@ module.exports = {
             return message.reply({ embeds: [settingsPannel] });
         }
 
+        client.cache.settings.delete(message.guild.id);
+
         switch (setting) {
             case 'allowcmds':
                 if (!args[1])

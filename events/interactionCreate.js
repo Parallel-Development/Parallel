@@ -16,30 +16,36 @@ module.exports = {
     name: 'interactionCreate',
     async execute(client, interaction) {
 
-        if (!client.cache.blacklistedUsers.includes(interaction.user.id)) {
+        if (!client.cache.whitelistedUsers.includes(interaction.user.id)) {
             const userBlacklist = await client.helpers.blacklist.check(interaction.user.id);
             if (userBlacklist.isBlacklisted) {
                 if (userBlacklist.sent) return;
                 return client.helpers.blacklist.DMUserBlacklist(client, interaction.user.id, userBlacklist.reason, userBlacklist.date);
             }
+
+            client.cache.whitelistedUsers.push(interaction.user.id)
         }
 
-        client.cache.blacklistedUsers.push(interaction.user.id)
-
-        if (client.cache.blacklistedServers.includes(interaction.guild.id)) {
+        if (client.cache.whitelistedServers.includes(interaction.guild.id)) {
             const serverBlacklist = await client.helpers.blacklist.check(interaction.guild.id, true);
 
             if (serverBlacklist.isBlacklisted) {
                 if (serverBlacklist.sent) return interaction.guild.leave();
                 return client.helpers.blacklist.sendServerBlacklist(client, interaction, serverBlacklist.reason, serverBlacklist.date);
             }
+
+            client.cache.whitelistedServers.push(interaction.user.id);
         }
 
-        client.cache.blacklistedServers.push(interaction.user.id);
 
-        const settingsCheck = await settingsSchema.findOne({ guildID: interaction.guild.id });
-        if (!settingsCheck) {
-            await new settingsSchema({
+        const settings =
+            client.cache.settings.get(interaction.guild.id) ||
+            (await settingsSchema
+                .findOne({
+                    guildID: interaction.guild.id
+                })
+                .catch(() => { })) ||
+            (await new settingsSchema({
                 guildname: interaction.guild.name,
                 guildID: interaction.guild.id,
                 prefix: client.config.prefix,
@@ -62,8 +68,11 @@ module.exports = {
                     disabledCommandChannel: 'respond',
                     deleteDelay: '5000'
                 }
-            }).save();
-        }
+            }).save());
+
+        if (!client.cache.settings.has(interaction.guild.id)) client.cache.settings.set(interaction.guild.id, settings);
+        
+        const { modRoles, locked, modRolePermissions, errorConfig } = settings;
 
         if (!client.cache.hasAllSchemas.includes(interaction.guild.id)) {
             const automodCheck = await automodSchema.findOne({
@@ -151,9 +160,9 @@ module.exports = {
                     afks: []
                 }).save();
             }
-        };
 
-        client.cache.hasAllSchemas.push(interaction.guild.id);
+            client.cache.hasAllSchemas.push(interaction.guild.id);
+        };
 
         if (interaction.isButton()) {
             if (interaction.customId === 'join' || interaction.customId === 'deny') return rps.run(client, interaction);
@@ -184,9 +193,6 @@ module.exports = {
 
         if (command.developer && !client.config.developers.some(ID => ID === interaction.user.id))
             return client.util.throwError(interaction, 'You cannot run this command.');
-
-        const guildSettings = await settingsSchema.findOne({ guildID: interaction.guild.id });
-        const { modRoles, locked, modRolePermissions, errorConfig } = guildSettings;
 
         const isModerator = modRoles.some(role => interaction.member.roles.cache.has(role));
 
