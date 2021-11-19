@@ -165,6 +165,6 @@ module.exports = {
             (client.util.getChannel(message.guild, args[0]) && args.slice(1).join(' '))
         )
             lockedEmbed.addField('Reason', reason.length >= 1024 ? await client.util.createBin(reason) : reason);
-        await channel.send({ embeds: [lockedEmbed] });
+        await channel.send({ embeds: [lockedEmbed] }).catch(() => {});
     }
 };

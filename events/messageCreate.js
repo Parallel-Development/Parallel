@@ -658,6 +658,7 @@ module.exports = {
                 if (cooldownInformation.triggered) return client.helpers.cooldown.makeHard(message.author.id);
                 client.helpers.cooldown.makeTriggered(message.author.id);
                 return client.util.throwError(
+                    message,
                     `Slow down there! Please wait a few moments before running another command`
                 );
             }

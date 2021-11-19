@@ -177,6 +177,6 @@ module.exports = {
             .setDescription('This channel has been locked. Only moderators may speak in this channel');
         if (args['reason'])
             lockedEmbed.addField('Reason', reason.length >= 1024 ? await client.util.createBin(reason) : reason);
-        await channel.send({ embeds: [lockedEmbed] });
+        await channel.send({ embeds: [lockedEmbed] }).catch(() => {});
     }
 };

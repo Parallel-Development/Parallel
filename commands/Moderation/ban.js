@@ -59,23 +59,26 @@ module.exports = {
         const bansToExpire = guildWarnings.warnings.filter(
             warning => warning.expires > Date.now() && warning.type === 'Ban'
         );
-        for (let i = 0; i !== bansToExpire.length; ++i) {
-            const ban = bansToExpire[i];
-            await warningSchema.updateOne(
-                {
-                    guildID: message.guild.id,
-                    warnings: {
-                        $elemMatch: {
-                            punishmentID: ban.punishmentID
+
+        if (bansToExpire.length) {
+            for (let i = 0; i !== bansToExpire.length; ++i) {
+                const ban = bansToExpire[i];
+                await warningSchema.updateOne(
+                    {
+                        guildID: message.guild.id,
+                        warnings: {
+                            $elemMatch: {
+                                punishmentID: ban.punishmentID
+                            }
+                        }
+                    },
+                    {
+                        $set: {
+                            'warnings.$.expires': Date.now()
                         }
                     }
-                },
-                {
-                    $set: {
-                        'warnings.$.expires': Date.now()
-                    }
-                }
-            );
+                );
+            }
         }
 
         await punishmentSchema.deleteMany({
