@@ -30,7 +30,7 @@ module.exports = {
         await member.roles.remove(role, `Responsible Member: ${message.member.user.tag}`);
 
         let didNotSend = false;
-        if (args['dm'] === true) {
+        if (args[2] === '--dm') {
             const reason = args['reason'] || 'Unspecified';
             const addedRoleDM = new Discord.MessageEmbed()
                 .setColor(client.util.mainColor(message.guild))
@@ -50,7 +50,7 @@ module.exports = {
                 `${
                     client.config.emotes.success
                 } Role ${role.toString()} successfully removed from ${member.toString()} ${
-                    args['dm'] ? (didNotSend ? '| Failed to DM them' : "| Successfully DM'd them") : ''
+                    args[2] === '--dm' ? (didNotSend ? '| Failed to DM them' : "| Successfully DM'd them") : ''
                 }`
             );
         message.reply({ embeds: [removedRole] });

@@ -51,7 +51,7 @@ module.exports = {
                 `${
                     client.config.emotes.success
                 } Role ${role.toString()} successfully assigned to ${member.toString()} ${
-                    args['dm'] ? (didNotSend ? '| Failed to DM them' : "| Successfully DM'd them") : ''
+                    args[2] === '--dm' ? (didNotSend ? '| Failed to DM them' : "| Successfully DM'd them") : ''
                 }`
             );
         message.reply({ embeds: [assignedRole] });

@@ -7,7 +7,7 @@ const ms = require('ms');
 module.exports = {
     name: 'duration',
     description: 'Change the duration of a punishment',
-    usage: 'duration [punishment ID] (new duration)',
+    usage: 'duration [punishment ID] (new duration, permanent)',
     permissions: Discord.Permissions.FLAGS.MANAGE_MESSAGES,
     async execute(client, message, args) {
         const guildSettings = await settingsSchema.findOne({ guildID: message.guild.id });
@@ -15,7 +15,8 @@ module.exports = {
         const isModerator = message.member.roles.cache.some(role => modRoles.includes(role.id));
 
         const punishmentID = args[0];
-        const newDuration = args[1];
+        const newDuration = args[1]?.toLowerCase();
+        if (!newDuration) return client.util.throwError(message, client.config.errors.missing_argument_duration);
         if (!punishmentID) return client.util.throwError(message, client.config.errors.missing_argument_punishmentID);
 
         const punishmentInformation = await warningSchema.findOne({
@@ -56,8 +57,12 @@ module.exports = {
 
         if (punishment.expires - Date.now() <= 0)
             return client.util.throwError(message, 'this punishment has already expired');
-        if (!ms(newDuration)) return client.util.throwError(message, client.config.errors.bad_duration);
-        if (ms(newDuration) > 315576000000) return client.util.throwError(message, client.config.errors.time_too_long);
+
+        if (newDuration !== 'permanent') {
+            if (!ms(newDuration)) return client.util.throwError(message, client.config.errors.bad_duration);
+            if (ms(newDuration) > 315576000000)
+                return client.util.throwError(message, client.config.errors.time_too_long);
+        }
 
         await warningSchema.updateOne(
             {
@@ -70,8 +75,9 @@ module.exports = {
             },
             {
                 $set: {
-                    'warnings.$.expires': Date.now() + ms(newDuration),
-                    'warnings.$.duration': client.util.duration(`${ms(newDuration)}`)
+                    'warnings.$.expires': newDuration === 'permanent' ? 'Never' : Date.now() + ms(newDuration),
+                    'warnings.$.duration':
+                        newDuration === 'permanent' ? 'Permanent' : client.util.duration(`${ms(newDuration)}`)
                 }
             }
         );
@@ -84,15 +90,15 @@ module.exports = {
                     userID: punishment.userID
                 },
                 {
-                    expires: Date.now() + ms(newDuration)
+                    expires: newDuration === 'permanent' ? 'Never' : Date.now() + ms(newDuration)
                 }
             );
         }
 
         return message.reply(
-            `Successfully updated duration for punishment \`${punishmentID}\` to \`${client.util.duration(
-                ms(newDuration)
-            )}\``
+            `Successfully updated duration for punishment \`${punishmentID}\` to \`${
+                newDuration === 'permanent' ? 'permanent' : client.util.duration(ms(newDuration))
+            }\``
         );
     }
 };
