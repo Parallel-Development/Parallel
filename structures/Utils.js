@@ -161,7 +161,7 @@ class Utils {
     }
 
     addMemberToCollectionPrevention(guildID, memberID) {
-        return global.collectionPrevention.push({ guildID: guildID, member: memberID });
+        return global.collectionPrevention.push({ guildID: guildID, memberID: memberID });
     }
 
     removeMemberFromCollectionPrevention(guildID, memberID) {

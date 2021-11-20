@@ -16,6 +16,9 @@ module.exports = {
             .addChoice('objects', 'en_objects')
         ),
     async execute(client, interaction, args) {
+
+        if (global.collectionPrevention.some(prevention => prevention.guildID === interaction.guild.id && prevention.memberID === interaction.user.id)) return client.util.throwError(interaction, 'cannot create an akinator game while a collector is already still going')
+
         let region = args['type'];
 
         if (!['en', 'en_animals', 'en_objects'].includes(region)) {
@@ -50,6 +53,8 @@ module.exports = {
             await aki.start();
             ready(aki);
         }
+
+        client.util.addMemberToCollectionPrevention(interaction.guild.id, interaction.user.id);
 
         async function ready(aki) {
 
@@ -111,6 +116,10 @@ module.exports = {
                 if (collector.collected.size === 30) return interaction.update({ content: 'I could not guess your character in 30 questions', components: [] })
 
                 await interaction.update({ content: `${aki.question} | Guess Count: ${collector.collected.size}`, components: [row, row2] }).catch(() => {} );
+            })
+
+            collector.on('end', () => {
+                client.util.removeMemberFromCollectionPrevention(interaction.guild.id, interaction.user.id);
             })
 
         }

@@ -8,7 +8,6 @@ module.exports = {
     usage: 'shortcuts create [shortcut name] <duration> (reason)\nshortcuts remove [shortcut name]\nshortcuts removeall\nshortcuts view',
     aliases: ['shortcut', 'short'],
     async execute(client, message, args) {
-        if (global.collectionPrevention.some(information => information.userID === message.author.id)) return;
 
         if (!args[0]) return client.util.throwError(message, client.config.errors.missing_argument_option);
         const option = args[0];

@@ -118,7 +118,7 @@ module.exports = {
 
                 await warningSchema.updateOne(
                     {
-                        guildID: interaction.guild.id,
+                        guildID: message.guild.id,
                         warnings: {
                             $elemMatch: {
                                 punishmentID: mute.punishmentID

@@ -83,35 +83,22 @@ class ExpiredHandler {
                 }
             }
 
-            // Check for expired warnings
+            // remove all expired warnings
 
-            const expiredWarningDate = await warningSchema.find({
-                warnings: {
-                    $elemMatch: {
-                        expires: { $lte: currentDate },
-                        type: 'Warn'
-                    }
-                }
-            });
 
-            for (let i = 0; i !== expiredWarningDate.length; ++i) {
-                let { _id } = expiredWarningDate[i];
-
-                await warningSchema.updateOne(
-                    {
-                        _id: _id
-                    },
-                    {
-                        $pull: {
-                            warnings: {
-                                expires: {
-                                    $lte: currentDate
-                                }
-                            }
+            await warningSchema.updateMany(
+                {},
+                {
+                    $pull: {
+                        warnings: {
+                            expires: {
+                                $lte: currentDate
+                            },
+                            type: 'Warn'
                         }
                     }
-                );
-            }
+                }
+            );
         }, 10000);
     }
 }
