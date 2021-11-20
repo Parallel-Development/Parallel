@@ -24,7 +24,7 @@ class Punishment {
             }).save();
         };
 
-        if (type === 'mute') delete global.notMutedUsers[userID];
+        if (type === 'mute') global.notMutedUsers.splice(global.notMutedUsers.indexOf(userID, 1));
 
         return main();
     }
