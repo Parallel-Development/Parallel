@@ -118,8 +118,9 @@ module.exports = {
                 await interaction.update({ content: `${aki.question} | Guess Count: ${collector.collected.size}`, components: [row, row2] }).catch(() => {} );
             })
 
-            collector.on('end', () => {
+            collector.on('end', (col, reason) => {
                 client.util.removeMemberFromCollectionPrevention(interaction.guild.id, interaction.user.id);
+                if (reason === 'time') gameMessageBoard.edit({ content: '3 minute time limit exceeded', components: [] });
             })
 
         }

@@ -70,18 +70,10 @@ module.exports = {
 
             const filter = i => i.user.id === message.author.id;
             await gameMessageBoard.edit({ content: aki.question, components: [row, row2] });
-            const collector = await gameMessageBoard.createMessageComponentCollector({ filter, max: 30 });
+            const collector = await gameMessageBoard.createMessageComponentCollector({ filter, max: 30, time: 180000 });
 
-            let lastCreatedTimestamp;
 
             collector.on('collect', async interaction => {
-
-                if (Date.now() - lastCreatedTimestamp >= 180000) {
-                    await aki.win();
-                    await collector.stop();
-                    await interaction.update({ components: [] });
-                    return interaction.reply({ content: 'Game ended due to inactivity', ephemeral: true });
-                }
 
                 lastCreatedTimestamp = Date.now();
 
@@ -110,8 +102,9 @@ module.exports = {
                 await interaction.update({ content: `${aki.question} | Guess Count: ${collector.collected.size}`, components: [row, row2] });
             })
 
-            collector.on('end', () => {
+            collector.on('end', (col, reason) => {
                 client.util.removeMemberFromCollectionPrevention(message.guild.id, message.author.id);
+                if (reason === 'time') gameMessageBoard.edit({ content: '3 minute time limit exceeded', components: [] });
             })
 
         }
