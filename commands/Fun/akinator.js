@@ -74,7 +74,9 @@ module.exports = {
 
             const filter = i => i.user.id === message.author.id;
             await gameMessageBoard.edit({ content: aki.question, components: [row, row2] });
-            const collector = await gameMessageBoard.createMessageComponentCollector({ filter, max: 50, time: 180000 });
+            const collector = await gameMessageBoard.createMessageComponentCollector({ filter, max: 50, time: 300000 });
+
+            let latestAnswer;
 
 
             collector.on('collect', async interaction => {
@@ -87,7 +89,7 @@ module.exports = {
                     } else {
                         if (global.collectionPrevention.some(prevention => prevention.guildID === message.guild.id && prevention.memberID === message.author.id)) return interaction.update({ content: 'Cannot continue the game as a new game is already ongoing', components: [] });
                         client.util.addMemberToCollectionPrevention(message.guild.id, message.author.id);
-                        while (aki.progress >= 80) await aki.step(1);
+                        while (aki.answers[0].name === latestAnswer) await aki.step(1);
                     }
                 }
 
@@ -101,6 +103,7 @@ module.exports = {
                 if (aki.progress >= 80) {
                     await aki.win();
                     client.util.removeMemberFromCollectionPrevention(message.guild.id, message.author.id);
+                    latestAnswer = aki.answers[0].name;
                     return interaction.update({ content: `I am **${aki.progress}%** sure the answer is: \`${aki.answers[0].name}\``, components: [new Discord.MessageActionRow().addComponents(yes, no)]})
                 }
 
@@ -111,7 +114,8 @@ module.exports = {
 
             collector.on('end', (col, reason) => {
                 client.util.removeMemberFromCollectionPrevention(message.guild.id, message.author.id);
-                if (reason === 'time') gameMessageBoard.edit({ content: '3 minute time limit exceeded', components: [] });
+                gameMessageBoard = message.channel.messages.cache.get(gameMessageBoard.id);
+                if (reason === 'time' && !gameMessageBoard.content.startsWith('I am')) gameMessageBoard.edit({ content: '5 minute time limit exceeded', components: [] });
             })
 
         }

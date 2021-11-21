@@ -82,7 +82,7 @@ module.exports = {
 
             const filter = i => i.user.id === interaction.user.id;
             await gameMessageBoard.edit({ content: aki.question, components: [row, row2] });
-            const collector = await gameMessageBoard.createMessageComponentCollector({ filter, max: 50 });
+            const collector = await gameMessageBoard.createMessageComponentCollector({ filter, max: 50, time: 300000 });
 
             collector.on('collect', async interaction => {
 
@@ -118,7 +118,8 @@ module.exports = {
 
             collector.on('end', (col, reason) => {
                 client.util.removeMemberFromCollectionPrevention(interaction.guild.id, interaction.user.id);
-                if (reason === 'time') gameMessageBoard.edit({ content: '3 minute time limit exceeded', components: [] });
+                gameMessageBoard = message.channel.messages.cache.get(gameMessageBoard.id);
+                if (reason === 'time' && !gameMessageBoard.content.startsWith('I am')) gameMessageBoard.edit({ content: '5 minute time limit exceeded', components: [] });
             })
 
         }
