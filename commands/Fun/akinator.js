@@ -3,7 +3,7 @@ const { Aki } = require('aki-api');
 
 module.exports = {
     name: 'akinator',
-    description: 'Choose a character, animal, or object, and have the bot — using the akinator API — guess it with a max of 30 yes and no questions',
+    description: 'Choose a character, animal, or object, and have the bot — using the akinator API — guess it with a max of 50 yes and no questions',
     usage: 'akinator [characters, animals, objects]',
     aliases: ['aki'],
     async execute(client, message, args) {
@@ -19,7 +19,8 @@ module.exports = {
             const characterBtn = new Discord.MessageButton().setLabel('Characters').setStyle('PRIMARY').setCustomId('characters');
             const animalBtn = new Discord.MessageButton().setLabel('Animals').setStyle('PRIMARY').setCustomId('animals');
             const objectBtn = new Discord.MessageButton().setLabel('Objects').setStyle('PRIMARY').setCustomId('objects');
-            const row = new Discord.MessageActionRow().addComponents(characterBtn, animalBtn, objectBtn);
+            const nevermindBtn = new Discord.MessageButton().setLabel('Nevermind').setStyle('DANGER').setCustomId('nevermind');
+            const row = new Discord.MessageActionRow().addComponents(characterBtn, animalBtn, objectBtn, nevermindBtn);
 
             const whatType = await message.reply({ content: `What will I be guessing?`, components: [row] });
             const filter = i => i.user.id === message.author.id;
@@ -30,6 +31,9 @@ module.exports = {
                     case 'characters': region = 'en'; break;
                     case 'animals': region = 'en_animals'; break;
                     case 'objects': region = 'en_objects'; break;
+                    case 'nevermind': 
+                        client.util.removeMemberFromCollectionPrevention(message.guild.id, message.author.id);
+                        return interaction.update({ content: 'Game cancelled.', components: [] })
                     default: return message.reply('Something went horribly wrong...');
                 }
 
@@ -70,18 +74,20 @@ module.exports = {
 
             const filter = i => i.user.id === message.author.id;
             await gameMessageBoard.edit({ content: aki.question, components: [row, row2] });
-            const collector = await gameMessageBoard.createMessageComponentCollector({ filter, max: 30, time: 180000 });
+            const collector = await gameMessageBoard.createMessageComponentCollector({ filter, max: 50, time: 180000 });
 
 
             collector.on('collect', async interaction => {
-
-                lastCreatedTimestamp = Date.now();
 
                 if ((interaction.customId === 'yes' || interaction.customId === 'no') && gameMessageBoard.content.startsWith('I am')) {
                     if (interaction.customId === 'yes') {
                         await aki.win();
                         await collector.stop();
                         return interaction.update({ components: [] });
+                    } else {
+                        if (global.collectionPrevention.some(prevention => prevention.guildID === message.guild.id && prevention.memberID === message.author.id)) return interaction.update({ content: 'Cannot continue the game as a new game is already ongoing', components: [] });
+                        client.util.addMemberToCollectionPrevention(message.guild.id, message.author.id);
+                        while (aki.progress >= 80) await aki.step(1);
                     }
                 }
 
@@ -94,10 +100,11 @@ module.exports = {
                 await aki.step(answers[interaction.customId]);
                 if (aki.progress >= 80) {
                     await aki.win();
+                    client.util.removeMemberFromCollectionPrevention(message.guild.id, message.author.id);
                     return interaction.update({ content: `I am **${aki.progress}%** sure the answer is: \`${aki.answers[0].name}\``, components: [new Discord.MessageActionRow().addComponents(yes, no)]})
                 }
 
-                if (collector.collected.size === 30) return interaction.message.edit({ content: 'I could not guess your character in 30 questions', components: [] })
+                if (collector.collected.size === 50) return interaction.message.edit({ content: 'I could not guess your character in 50 questions', components: [] })
 
                 await interaction.update({ content: `${aki.question} | Guess Count: ${collector.collected.size}`, components: [row, row2] });
             })
