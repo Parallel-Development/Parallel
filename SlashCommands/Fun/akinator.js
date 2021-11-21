@@ -80,8 +80,6 @@ module.exports = {
             await gameMessageBoard.edit({ content: aki.question, components: [row, row2] });
             const collector = await gameMessageBoard.createMessageComponentCollector({ filter, max: 30 });
 
-            let lastCreatedTimestamp = Date.now();
-
             collector.on('collect', async interaction => {
 
                 if (Date.now() - lastCreatedTimestamp >= 180000) {
@@ -90,8 +88,6 @@ module.exports = {
                     await interaction.update({ components: [] });
                     return interaction.reply({ content: 'Game ended due to inactivity', ephemeral: true });
                 }
-
-                lastCreatedTimestamp = Date.now();
 
                 if ((interaction.customId === 'yes' || interaction.customId === 'no') && gameMessageBoard.content.startsWith('I am')) {
                     if (interaction.customId === 'yes') {
