@@ -191,7 +191,7 @@ module.exports = {
                 client.helpers.cooldown.makeTriggered(interaction.user.id);
                 return client.util.throwError(
                     interaction,
-                    `Slow down there! Please wait a few moments before running another command`
+                    `too fast: Please wait a few moments before running another command`
                 );
             }
         } else client.helpers.cooldown.add(interaction.user.id);
@@ -203,7 +203,7 @@ module.exports = {
         if (!command) return; // i guess?
 
         if (command.developer && !client.config.developers.some(ID => ID === interaction.user.id))
-            return client.util.throwError(interaction, 'You cannot run this command.');
+            return client.util.throwError(interaction, 'developer commands cannot be ran by non-developers');
 
         const isModerator = modRoles.some(role => interaction.member.roles.cache.has(role));
 

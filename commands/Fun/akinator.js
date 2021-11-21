@@ -13,7 +13,8 @@ module.exports = {
         let region = `en_${args[0]?.toLowerCase()}`;
         if (region === 'en_characters') region = 'en';
 
-        let gameMessageBoard;
+        const gameBoards = [];
+        let whatType;
 
         if (!['en', 'en_animals', 'en_objects'].includes(region)) {
             const characterBtn = new Discord.MessageButton().setLabel('Characters').setStyle('PRIMARY').setCustomId('characters');
@@ -22,11 +23,13 @@ module.exports = {
             const nevermindBtn = new Discord.MessageButton().setLabel('Never mind').setStyle('DANGER').setCustomId('nevermind');
             const row = new Discord.MessageActionRow().addComponents(characterBtn, animalBtn, objectBtn, nevermindBtn);
 
-            const whatType = await message.reply({ content: `What will I be guessing?`, components: [row] });
-            const filter = i => i.user.id === message.author.id;
-            const collector = await whatType.createMessageComponentCollector({ filter, max: 1 });
+            whatType = await message.reply({ content: `What will I be guessing?`, components: [row] });
+            const collector = await whatType.createMessageComponentCollector({ time: 30000 });
 
             collector.on('collect', async interaction => {
+
+                if (interaction.user.id !== message.author.id) return client.util.throwError(interaction, client.config.errors.no_button_access)
+
                 switch (interaction.customId) {
                     case 'characters': region = 'en'; break;
                     case 'animals': region = 'en_animals'; break;
@@ -37,14 +40,20 @@ module.exports = {
                     default: return message.reply('Something went horribly wrong...');
                 }
 
+                await collector.stop();
                 await interaction.update({ content: `Creating a new game, please wait... ${client.config.emotes.loading}`, components: [] })
-                gameMessageBoard = interaction.message;
+                gameBoards.push({ userID: message.author.id, message: interaction.message });
                 const aki = new Aki({ region });
                 await aki.start();
                 ready(aki);
             })
+
+            collector.on('end', (col, reason) => {
+                if (reason === 'time') return whatType.edit({ content: '30 second response limit exceeded', components: [] });
+            })
         } else {
-            gameMessageBoard = await message.channel.send(`Creating a new game, please wait... ${client.config.emotes.loading}`);
+            const msg = await message.channel.send(`Creating a new game, please wait... ${client.config.emotes.loading}`);
+            gameBoards.push({ userID: message.author.id, message: msg });
             const aki = new Aki({ region });
             await aki.start();
             ready(aki);
@@ -72,16 +81,19 @@ module.exports = {
                 probablyNot: 4
             };
 
-            const filter = i => i.user.id === message.author.id;
+            let gameMessageBoard = gameBoards.find(board => board.userID === message.author.id).message;
+
             await gameMessageBoard.edit({ content: aki.question, components: [row, row2] });
-            const collector = await gameMessageBoard.createMessageComponentCollector({ filter, max: 50, time: 300000 });
+            const collector = await gameMessageBoard.createMessageComponentCollector({ time: 300000 });
 
             let latestAnswer;
 
 
             collector.on('collect', async interaction => {
 
-                if ((interaction.customId === 'yes' || interaction.customId === 'no') && gameMessageBoard.content.startsWith('I am')) {
+                if (interaction.user.id !== message.author.id) return client.util.throwError(interaction, client.config.errors.no_button_access)
+
+                if ((interaction.customId === 'yes' || interaction.customId === 'no') && gameMessageBoard.embeds.length) {
                     if (interaction.customId === 'yes') {
                         await aki.win();
                         await collector.stop();
@@ -99,17 +111,30 @@ module.exports = {
                     return collector.stop();
                 }
 
+                interaction.update({ content: `${interaction.message.content} ${client.config.emotes.loading}` });
+
                 await aki.step(answers[interaction.customId]);
                 if (aki.progress >= 80) {
+
                     await aki.win();
+
+                    const guessEmbed = new Discord.MessageEmbed()
+                        .setAuthor('Akinator', client.user.displayAvatarURL())
+                        .setDescription(`I am **${aki.progress}%** sure you were thinking of...\n> ${aki.answers[0].name}`)
+                        .setColor(client.util.mainColor(message.guild))
+                        if (region !== 'en_objects') guessEmbed.setThumbnail(aki.answers[0].absolute_picture_path.replaceAll('\\', '') )
+
                     client.util.removeMemberFromCollectionPrevention(message.guild.id, message.author.id);
                     latestAnswer = aki.answers[0].name;
-                    return interaction.update({ content: `I am **${aki.progress}%** sure the answer is: \`${aki.answers[0].name}\``, components: [new Discord.MessageActionRow().addComponents(yes, no)]})
+                    return gameMessageBoard.edit({ content: null, embeds: [guessEmbed], components: [new Discord.MessageActionRow().addComponents(yes, no)]})
                 }
 
-                if (collector.collected.size === 50) return interaction.message.edit({ content: 'I could not guess your character in 50 questions', components: [] })
+                if (collector.collected.size === 50) {
+                    await collector.stop();
+                    return interaction.message.edit({ content: 'I could not guess your character in 50 questions', components: [] })
+                }
 
-                await interaction.update({ content: `${aki.question} | Guess Count: ${collector.collected.size}`, components: [row, row2] });
+                await gameMessageBoard.edit({ embeds: [], content: `${aki.question} | Guess Count: ${collector.collected.size}`, components: [row, row2] });
             })
 
             collector.on('end', (col, reason) => {

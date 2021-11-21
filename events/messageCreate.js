@@ -659,7 +659,7 @@ module.exports = {
                 client.helpers.cooldown.makeTriggered(message.author.id);
                 return client.util.throwError(
                     message,
-                    `Slow down there! Please wait a few moments before running another command`
+                    `too fast: please wait a few moments before running another command`
                 );
             }
         } else client.helpers.cooldown.add(message.author.id);
