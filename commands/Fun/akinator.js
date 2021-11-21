@@ -19,7 +19,7 @@ module.exports = {
             const characterBtn = new Discord.MessageButton().setLabel('Characters').setStyle('PRIMARY').setCustomId('characters');
             const animalBtn = new Discord.MessageButton().setLabel('Animals').setStyle('PRIMARY').setCustomId('animals');
             const objectBtn = new Discord.MessageButton().setLabel('Objects').setStyle('PRIMARY').setCustomId('objects');
-            const nevermindBtn = new Discord.MessageButton().setLabel('Nevermind').setStyle('DANGER').setCustomId('nevermind');
+            const nevermindBtn = new Discord.MessageButton().setLabel('Never mind').setStyle('DANGER').setCustomId('nevermind');
             const row = new Discord.MessageActionRow().addComponents(characterBtn, animalBtn, objectBtn, nevermindBtn);
 
             const whatType = await message.reply({ content: `What will I be guessing?`, components: [row] });
