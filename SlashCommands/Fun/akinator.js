@@ -118,7 +118,7 @@ module.exports = {
 
             collector.on('end', (col, reason) => {
                 client.util.removeMemberFromCollectionPrevention(interaction.guild.id, interaction.user.id);
-                gameMessageBoard = message.channel.messages.cache.get(gameMessageBoard.id);
+                gameMessageBoard = interaction.channel.messages.cache.get(gameMessageBoard.id);
                 if (reason === 'time' && !gameMessageBoard.content.startsWith('I am')) gameMessageBoard.edit({ content: '5 minute time limit exceeded', components: [] });
             })
 
