@@ -45,7 +45,7 @@ module.exports = {
                     case 'animals': region = 'en_animals'; break;
                     case 'objects': region = 'en_objects'; break;
                     case 'nevermind':
-                        client.util.removeMemberFromCollectionPrevention(message.guild.id, message.author.id);
+                        client.util.removeMemberFromCollectionPrevention(interaction.guild.id, interaction.user.id);
                         return interaction.update({ content: 'Game cancelled.', components: [] })
                     default: return interaction.reply('Something went horribly wrong...');
                 }
