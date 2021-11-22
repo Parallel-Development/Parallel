@@ -109,13 +109,7 @@ module.exports = {
                         : massmentionTempBanDuration
                         ? massmention + ' for ' + client.util.duration(massmentionTempBanDuration)
                         : massmention
-                }\``,
-                true
-            )
-            .addField(
-                'Filter-list',
-                'The list of blacklisted words on the server that if used and the Filter automod is enabled, will be moderated',
-                true
+                }\``, true
             )
             .addField(
                 'Malicious-links',
@@ -124,7 +118,11 @@ module.exports = {
                     : maliciouslinksTempBanDuration
                         ? maliciouslinks + ' for ' + client.util.duration(maliciouslinksTempBanDuration)
                         : maliciouslinks
-                }\``,
+                }\``
+            )
+            .addField(
+                'Filter-list',
+                'The list of blacklisted words on the server that if used and the Filter automod is enabled, will be moderated',
                 true
             )
             .addField('Channel-bypass', 'The list of channels that are excluded from the automod', true)

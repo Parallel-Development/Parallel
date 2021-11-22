@@ -230,12 +230,15 @@ module.exports = {
             massmentionTempBanDuration,
             walltextTempMuteDuration,
             walltextTempBanDuration,
+            maliciouslinksTempMuteDuration,
+            maliciouslinksTempBanDuration,
             fast,
             filter,
             invites,
             links,
             massmention,
-            walltext
+            walltext,
+            maliciouslinks
         } = automodGrab;
 
         client.cache.automod.delete(interaction.guild.id);
@@ -310,6 +313,15 @@ module.exports = {
                         : massmention
                 }\``,
                 true
+            )
+            .addField(
+                'Malicious-links',
+                `Toggled: \`${maliciouslinksTempMuteDuration
+                    ? maliciouslinks + ' for ' + client.util.duration(maliciouslinksTempMuteDuration)
+                    : maliciouslinksTempBanDuration
+                        ? maliciouslinks + ' for ' + client.util.duration(maliciouslinksTempBanDuration)
+                        : maliciouslinks
+                }\``
             )
             .addField(
                 'Filter-list',
