@@ -61,6 +61,8 @@ module.exports = {
         )
             return client.util.throwError(interaction, 'you may only view the server shortcuts');
 
+        client.cache.settings.delete(interaction.guild.id);
+
         if (subArgs['create']) {
             const createArgs = subArgs['create'].options.reduce((a, b) => ({ ...a, [b['name']]: b.value }), {});
             const shortcutName = createArgs['name'];

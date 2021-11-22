@@ -31,6 +31,9 @@ class ExpiredLogger {
                         automodLogging: 'none'
                     }
                 );
+
+                client.cache.settings.delete(message.guild.id);
+                
                 return;
             }
 

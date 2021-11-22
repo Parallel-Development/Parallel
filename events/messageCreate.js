@@ -83,6 +83,8 @@ module.exports = {
                     muterole: findMuteRole.id
                 }
             );
+
+            client.cache.settings.delete(message.guild.id);
         }
 
         if (!message.guild.roles.cache.get(muterole) && muterole !== 'none') {
@@ -94,6 +96,8 @@ module.exports = {
                     muterole: 'none'
                 }
             );
+
+            client.cache.settings.delete(message.guild.id);
         }
 
         if (!global.notMutedUsers.includes(message.author.id)) {

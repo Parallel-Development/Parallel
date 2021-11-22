@@ -20,6 +20,8 @@ module.exports = {
             );
         }
 
+        client.cache.settings.delete(message.guild.id);
+
         const request = global.confirmationRequests.find(request => request.ID === message.author.id);
 
         if (request.request === 'clearInfractions') {

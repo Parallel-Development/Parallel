@@ -21,6 +21,8 @@ module.exports = {
             );
         }
 
+        client.cache.settings.delete(interaction.guild.id);
+
         const request = global.confirmationRequests.find(
             request => request.ID === interaction.user.id && request.guildID === interaction.guild.id
         );

@@ -52,6 +52,8 @@ module.exports = {
                 }
             );
 
+            client.cache.settings.delete(message.guild.id);
+
             return;
         }
 

@@ -57,6 +57,8 @@ module.exports = {
                 'Error at argument `name`: a shortcut name is required!\n\n`>shortcuts create` + add a shortcut name here'
             );
 
+        client.cache.settings.delete(message.guild.id);
+
         if (option === 'create') {
             if (client.commands.has(shortcutName) || client.aliases.has(shortcutName))
                 return message.reply(
