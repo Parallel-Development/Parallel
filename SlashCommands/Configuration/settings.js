@@ -263,3 +263,13 @@ module.exports = {
         }
     }
 };
+
+function settingsHelp(title, usage, description) {
+    const embed = new Discord.MessageEmbed()
+        .setColor('#09ff2')
+        .addField('Description', description)
+        .addField('Usage', `settings ${usage}`)
+        .setTitle(`Settings - ${title}`);
+
+    return embed;
+}
