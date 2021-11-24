@@ -35,14 +35,13 @@ module.exports = {
         const __time = args[1];
         let time = parseInt(__time) && __time !== '' ? ms(__time) : null;
         if (time && time > 315576000000) return client.util.throwError(message, client.config.errors.time_too_long);
-        const reason = time ? args.slice(2).join(' ') || 'Unspecified' : args.slice(1).join(' ') || 'Unspecified';
+        let reason = time ? args.slice(2).join(' ') || 'Unspecified' : args.slice(1).join(' ') || 'Unspecified';
 
         const settings = await settingsSchema.findOne({
             guildID: message.guild.id
         });
 
-        const { manualwarnexpire } = settings;
-        const { delModCmds } = settings;
+        const { manualwarnexpire, delModCmds } = settings;
         if (delModCmds) message.delete();
 
         if (
@@ -51,8 +50,9 @@ module.exports = {
             __time !== 'permanent' &&
             __time !== 'p' &&
             __time !== 'forever'
-        )
+        ) 
             time = parseInt(manualwarnexpire);
+        else if (__time === 'permanent' || __time === 'p' || __time === 'forever') reason = reason.split(' ').slice(1).join(' ');
 
         new Infraction(client, 'Warn', message, message.member, member, {
             reason: reason,
