@@ -6,21 +6,21 @@ exports.run = async (client, message, args) => {
 
     let permission;
     try {
-        permission = new Discord.Permissions(args.slice(2).join(' ').replaceAll(' ', '_').toUpperCase());
+        if (args[2]) permission = new Discord.Permissions(args.slice(2).join(' ').replaceAll(' ', '_').toUpperCase());
     } catch {
         permission = false;
     }
 
-    if (!permission && option !== 'view')
+    if (!permission && option !== 'view' && option !== 'removeall')
         return client.util.throwError(message, 'no permission with this name or permission integer found');
-    if (option !== 'view' && permission.has(Discord.Permissions.FLAGS.ADMINISTRATOR))
+    if (option !== 'view' && option !== 'removeall' && permission.has(Discord.Permissions.FLAGS.ADMINISTRATOR))
         permission = Discord.Permissions.FLAGS.ADMINISTRATOR;
-    if (option !== 'view' && permission.length > 1 && option !== 'set')
+    if (option !== 'view' && option !== 'removeall' && permission.length > 1 && option !== 'set')
         return client.util.throwError(
             message,
             'you can only use option `add` or `remove` with one permission at a time. To set the permissions all at once, consider using option `set`'
         );
-    if (option !== 'view' && !message.member.permissions.has(permission))
+    if ((option !== 'view' && !message.member.permissions.has(permission)) || option === 'removeall' && !message.member.permissions.has(Discord.Permissions.FLAGS.ADMINISTRATOR))
         return client.util.throwError(message, "cannot manage a permission that you don't have");
 
     if (!option) return client.util.throwError(message, client.config.errors.missing_argument_option);
@@ -65,6 +65,14 @@ exports.run = async (client, message, args) => {
         );
 
         return message.reply(`Successfully updated the moderator role permissions!`);
+    } else if (option === 'removeall') {
+        await settingsSchema.updateOne({
+            guildID: message.guild.id,
+        },
+        {
+            modRolePermissions: '0'
+        })
+        return message.reply(`Successfully removed all moderator role permissions!`);
     } else if (option === 'set') {
         if (permission > 8589934591) return client.util.throwError(message, 'this permission int is to large');
         await settingsSchema.updateOne(
@@ -76,7 +84,7 @@ exports.run = async (client, message, args) => {
             }
         );
 
-        return message.reply(`Successfully set the moderator role permissions! `);
+        return message.reply(`Successfully set the moderator role permissions!`);
     } else if (option === 'view') {
         if (modRolePermissions === '0') return message.reply(`The moderator role permissions list is empty!`);
         const modRolePermissionsEmbed = new Discord.MessageEmbed()
