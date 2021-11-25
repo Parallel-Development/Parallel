@@ -22,6 +22,8 @@ const fs = require('fs');
 const Utils = require('./structures/Utils');
 const Helpers = require('./structures/Helpers');
 
+console.errorLogs = [];
+
 client.commands = new Discord.Collection();
 client.aliases = new Discord.Collection();
 client.util = new Utils();
@@ -59,6 +61,9 @@ const EventHandler = require('./handlers/EventHandler'),
     ExpiredHandler = require('./handlers/ExpiredHandler');
 new EventHandler(client), new CommandHandler(client), new ExpiredHandler(client);
 
-process.on('uncaughtException', error => console.error(error));
+process.on('uncaughtException', error => {
+    console.error(error);
+    console.errorLogs.push(error.stack);
+});
 
 client.login(global.perpendicular ? client.config.perpendicularToken : client.config.token);

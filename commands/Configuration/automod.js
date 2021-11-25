@@ -39,7 +39,7 @@ module.exports = {
             massmention,
             walltext,
             maliciouslinks
-        } = automodGrab;
+        } = automodGrab;s
 
         const automodList = new Discord.MessageEmbed()
             .setColor(client.util.mainColor(message.guild))
