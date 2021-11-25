@@ -63,7 +63,7 @@ new EventHandler(client), new CommandHandler(client), new ExpiredHandler(client)
 
 process.on('uncaughtException', error => {
     console.error(error);
-    console.errorLogs.push(error.stack);
+    if (!console.errorLogs.includes(error.stack)) console.errorLogs.push(error.stack);
 });
 
 client.login(global.perpendicular ? client.config.perpendicularToken : client.config.token);
