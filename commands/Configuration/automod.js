@@ -1378,7 +1378,7 @@ module.exports = {
                     case 'add':
                         if (!bypassChannel)
                             return client.util.throwError(message, client.config.errors.missing_argument_channel);
-                        if (bypassChannel.type !== 'GUILD_TEXT')
+                        if (!bypassChannel.isText())
                             return client.util.throwError(message, client.config.errors.not_type_text_channel);
                         const alreadyInBypassList0 = await automodSchema.findOne({
                             guildID: message.guild.id,
@@ -1455,7 +1455,7 @@ module.exports = {
                             const channel = bypassChannels[i];
                             if (
                                 !message.guild.channels.cache.get(channel) ||
-                                message.guild.channels.cache.get(channel).type !== 'GUILD_TEXT'
+                                !message.guild.channels.cache.get(channel).isText()
                             ) {
                                 await automodSchema.updateOne(
                                     {
@@ -1472,7 +1472,7 @@ module.exports = {
 
                         const bypassChannels_ = bypassChannels
                             .map(channel => message.guild.channels.cache.get(channel))
-                            .filter(channel => channel.type === 'GUILD_TEXT')
+                            .filter(channel => channel.isText())
                             .join(', ');
                         bypassChannelsViewList.addField('Channels', bypassChannels_);
 

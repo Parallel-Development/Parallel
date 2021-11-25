@@ -1521,14 +1521,14 @@ module.exports = {
                 const bypassChannel = client.util.getChannel(interaction.guild, toggle['channel']);
                 if (toggle['method'] !== 'add' && toggle['method'] !== 'remove' && bypassChannel)
                     return client.util.throwError(interaction, 'A channel was provided but was not expected');
-                if (bypassChannel && bypassChannel.type !== 'GUILD_TEXT')
+                if (bypassChannel && !bypassChannel.type.isText())
                     return client.util.throwError(interaction, client.config.errors.not_type_text_channel);
 
                 switch (toggle['method']) {
                     case 'add':
                         if (!bypassChannel)
                             return client.util.throwError(interaction, client.config.errors.missing_argument_channel);
-                        if (bypassChannel.type !== 'GUILD_TEXT')
+                        if (!bypassChannel.isText())
                             return client.util.throwError(interaction, client.config.errors.not_type_text_channel);
                         const alreadyInBypassList0 = await automodSchema.findOne({
                             guildID: interaction.guild.id,
