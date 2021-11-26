@@ -50,7 +50,7 @@ class ExpiredHandler {
                             .addField('Reason', '[AUTO] Mute Expired')
                             .addField('Date', client.util.timestamp(Date.now()));
 
-                        member.send({ embeds: [unmuteDM] });
+                        await member.send({ embeds: [unmuteDM] }).catch(() => {});
                     }
 
                     new ExpiredLogger(

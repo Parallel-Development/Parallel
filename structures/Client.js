@@ -7,10 +7,10 @@ const ExpiredHandler = require('../handlers/ExpiredHandler');
 const ProcessEventsHandler = require('../handlers/ProcessEventsHandler');
 const fs = require('fs');
 
-class Client {
+class Client extends Discord.Client {
     constructor() {
 
-        this.client = new Discord.Client({
+        super({
             intents: [
                 Discord.Intents.FLAGS.GUILDS,
                 Discord.Intents.FLAGS.GUILD_MESSAGES,
@@ -23,9 +23,9 @@ class Client {
             }
         })
 
-        this.client.util = new Utils();
-        this.client.helpers = new Helpers();
-        this.client.cache = {
+        this.util = new Utils();
+        this.helpers = new Helpers();
+        this.cache = {
             maliciousLinks: [],
             whitelistedUsers: [],
             whitelistedServers: [],
@@ -33,11 +33,11 @@ class Client {
             settings: new Map(),
             automod: new Map()
         };
-        this.client.commands = new Discord.Collection();
-        this.client.aliases = new Discord.Collection();
-        this.client.events = new Discord.Collection();
-        this.client.categories = fs.readdirSync('./commands');
-        this.client.config = require('../config.json');
+        this.commands = new Discord.Collection();
+        this.aliases = new Discord.Collection();
+        this.events = new Discord.Collection();
+        this.categories = fs.readdirSync('./commands');
+        this.config = require('../config.json');
 
         global.collectionPrevention = [];
         global.confirmationRequests = [];
@@ -56,9 +56,9 @@ class Client {
 
         connectToMongoDB();
 
-        new EventHandler(this.client), 
-        new CommandHandler(this.client), 
-        new ExpiredHandler(this.client),
+        new EventHandler(this), 
+        new CommandHandler(this), 
+        new ExpiredHandler(this),
         new ProcessEventsHandler();
 
     }

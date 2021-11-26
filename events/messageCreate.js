@@ -299,7 +299,6 @@ module.exports = {
                 const userAFKInformation = afks.find(afk => afk.userID === mentionedAFKUsers.first().id);
 
                 if (Date.now() - userAFKInformation.date <= 5000) return;
-                const between = Date.now() - userAFKInformation.date;
                 if (mentionedAFKUsers.first().id !== message.author.id)
                     return message.reply({
                         content: `${mentionedAFKUsers.first()} went AFK ${client.util.timestamp(
@@ -488,7 +487,7 @@ module.exports = {
                         type: 'mute'
                     });
 
-                    if (member.permissions.has(Discord.Permissions.FLAGS.MANAGE_ROLES) && !removerolesonmute)
+                    if (member?.permissions?.has(Discord.Permissions.FLAGS.MANAGE_ROLES) && !removerolesonmute)
                         return client.util.throwError(
                             message,
                             'This command may not be effective on this member | If you have the **Remove Roles On Mute** module enabled, this may work'

@@ -112,28 +112,31 @@ module.exports = {
             });
 
             const guildWarnings = await warningSchema.findOne({ guildID: interaction.guild.id });
-            const mutesToExpire = guildWarnings.warnings.filter(
-                warning => warning.expires > Date.now() && warning.type === 'Mute'
-            );
 
-            for (let i = 0; i !== mutesToExpire.length; ++i) {
-                const mute = mutesToExpire[i];
+            if (guildWarnings.warnings?.length) {
+                const mutesToExpire = guildWarnings.warnings.filter(
+                    warning => warning.expires > Date.now() && warning.type === 'Mute'
+                );
 
-                await warningSchema.updateOne(
-                    {
-                        guildID: interaction.guild.id,
-                        warnings: {
-                            $elemMatch: {
-                                punishmentID: mute.punishmentID
+                for (let i = 0; i !== mutesToExpire.length; ++i) {
+                    const mute = mutesToExpire[i];
+
+                    await warningSchema.updateOne(
+                        {
+                            guildID: interaction.guild.id,
+                            warnings: {
+                                $elemMatch: {
+                                    punishmentID: mute.punishmentID
+                                }
+                            }
+                        },
+                        {
+                            $set: {
+                                'warnings.$.expires': Date.now()
                             }
                         }
-                    },
-                    {
-                        $set: {
-                            'warnings.$.expires': Date.now()
-                        }
-                    }
-                );
+                    );
+                }
             }
         }
 
