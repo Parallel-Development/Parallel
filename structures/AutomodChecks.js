@@ -152,7 +152,8 @@ class AutomodChecks {
                     !message.channel.permissionsFor(message.member).has(Discord.Permissions.FLAGS.ATTACH_FILES)
                 )
                     return new Automod(client, message, 'links').execute();
-            } else if (linkRegex.test(message.content.toLowerCase())) return new Automod(client, message, 'links').execute();
+            } else if (linkRegex.test(message.content.toLowerCase()))
+                return new Automod(client, message, 'links').execute();
         };
 
         return main();

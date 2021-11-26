@@ -33,7 +33,7 @@ class ExpiredLogger {
                 );
 
                 client.cache.settings.delete(message.guild.id);
-                
+
                 return;
             }
 

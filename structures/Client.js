@@ -18,10 +18,12 @@ class Client extends Discord.Client {
                 Discord.Intents.FLAGS.DIRECT_MESSAGES,
                 Discord.Intents.FLAGS.GUILD_BANS,
                 Discord.Intents.FLAGS.GUILD_VOICE_STATES
-            ], allowedMentions: {
-                parse: ['users'], repliedUser: false
+            ],
+            allowedMentions: {
+                parse: ['users'],
+                repliedUser: false
             }
-        })
+        });
 
         this.util = new Utils();
         this.helpers = new Helpers();
@@ -60,7 +62,6 @@ class Client extends Discord.Client {
         new CommandHandler(this), 
         new ExpiredHandler(this),
         new ProcessEventsHandler();
-
     }
 }
 
