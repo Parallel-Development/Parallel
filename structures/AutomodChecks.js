@@ -18,8 +18,8 @@ class AutomodChecks {
             // Malicious Link Check;
 
             if (client.cache.maliciousLinks.some(url => message.content.includes(url))) {
-                let punished = await new Automod(client, message, 'maliciouslinks').punished;
-                if (punished) return;
+                let punished = await new Automod(client, message, 'maliciouslinks').execute();
+                if (punished === false) return;
             }
 
             const matchRegex = /([\w-]+(?:(?:.[\w-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])/g;
@@ -40,8 +40,8 @@ class AutomodChecks {
                         client.cache.maliciousLinks = client.cache.maliciousLinks.concat(
                             data.matches.map(match => match.url)
                         );
-                    let punished = await new Automod(client, message, 'maliciouslinks').punished;
-                    if (punished) return;
+                    let punished = await new Automod(client, message, 'maliciouslinks').execute();
+                    if (punished === false) return;
                 }
             }
 
@@ -77,22 +77,22 @@ class AutomodChecks {
                                 .includes(word))
                 )
             ) {
-                let punished = await new Automod(client, message, 'filter').punished;
-                if (punished) return;
+                let punished = await new Automod(client, message, 'filter').execute();
+                if (punished === false) return;
             }
 
             // Mass Mention
 
             if (!edit && message.mentions.users.filter(user => !user.bot).size >= 5) {
-                let punished = await new Automod(client, message, 'massmention').punished;
-                if (punished) return;
+                let punished = await new Automod(client, message, 'massmention').execute();
+                if (punished === false) return;
             }
             // Walltext
 
             const walltextCheck = message.content.split('\n');
             if (walltextCheck.length >= 9 || message.content.length >= 700) {
-                let punished = await new Automod(client, message, 'walltext').punished;
-                if (punished) return;
+                let punished = new Automod(client, message, 'walltext').execute();
+                if (punished === false) return;
             }
             // Spam
 
@@ -102,8 +102,8 @@ class AutomodChecks {
                     let msgCount = userData.msgCount;
                     if (parseInt(msgCount) === 4) {
                         userMap.delete(message.author.id);
-                        let punished = await new Automod(client, message, 'fast').punished;
-                        if (punished) return;
+                        let punished = await new Automod(client, message, 'fast').execute();
+                        if (punished === false) return;
                     } else {
                         msgCount++;
                         userData.msgCount = msgCount;
@@ -125,8 +125,8 @@ class AutomodChecks {
 
             const inviteCheck = /discord(?:app)?.(?:com\/invite|gg)\/[a-zA-Z0-9]+\/?/i;
             if (inviteCheck.test(message.content.toLowerCase())) {
-                let punished = await new Automod(client, message, 'invites').punished;
-                if (punished) return;
+                let punished = await new Automod(client, message, 'invites').execute();
+                if (punished === false) return;
             }
             // Links
 
@@ -151,8 +151,8 @@ class AutomodChecks {
                     allowTenor.attachmentPermsOnly &&
                     !message.channel.permissionsFor(message.member).has(Discord.Permissions.FLAGS.ATTACH_FILES)
                 )
-                    return new Automod(client, message, 'links');
-            } else if (linkRegex.test(message.content.toLowerCase())) return new Automod(client, message, 'links');
+                    return new Automod(client, message, 'links').execute();
+            } else if (linkRegex.test(message.content.toLowerCase())) return new Automod(client, message, 'links').execute();
         };
 
         return main();

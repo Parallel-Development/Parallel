@@ -845,7 +845,7 @@ module.exports = {
                         });
                         break;
                     case 'tempmute':
-                        updateWalltext('tempmute');
+                        updateWalltext('tempmute', duration);
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed()

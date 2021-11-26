@@ -22,8 +22,6 @@ module.exports = {
             }
         }
 
-        console.log('All commands have been loaded!');
-
         return;
     }
 };

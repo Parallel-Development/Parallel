@@ -181,7 +181,12 @@ module.exports = {
                 interaction.customId === 'jumpToBack'
             )
                 return infractions.run(client, interaction);
+
+
+            return;
         }
+
+        if (!interaction.isCommand()) return;
 
         const cooldownInformation = client.helpers.cooldown.check(interaction.user.id);
         if (cooldownInformation.inCooldown === true) {
@@ -195,12 +200,11 @@ module.exports = {
                 );
             }
         } else client.helpers.cooldown.add(interaction.user.id);
-
-        if (!interaction.isCommand()) return;
         if (global.void && !client.config.developers.includes(interaction.user.id)) return;
 
         const command = client.slashCommands.get(interaction.commandName);
-        if (!command) return; // i guess?
+        console.log(command);
+        if (!command) return client.util.throwError(interaction, 'unexpected: the interaction command exists but a file could not be found associated with it. (This error was not supposed to occur. This did **not** occour due to missing permissions or bad syntax. Please report this case to a developer or via the bug report forms\n\n[Support Server](https://discord.gg/v2AV3XtnBM)\n[Bug Report Form](https://docs.google.com/forms/d/1DcWLQRBT367IivyisDL6YrH-19PrOmuwO4r2uj1idGw/edit)')
 
         if (command.developer && !client.config.developers.some(ID => ID === interaction.user.id))
             return client.util.throwError(interaction, 'developer commands cannot be ran by non-developers');
