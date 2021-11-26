@@ -60,7 +60,7 @@ module.exports = {
 
         const guildWarnings = await warningSchema.findOne({ guildID: interaction.guild.id });
         const bansToExpire = guildWarnings.warnings.filter(
-            warning => warning.expires > Date.now() && warning.type === 'Ban'
+            warning => warning.expires > Date.now() && warning.type === 'Ban' && warning.userID === member.id
         );
 
         if (bansToExpire.length) {

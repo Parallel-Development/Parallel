@@ -112,7 +112,7 @@ module.exports = {
 
             if (guildWarnings.warnings?.length) {
                 const mutesToExpire = guildWarnings.warnings.filter(
-                    warning => warning.expires > Date.now() && warning.type === 'Mute'
+                    warning => warning.expires > Date.now() && warning.type === 'Mute' && warning.userID === member.id
                 );
 
                 for (let i = 0; i !== mutesToExpire.length; ++i) {

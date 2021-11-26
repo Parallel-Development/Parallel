@@ -59,7 +59,7 @@ module.exports = {
 
         if (guildWarnings.warnings?.length) {
             const bansToExpire = guildWarnings.warnings.filter(
-                warning => warning.expires > Date.now() && warning.type === 'Ban'
+                warning => warning.expires > Date.now() && warning.type === 'Ban' && warning.userID === member.id
             );
 
             if (bansToExpire.length) {
