@@ -85,7 +85,6 @@ class ExpiredHandler {
 
             // remove all expired warnings
 
-
             await warningSchema.updateMany(
                 {},
                 {

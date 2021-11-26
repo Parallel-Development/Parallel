@@ -9,7 +9,6 @@ const fs = require('fs');
 
 class Client {
     constructor() {
-
         this.client = new Discord.Client({
             intents: [
                 Discord.Intents.FLAGS.GUILDS,
@@ -18,10 +17,12 @@ class Client {
                 Discord.Intents.FLAGS.DIRECT_MESSAGES,
                 Discord.Intents.FLAGS.GUILD_BANS,
                 Discord.Intents.FLAGS.GUILD_VOICE_STATES
-            ], allowedMentions: {
-                parse: ['users'], repliedUser: false
+            ],
+            allowedMentions: {
+                parse: ['users'],
+                repliedUser: false
             }
-        })
+        });
 
         this.client.util = new Utils();
         this.client.helpers = new Helpers();
@@ -56,11 +57,10 @@ class Client {
 
         connectToMongoDB();
 
-        new EventHandler(this.client), 
-        new CommandHandler(this.client), 
-        new ExpiredHandler(this.client),
+        new EventHandler(this.client);
+        new CommandHandler(this.client);
+        new ExpiredHandler(this.client);
         new ProcessEventsHandler();
-
     }
 }
 

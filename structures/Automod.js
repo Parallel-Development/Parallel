@@ -10,9 +10,7 @@ const Discord = require('discord.js');
 const automodCooldown = new Set();
 
 class Automod {
-
     constructor(client, message, type) {
-
         if (!client) throw new Error('required argument `client` is missing');
         if (!message) throw new Error('required argument `message` is missing');
         if (!type) throw new Error('required argument `type` is missing');
@@ -25,13 +23,12 @@ class Automod {
     }
 
     async execute() {
-
         const message = this.message;
         const client = this.client;
         const type = this.type;
 
         const automod = await automodSchema.findOne({ guildID: message.guild.id });
-        
+
         const {
             fast,
             massmention,
@@ -62,7 +59,7 @@ class Automod {
         const { autowarnexpire, baninfo, muterole, removerolesonmute } = settings;
 
         const structure = async (name, reason, time, color) => {
-            message.delete().catch(() => { });
+            message.delete().catch(() => {});
             if (name === 'disabled') {
                 return false;
             }
@@ -131,9 +128,10 @@ class Automod {
             );
             new ModerationLogger(
                 client,
-                `${name.charAt(0).toUpperCase() +
-                name.slice(1) +
-                (name.endsWith('e') ? '' : name.endsWith('ban') ? 'ne' : 'e')
+                `${
+                    name.charAt(0).toUpperCase() +
+                    name.slice(1) +
+                    (name.endsWith('e') ? '' : name.endsWith('ban') ? 'ne' : 'e')
                 }d`,
                 message.guild.me,
                 message.member,
@@ -147,7 +145,8 @@ class Automod {
             const punishedEmbed = new Discord.MessageEmbed()
                 .setColor(color)
                 .setDescription(
-                    `${member.toString()} has been automatically ${name.endsWith('e') ? name : name.endsWith('ban') ? name + 'ne' : name + 'e'
+                    `${member.toString()} has been automatically ${
+                        name.endsWith('e') ? name : name.endsWith('ban') ? name + 'ne' : name + 'e'
                     }d with ID \`${punishmentID}\``
                 );
 
@@ -184,19 +183,12 @@ class Automod {
             punishmentID = client.util.generateID();
 
             if (instance.punishment === 'ban' || instance.punishment === 'tempban') {
-                new DMUserInfraction(
-                    client,
-                    'banned',
-                    client.config.colors.punishment[2],
-                    message,
-                    message.member,
-                    {
-                        reason: _reason,
-                        punishmentID: punishmentID,
-                        time: instance.duration,
-                        baninfo: baninfo !== 'none' ? baninfo : null
-                    }
-                );
+                new DMUserInfraction(client, 'banned', client.config.colors.punishment[2], message, message.member, {
+                    reason: _reason,
+                    punishmentID: punishmentID,
+                    time: instance.duration,
+                    baninfo: baninfo !== 'none' ? baninfo : null
+                });
 
                 new ModerationLogger(client, 'Banned', message.guild.me, message.member, message.channel, {
                     reason: _reason,
@@ -219,13 +211,11 @@ class Automod {
                 await message.guild.members.ban(message.member, { reason: _reason });
             } else if (instance.punishment === 'mute' || instance.punishment === 'tempmute') {
                 const memberRoles = removerolesonmute ? member.roles.cache.map(roles => roles.id) : [];
-                const unmanagableRoles = message.member.roles.cache
-                    .filter(role => role.managed)
-                    .map(roles => roles.id);
+                const unmanagableRoles = message.member.roles.cache.filter(role => role.managed).map(roles => roles.id);
 
                 if (!message.member.roles.cache.has(role.id)) {
                     if (removerolesonmute) {
-                        await member.voice.disconnect().catch(() => { });
+                        await member.voice.disconnect().catch(() => {});
                         await member.roles.set([role, ...unmanagableRoles]);
                     } else await client.util.muteMember(message, member, role);
                 }
@@ -301,7 +291,7 @@ class Automod {
                 const msg = messages[i];
                 if (msg.author.id === message.author.id) userMessages.push(msg);
             }
-            if (fast !== 'disabled') message.channel.bulkDelete(userMessages).catch(() => { });
+            if (fast !== 'disabled') message.channel.bulkDelete(userMessages).catch(() => {});
         }
 
         switch (type) {
@@ -313,15 +303,15 @@ class Automod {
                     maliciouslinksTempMuteDuration
                         ? maliciouslinksTempMuteDuration
                         : maliciouslinksTempBanDuration
-                            ? maliciouslinksTempBanDuration
-                            : null,
+                        ? maliciouslinksTempBanDuration
+                        : null,
                     maliciouslinks === 'warn'
                         ? client.config.colors.punishment[0]
                         : maliciouslinks === 'mute' || maliciouslinks === 'tempmute'
-                            ? client.config.colors.punishment[1]
-                            : maliciouslinks === 'ban' || maliciouslinks === 'tempban'
-                                ? client.config.colors.punishment[2]
-                                : null
+                        ? client.config.colors.punishment[1]
+                        : maliciouslinks === 'ban' || maliciouslinks === 'tempban'
+                        ? client.config.colors.punishment[2]
+                        : null
                 );
             case 'filter':
                 if (filter === 'disabled') return false;
@@ -331,15 +321,15 @@ class Automod {
                     filterTempMuteDuration
                         ? filterTempMuteDuration
                         : filterTempBanDuration
-                            ? filterTempBanDuration
-                            : null,
+                        ? filterTempBanDuration
+                        : null,
                     filter === 'warn'
                         ? client.config.colors.punishment[0]
                         : filter === 'mute' || filter === 'tempmute'
-                            ? client.config.colors.punishment[1]
-                            : filter === 'ban' || filter === 'tempban'
-                                ? client.config.colors.punishment[2]
-                                : null
+                        ? client.config.colors.punishment[1]
+                        : filter === 'ban' || filter === 'tempban'
+                        ? client.config.colors.punishment[2]
+                        : null
                 );
             case 'massmention':
                 if (massmention === 'disabled') return false;
@@ -349,15 +339,15 @@ class Automod {
                     massmentionTempMuteDuration
                         ? massmentionTempMuteDuration
                         : massmentionTempBanDuration
-                            ? massmentionTempBanDuration
-                            : null,
+                        ? massmentionTempBanDuration
+                        : null,
                     massmention === 'warn'
                         ? client.config.colors.punishment[0]
                         : massmention === 'mute' || massmention === 'tempmute'
-                            ? client.config.colors.punishment[1]
-                            : massmention === 'ban' || massmention === 'tempban'
-                                ? client.config.colors.punishment[2]
-                                : null
+                        ? client.config.colors.punishment[1]
+                        : massmention === 'ban' || massmention === 'tempban'
+                        ? client.config.colors.punishment[2]
+                        : null
                 );
             case 'walltext':
                 if (walltext === 'disabled') return false;
@@ -367,15 +357,15 @@ class Automod {
                     walltextTempMuteDuration
                         ? walltextTempMuteDuration
                         : walltextTempBanDuration
-                            ? walltextTempBanDuration
-                            : null,
+                        ? walltextTempBanDuration
+                        : null,
                     walltext === 'warn'
                         ? client.config.colors.punishment[0]
                         : walltext === 'mute' || walltext === 'tempmute'
-                            ? client.config.colors.punishment[1]
-                            : walltext === 'ban' || walltext === 'tempban'
-                                ? client.config.colors.punishment[2]
-                                : null
+                        ? client.config.colors.punishment[1]
+                        : walltext === 'ban' || walltext === 'tempban'
+                        ? client.config.colors.punishment[2]
+                        : null
                 );
 
             case 'fast':
@@ -387,10 +377,10 @@ class Automod {
                     fast === 'warn'
                         ? client.config.colors.punishment[0]
                         : fast === 'mute' || fast === 'tempmute'
-                            ? client.config.colors.punishment[1]
-                            : fast === 'ban' || fast === 'tempban'
-                                ? client.config.colors.punishment[2]
-                                : null
+                        ? client.config.colors.punishment[1]
+                        : fast === 'ban' || fast === 'tempban'
+                        ? client.config.colors.punishment[2]
+                        : null
                 );
             case 'invites':
                 if (invites === 'disabled') return false;
@@ -400,36 +390,32 @@ class Automod {
                     invitesTempMuteDuration
                         ? invitesTempMuteDuration
                         : invitesTempBanDuration
-                            ? invitesTempBanDuration
-                            : null,
+                        ? invitesTempBanDuration
+                        : null,
                     invites === 'warn'
                         ? client.config.colors.punishment[0]
                         : invites === 'mute' || invites === 'tempmute'
-                            ? client.config.colors.punishment[1]
-                            : invites === 'ban' || invites === 'tempban'
-                                ? client.config.colors.punishment[2]
-                                : null
+                        ? client.config.colors.punishment[1]
+                        : invites === 'ban' || invites === 'tempban'
+                        ? client.config.colors.punishment[2]
+                        : null
                 );
             case 'links':
                 if (links === 'disabled') return false;
                 return structure(
                     links,
                     `[AUTO] Sending links`,
-                    linksTempMuteDuration
-                        ? linksTempMuteDuration
-                        : linksTempBanDuration
-                            ? linksTempBanDuration
-                            : null,
+                    linksTempMuteDuration ? linksTempMuteDuration : linksTempBanDuration ? linksTempBanDuration : null,
                     links === 'warn'
                         ? client.config.colors.punishment[0]
                         : links === 'mute' || links === 'tempmute'
-                            ? client.config.colors.punishment[1]
-                            : links === 'ban' || links === 'tempban'
-                                ? client.config.colors.punishment[2]
-                                : null
+                        ? client.config.colors.punishment[1]
+                        : links === 'ban' || links === 'tempban'
+                        ? client.config.colors.punishment[2]
+                        : null
                 );
         }
-    };
+    }
 }
 
 module.exports = Automod;
