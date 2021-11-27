@@ -118,11 +118,12 @@ module.exports = {
                     userID: member.id,
                     type: 'mute'
                 });
-                if (member.permissions.has(Discord.Permissions.FLAGS.MANAGE_ROLES) && !removerolesonmute)
+                if (member?.permissions?.has(Discord.Permissions.FLAGS.MANAGE_ROLES) && !removerolesonmute)
                     return client.util.throwError(
                         interaction,
                         'This command may not be effective on this member | If you have the **Remove Roles On Mute** module enabled, this may work'
                     );
+
                 const role =
                     interaction.guild.roles.cache.get(muterole) || (await client.util.createMuteRole(interaction));
                 if (role.position >= interaction.guild.me.roles.highest.position)
@@ -136,12 +137,24 @@ module.exports = {
                         type: 'mute'
                     });
                 }
-                const memberRoles = removerolesonmute ? member.roles.cache.map(roles => roles.id) : [];
-                const unmanagableRoles = removerolesonmute
-                    ? member.roles.cache.filter(roles => roles.managed).map(roles => roles.id)
-                    : [];
-                if (removerolesonmute) await member.roles.set([role, ...unmanagableRoles]);
-                else await client.util.muteMember(interaction, member, role);
+
+                if (member.user) {
+                    const unmanagableRoles = removerolesonmute
+                        ? member.roles.cache.filter(roles => roles.managed).map(roles => roles.id)
+                        : [];
+                    if (removerolesonmute) await member.roles.set([role, ...unmanagableRoles]);
+                    else await client.util.muteMember(interaction, member, role);
+
+                    new DMUserInfraction(client, 'muted', client.config.colors.punishment[1], interaction, member, {
+                        reason: shortcmd.reason,
+                        punishmentID: punishmentID,
+                        time: duration
+                    });
+
+                }
+
+                const memberRoles = removerolesonmute ? member?.roles?.cache?.map(roles => roles.id) : [];
+
                 new Infraction(client, 'Mute', interaction, interaction.member, member, {
                     reason: shortcmd.reason,
                     punishmentID: punishmentID,
@@ -152,11 +165,6 @@ module.exports = {
                     reason: shortcmd.reason,
                     time: duration ? Date.now() + duration : 'Never',
                     roles: memberRoles
-                });
-                new DMUserInfraction(client, 'muted', client.config.colors.punishment[1], interaction, member, {
-                    reason: shortcmd.reason,
-                    punishmentID: punishmentID,
-                    time: duration
                 });
                 new ModerationLogger(client, 'Muted', interaction.member, member, interaction.channel, {
                     reason: shortcmd.reason,

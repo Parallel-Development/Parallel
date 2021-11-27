@@ -510,13 +510,22 @@ module.exports = {
                         });
                     }
 
-                    const memberRoles = removerolesonmute ? member.roles.cache.map(roles => roles.id) : [];
-                    const unmanagableRoles = removerolesonmute
-                        ? member.roles.cache.filter(roles => roles.managed).map(roles => roles.id)
-                        : [];
+                    if (member.user) {
+                        const unmanagableRoles = removerolesonmute
+                            ? member.roles.cache.filter(roles => roles.managed).map(roles => roles.id)
+                            : [];
 
-                    if (removerolesonmute) await member.roles.set([role, ...unmanagableRoles]);
-                    else await client.util.muteMember(message, member, role);
+                        if (removerolesonmute) await member.roles.set([role, ...unmanagableRoles]);
+                        else await client.util.muteMember(message, member, role);
+
+                        new DMUserInfraction(client, 'muted', client.config.colors.punishment[1], message, member, {
+                            reason: shortcmd.reason,
+                            punishmentID: punishmentID,
+                            time: duration
+                        });
+                    }
+
+                    const memberRoles = removerolesonmute ? member?.roles?.cache?.map(roles => roles.id) : [];
 
                     new Infraction(client, 'Mute', message, message.member, member, {
                         reason: shortcmd.reason,
@@ -528,11 +537,6 @@ module.exports = {
                         reason: shortcmd.reason,
                         time: duration ? Date.now() + duration : 'Never',
                         roles: memberRoles
-                    });
-                    new DMUserInfraction(client, 'muted', client.config.colors.punishment[1], message, member, {
-                        reason: shortcmd.reason,
-                        punishmentID: punishmentID,
-                        time: duration
                     });
                     new ModerationLogger(client, 'Muted', message.member, member, message.channel, {
                         reason: shortcmd.reason,
