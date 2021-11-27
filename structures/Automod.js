@@ -59,7 +59,6 @@ class Automod {
         const { autowarnexpire, baninfo, muterole, removerolesonmute } = settings;
 
         const structure = async (name, reason, time, color) => {
-
             if (onlyCheck) return;
 
             message.delete().catch(() => {});

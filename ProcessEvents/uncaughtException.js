@@ -6,4 +6,4 @@ module.exports = {
         console.error(error);
         if (!console.errorLogs.includes(error.stack)) console.errorLogs.push(error.stack);
     }
-}
+};
