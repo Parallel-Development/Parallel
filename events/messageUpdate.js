@@ -35,7 +35,7 @@ module.exports = {
             !channelBypassed &&
             !roleBypassed
         )
-            new AutomodChecks(client, message, true);
+            await new AutomodChecks(client, message, true).execute();
 
         const settings = await settingsSchema.findOne({
             guildID: message.guild.id

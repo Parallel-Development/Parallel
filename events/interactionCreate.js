@@ -1,14 +1,12 @@
 const Discord = require('discord.js');
-const { MessageButton, MessageActionRow } = Discord;
 const settingsSchema = require('../schemas/settings-schema');
 const automodSchema = require('../schemas/automod-schema');
-const blacklistSchema = require('../schemas/blacklist-schema');
 const warningSchema = require('../schemas/warning-schema');
 const lockSchema = require('../schemas/lock-schema');
 const systemSchema = require('../schemas/system-schema');
 const tagSchema = require('../schemas/tag-schema');
 const afkSchema = require('../schemas/afk-schema');
-const cooldown = new Set();
+const AutomodChecks = require('../structures/AutomodChecks');
 const rps = require('../Buttons/rock-paper-scissors');
 const infractions = require('../Buttons/infractions');
 
@@ -202,7 +200,6 @@ module.exports = {
         if (global.void && !client.config.developers.includes(interaction.user.id)) return;
 
         const command = client.slashCommands.get(interaction.commandName);
-        console.log(command);
         if (!command)
             return client.util.throwError(
                 interaction,
@@ -252,14 +249,12 @@ module.exports = {
         )
             return interaction.reply({ content: 'Commands are disabled in this channel', ephemeral: true });
 
+        const options = interaction.options.data.reduce((map, arg) => ((map[arg.name] = arg.value), map), {});
+
         try {
-            command.execute(
-                client,
-                interaction,
-                interaction.options.data.reduce((map, arg) => ((map[arg.name] = arg.value), map), {})
-            );
+            command.execute(client, interaction, options);
         } catch {
-            interaction.reply({ content: 'Error executing command', ephemeral: true });
+            return interaction.reply({ content: 'Error executing command', ephemeral: true });
         }
     }
 };

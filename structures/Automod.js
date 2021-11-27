@@ -22,7 +22,7 @@ class Automod {
         this.type = type;
     }
 
-    async execute() {
+    async execute(onlyCheck = false) {
         const message = this.message;
         const client = this.client;
         const type = this.type;
@@ -59,11 +59,14 @@ class Automod {
         const { autowarnexpire, baninfo, muterole, removerolesonmute } = settings;
 
         const structure = async (name, reason, time, color) => {
-            message.delete().catch(() => {});
-            if (name === 'disabled') {
-                return false;
-            }
+
+            console.log(name, reason, color, onlyCheck);
+
+            if (onlyCheck) return;
+
+            message.delete().catch(() => { });
             if (name === 'delete') return;
+
 
             if (automodCooldown.has(message.author.id)) return;
             else {
@@ -297,6 +300,7 @@ class Automod {
         switch (type) {
             case 'maliciouslinks':
                 if (maliciouslinks === 'disabled') return false;
+                console.log('ok...');
                 return structure(
                     maliciouslinks,
                     `[AUTO] Sending a malicious link`,

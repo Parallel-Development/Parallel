@@ -257,8 +257,11 @@ module.exports = {
             !isModerator &&
             !channelBypassed &&
             !roleBypassed
-        )
-            new AutomodChecks(client, message);
+        ) {
+
+            const punished = await new AutomodChecks(client, message).execute();
+            if (punished) return;
+        }
 
         if (
             new RegExp(`^<@!?${client.user.id}>`).test(message.content) &&
@@ -326,7 +329,7 @@ module.exports = {
                 if (message.member.displayName.startsWith('[AFK] '))
                     await message.member.setNickname(`${message.member.displayName.slice(5)}`).catch(() => {});
 
-                const msg = await message.reply(`Welcome back, I removed your AFK`);
+                const msg = await message.reply(`Welcome back, I removed your AFK`).catch(() => {});
                 return setTimeout(() => msg.delete(), 5000);
             }
 
