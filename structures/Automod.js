@@ -287,7 +287,7 @@ class Automod {
             const userMessages = [];
             const _messages = await message.channel.messages.fetch({ limit: 100 });
             const messages = [..._messages.values()];
-            for(let i = 0; i !== 5; ++i) {
+            for (let i = 0; i !== 5; ++i) {
                 const msg = messages[i];
                 if (msg.author.id === message.author.id) userMessages.push(msg);
             }
