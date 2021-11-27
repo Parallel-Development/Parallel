@@ -258,7 +258,6 @@ module.exports = {
             !channelBypassed &&
             !roleBypassed
         ) {
-
             const punished = await new AutomodChecks(client, message).execute();
             if (punished) return;
         }

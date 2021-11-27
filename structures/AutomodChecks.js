@@ -16,7 +16,6 @@ class AutomodChecks {
     }
 
     async execute(onlyCheck = false) {
-
         const client = this.client;
         const message = this.message;
         const edit = this.edit;
@@ -168,7 +167,7 @@ class AutomodChecks {
             let punished = await new Automod(client, message, 'links').execute(onlyCheck);
             if (punished !== false) return true;
         }
-    };
+    }
 }
 
 module.exports = AutomodChecks;

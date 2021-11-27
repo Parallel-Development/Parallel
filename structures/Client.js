@@ -9,7 +9,6 @@ const fs = require('fs');
 
 class Client extends Discord.Client {
     constructor() {
-
         super({
             intents: [
                 Discord.Intents.FLAGS.GUILDS,
@@ -58,10 +57,7 @@ class Client extends Discord.Client {
 
         connectToMongoDB();
 
-        new EventHandler(this), 
-        new CommandHandler(this), 
-        new ExpiredHandler(this),
-        new ProcessEventsHandler();
+        new EventHandler(this), new CommandHandler(this), new ExpiredHandler(this), new ProcessEventsHandler();
     }
 }
 

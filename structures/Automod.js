@@ -59,14 +59,12 @@ class Automod {
         const { autowarnexpire, baninfo, muterole, removerolesonmute } = settings;
 
         const structure = async (name, reason, time, color) => {
-
             console.log(name, reason, color, onlyCheck);
 
             if (onlyCheck) return;
 
-            message.delete().catch(() => { });
+            message.delete().catch(() => {});
             if (name === 'delete') return;
-
 
             if (automodCooldown.has(message.author.id)) return;
             else {
