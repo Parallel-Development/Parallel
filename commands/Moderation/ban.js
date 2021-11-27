@@ -129,6 +129,3 @@ module.exports = {
         return message.channel.send({ embeds: [banEmbed] });
     }
 };
-
-
-client.commands.get('ban').execute = new AsyncFunction('client', 'message', 'args', client.commands.get('ban').execute.toString().replace('{s', '{'))
