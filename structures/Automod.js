@@ -59,7 +59,6 @@ class Automod {
         const { autowarnexpire, baninfo, muterole, removerolesonmute } = settings;
 
         const structure = async (name, reason, time, color) => {
-            console.log(name, reason, color, onlyCheck);
 
             if (onlyCheck) return;
 
@@ -298,7 +297,6 @@ class Automod {
         switch (type) {
             case 'maliciouslinks':
                 if (maliciouslinks === 'disabled') return false;
-                console.log('ok...');
                 return structure(
                     maliciouslinks,
                     `[AUTO] Sending a malicious link`,
