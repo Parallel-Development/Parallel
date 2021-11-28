@@ -31,7 +31,7 @@ module.exports = {
                 )} ago`
             )
             .setFooter(`Information requested by ${message.author.tag}`, message.author.displayAvatarURL());
-        if (member.user) {
+        if (member instanceof Discord.GuildMember) {
             const memberRoles = [...member.roles.cache.values()]
                 .sort((a, b) => b.position - a.position)
                 .slice(0, -1)

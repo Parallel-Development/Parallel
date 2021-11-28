@@ -60,7 +60,7 @@ module.exports = {
                 (await client.util.getMember(interaction.guild, args['target'])) ||
                 (await client.util.getUser(client, args['target']));
             if (!member) return client.util.throwError(interaction, client.config.errors.missing_argument_user);
-            if (member.user) {
+            if (member instanceof Discord.GuildMember) {
                 if (member.id === client.user.id)
                     return client.util.throwError(interaction, client.config.errors.cannot_punish_myself);
                 if (member.id === interaction.member.id)
@@ -81,7 +81,7 @@ module.exports = {
                     .then(bans => bans.find(ban => ban.user.id === member.id));
                 if (alreadyBanned) return client.util.throwError(interaction, 'This user is already banned');
                 const { baninfo } = settings;
-                if (member.user)
+                if (member instanceof Discord.GuildMember)
                     await new DMUserInfraction(
                         client,
                         'banned',
@@ -138,7 +138,7 @@ module.exports = {
                     });
                 }
 
-                if (member.user) {
+                if (member instanceof Discord.GuildMember) {
                     const unmanagableRoles = removerolesonmute
                         ? member.roles.cache.filter(roles => roles.managed).map(roles => roles.id)
                         : [];

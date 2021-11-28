@@ -427,7 +427,7 @@ module.exports = {
                     (await client.util.getUser(client, args[0]));
                 if (!member) return client.util.throwError(message, client.config.errors.missing_argument_user);
 
-                if (member.user) {
+                if (member instanceof Discord.GuildMember) {
                     if (member.id === client.user.id)
                         return client.util.throwError(message, client.config.errors.cannot_punish_myself);
                     if (member.id === message.member.id)
@@ -451,7 +451,7 @@ module.exports = {
 
                     const { baninfo } = settings;
 
-                    if (member.user)
+                    if (member instanceof Discord.GuildMember)
                         await new DMUserInfraction(
                             client,
                             'banned',
@@ -510,7 +510,7 @@ module.exports = {
                         });
                     }
 
-                    if (member.user) {
+                    if (member instanceof Discord.GuildMember) {
                         const unmanagableRoles = removerolesonmute
                             ? member.roles.cache.filter(roles => roles.managed).map(roles => roles.id)
                             : [];

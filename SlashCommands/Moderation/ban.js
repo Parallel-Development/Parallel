@@ -34,7 +34,7 @@ module.exports = {
         if (time && time > 315576000000) return client.util.throwError(interaction, client.config.errors.time_too_long);
         const reason = args['reason'] || 'Unspecified';
 
-        if (member.user) {
+        if (member instanceof Discord.GuildMember) {
             if (member.id === client.user.id)
                 return client.util.throwError(interaction, client.config.errors.cannot_punish_myself);
             if (member.id === interaction.member.id)
@@ -90,7 +90,7 @@ module.exports = {
             userID: member.id
         });
 
-        if (member.user)
+        if (member instanceof Discord.GuildMember)
             await new DMUserInfraction(client, 'banned', client.config.colors.punishment[2], interaction, member, {
                 reason: reason,
                 punishmentID: punishmentID,

@@ -75,7 +75,7 @@ module.exports = {
 
         if (!member) return client.util.throwError(interaction, client.config.errors.invalid_member);
 
-        if (member.user) {
+        if (member instanceof Discord.GuildMember) {
             if (member.id === client.user.id)
                 return client.util.throwError(interaction, client.config.errors.cannot_punish_myself);
             if (member.id === interaction.member.id)
