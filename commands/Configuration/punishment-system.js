@@ -70,7 +70,7 @@ module.exports = {
             });
         }
 
-        const punishment = args[1];
+        const punishment = args[1]?.toLowerCase();
         if (warningsCount && !punishment)
             return message.reply(
                 `Please specify what punishment a user should be given for reaching \`${warningsCount}\` warnings`
@@ -127,7 +127,7 @@ module.exports = {
         };
 
         const duration = args[2] ? ms(args[2]) : null;
-        if (!duration && args[1] && (args[1] === 'tempmute' || args[1] === 'temban')) {
+        if (!duration && args[1] && (args[1] === 'tempmute' || args[1] === 'tempban')) {
             if (!args[2]) return client.util.throwError(message, client.config.errors.missing_argument_duration);
             else return client.util.throwError(message, client.config.errors.bad_duration);
         } else if (duration && duration > 315576000000)
