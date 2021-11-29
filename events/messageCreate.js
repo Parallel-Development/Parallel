@@ -510,6 +510,8 @@ module.exports = {
                         });
                     }
 
+                    const memberRoles = removerolesonmute ? member?.roles?.cache?.map(roles => roles.id) : [];
+
                     if (member instanceof Discord.GuildMember) {
                         const unmanagableRoles = removerolesonmute
                             ? member.roles.cache.filter(roles => roles.managed).map(roles => roles.id)
@@ -524,8 +526,6 @@ module.exports = {
                             time: duration
                         });
                     }
-
-                    const memberRoles = removerolesonmute ? member?.roles?.cache?.map(roles => roles.id) : [];
 
                     new Infraction(client, 'Mute', message, message.member, member, {
                         reason: shortcmd.reason,
