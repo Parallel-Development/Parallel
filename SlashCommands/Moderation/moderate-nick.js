@@ -46,7 +46,7 @@ module.exports = {
 
         let failedToSend = false;
         if (args['dm'] === true) {
-            let reason = args['reason'];
+            let reason = args['reason'] || 'Unspecified';
             if (reason.length >= 1024) reason = await client.util.createBin(reason);
             await member
                 .send(

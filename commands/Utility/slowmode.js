@@ -42,14 +42,16 @@ module.exports = {
                 'the current slowmode + the slowmode increment exceeds the 21,600 second limit!'
             );
 
-        if (slowmode < 0.5) channel.setRateLimitPerUser(0);
-        else channel.setRateLimitPerUser(slowmode);
+        let newChannelState;
+
+        if (slowmode < 0.5) newChannelState = await channel.setRateLimitPerUser(0);
+        else newChannelState = await channel.setRateLimitPerUser(parseInt(slowmode));
 
         const slowmodeEmbed = new Discord.MessageEmbed()
             .setColor(client.util.mainColor(message.guild))
             .setDescription(
                 `${client.config.emotes.success} Set the slowmode for ${channel} to \`${
-                    slowmode >= 0 ? client.util.duration(slowmode * 1000) : '0 seconds'
+                    client.util.duration(newChannelState.rateLimitPerUser * 1000)
                 }\``
             );
 

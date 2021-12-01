@@ -50,7 +50,7 @@ module.exports = {
                 bulkDeleteMessage.delete();
             }, 5000);
         } else {
-            const deletedAmount = await message.channel.bulkDelete(amount, true);
+            const deletedAmount = await message.channel.bulkDelete(amount, true).catch(() => {});
             if (!deletedAmount.size)
                 return message.channel.send(
                     'Deleted 0 messages; either there are no messages in this channel or the messages are too old'

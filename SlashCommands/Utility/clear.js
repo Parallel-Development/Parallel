@@ -53,7 +53,7 @@ module.exports = {
                 );
             const _msg = await interaction.editReply({ embeds: [bulkDeleteEmbed] });
         } else {
-            const deletedAmount = await interaction.channel.bulkDelete(amount, true);
+            const deletedAmount = await interaction.channel.bulkDelete(amount, true).catch(() => {});
             if (!deletedAmount.size)
                 return interaction.editReply(
                     'Deleted 0 messages; either there are no messages in this channel or the messages are too old'

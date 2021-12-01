@@ -40,7 +40,7 @@ class AutomodChecks {
                 .body({ message: message.content })
                 .send();
 
-            const data = res.json();
+            const data = res.json().catch(() => {});
             if (data.match) {
                 if (
                     data.matches.length &&

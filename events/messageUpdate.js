@@ -10,7 +10,7 @@ module.exports = {
     async execute(client, oldMessage, message) {
         if (global.void === true && !client.config.developers.includes(message.author.id)) return;
 
-        if (message.author.bot || !message.guild || oldMessage.content === message.content) return;
+        if (message.author.bot || !message.guild || oldMessage.content === message.content || !message.content || !oldMessage.content) return;
 
         const getModerators = await settingsSchema.findOne({
             guildID: message.guild.id
