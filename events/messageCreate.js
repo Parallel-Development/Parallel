@@ -16,7 +16,6 @@ const Punishment = require('../structures/Punishment');
 const AutomodChecks = require('../structures/AutomodChecks');
 
 const Discord = require('discord.js');
-const notMutedCache = require('../structures/Punishment').cache;
 
 module.exports = {
     name: 'messageCreate',
