@@ -1521,7 +1521,7 @@ module.exports = {
                 const bypassChannel = client.util.getChannel(interaction.guild, toggle['channel']);
                 if (toggle['method'] !== 'add' && toggle['method'] !== 'remove' && bypassChannel)
                     return client.util.throwError(interaction, 'A channel was provided but was not expected');
-                if (bypassChannel && !bypassChannel.type.isText())
+                if (bypassChannel && !bypassChannel.isText())
                     return client.util.throwError(interaction, client.config.errors.not_type_text_channel);
 
                 switch (toggle['method']) {
