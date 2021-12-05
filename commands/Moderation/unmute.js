@@ -18,7 +18,7 @@ module.exports = {
         if (!args[0]) return client.util.throwError(message, client.config.errors.missing_argument_member);
 
         const reason = args.slice(1).join(' ') || 'Unspecified';
-        const punishmentID = client.util.generateID();
+        const punishmentID = client.util.createSnowflake();
 
         const settings = await settingsSchema.findOne({
             guildID: message.guild.id

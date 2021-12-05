@@ -403,7 +403,7 @@ module.exports = {
             else if (shortcmd.type === 'ban' || shortcmd.type === 'tempban')
                 permissions = Discord.Permissions.FLAGS.BAN_MEMBERS;
 
-            const punishmentID = client.util.generateID();
+            const punishmentID = client.util.createSnowflake();
             const duration = shortcmd.duration !== 'Permanent' ? shortcmd.duration : null;
 
             if (

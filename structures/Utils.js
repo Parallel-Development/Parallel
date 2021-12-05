@@ -4,7 +4,6 @@ const FlakeIdGen = require('flake-idgen'),
     generator = new FlakeIdGen(),
     intformat = require('biguint-format');
 const settingsSchema = require('../schemas/settings-schema');
-const ms_ = require('ms');
 
 class Utils {
     async createBin(data) {
@@ -79,7 +78,7 @@ class Utils {
         return `<t:${Math.floor(time / 1000)}${relative ? ':R' : ''}>`;
     }
 
-    generateID() {
+    createSnowflake() {
         return intformat(generator.next());
     }
 

@@ -31,7 +31,7 @@ module.exports = {
         if (member.id === message.guild.ownerId)
             return client.util.throwError(message, client.config.errors.cannot_punish_owner);
 
-        const punishmentID = client.util.generateID();
+        const punishmentID = client.util.createSnowflake();
 
         const reason = args.slice(1).join(' ') || 'Unspecified';
 

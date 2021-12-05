@@ -30,7 +30,7 @@ module.exports = {
         if (member === message.guild.owner)
             return client.util.throwError(message, client.config.errors.cannot_punish_owner);
 
-        const punishmentID = client.util.generateID();
+        const punishmentID = client.util.createSnowflake();
 
         const __time = args[1];
         let time = parseInt(__time) && __time !== '' ? ms(__time) : null;

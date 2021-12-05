@@ -50,37 +50,39 @@ module.exports = {
                 return client.util.throwError(interaction, client.config.errors.cannot_punish_owner);
         }
 
-        const punishmentID = client.util.generateID();
+        const punishmentID = client.util.createSnowflake();
 
         const settings = await settingsSchema.findOne({
             guildID: interaction.guild.id
         });
-        const { baninfo } = settings;
-        const { delModCmds } = settings;
+        const { baninfo, delModCmds } = settings;
 
         const guildWarnings = await warningSchema.findOne({ guildID: interaction.guild.id });
-        const bansToExpire = guildWarnings.warnings.filter(
-            warning => warning.expires > Date.now() && warning.type === 'Ban' && warning.userID === member.id
-        );
 
-        if (bansToExpire.length) {
-            for (let i = 0; i !== bansToExpire.length; ++i) {
-                const ban = bansToExpire[i];
-                await warningSchema.updateOne(
-                    {
-                        guildID: interaction.guild.id,
-                        warnings: {
-                            $elemMatch: {
-                                punishmentID: ban.punishmentID
+        if (guildWarnings?.warnings) {
+            const bansToExpire = guildWarnings.warnings.filter(
+                warning => warning.expires > Date.now() && warning.type === 'Ban' && warning.userID === member.id
+            );
+
+            if (bansToExpire.length) {
+                for (let i = 0; i !== bansToExpire.length; ++i) {
+                    const ban = bansToExpire[i];
+                    await warningSchema.updateOne(
+                        {
+                            guildID: interaction.guild.id,
+                            warnings: {
+                                $elemMatch: {
+                                    punishmentID: ban.punishmentID
+                                }
+                            }
+                        },
+                        {
+                            $set: {
+                                'warnings.$.expires': Date.now()
                             }
                         }
-                    },
-                    {
-                        $set: {
-                            'warnings.$.expires': Date.now()
-                        }
-                    }
-                );
+                    );
+                }
             }
         }
 

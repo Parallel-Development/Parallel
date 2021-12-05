@@ -36,7 +36,7 @@ module.exports = {
         if (time && time > 315576000000) return client.util.throwError(message, client.config.errors.time_too_long);
         const reason = time ? args.slice(2).join(' ') || 'Unspecified' : args.slice(1).join(' ') || 'Unspecified';
 
-        const punishmentID = client.util.generateID();
+        const punishmentID = client.util.createSnowflake();
 
         if (!member && (await client.util.getUser(client, args[0]))) {
             const user = await client.util.getUser(client, args[0]);
@@ -66,7 +66,7 @@ module.exports = {
             });
 
             return message.reply(
-                `**${user.tag}** has been muted. They are not currently on the server, but when they rejoin they will be muted`
+                `**${user.tag}** has been muted. They are not currently on the server, but if they join they will be muted`
             );
         }
 
@@ -110,7 +110,7 @@ module.exports = {
 
             const guildWarnings = await warningSchema.findOne({ guildID: message.guild.id });
 
-            if (guildWarnings.warnings?.length) {
+            if (guildWarnings?.warnings?.length) {
                 const mutesToExpire = guildWarnings.warnings.filter(
                     warning => warning.expires > Date.now() && warning.type === 'Mute' && warning.userID === member.id
                 );

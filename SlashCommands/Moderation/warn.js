@@ -37,7 +37,7 @@ module.exports = {
         if (member === interaction.guild.owner)
             return client.util.throwError(interaction, client.config.errors.cannot_punish_owner);
 
-        const punishmentID = client.util.generateID();
+        const punishmentID = client.util.createSnowflake();
 
         let time = args['duration'] ? ms(args['duration']) : null;
         if (time && time > 315576000000) return client.util.throwError(interaction, client.config.errors.time_too_long);

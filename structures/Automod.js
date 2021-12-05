@@ -96,7 +96,7 @@ class Automod {
             }
 
             let member = message.member;
-            let punishmentID = client.util.generateID();
+            let punishmentID = client.util.createSnowflake();
 
             new Infraction(
                 client,
@@ -180,7 +180,7 @@ class Automod {
             const closestInstance = memberAutomodWarnings.length - Math.min(...x);
             const instance = system.find(instance => instance.amount === closestInstance);
             const _reason = `[AUTO] Reaching or exceeding **${closestInstance}** infractions`;
-            punishmentID = client.util.generateID();
+            punishmentID = client.util.createSnowflake();
 
             if (instance.punishment === 'ban' || instance.punishment === 'tempban') {
                 new DMUserInfraction(client, 'banned', client.config.colors.punishment[2], message, message.member, {

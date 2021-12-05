@@ -46,7 +46,7 @@ module.exports = {
                 return client.util.throwError(message, client.config.errors.cannot_punish_owner);
         }
 
-        const punishmentID = client.util.generateID();
+        const punishmentID = client.util.createSnowflake();
 
         const settings = await settingsSchema.findOne({
             guildID: message.guild.id
@@ -57,7 +57,7 @@ module.exports = {
 
         const guildWarnings = await warningSchema.findOne({ guildID: message.guild.id });
 
-        if (guildWarnings.warnings?.length) {
+        if (guildWarnings?.warnings?.length) {
             const bansToExpire = guildWarnings.warnings.filter(
                 warning => warning.expires > Date.now() && warning.type === 'Ban' && warning.userID === member.id
             );

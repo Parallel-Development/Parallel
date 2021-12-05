@@ -21,7 +21,7 @@ module.exports = {
     aliases: ['unshut', 'um'],
     async execute(client, interaction, args) {
         const reason = args['reason'] || 'Unspecified';
-        const punishmentID = client.util.generateID();
+        const punishmentID = client.util.createSnowflake();
 
         const settings = await settingsSchema.findOne({
             guildID: interaction.guild.id

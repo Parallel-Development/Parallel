@@ -59,7 +59,7 @@ module.exports = {
 
         }
 
-        const punishmentID = client.util.generateID();
+        const punishmentID = client.util.createSnowflake();
 
         new Infraction(client, 'Unban', message, message.member, user, {
             reason: reason,

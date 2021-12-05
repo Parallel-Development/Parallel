@@ -39,7 +39,7 @@ module.exports = {
         if (time && time > 315576000000) return client.util.throwError(interaction, client.config.errors.time_too_long);
         const reason = args['reason'] || 'Unspecified';
 
-        const punishmentID = client.util.generateID();
+        const punishmentID = client.util.createSnowflake();
 
         if (!member) {
             const user = await client.util.getUser(client, args['user']);
@@ -69,7 +69,7 @@ module.exports = {
             });
 
             return interaction.reply(
-                `**${user.tag}** has been muted. They are not currently on the server, but when they rejoin they will be muted`
+                `**${user.tag}** has been muted. They are not currently on the server, but if they join they will be muted`
             );
         }
 
@@ -113,7 +113,7 @@ module.exports = {
 
             const guildWarnings = await warningSchema.findOne({ guildID: interaction.guild.id });
 
-            if (guildWarnings.warnings?.length) {
+            if (guildWarnings?.warnings?.length) {
                 const mutesToExpire = guildWarnings.warnings.filter(
                     warning => warning.expires > Date.now() && warning.type === 'Mute' && warning.userID === member.id
                 );
