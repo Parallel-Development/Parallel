@@ -1105,7 +1105,6 @@ module.exports = {
                                     .setAuthor('Automod Update', client.user.displayAvatarURL())
                             ]
                         });
-                        message.reply(success);
                         break;
                     case 'disable':
                         updateInvites('disabled');

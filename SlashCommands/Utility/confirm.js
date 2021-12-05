@@ -52,8 +52,11 @@ module.exports = {
             await interaction.reply({ embeds: [clearedInfractionsEmbed] });
             global.confirmationRequests.pop({ ID: interaction.user.id });
         } else if (request.request === 'clearServerInfractions') {
-            await warningSchema.deleteOne({
+            await warningSchema.updateOne({
                 guildID: interaction.guild.id
+            },
+            {
+                warnings: []
             });
 
             const clearedServerInfractionsEmbed = new Discord.MessageEmbed()

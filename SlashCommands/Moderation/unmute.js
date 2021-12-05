@@ -96,7 +96,7 @@ module.exports = {
 
         const guildWarnings = await warningSchema.findOne({ guildID: interaction.guild.id });
 
-        if (guildWarnings.warnings?.length) {
+        if (guildWarnings?.warnings?.length) {
             const mutesToExpire = guildWarnings.warnings.filter(
                 warning => warning.expires > Date.now() && warning.type === 'Mute' && warning.userID === member.id
             );

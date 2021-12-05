@@ -19,6 +19,7 @@ module.exports = {
         const guildWarnings = await warningSchema.findOne({
             guildID: interaction.guild.id
         });
+        if (!guildWarnings?.warnings?.length) return interaction.reply(`This user has no infractions`);
         const userWarnings = guildWarnings.warnings.filter(warning => warning.userID === user.id);
 
         if (!userWarnings.length) return interaction.reply('This user has no infractions');

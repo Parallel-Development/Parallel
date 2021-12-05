@@ -36,7 +36,7 @@ module.exports = {
                     if (msg.author.id === user.id) userMessages.push(msg);
                 }
                 const deletedMessages = await interaction.channel.bulkDelete(userMessages, true).catch(() => {});
-                if (!deletedMessages.size) break;
+                if (!deletedMessages?.size) break;
                 purgedMessages += deletedMessages.size;
             }
 
@@ -54,7 +54,7 @@ module.exports = {
             const _msg = await interaction.editReply({ embeds: [bulkDeleteEmbed] });
         } else {
             const deletedAmount = await interaction.channel.bulkDelete(amount, true).catch(() => {});
-            if (!deletedAmount.size)
+            if (!deletedAmount?.size)
                 return interaction.editReply(
                     'Deleted 0 messages; either there are no messages in this channel or the messages are too old'
                 );

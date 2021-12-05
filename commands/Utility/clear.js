@@ -13,7 +13,7 @@ module.exports = {
         if (!amount) return client.util.throwError(message, client.config.errors.bad_input_number);
         if (amount > 100 || amount < 1) return client.util.throwError(message, 'Number must a number between 1-100');
         if (!message.channel.permissionsFor(message.guild.me).has(Discord.Permissions.FLAGS.MANAGE_MESSAGES))
-            return client.util.throwError(interaction, client.config.errors.my_channel_access_denied);
+            return client.util.throwError(message, client.config.errors.my_channel_access_denied);
         await message.delete().catch(() => {});
 
         const user = await client.util.getUser(client, args[1]);
@@ -30,7 +30,7 @@ module.exports = {
                     if (msg.author === user) userMessages.push(msg);
                 }
                 const deletedMessages = await message.channel.bulkDelete(userMessages, true).catch(() => {});
-                if (!deletedMessages.size) break;
+                if (!deletedMessages?.size) break;
                 purgedMessages += deletedMessages.size;
             }
 
@@ -51,7 +51,7 @@ module.exports = {
             }, 5000);
         } else {
             const deletedAmount = await message.channel.bulkDelete(amount, true).catch(() => {});
-            if (!deletedAmount.size)
+            if (!deletedAmount?.size)
                 return message.channel.send(
                     'Deleted 0 messages; either there are no messages in this channel or the messages are too old'
                 );

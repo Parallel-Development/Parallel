@@ -165,7 +165,7 @@ class Automod {
             const guildWarnings = await warningSchema.findOne({
                 guildID: message.guild.id
             });
-            if (!guildWarnings.warnings.length) return;
+            if (!guildWarnings?.warnings?.length) return;
             const memberAutomodWarnings = guildWarnings.warnings.filter(
                 warning => warning.userID === message.author.id && warning.auto && warning.type === 'Warn'
             );
