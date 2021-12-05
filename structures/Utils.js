@@ -98,15 +98,16 @@ class Utils {
         const channels = [...message.guild.channels.cache.values()];
         for (let i = 0; i !== channels.length; ++i) {
             const channel = channels[i];
-            if (!channel.permissionsFor(message.guild.me).has(Discord.Permissions.FLAGS.MANAGE_CHANNELS)) return;
-            channel.permissionOverwrites.edit(role, {
-                SEND_MESSAGES: false,
-                ADD_REACTIONS: false,
-                CONNECT: false,
-                SEND_MESSAGES_IN_THREADS: false,
-                CREATE_PUBLIC_THREADS: false,
-                CREATE_PRIVATE_THREADS: false
-            });
+            if (channel && channel.permissionsFor(message.guild.me).has(Discord.Permissions.FLAGS.MANAGE_CHANNELS)) {
+                channel.permissionOverwrites.edit(role, {
+                    SEND_MESSAGES: false,
+                    ADD_REACTIONS: false,
+                    CONNECT: false,
+                    SEND_MESSAGES_IN_THREADS: false,
+                    CREATE_PUBLIC_THREADS: false,
+                    CREATE_PRIVATE_THREADS: false
+                });
+            }
 
             await sleep(0);
         }
