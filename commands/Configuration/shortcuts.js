@@ -72,10 +72,10 @@ module.exports = {
                 return message.reply(
                     'Refused to create command: you have exceeded the allowed amount of shortcut commands. You must delete one in order to add another\n\nRemove a shortcut: `>shortcuts remove [any shortcut name]`'
                 );
-            if (shortcutName.length > 10)
+            if (shortcutName.length > 20)
                 return message.reply(
-                    `Refused to create command: the shortcut name must be 10 characters or less\n\n\`>shortcuts create\` \`${shortcutName}\` <- remove **${
-                        shortcutName.length - 10
+                    `Refused to create command: the shortcut name must be 20 characters or less\n\n\`>shortcuts create\` \`${shortcutName}\` <- remove **${
+                        shortcutName.length - 20
                     }** characters from this argument \`...\``
                 );
 

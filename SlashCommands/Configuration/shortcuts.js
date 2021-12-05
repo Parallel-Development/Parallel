@@ -81,10 +81,10 @@ module.exports = {
                     interaction,
                     'Refused to create command: you have exceeded the allowed amount of shortcut commands. You must delete one in order to add another'
                 );
-            if (shortcutName.length > 10)
+            if (shortcutName.length > 20)
                 return client.util.throwError(
                     interaction,
-                    `Refused to create command: the shortcut name must be 10 characters or less`
+                    `Refused to create command: the shortcut name must be 20 characters or less`
                 );
 
             const duration = createArgs['duration'] ? ms(createArgs['duration']) : null;
