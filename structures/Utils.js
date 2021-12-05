@@ -98,8 +98,8 @@ class Utils {
         const channels = [...message.guild.channels.cache.values()];
         for (let i = 0; i !== channels.length; ++i) {
             const channel = channels[i];
-            if (channel && channel.permissionsFor(message.guild.me).has(Discord.Permissions.FLAGS.MANAGE_CHANNELS)) {
-                channel.permissionOverwrites.edit(role, {
+            if (channel && channel.permissionOverwrites && channel.permissionsFor(message.guild.me).has(Discord.Permissions.FLAGS.MANAGE_CHANNELS)) {
+                await channel.permissionOverwrites.edit(role, {
                     SEND_MESSAGES: false,
                     ADD_REACTIONS: false,
                     CONNECT: false,
