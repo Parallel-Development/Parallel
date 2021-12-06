@@ -39,6 +39,12 @@ module.exports = {
         const users = await Promise.all(rawUsers.map(user => resolveUser(user))).then(users => users.filter(user => user));
 
         if (!users.length) return client.util.throwError(interaction, 'you must provide at least one __valid__ user to ban');
+
+        const userIds = users.map(user => user.id);
+        const duplicates = userIds.filter((id, index) => userIds.indexOf(id) !== index);
+        if (duplicates.length) return interaction.reply({ content: `Error: duplicate users were provided. The following users were duplicated: ${duplicates.map(id => `<@${id}>`).join(', ')}`, allowedMentions: { users: [] } })
+            .catch(() => interaction.editReply({ content: `Error: duplicate users were provided. The following users were duplicated: ${duplicates.map(id => `<@${id}>`).join(', ')}`, allowedMentions: { users: [] } }))
+
         if (users.some(user => user.id === client.user.id)) return client.util.throwError(interaction, client.config.errors.cannot_punish_myself);
         if (users.some(user => user.id === interaction.user.id)) return client.util.throwError(interaction, client.config.errors.cannot_punish_yourself);
         if (users.some(user => user instanceof Discord.GuildMember && user.roles.highest.position >= interaction.member.roles.highest.position && !interaction.guild.ownerId === interaction.user.id)) return client.util.throwError(interaction, client.config.errors.hierarchy);
