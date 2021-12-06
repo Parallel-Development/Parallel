@@ -58,14 +58,19 @@ module.exports = {
         const bannedUsers = await Promise.all(users.map(user => resolveBannedUser(user.id)));
         if (bannedUsers.some(ban => ban))
             return client.util.throwError(message, 'you cannot ban users that are already banned');
+            
+        const pastArguments = args.join(' ')?.split(' * ')[1]?.split(' ');
 
-        const pastArguments = args.join(' ').split(' * ')[1].split(' ');
-        const __time = pastArguments[0];
-        const time = parseInt(__time) && __time !== '' ? ms(__time) : null;
-        if (time && time > 315576000000) return client.util.throwError(message, client.config.errors.time_too_long);
-        const reason = time
-            ? pastArguments.slice(1).join(' ') || 'Unspecified'
-            : pastArguments.join(' ') || 'Unspecified';
+        let time = null, reason = 'Unspecified';
+
+        if (pastArguments) {
+            const __time = pastArguments[0];
+            time = parseInt(__time) && __time !== '' ? ms(__time) : null;
+            if (time && time > 315576000000) return client.util.throwError(message, client.config.errors.time_too_long);
+            reason = time
+                ? pastArguments.slice(1).join(' ') || 'Unspecified'
+                : pastArguments.join(' ') || 'Unspecified';
+        }
 
         await msg.edit(`Banning ${users.length} users...`);
 
