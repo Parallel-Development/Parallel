@@ -54,9 +54,9 @@ module.exports = {
         const slowmodeEmbed = new Discord.MessageEmbed()
             .setColor(client.util.mainColor(interaction.guild))
             .setDescription(
-                `✅ Set the slowmode for ${channel} to \`${
-                    client.util.duration(newChannelState.rateLimitPerUser * 1000)
-                }\``
+                `✅ Set the slowmode for ${channel} to \`${client.util.duration(
+                    newChannelState.rateLimitPerUser * 1000
+                )}\``
             );
 
         return interaction.reply({ embeds: [slowmodeEmbed] });

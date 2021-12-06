@@ -49,12 +49,14 @@ module.exports = {
             await message.reply({ embeds: [clearedInfractionsEmbed] });
             global.confirmationRequests.pop({ ID: message.author.id });
         } else if (request.request === 'clearServerInfractions') {
-            await warningSchema.updateOne({
-                guildID: message.guild.id
-            },
-            {
-                warnings: []
-            })
+            await warningSchema.updateOne(
+                {
+                    guildID: message.guild.id
+                },
+                {
+                    warnings: []
+                }
+            );
 
             const clearedServerInfractionsEmbed = new Discord.MessageEmbed()
                 .setColor(client.util.mainColor(message.guild))

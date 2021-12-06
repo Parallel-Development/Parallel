@@ -12,17 +12,16 @@ const ms = require('ms');
 module.exports = {
     name: 'massban',
     data: new SlashCommandBuilder()
-    .setName('massban')
-    .setDescription('Ban multiple useres at once, up to 20 members')
-    .addStringOption(
-        option => option.setName('users').setDescription('The users to ban. Please separate every user mention or ID by a space').setRequired(true)
-    )
-    .addStringOption(
-        option => option.setName('reason').setDescription('The reason for the bans')
-    )
-    .addStringOption(
-        option => option.setName('duration').setDescription('The duration of the bans')
-    ),
+        .setName('massban')
+        .setDescription('Ban multiple useres at once, up to 20 members')
+        .addStringOption(option =>
+            option
+                .setName('users')
+                .setDescription('The users to ban. Please separate every user mention or ID by a space')
+                .setRequired(true)
+        )
+        .addStringOption(option => option.setName('reason').setDescription('The reason for the bans'))
+        .addStringOption(option => option.setName('duration').setDescription('The duration of the bans')),
     description: 'Ban multiple users at once, up to 20 members',
     requiredBotPermission: Discord.Permissions.FLAGS.BAN_MEMBERS,
     permissions: Discord.Permissions.FLAGS.BAN_MEMBERS,
@@ -56,13 +55,16 @@ module.exports = {
         })
         
         const bannedUsers = await Promise.all(users.map(user => resolveBannedUser(user.id)));
-        if (bannedUsers.some(ban => ban)) return client.util.throwError(interaction, 'you cannot ban users that are already banned');
+        if (bannedUsers.some(ban => ban))
+            return client.util.throwError(interaction, 'you cannot ban users that are already banned');
 
         const reason = args['reason'] || 'Unspecified';
         const time = args['duration'] ? ms(args['duration']) : null;
         if (time && time > 315576000000) return client.util.throwError(interaction, client.config.errors.time_too_long);
 
-        await interaction.reply(`Banning ${users.length} users...`).catch(() => interaction.editReply(`Banning ${users.length} users...`));
+        await interaction
+            .reply(`Banning ${users.length} users...`)
+            .catch(() => interaction.editReply(`Banning ${users.length} users...`));
 
         const settings = await settingsSchema.findOne({ guildID: interaction.guild.id });
         const { baninfo } = settings;
@@ -108,12 +110,19 @@ module.exports = {
                 });
 
                 if (user instanceof Discord.GuildMember)
-                    await new DMUserInfraction(client, 'banned', client.config.colors.punishment[2], interaction, user, {
-                        reason: reason,
-                        punishmentID: punishmentID,
-                        time: time,
-                        baninfo: baninfo !== 'none' ? baninfo : null
-                    });
+                    await new DMUserInfraction(
+                        client,
+                        'banned',
+                        client.config.colors.punishment[2],
+                        interaction,
+                        user,
+                        {
+                            reason: reason,
+                            punishmentID: punishmentID,
+                            time: time,
+                            baninfo: baninfo !== 'none' ? baninfo : null
+                        }
+                    );
 
                 new ModerationLogger(client, 'Banned', interaction.member, user, interaction.channel, {
                     reason: reason,
@@ -121,7 +130,9 @@ module.exports = {
                     punishmentID: punishmentID
                 });
 
-                await interaction.guild.members.ban(user, { reason: reason }).catch(() => unsuccessfullyBannedUsers.push(user));
+                await interaction.guild.members
+                    .ban(user, { reason: reason })
+                    .catch(() => unsuccessfullyBannedUsers.push(user));
 
                 new Infraction(client, 'Ban', interaction, interaction.member, user, {
                     reason: reason,
@@ -138,9 +149,20 @@ module.exports = {
         }
 
         await interaction.editReply(
-            `${!unsuccessfullyBannedUsers 
-                ? `Successfully banned **${users.length - unsuccessfullyBannedUsers.length}** users, failed to ban **${unsuccessfullyBannedUsers.length}** users` 
-                : `Successfully banned all **${users.length}** users`
-            }\nBanned users: ${users.filter(user => !unsuccessfullyBannedUsers.some(fail => fail.id === user.id)).map(user => user.toString()).join(', ')}\n\n${unsuccessfullyBannedUsers.length ? `Failed to ban: ${unsuccessfullyBannedUsers.map(user => user.toString()).join(', ')}` : ''}`);
+            `${
+                !unsuccessfullyBannedUsers
+                    ? `Successfully banned **${
+                          users.length - unsuccessfullyBannedUsers.length
+                      }** users, failed to ban **${unsuccessfullyBannedUsers.length}** users`
+                    : `Successfully banned all **${users.length}** users`
+            }\nBanned users: ${users
+                .filter(user => !unsuccessfullyBannedUsers.some(fail => fail.id === user.id))
+                .map(user => user.toString())
+                .join(', ')}\n\n${
+                unsuccessfullyBannedUsers.length
+                    ? `Failed to ban: ${unsuccessfullyBannedUsers.map(user => user.toString()).join(', ')}`
+                    : ''
+            }`
+        );
     }
-}
+};

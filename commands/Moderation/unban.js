@@ -56,7 +56,6 @@ module.exports = {
                     }
                 );
             }
-
         }
 
         const punishmentID = client.util.createSnowflake();

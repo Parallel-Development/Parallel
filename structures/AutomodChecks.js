@@ -41,7 +41,11 @@ class AutomodChecks {
                 .send();
 
             let data;
-            try { data = res.json() } catch { return false };
+            try {
+                data = res.json();
+            } catch {
+                return false;
+            }
             if (data.match) {
                 if (
                     data.matches.length &&
