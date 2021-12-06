@@ -36,7 +36,7 @@ module.exports = {
             return msg.edit('Error: you must provide at least one __valid__ user to ban');
         const userIds = users.map(user => user.id);
         const duplicates = userIds.filter((id, index) => userIds.indexOf(id) !== index);
-        if (duplicates.length) return msg.edit({ content: `Error: duplicate users were provided. The following users were duplicated: ${duplicates.map(id => `<@${id}>`).join(', ')}`, allowedMentions: { users: [] } });
+        if (duplicates.length) return msg.edit(`Error: duplicate users were provided | Error occurred whilst validating user <@${duplicates[0]}>`);
         if (users.some(user => user.id === client.user.id)) 
             return msg.edit(`Error: ${client.config.errors.cannot_punish_myself}`);
         
@@ -57,7 +57,7 @@ module.exports = {
 
         const bannedUsers = await Promise.all(users.map(user => resolveBannedUser(user.id)));
         if (bannedUsers.some(ban => ban))
-            return client.util.throwError(message, 'you cannot ban users that are already banned');
+            return msg.edit(`Error: you cannot ban users that are already banned | Error occurred whilst validating user ${bannedUsers.find(ban => ban).user.toString()}`);
             
         const pastArguments = args.join(' ')?.split(' * ')[1]?.split(' ');
 
