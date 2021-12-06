@@ -152,7 +152,6 @@ module.exports = {
                         punishmentID: punishmentID,
                         time: duration
                     });
-
                 }
 
                 new Infraction(client, 'Mute', interaction, interaction.member, member, {

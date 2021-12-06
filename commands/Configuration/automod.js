@@ -109,13 +109,15 @@ module.exports = {
                         : massmentionTempBanDuration
                         ? massmention + ' for ' + client.util.duration(massmentionTempBanDuration)
                         : massmention
-                }\``, true
+                }\``,
+                true
             )
             .addField(
                 'Malicious-links',
-                `Toggled: \`${maliciouslinksTempMuteDuration
-                    ? maliciouslinks + ' for ' + client.util.duration(maliciouslinksTempMuteDuration)
-                    : maliciouslinksTempBanDuration
+                `Toggled: \`${
+                    maliciouslinksTempMuteDuration
+                        ? maliciouslinks + ' for ' + client.util.duration(maliciouslinksTempMuteDuration)
+                        : maliciouslinksTempBanDuration
                         ? maliciouslinks + ' for ' + client.util.duration(maliciouslinksTempBanDuration)
                         : maliciouslinks
                 }\``
@@ -130,8 +132,24 @@ module.exports = {
             .setAuthor(`Auto-moderation for ${message.guild.name}`, client.user.displayAvatarURL());
 
         const option = args[0] ? args[0].toLowerCase().replace('-', '') : [];
-        const whitelistedArguments = [['filterlist', 'view'], ['channelbypass', 'view'], ['rolebypass', 'view']];
-        if (args[0] && !whitelistedArguments.some(arguments => arguments.join(' ') === args[0].toLowerCase().replace('-', '') + ' ' + args.slice(1)) && (!message.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD) && (!message.member.roles.cache.some(role => modRoles.includes(role.id)) || !new Discord.Permissions(modRolePermissions).has(Discord.Permissions.FLAGS.MANAGE_GUILD)))) return client.util.throwError(message, 'no permission to edit the configuration of the automod, you may only view the toggled automod features by running this command with no additional arguments, or view lists such as the channel-bypass list');
+        const whitelistedArguments = [
+            ['filterlist', 'view'],
+            ['channelbypass', 'view'],
+            ['rolebypass', 'view']
+        ];
+        if (
+            args[0] &&
+            !whitelistedArguments.some(
+                arguments => arguments.join(' ') === args[0].toLowerCase().replace('-', '') + ' ' + args.slice(1)
+            ) &&
+            !message.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD) &&
+            (!message.member.roles.cache.some(role => modRoles.includes(role.id)) ||
+                !new Discord.Permissions(modRolePermissions).has(Discord.Permissions.FLAGS.MANAGE_GUILD))
+        )
+            return client.util.throwError(
+                message,
+                'no permission to edit the configuration of the automod, you may only view the toggled automod features by running this command with no additional arguments, or view lists such as the channel-bypass list'
+            );
         const toggle = args[1] ? args[1].toLowerCase().replace('-', '') : [];
         if (!option.length) return message.reply({ embeds: [automodList] });
 
@@ -1324,7 +1342,8 @@ module.exports = {
                                 new Discord.MessageEmbed()
                                     .setColor(client.util.mainColor(message.guild))
                                     .setDescription(
-                                        `${client.config.emotes.success
+                                        `${
+                                            client.config.emotes.success
                                         } Members who send a malicious link will get banned for \`${client.util.duration(
                                             duration
                                         )}\``
@@ -1340,7 +1359,8 @@ module.exports = {
                                 new Discord.MessageEmbed()
                                     .setColor(client.util.mainColor(message.guild))
                                     .setDescription(
-                                        `${client.config.emotes.success
+                                        `${
+                                            client.config.emotes.success
                                         } Members who send a malicious link will get muted for \`${client.util.duration(
                                             duration
                                         )}\``

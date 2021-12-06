@@ -17,7 +17,7 @@ module.exports = {
     aliases: ['gtfo', 'banish', 'b'],
     permissions: Discord.Permissions.FLAGS.BAN_MEMBERS,
     requiredBotPermission: Discord.Permissions.FLAGS.BAN_MEMBERS,
-    async execute (client, message, args) {
+    async execute(client, message, args) {
         const member =
             (await client.util.getMember(message.guild, args[0])) || (await client.util.getUser(client, args[0]));
         if (!member) return client.util.throwError(message, client.config.errors.invalid_member);

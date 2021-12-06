@@ -21,12 +21,16 @@ module.exports = {
         if (rawUsers.length > 20) return client.util.throwError(message, 'you can only ban up to 20 users at once');
 
         const msg = await message.reply(`Validating the provided users, please wait...`);
-        const resolveUser = async Id => new Promise(async resolve => {
-            const user = await client.util.getMember(message.guild, Id) || await client.util.getUser(client, Id);
-            resolve(user);
-        });
+        const resolveUser = async Id =>
+            new Promise(async resolve => {
+                const user =
+                    (await client.util.getMember(message.guild, Id)) || (await client.util.getUser(client, Id));
+                resolve(user);
+            });
 
-        const users = await Promise.all(rawUsers.map(user => resolveUser(user))).then(users => users.filter(user => user));
+        const users = await Promise.all(rawUsers.map(user => resolveUser(user))).then(users =>
+            users.filter(user => user)
+        );
 
         if (!users.length) {
             msg.delete();
@@ -40,28 +44,45 @@ module.exports = {
             msg.delete();
             return client.util.throwError(message, client.config.errors.cannot_punish_yourself);
         }
-        if (users.some(user => user instanceof Discord.GuildMember && user.roles.highest.position >= message.member.roles.highest.position && !message.guild.ownerId === message.author.id)) {
+        if (
+            users.some(
+                user =>
+                    user instanceof Discord.GuildMember &&
+                    user.roles.highest.position >= message.member.roles.highest.position &&
+                    !message.guild.ownerId === message.author.id
+            )
+        ) {
             msg.delete();
             return client.util.throwError(message, client.config.errors.hierarchy);
         }
-        if (users.some(user => user instanceof Discord.GuildMember && user.roles.highest.position >= message.guild.me.roles.highest.position)) {
+        if (
+            users.some(
+                user =>
+                    user instanceof Discord.GuildMember &&
+                    user.roles.highest.position >= message.guild.me.roles.highest.position
+            )
+        ) {
             msg.delete();
             return client.util.throwError(message, client.config.errors.my_hierarchy);
         }
 
-        const resolveBannedUser = async Id => new Promise(async resolve => {
-            const bannedUser = await message.guild.bans.fetch(Id).catch(() => false);
-            resolve(bannedUser);
-        })
+        const resolveBannedUser = async Id =>
+            new Promise(async resolve => {
+                const bannedUser = await message.guild.bans.fetch(Id).catch(() => false);
+                resolve(bannedUser);
+            });
 
         const bannedUsers = await Promise.all(users.map(user => resolveBannedUser(user.id)));
-        if (bannedUsers.some(ban => ban)) return client.util.throwError(message, 'you cannot ban users that are already banned');
+        if (bannedUsers.some(ban => ban))
+            return client.util.throwError(message, 'you cannot ban users that are already banned');
 
         const pastArguments = args.join(' ').split(' * ')[1].split(' ');
         const __time = pastArguments[0];
         const time = parseInt(__time) && __time !== '' ? ms(__time) : null;
         if (time && time > 315576000000) return client.util.throwError(message, client.config.errors.time_too_long);
-        const reason = time ? pastArguments.slice(1).join(' ') || 'Unspecified' : pastArguments.join(' ') ||  'Unspecified';
+        const reason = time
+            ? pastArguments.slice(1).join(' ') || 'Unspecified'
+            : pastArguments.join(' ') || 'Unspecified';
 
         await msg.edit(`Banning ${users.length} users...`);
 
@@ -122,7 +143,9 @@ module.exports = {
                     punishmentID: punishmentID
                 });
 
-                await message.guild.members.ban(user, { reason: reason }).catch(() => unsuccessfullyBannedUsers.push(user));
+                await message.guild.members
+                    .ban(user, { reason: reason })
+                    .catch(() => unsuccessfullyBannedUsers.push(user));
 
                 new Infraction(client, 'Ban', message, message.member, user, {
                     reason: reason,
@@ -139,9 +162,20 @@ module.exports = {
         }
 
         await msg.edit(
-            `${!unsuccessfullyBannedUsers
-                ? `Successfully banned **${users.length - unsuccessfullyBannedUsers.length}** users, failed to ban **${unsuccessfullyBannedUsers.length}** users`
-                : `Successfully banned all **${users.length}** users`
-            }\nBanned users: ${users.filter(user => !unsuccessfullyBannedUsers.some(fail => fail.id === user.id)).map(user => user.toString()).join(', ')}\n\n${unsuccessfullyBannedUsers.length ? `Failed to ban: ${unsuccessfullyBannedUsers.map(user => user.toString()).join(', ')}` : ''}`);
+            `${
+                !unsuccessfullyBannedUsers
+                    ? `Successfully banned **${
+                          users.length - unsuccessfullyBannedUsers.length
+                      }** users, failed to ban **${unsuccessfullyBannedUsers.length}** users`
+                    : `Successfully banned all **${users.length}** users`
+            }\nBanned users: ${users
+                .filter(user => !unsuccessfullyBannedUsers.some(fail => fail.id === user.id))
+                .map(user => user.toString())
+                .join(', ')}\n\n${
+                unsuccessfullyBannedUsers.length
+                    ? `Failed to ban: ${unsuccessfullyBannedUsers.map(user => user.toString()).join(', ')}`
+                    : ''
+            }`
+        );
     }
-}
+};

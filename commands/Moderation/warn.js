@@ -50,9 +50,10 @@ module.exports = {
             __time !== 'permanent' &&
             __time !== 'p' &&
             __time !== 'forever'
-        ) 
+        )
             time = parseInt(manualwarnexpire);
-        else if (__time === 'permanent' || __time === 'p' || __time === 'forever') reason = reason.split(' ').slice(1).join(' ');
+        else if (__time === 'permanent' || __time === 'p' || __time === 'forever')
+            reason = reason.split(' ').slice(1).join(' ');
 
         new Infraction(client, 'Warn', message, message.member, member, {
             reason: reason,

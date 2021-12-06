@@ -19,13 +19,12 @@ module.exports = {
         const { allowedRoles, afks } = guildAFK;
 
         let wasDefered = false;
-        
+
         if (
             !interaction.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_MESSAGES) &&
             !interaction.member.roles.cache.some(role => modRoles.includes(role.id)) &&
             args['reason']
         ) {
-
             await interaction.deferReply();
             wasDefered = true;
             const message = interaction.channel.messages.cache.find(m => m.interaction?.id === interaction.id);
@@ -33,8 +32,12 @@ module.exports = {
 
             const punished = await new AutomodChecks(client, message, false).execute(true);
             if (punished) {
-                await message.delete()
-                return interaction.user.send('Command rejected because the AFK reason included content that would have gotten you punished by the auto-moderation!').catch(() => {})
+                await message.delete();
+                return interaction.user
+                    .send(
+                        'Command rejected because the AFK reason included content that would have gotten you punished by the auto-moderation!'
+                    )
+                    .catch(() => {});
             }
         }
 
@@ -63,7 +66,9 @@ module.exports = {
             if (interaction.member.displayName.startsWith('[AFK] '))
                 await interaction.member.setNickname(`${interaction.member.displayName.slice(5)}`).catch(() => {});
 
-            return wasDefered ? interaction.editReply(`I removed your AFK status!`) : interaction.reply(`I removed your AFK status!`);
+            return wasDefered
+                ? interaction.editReply(`I removed your AFK status!`)
+                : interaction.reply(`I removed your AFK status!`);
         }
         const AFKReason = args['reason'];
         if (AFKReason?.length > 200) return interaction.reply('Please make your AFK reason 200 characters or less');
@@ -85,14 +90,14 @@ module.exports = {
         if (!interaction.member.displayName.startsWith('[AFK] '))
             await interaction.member.setNickname(`[AFK] ${interaction.member.displayName}`).catch(() => {});
 
-        return wasDefered 
-        ? interaction.editReply({
-            content: `You are now marked as AFK ${AFKReason ? `- ${AFKReason}` : ''}`,
-            allowedMentions: { users: [] }
-        })
-        : interaction.reply({
-            content: `You are now marked as AFK ${AFKReason ? `- ${AFKReason}` : ''}`,
-            allowedMentions: { users: [] }
-        });
+        return wasDefered
+            ? interaction.editReply({
+                  content: `You are now marked as AFK ${AFKReason ? `- ${AFKReason}` : ''}`,
+                  allowedMentions: { users: [] }
+              })
+            : interaction.reply({
+                  content: `You are now marked as AFK ${AFKReason ? `- ${AFKReason}` : ''}`,
+                  allowedMentions: { users: [] }
+              });
     }
 };

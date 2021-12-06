@@ -25,8 +25,12 @@ module.exports = {
                         await member.roles.add(roles[i]).catch(() => {});
                     }
                 });
-            try { await member.roles.add(role) } catch { return; }
- 
+            try {
+                await member.roles.add(role);
+            } catch {
+                return;
+            }
+
             const mutedEmbed = new Discord.MessageEmbed()
                 .setColor(client.config.colors.punishment[1])
                 .setAuthor(`Parallel Moderation`, client.user.displayAvatarURL())
