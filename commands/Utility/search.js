@@ -65,9 +65,9 @@ module.exports = {
         return msg.edit({ embeds: [result] }).catch(async () => {
             const newResult = await client.util.createBin(
                 members.map(
-                    m =>
-                        `${m.user.tag} | ID: ${m.id} | Username: ${m.user.username} | Display Name: \`${m.displayName}\``
-                )
+                    (m, i) =>
+                        `Result #${i + 1}: ${m.user.tag}\n- ID: ${m.id}\n- Username: ${m.user.username}\n- Display Name: ${m.displayName}\n`
+                ).join('\n')
             );
             const newResultEmbed = new Discord.MessageEmbed()
                 .setColor(client.util.mainColor(message.guild))

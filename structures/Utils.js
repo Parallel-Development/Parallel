@@ -10,7 +10,7 @@ class Utils {
         if (!data) throw new Error("required argument 'text' is missing");
 
         const res = await req('https://hst.sh/documents', 'POST')
-            .body(JSON.stringify(data, null, 2))
+            .body(typeof data === 'object' ? JSON.stringify(data, null, 2) : data)
             .timeout(15000)
             .send();
 
