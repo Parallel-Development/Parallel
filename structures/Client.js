@@ -6,6 +6,7 @@ const CommandHandler = require('../handlers/CommandHandler');
 const ExpiredHandler = require('../handlers/ExpiredHandler');
 const ProcessEventsHandler = require('../handlers/ProcessEventsHandler');
 const fs = require('fs');
+const mongoose = require('mongoose');
 
 class Client extends Discord.Client {
     constructor() {
@@ -48,14 +49,15 @@ class Client extends Discord.Client {
         global.lockdownCooldown = new Set();
         global.notMutedUsers = [];
 
-        const mongo = require('../mongo');
-        const connectToMongoDB = async () => {
-            await mongo().then(() => {
-                console.log('Connected to mongoDB!');
+        const connect = async () => {
+            await mongoose.connect(this.config.mongoURL, {
+                keepAlive: true,
+                useNewUrlParser: true,
+                useUnifiedTopology: true
             });
         };
 
-        connectToMongoDB();
+        connect().then(() => console.log('Successfully connected to database'));
 
         new EventHandler(this), new CommandHandler(this), new ExpiredHandler(this), new ProcessEventsHandler();
     }
