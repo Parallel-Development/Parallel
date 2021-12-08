@@ -3,6 +3,7 @@ const Infraction = require('../../structures/Infraction');
 const ModerationLogger = require('../../structures/ModerationLogger');
 const punishmentSchema = require('../../schemas/punishment-schema');
 const warningSchema = require('../../schemas/warning-schema');
+const settingsSchema = require('../../schemas/settings-schema');
 
 module.exports = {
     name: 'unban',
@@ -23,6 +24,13 @@ module.exports = {
             return client.util.throwError(message, client.config.errors.invalid_user);
         const userBanned = await message.guild.bans.fetch(user.id).catch(() => {});
         if (!userBanned) return client.util.throwError(message, 'This user is not banned');
+
+        const settings = await settingsSchema.findOne({
+            guildID: message.guild.id
+        });
+
+        const { delModCmds } = settings;
+        if (delModCmds) message.delete();
 
         await message.guild.members.unban(user.id);
 
@@ -76,6 +84,6 @@ module.exports = {
             .setColor(client.util.mainColor(message.guild))
             .setDescription(`${client.config.emotes.success} **${user.tag}** has been unbanned`);
 
-        return message.reply({ embeds: [unbannedEmbed] });
+        return message.channel.send({ embeds: [unbannedEmbed] });
     }
 };
