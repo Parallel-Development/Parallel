@@ -138,9 +138,7 @@ class Utils {
             mention = mention.slice(2, -1);
             if (mention.startsWith('!')) mention = mention.slice(1);
         }
-        const member = await guild.members.fetch({ user: mention, force: true }).catch(() => {});
-        if (!member) return undefined;
-        return guild.members.cache.get(mention);
+        return guild.members.fetch(mention).catch(() => undefined);
     }
 
     async getUser(client, mention) {
@@ -149,7 +147,7 @@ class Utils {
             mention = mention.slice(2, -1);
             if (mention.startsWith('!')) mention = mention.slice(1);
         }
-        return client.users.fetch(mention).catch(() => {});
+        return client.users.fetch(mention).catch(() => undefined);
     }
 
     getRole(guild, mention) {
