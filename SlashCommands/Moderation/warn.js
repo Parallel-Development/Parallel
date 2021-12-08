@@ -82,7 +82,13 @@ module.exports = {
 
         if (delModCmds) {
             await interaction.reply({ content: `Successfully warned member ${member}`, ephemeral: true });
-            return interaction.channel.send({ embeds: [warnedEmbed] });
-        } else return interaction.reply({ embeds: [warnedEmbed] });
+            return interaction.channel.send({ embeds: [
+                new Discord.MessageEmbed()
+                    .setColor(client.config.colors.punishment[0])
+                    .setDescription(`${client.config.emotes.success} ${member.toString()} has been warned with ID \`${punishmentID}\``)
+            ] });
+        }
+        
+        return interaction.reply({ embeds: [warnedEmbed] });
     }
 };

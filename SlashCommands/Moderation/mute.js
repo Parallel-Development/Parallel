@@ -176,7 +176,11 @@ module.exports = {
 
         if (delModCmds) {
             await interaction.reply({ content: `Successfully muted member ${member}`, ephemeral: true });
-            return interaction.channel.send({ embeds: [mutedEmbed] });
+            return interaction.channel.send({ embeds: [
+                new Discord.MessageEmbed()
+                    .setColor(client.config.colors.punishment[1])
+                    .setDescription(`${client.config.emotes.success} ${member.toString()} has been muted with ID \`${punishmentID}\``)
+            ] });
         }
 
         return interaction.reply({ embeds: [mutedEmbed] });
