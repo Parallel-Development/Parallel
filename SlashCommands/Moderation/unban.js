@@ -3,6 +3,7 @@ const Infraction = require('../../structures/Infraction');
 const ModerationLogger = require('../../structures/ModerationLogger');
 const punishmentSchema = require('../../schemas/punishment-schema');
 const warningSchema = require('../../schemas/warning-schema');
+const settingsSchema = require('../../schemas/settings-schema');
 
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
@@ -24,6 +25,12 @@ module.exports = {
 
         const userBanned = await interaction.guild.bans.fetch(user.id).catch(() => {});
         if (!userBanned) return client.util.throwError(interaction, 'This user is not banned');
+
+        const settings = await settingsSchema.findOne({
+            guildID: interaction.guild.id
+        });
+
+        const { delModCmds } = settings;
 
         await interaction.guild.members.unban(user.id);
 
@@ -76,6 +83,15 @@ module.exports = {
         const unbannedEmbed = new Discord.MessageEmbed()
             .setColor(client.util.mainColor(interaction.guild))
             .setDescription(`✅ **${user.tag}** has been unbanned`);
+
+        if (delModCmds) {
+            await interaction.reply({ content: `Successfully unbanned **${user.tag}**`, ephemeral: true });
+            return interaction.channel.send({ embeds: [
+                new Discord.MessageEmbed()
+                    .setColor(client.util.mainColor(interaction.guild))
+                    .setDescription(`${client.config.emotes.success} **${user.tag}** has been unbanned`)
+            ] })
+        }
 
         return interaction.reply({ embeds: [unbannedEmbed] });
     }
