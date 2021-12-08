@@ -19,6 +19,25 @@ class Client extends Discord.Client {
                 Discord.Intents.FLAGS.GUILD_BANS,
                 Discord.Intents.FLAGS.GUILD_VOICE_STATES
             ],
+            makeCache: Discord.Options.cacheWithLimits({
+                ...Discord.Options.defaultMakeCacheSettings,
+                GuildEmojiManager: 0,
+                GuildInviteManager: 0,
+                VoiceStateManager: 0,
+                StageInstanceManager: 0,
+                GuildStickerManager: 0,
+                ThreadManager: 100,
+                UserManager: {
+                    maxSize: 2000,
+                    sweepInterval: 1800000,
+                    sweepFilter: (user) => user.id !== '745401642664460319'
+                },
+                GuildMemberManager: {
+                    maxSize: 2000,
+                    sweepInterval: 1800000,
+                    sweepFilter: (member) => member.id !== '745401642664460319'
+                }
+            }),
             allowedMentions: {
                 parse: ['users'],
                 repliedUser: false
