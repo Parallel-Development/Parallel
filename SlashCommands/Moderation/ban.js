@@ -125,12 +125,21 @@ module.exports = {
             .setDescription(`✅ **${member.user ? member : member.tag}** has been banned with ID \`${punishmentID}\``);
 
         if (delModCmds) {
-            await interaction.reply({ content: `Successfully banned member **${member.user ? member : member.tag}**`, ephemeral: true });
-            return interaction.channel.send({ embeds: [
-                new Discord.MessageEmbed()
-                    .setColor(client.config.colors.punishment[2])
-                    .setDescription(`${client.config.emotes.success} **${member.user ? member : member.tag}** has been banned with ID \`${punishmentID}\``)
-            ] });
+            await interaction.reply({
+                content: `Successfully banned member **${member.user ? member : member.tag}**`,
+                ephemeral: true
+            });
+            return interaction.channel.send({
+                embeds: [
+                    new Discord.MessageEmbed()
+                        .setColor(client.config.colors.punishment[2])
+                        .setDescription(
+                            `${client.config.emotes.success} **${
+                                member.user ? member : member.tag
+                            }** has been banned with ID \`${punishmentID}\``
+                        )
+                ]
+            });
         }
 
         return interaction.reply({ embeds: [banEmbed] });

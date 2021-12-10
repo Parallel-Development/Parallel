@@ -30,12 +30,12 @@ class Client extends Discord.Client {
                 UserManager: {
                     maxSize: 2000,
                     sweepInterval: 1800000,
-                    sweepFilter: (user) => user.id !== '745401642664460319'
+                    sweepFilter: user => user.id !== '745401642664460319'
                 },
                 GuildMemberManager: {
                     maxSize: 2000,
                     sweepInterval: 1800000,
-                    sweepFilter: (member) => member.id !== '745401642664460319'
+                    sweepFilter: member => member.id !== '745401642664460319'
                 }
             }),
             allowedMentions: {

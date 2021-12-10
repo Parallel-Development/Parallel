@@ -71,13 +71,19 @@ module.exports = {
 
         if (delModCmds) {
             await interaction.reply({ content: `Successfully kicked member ${member}`, ephemeral: true });
-            return interaction.channel.send({ embeds: [
-                new Discord.MessageEmbed()
-                    .setColor(client.config.colors.punishment[1])
-                    .setDescription(`${client.config.emotes.success} ${member.toString()} has been kicked with ID \`${punishmentID}\``)
-            ] });
+            return interaction.channel.send({
+                embeds: [
+                    new Discord.MessageEmbed()
+                        .setColor(client.config.colors.punishment[1])
+                        .setDescription(
+                            `${
+                                client.config.emotes.success
+                            } ${member.toString()} has been kicked with ID \`${punishmentID}\``
+                        )
+                ]
+            });
         }
-        
+
         return interaction.reply({ embeds: [kickedEmbed] });
     }
 };
