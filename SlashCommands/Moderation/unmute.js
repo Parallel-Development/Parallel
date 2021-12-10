@@ -145,11 +145,13 @@ module.exports = {
 
         if (delModCmds) {
             await interaction.reply({ content: `Successfully unmuted member ${member}`, ephemeral: true });
-            return interaction.channel.send({ embeds: [
-                new Discord.MessageEmbed()
-                    .setColor(client.util.mainColor(interaction.guild))
-                    .setDescription(`${client.config.emotes.success} ${member.toString()} has been unmuted`)
-            ] });
+            return interaction.channel.send({
+                embeds: [
+                    new Discord.MessageEmbed()
+                        .setColor(client.util.mainColor(interaction.guild))
+                        .setDescription(`${client.config.emotes.success} ${member.toString()} has been unmuted`)
+                ]
+            });
         }
 
         return interaction.reply({ embeds: [unmutedEmbed] });

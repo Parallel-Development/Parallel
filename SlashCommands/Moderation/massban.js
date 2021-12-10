@@ -30,32 +30,64 @@ module.exports = {
         if (rawUsers.length > 20) return client.util.throwError(interaction, 'you can only ban up to 20 users at once');
 
         if (rawUsers.length > 3) await interaction.reply(`Validating the provided users, please wait...`);
-        const resolveUser = async Id => new Promise(async resolve => {
-            const user = await client.util.getMember(interaction.guild, Id) || await client.util.getUser(client, Id);
-            resolve(user);
-        });
+        const resolveUser = async Id =>
+            new Promise(async resolve => {
+                const user =
+                    (await client.util.getMember(interaction.guild, Id)) || (await client.util.getUser(client, Id));
+                resolve(user);
+            });
 
-        const users = await Promise.all(rawUsers.map(user => resolveUser(user))).then(users => users.filter(user => user));
+        const users = await Promise.all(rawUsers.map(user => resolveUser(user))).then(users =>
+            users.filter(user => user)
+        );
 
-        if (!users.length) return client.util.throwError(interaction, 'you must provide at least one __valid__ user to ban');
+        if (!users.length)
+            return client.util.throwError(interaction, 'you must provide at least one __valid__ user to ban');
 
         const userIds = users.map(user => user.id);
         const duplicates = userIds.filter((id, index) => userIds.indexOf(id) !== index);
-        if (duplicates.length) return client.util.throwError(interaction, `duplicate users were provided | Error occurred whilst validating user <@${duplicates[0]}>`);
+        if (duplicates.length)
+            return client.util.throwError(
+                interaction,
+                `duplicate users were provided | Error occurred whilst validating user <@${duplicates[0]}>`
+            );
 
-        if (users.some(user => user.id === client.user.id)) return client.util.throwError(interaction, client.config.errors.cannot_punish_myself);
-        if (users.some(user => user.id === interaction.user.id)) return client.util.throwError(interaction, client.config.errors.cannot_punish_yourself);
-        if (users.some(user => user instanceof Discord.GuildMember && user.roles.highest.position >= interaction.member.roles.highest.position && !interaction.guild.ownerId === interaction.user.id)) return client.util.throwError(interaction, client.config.errors.hierarchy);
-        if (users.some(user => user instanceof Discord.GuildMember && user.roles.highest.position >= interaction.guild.me.roles.highest.position)) return client.util.throwError(interaction, client.config.errors.my_hierarchy);
+        if (users.some(user => user.id === client.user.id))
+            return client.util.throwError(interaction, client.config.errors.cannot_punish_myself);
+        if (users.some(user => user.id === interaction.user.id))
+            return client.util.throwError(interaction, client.config.errors.cannot_punish_yourself);
+        if (
+            users.some(
+                user =>
+                    user instanceof Discord.GuildMember &&
+                    user.roles.highest.position >= interaction.member.roles.highest.position &&
+                    !interaction.guild.ownerId === interaction.user.id
+            )
+        )
+            return client.util.throwError(interaction, client.config.errors.hierarchy);
+        if (
+            users.some(
+                user =>
+                    user instanceof Discord.GuildMember &&
+                    user.roles.highest.position >= interaction.guild.me.roles.highest.position
+            )
+        )
+            return client.util.throwError(interaction, client.config.errors.my_hierarchy);
 
-        const resolveBannedUser = async Id => new Promise(async resolve => {
-            const bannedUser = await interaction.guild.bans.fetch(Id).catch(() => false);
-            resolve(bannedUser);
-        })
-        
+        const resolveBannedUser = async Id =>
+            new Promise(async resolve => {
+                const bannedUser = await interaction.guild.bans.fetch(Id).catch(() => false);
+                resolve(bannedUser);
+            });
+
         const bannedUsers = await Promise.all(users.map(user => resolveBannedUser(user.id)));
         if (bannedUsers.some(ban => ban))
-            return client.util.throwError(interaction, `you cannot ban users that are already banned | Error occurred whilst validating user ${bannedUsers.find(ban => ban).user.toString()}`);
+            return client.util.throwError(
+                interaction,
+                `you cannot ban users that are already banned | Error occurred whilst validating user ${bannedUsers
+                    .find(ban => ban)
+                    .user.toString()}`
+            );
 
         const reason = args['reason'] || 'Unspecified';
         const time = args['duration'] ? ms(args['duration']) : null;

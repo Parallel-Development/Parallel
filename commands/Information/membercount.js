@@ -6,7 +6,6 @@ module.exports = {
     usage: 'membercount\nmembercount detailed',
     aliases: ['usercount'],
     async execute(client, message, args) {
-
         const membercountDetailed = new Discord.MessageEmbed()
             .setColor(client.util.mainColor(message.guild))
             .setAuthor('Member Count', client.user.displayAvatarURL())

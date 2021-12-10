@@ -66,7 +66,7 @@ module.exports = {
         if (subArgs['create']) {
             const createArgs = subArgs['create'].options.reduce((a, b) => ({ ...a, [b['name']]: b.value }), {});
             const shortcutName = createArgs['name'];
-            if (shortcutName.split(' ').length > 1) 
+            if (shortcutName.split(' ').length > 1)
                 return client.util.throwError(interaction, 'shortcut name must not contain spaces');
             const type = createArgs['type'];
 

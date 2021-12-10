@@ -32,21 +32,36 @@ module.exports = {
             users.filter(user => user)
         );
 
-        if (!users.length) 
-            return msg.edit('Error: you must provide at least one __valid__ user to ban');
+        if (!users.length) return msg.edit('Error: you must provide at least one __valid__ user to ban');
         const userIds = users.map(user => user.id);
         const duplicates = userIds.filter((id, index) => userIds.indexOf(id) !== index);
-        if (duplicates.length) return msg.edit(`Error: duplicate users were provided | Error occurred whilst validating user <@${duplicates[0]}>`);
-        if (users.some(user => user.id === client.user.id)) 
+        if (duplicates.length)
+            return msg.edit(
+                `Error: duplicate users were provided | Error occurred whilst validating user <@${duplicates[0]}>`
+            );
+        if (users.some(user => user.id === client.user.id))
             return msg.edit(`Error: ${client.config.errors.cannot_punish_myself}`);
-        
-        if (users.some(user => user.id === message.author.id)) 
+
+        if (users.some(user => user.id === message.author.id))
             return msg.edit(`Error: ${client.config.errors.cannot_punish_yourself}`);
 
-        if (users.some(user => user instanceof Discord.GuildMember && user.roles.highest.position >= message.member.roles.highest.position && !message.guild.ownerId === message.author.id)) 
+        if (
+            users.some(
+                user =>
+                    user instanceof Discord.GuildMember &&
+                    user.roles.highest.position >= message.member.roles.highest.position &&
+                    !message.guild.ownerId === message.author.id
+            )
+        )
             return msg.edit(`Error: ${client.config.errors.hierarchy}`);
-            
-        if (users.some(user => user instanceof Discord.GuildMember && user.roles.highest.position >= message.guild.me.roles.highest.position)) 
+
+        if (
+            users.some(
+                user =>
+                    user instanceof Discord.GuildMember &&
+                    user.roles.highest.position >= message.guild.me.roles.highest.position
+            )
+        )
             return msg.edit(`Error: ${client.config.errors.my_hierarchy}`);
 
         const resolveBannedUser = async Id =>
@@ -57,11 +72,16 @@ module.exports = {
 
         const bannedUsers = await Promise.all(users.map(user => resolveBannedUser(user.id)));
         if (bannedUsers.some(ban => ban))
-            return msg.edit(`Error: you cannot ban users that are already banned | Error occurred whilst validating user ${bannedUsers.find(ban => ban).user.toString()}`);
-            
+            return msg.edit(
+                `Error: you cannot ban users that are already banned | Error occurred whilst validating user ${bannedUsers
+                    .find(ban => ban)
+                    .user.toString()}`
+            );
+
         const pastArguments = args.join(' ')?.split(' * ')[1]?.split(' ');
 
-        let time = null, reason = 'Unspecified';
+        let time = null,
+            reason = 'Unspecified';
 
         if (pastArguments) {
             const __time = pastArguments[0];
