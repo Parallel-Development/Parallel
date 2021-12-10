@@ -130,7 +130,7 @@ module.exports = {
                 allow: 0n
             });
 
-            neutralOverwrites.push(everyoneRoleOverwrite.id);
+            neutralOverwrites.push(interaction.guild.roles.everyone.id);
         }
 
         for (let i = 0; i !== allOverwrites.length; ++i) {

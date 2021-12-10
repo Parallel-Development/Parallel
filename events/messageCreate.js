@@ -328,7 +328,7 @@ module.exports = {
                     await message.member.setNickname(`${message.member.displayName.slice(5)}`).catch(() => {});
 
                 const msg = await message.reply(`Welcome back, I removed your AFK`).catch(() => {});
-                return setTimeout(() => msg.delete().catch(() => {}), 5000);
+                return setTimeout(() => msg?.delete().catch(() => {}), 5000);
             }
 
             return;

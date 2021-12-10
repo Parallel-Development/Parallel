@@ -289,7 +289,7 @@ class Automod {
             const messages = [..._messages.values()];
             for (let i = 0; i !== 5; ++i) {
                 const msg = messages[i];
-                if (msg.author.id === message.author.id) userMessages.push(msg);
+                if (msg?.author.id === message.author.id) userMessages.push(msg);
             }
             if (fast !== 'disabled') message.channel.bulkDelete(userMessages).catch(() => {});
         }
