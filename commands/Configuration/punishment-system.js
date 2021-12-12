@@ -18,7 +18,7 @@ module.exports = {
             if (systemCheck.system.length === 0)
                 return message.reply('No warning amount instances are set for this server');
             const pSystem = new Discord.MessageEmbed()
-                .setColor(client.util.mainColor(message.guild))
+                .setColor(client.util.getMainColor(message.guild))
                 .setAuthor(`Punishment system for ${message.guild.name}`, client.user.displayAvatarURL());
             pSystem.setDescription(
                 systemCheck.system
@@ -53,9 +53,9 @@ module.exports = {
             return client.util.throwError(message, client.config.errors.bad_input_number);
         warningsCount = Math.floor(warningsCount);
         if (warningsCount && warningsCount < 2)
-            return client.util.throwError(message, 'The value must be 2 or greater!');
+            return client.util.throwError(message, 'the value must be 2 or greater!');
         if (warningsCount && warningsCount > 20)
-            return client.util.throwError(message, 'The value must be less than or equal to 20!');
+            return client.util.throwError(message, 'the value must be less than or equal to 20!');
 
         let systemWarningCountCheck;
 

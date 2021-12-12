@@ -25,14 +25,14 @@ module.exports = {
 
         const nickname = args.slice(1).join(' ') || null;
         if (member.nickname === nickname && nickname === null)
-            return client.util.throwError(message, 'Please provide a nickname as this user has none!');
+            return client.util.throwError(message, 'please provide a nickname as this user has none!');
         if (member.displayName === nickname)
-            return client.util.throwError(message, 'This user already has this nickname!');
-        if (nickname?.length > 32) return client.util.throwError(message, 'Nickname length must be 32 or less');
+            return client.util.throwError(message, 'this user already has this nickname!');
+        if (nickname?.length > 32) return client.util.throwError(message, 'nickname length must be 32 or less');
         await member.setNickname(nickname);
 
         const successEmbed = new Discord.MessageEmbed()
-            .setColor(client.util.mainColor(message.guild))
+            .setColor(client.util.getMainColor(message.guild))
             .setDescription(
                 `${client.config.emotes.success} Nickname for ${member} set ${
                     nickname ? `to \`${nickname}\`` : 'back to normal'

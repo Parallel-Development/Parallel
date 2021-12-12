@@ -56,7 +56,7 @@ module.exports = {
             const setArgs = subArgs['set'].options.reduce((a, b) => ({ ...a, [b['name']]: b.value }), {});
             const warningCount = setArgs['warning_count'];
             if (warningCount > 20 || warningCount < 2)
-                return client.util.throwError(interaction, 'The warning count must be between `2` and `20`');
+                return client.util.throwError(interaction, 'the warning count must be between `2` and `20`');
 
             const punishment = setArgs['type'];
             const duration = setArgs['duration'] ? ms(setArgs['duration']) : null;
@@ -224,7 +224,7 @@ module.exports = {
             if (systemCheck.system.length === 0)
                 return interaction.reply('No warning amount instances are set for this server');
             const pSystem = new Discord.MessageEmbed()
-                .setColor(client.util.mainColor(interaction.guild))
+                .setColor(client.util.getMainColor(interaction.guild))
                 .setAuthor(`Punishment system for ${interaction.guild.name}`, client.user.displayAvatarURL());
             pSystem.setDescription(
                 systemCheck.system

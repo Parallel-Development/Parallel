@@ -93,7 +93,7 @@ exports.run = async (client, message, args) => {
     } else if (option === 'view') {
         if (modRolePermissions === '0') return message.reply(`The moderator role permissions list is empty!`);
         const modRolePermissionsEmbed = new Discord.MessageEmbed()
-            .setColor(client.util.mainColor(message.guild))
+            .setColor(client.util.getMainColor(message.guild))
             .setAuthor(`Moderator role permissions for ${message.guild.name}`, client.user.displayAvatarURL())
             .setDescription(
                 `${

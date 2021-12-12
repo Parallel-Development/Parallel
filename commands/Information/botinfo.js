@@ -8,7 +8,7 @@ module.exports = {
         await client.application.fetch();
 
         const botinfo = new Discord.MessageEmbed()
-            .setColor(client.util.mainColor(message.guild))
+            .setColor(client.util.getMainColor(message.guild))
             .setDescription(
                 'Parallel is a Discord bot with advanced modern moderation features. If you would like to join the development / support server, click [here](https://discord.gg/DcmVMPx8bn)'
             )

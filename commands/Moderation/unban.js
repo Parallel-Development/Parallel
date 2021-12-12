@@ -23,7 +23,7 @@ module.exports = {
         if (!(await client.util.getUser(client, args[0])))
             return client.util.throwError(message, client.config.errors.invalid_user);
         const userBanned = await message.guild.bans.fetch(user.id).catch(() => {});
-        if (!userBanned) return client.util.throwError(message, 'This user is not banned');
+        if (!userBanned) return client.util.throwError(message, 'this user is not banned');
 
         const settings = await settingsSchema.findOne({
             guildID: message.guild.id
@@ -81,7 +81,7 @@ module.exports = {
         });
 
         const unbannedEmbed = new Discord.MessageEmbed()
-            .setColor(client.util.mainColor(message.guild))
+            .setColor(client.util.getMainColor(message.guild))
             .setDescription(`${client.config.emotes.success} **${user.tag}** has been unbanned`);
 
         return message.channel.send({ embeds: [unbannedEmbed] });

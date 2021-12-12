@@ -47,7 +47,7 @@ module.exports = {
                 type: 'mute'
             });
 
-            if (hasMuteRecord) return client.util.throwError(message, 'This user already currently muted');
+            if (hasMuteRecord) return client.util.throwError(message, 'this user already currently muted');
 
             new Infraction(client, 'Mute', message, message.member, user, {
                 reason: reason,
@@ -95,12 +95,14 @@ module.exports = {
         });
 
         const role = message.guild.roles.cache.get(muterole) || (await client.util.createMuteRole(message));
+        if (!role) return client.util.throwError(message, 'the muted role was not found, so I tried to create one, but I failed due to bad permissions');
+        if (role.id !== muterole) client.cache.settings.delete(message.guild.id);
 
         if (role.position >= message.guild.me.roles.highest.position)
-            return client.util.throwError(message, 'My hierarchy is too low to manage the muted role');
+            return client.util.throwError(message, 'my hierarchy is too low to manage the muted role');
 
         if (member.roles.cache.has(role.id))
-            return client.util.throwError(message, 'This user is already currently muted!');
+            return client.util.throwError(message, 'this user is already currently muted!');
         else if (hasMuteRecord) {
             await punishmentSchema.deleteMany({
                 guildID: message.guild.id,

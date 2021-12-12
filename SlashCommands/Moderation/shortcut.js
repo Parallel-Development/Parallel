@@ -31,7 +31,7 @@ module.exports = {
         const isModerator = interaction.member.roles.cache.some(role => modRoles.includes(role));
 
         const shortcmd = shortcutCommands.find(command => command.name === args['name']);
-        if (!shortcmd) return client.util.throwError(interaction, 'No shortcut with the provided name exists');
+        if (!shortcmd) return client.util.throwError(interaction, 'no shortcut with the provided name exists');
 
         let member;
         let permissions;
@@ -79,7 +79,7 @@ module.exports = {
                 const alreadyBanned = await interaction.guild.bans
                     .fetch()
                     .then(bans => bans.find(ban => ban.user.id === member.id));
-                if (alreadyBanned) return client.util.throwError(interaction, 'This user is already banned');
+                if (alreadyBanned) return client.util.throwError(interaction, 'this user is already banned');
                 const { baninfo } = settings;
                 if (member instanceof Discord.GuildMember)
                     await new DMUserInfraction(
@@ -127,9 +127,9 @@ module.exports = {
                 const role =
                     interaction.guild.roles.cache.get(muterole) || (await client.util.createMuteRole(interaction));
                 if (role.position >= interaction.guild.me.roles.highest.position)
-                    return client.util.throwError(interaction, 'My hierarchy is too low to manage the muted role');
+                    return client.util.throwError(interaction, 'my hierarchy is too low to manage the muted role');
                 if (member?.roles?.cache?.has(role.id))
-                    return client.util.throwError(interaction, 'This user already currently muted');
+                    return client.util.throwError(interaction, 'this user already currently muted');
                 else if (hasMuteRecord) {
                     await punishmentSchema.deleteMany({
                         guildID: interaction.guild.id,

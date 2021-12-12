@@ -173,7 +173,7 @@ module.exports = {
         await interaction.editReply({ content: `Successfully locked ${channel}` });
 
         const lockedEmbed = new Discord.MessageEmbed()
-            .setColor(client.util.mainColor(interaction.guild))
+            .setColor(client.util.getMainColor(interaction.guild))
             .setAuthor('Channel Lock', client.user.displayAvatarURL())
             .setTitle('This channel has been locked')
             .setDescription('This channel has been locked. Only moderators may speak in this channel');

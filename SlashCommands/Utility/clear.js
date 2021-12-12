@@ -18,7 +18,7 @@ module.exports = {
         const user = await client.util.getUser(client, args['user']);
 
         if (amount > 100 || amount < 1)
-            return client.util.throwError(interaction, 'Number must a number between 1-100');
+            return client.util.throwError(interaction, 'number must a number between 1-100');
         if (!interaction.channel.permissionsFor(interaction.guild.me).has(Discord.Permissions.FLAGS.MANAGE_MESSAGES))
             return client.util.throwError(interaction, client.config.errors.my_channel_access_denied);
 
@@ -45,7 +45,7 @@ module.exports = {
                     'Deleted 0 messages; either failed to fetch any messages from the user, or the messages were too old to be bulk deleted'
                 );
             const bulkDeleteEmbed = new Discord.MessageEmbed()
-                .setColor(client.util.mainColor(interaction.guild))
+                .setColor(client.util.getMainColor(interaction.guild))
                 .setDescription(
                     `✅ Successfully purged \`${purgedMessages}\` ${
                         purgedMessages === 1 ? 'message' : 'messages'
@@ -59,7 +59,7 @@ module.exports = {
                     'Deleted 0 messages; either there are no messages in this channel or the messages are too old'
                 );
             const _bulkDeleteEmbed = new Discord.MessageEmbed()
-                .setColor(client.util.mainColor(interaction.guild))
+                .setColor(client.util.getMainColor(interaction.guild))
                 .setDescription(
                     `✅ Successfully purged \`${deletedAmount.size}\` ${
                         deletedAmount.size === 1 ? 'message' : 'messages'

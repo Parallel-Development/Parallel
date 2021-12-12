@@ -44,7 +44,7 @@ module.exports = {
         if (role === interaction.guild.roles.everyone || role.managed)
             return client.util.throwError(interaction, client.config.errors.unmanagable_role);
         if (!member.roles.cache.has(role.id))
-            return client.util.throwError(interaction, 'This member does not has this role!');
+            return client.util.throwError(interaction, 'this member does not has this role!');
 
         await member.roles.remove(role, `Responsible Member: ${interaction.user.tag}`);
 
@@ -52,7 +52,7 @@ module.exports = {
         if (args['dm'] === true) {
             const reason = args['reason'] || 'Unspecified';
             const addedRoleDM = new Discord.MessageEmbed()
-                .setColor(client.util.mainColor(interaction.guild))
+                .setColor(client.util.getMainColor(interaction.guild))
                 .setAuthor('Parallel Role Management', client.user.displayAvatarURL())
                 .setTitle(`A role has been revoked from you in ${interaction.guild.name}!`)
                 .addField('Removed Role', `${role.name} - \`${role.id}\``)
@@ -64,7 +64,7 @@ module.exports = {
         }
 
         const removedRole = new Discord.MessageEmbed()
-            .setColor(client.util.mainColor(interaction.guild))
+            .setColor(client.util.getMainColor(interaction.guild))
             .setDescription(
                 `✅ Role ${role.toString()} successfully removed from ${member.toString()} ${
                     args['dm'] ? (didNotSend ? '| Failed to DM them' : "| Successfully DM'd them") : ''

@@ -242,7 +242,7 @@ module.exports = {
         client.cache.automod.delete(interaction.guild.id);
 
         const automodList = new Discord.MessageEmbed()
-            .setColor(client.util.mainColor(interaction.guild))
+            .setColor(client.util.getMainColor(interaction.guild))
             .setDescription(
                 'Syntax: `automod (setting) [punishment]` or `automod (setting) disable` to disable. For lists, the options include `add`, `remove`, `removeall`, and `view`\n\nThe valid punishments are `delete`, `warn`, `kick`, `mute`, `tempmute`, and `tempban`'
             )
@@ -779,7 +779,7 @@ module.exports = {
                 const word = toggle['word'];
 
                 if (toggle['method'] !== 'view' && toggle['method'] !== 'removeall' && !word)
-                    return client.util.throwError(interaction, 'Please specify a word');
+                    return client.util.throwError(interaction, 'please specify a word');
 
                 switch (toggle['method']) {
                     case 'add':
@@ -845,7 +845,7 @@ module.exports = {
                                 'No words are on the filter! Want to add some? `automod filterlist add (word)`'
                             );
                         const filterViewList = new Discord.MessageEmbed()
-                            .setColor(client.util.mainColor(interaction.guild))
+                            .setColor(client.util.getMainColor(interaction.guild))
                             .setAuthor(`Filter list for ${interaction.guild.name}`, client.user.displayAvatarURL())
                             .setDescription(
                                 `${
@@ -875,7 +875,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setColor(client.util.getMainColor(interaction.guild))
                                     .setDescription(`✅ Members who send fast message spam will get their spam deleted`)
                                     .setAuthor('Automod Update', client.user.displayAvatarURL())
                             ]
@@ -886,7 +886,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setColor(client.util.getMainColor(interaction.guild))
                                     .setDescription(`✅ Members who send fast message spam will get warned`)
                                     .setAuthor('Automod Update', client.user.displayAvatarURL())
                             ]
@@ -897,7 +897,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setColor(client.util.getMainColor(interaction.guild))
                                     .setDescription(`✅ Members who send fast message spam will get kicked`)
                                     .setAuthor('Automod Update', client.user.displayAvatarURL())
                             ]
@@ -908,7 +908,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setColor(client.util.getMainColor(interaction.guild))
                                     .setDescription(`✅ Members who send fast message spam will get muted`)
                                     .setAuthor('Automod Update', client.user.displayAvatarURL())
                             ]
@@ -919,7 +919,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setColor(client.util.getMainColor(interaction.guild))
                                     .setDescription(`✅ Members who send fast message spam will get banned`)
                                     .setAuthor('Automod Update', client.user.displayAvatarURL())
                             ]
@@ -930,7 +930,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setColor(client.util.getMainColor(interaction.guild))
                                     .setDescription(
                                         `✅ Members who send fast message spam will get banned for \`${client.util.duration(
                                             duration
@@ -945,7 +945,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setColor(client.util.getMainColor(interaction.guild))
                                     .setDescription(
                                         `✅ Members who send fast message spam will get muted for \`${client.util.duration(
                                             duration
@@ -960,7 +960,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new Discord.MessageEmbed({})
-                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setColor(client.util.getMainColor(interaction.guild))
                                     .setDescription(
                                         `✅ Members who send fast message spam will no longer be automatically punished`
                                     )
@@ -987,7 +987,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setColor(client.util.getMainColor(interaction.guild))
                                     .setDescription(`✅ Members who send walltext will get their spam deleted`)
                                     .setAuthor('Automod Update', client.user.displayAvatarURL())
                             ]
@@ -998,7 +998,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setColor(client.util.getMainColor(interaction.guild))
                                     .setDescription(`✅ Members who send walltext will get warned`)
                                     .setAuthor('Automod Update', client.user.displayAvatarURL())
                             ]
@@ -1009,7 +1009,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setColor(client.util.getMainColor(interaction.guild))
                                     .setDescription(`✅ Members who send walltext will get kicked`)
                                     .setAuthor('Automod Update', client.user.displayAvatarURL())
                             ]
@@ -1020,7 +1020,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setColor(client.util.getMainColor(interaction.guild))
                                     .setDescription(`✅ Members who send walltext will get muted`)
                                     .setAuthor('Automod Update', client.user.displayAvatarURL())
                             ]
@@ -1031,7 +1031,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setColor(client.util.getMainColor(interaction.guild))
                                     .setDescription(`✅ Members who send walltext will get banned`)
                                     .setAuthor('Automod Update', client.user.displayAvatarURL())
                             ]
@@ -1042,7 +1042,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setColor(client.util.getMainColor(interaction.guild))
                                     .setDescription(
                                         `✅ Members who send walltext will get banned for \`${client.util.duration(
                                             duration
@@ -1057,7 +1057,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setColor(client.util.getMainColor(interaction.guild))
                                     .setDescription(
                                         `✅ Members who send walltext will get muted for \`${client.util.duration(
                                             duration
@@ -1072,7 +1072,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setColor(client.util.getMainColor(interaction.guild))
                                     .setDescription(`✅ Members who send walltext will no longer be punished`)
                                     .setAuthor('Automod Update', client.user.displayAvatarURL())
                             ]
@@ -1097,7 +1097,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setColor(client.util.getMainColor(interaction.guild))
                                     .setDescription(`✅ Members who send links will get their message deleted`)
                                     .setAuthor('Automod Update', client.user.displayAvatarURL())
                             ]
@@ -1108,7 +1108,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setColor(client.util.getMainColor(interaction.guild))
                                     .setDescription(`✅ Members who send links will get warned`)
                                     .setAuthor('Automod Update', client.user.displayAvatarURL())
                             ]
@@ -1119,7 +1119,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setColor(client.util.getMainColor(interaction.guild))
                                     .setDescription(`✅ Members who send links will get kicked`)
                                     .setAuthor('Automod Update', client.user.displayAvatarURL())
                             ]
@@ -1130,7 +1130,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setColor(client.util.getMainColor(interaction.guild))
                                     .setDescription(`✅ Members who send links will get muted`)
                                     .setAuthor('Automod Update', client.user.displayAvatarURL())
                             ]
@@ -1141,7 +1141,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setColor(client.util.getMainColor(interaction.guild))
                                     .setDescription(`✅ Members who send links will get banned`)
                                     .setAuthor('Automod Update', client.user.displayAvatarURL())
                             ]
@@ -1152,7 +1152,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setColor(client.util.getMainColor(interaction.guild))
                                     .setDescription(
                                         `✅ Members who send links will get banned for \`${client.util.duration(
                                             duration
@@ -1167,7 +1167,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setColor(client.util.getMainColor(interaction.guild))
                                     .setDescription(
                                         `✅ Members who send links will get muted for \`${client.util.duration(
                                             duration
@@ -1182,7 +1182,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setColor(client.util.getMainColor(interaction.guild))
                                     .setDescription(
                                         `✅ Members who send links will no longer be automatically punished`
                                     )
@@ -1209,7 +1209,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setColor(client.util.getMainColor(interaction.guild))
                                     .setDescription(`✅ Members who send invites will get their deleted`)
                                     .setAuthor('Automod Update', client.user.displayAvatarURL())
                             ]
@@ -1220,7 +1220,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setColor(client.util.getMainColor(interaction.guild))
                                     .setDescription(`✅ Members who send invites will get warned`)
                                     .setAuthor('Automod Update', client.user.displayAvatarURL())
                             ]
@@ -1231,7 +1231,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setColor(client.util.getMainColor(interaction.guild))
                                     .setDescription(`✅ Members who send invites will get kicked`)
                                     .setAuthor('Automod Update', client.user.displayAvatarURL())
                             ]
@@ -1242,7 +1242,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setColor(client.util.getMainColor(interaction.guild))
                                     .setDescription(`✅ Members who send invites will get muted`)
                                     .setAuthor('Automod Update', client.user.displayAvatarURL())
                             ]
@@ -1253,7 +1253,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setColor(client.util.getMainColor(interaction.guild))
                                     .setDescription(`✅ Members who send invites will get muted`)
                                     .setAuthor('Automod Update', client.user.displayAvatarURL())
                             ]
@@ -1264,7 +1264,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setColor(client.util.getMainColor(interaction.guild))
                                     .setDescription(
                                         `✅ Members who send invites will get banned for \`${client.util.duration(
                                             duration
@@ -1280,7 +1280,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setColor(client.util.getMainColor(interaction.guild))
                                     .setDescription(
                                         `✅ Members who send invites will get muted for \`${client.util.duration(
                                             duration
@@ -1296,7 +1296,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setColor(client.util.getMainColor(interaction.guild))
                                     .setDescription(`✅ Members who send invites will no longer get punished`)
                                     .setAuthor('Automod Update', client.user.displayAvatarURL())
                             ]
@@ -1320,7 +1320,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setColor(client.util.getMainColor(interaction.guild))
                                     .setDescription(`✅ Members who mention 5+ users will get their message deleted`)
                                     .setAuthor('Automod Update', client.user.displayAvatarURL())
                             ]
@@ -1331,7 +1331,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setColor(client.util.getMainColor(interaction.guild))
                                     .setDescription(`✅ Members who mention 5+ users will get warned`)
                                     .setAuthor('Automod Update', client.user.displayAvatarURL())
                             ]
@@ -1342,7 +1342,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setColor(client.util.getMainColor(interaction.guild))
                                     .setDescription(`✅ Members who mention 5+ users will get kicked`)
                                     .setAuthor('Automod Update', client.user.displayAvatarURL())
                             ]
@@ -1353,7 +1353,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setColor(client.util.getMainColor(interaction.guild))
                                     .setDescription(`✅ Members who mention 5+ users will get muted`)
                                     .setAuthor('Automod Update', client.user.displayAvatarURL())
                             ]
@@ -1364,7 +1364,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setColor(client.util.getMainColor(interaction.guild))
                                     .setDescription(`✅ Members who mention 5+ users will get banned`)
                                     .setAuthor('Automod Update', client.user.displayAvatarURL())
                             ]
@@ -1375,7 +1375,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setColor(client.util.getMainColor(interaction.guild))
                                     .setDescription(
                                         `✅ Members who mention 5+ users will get banned for \`${client.util.duration(
                                             duration
@@ -1390,7 +1390,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setColor(client.util.getMainColor(interaction.guild))
                                     .setDescription(
                                         `✅ Members who mention 5+ users will get muted for \`${client.util.duration(
                                             duration
@@ -1405,7 +1405,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setColor(client.util.getMainColor(interaction.guild))
                                     .setDescription(`✅ Members who mention 5+ users will no longer get punished`)
                                     .setAuthor('Automod Update', client.user.displayAvatarURL())
                             ]
@@ -1430,7 +1430,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setColor(client.util.getMainColor(interaction.guild))
                                     .setDescription(
                                         `✅ Members who send a malicious link will get their message deleted`
                                     )
@@ -1443,7 +1443,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setColor(client.util.getMainColor(interaction.guild))
                                     .setDescription(`✅ Members who send a malicious link will get warned`)
                                     .setAuthor('Automod Update', client.user.displayAvatarURL())
                             ]
@@ -1454,7 +1454,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setColor(client.util.getMainColor(interaction.guild))
                                     .setDescription(`✅ Members who send a malicious link will get kicked`)
                                     .setAuthor('Automod Update', client.user.displayAvatarURL())
                             ]
@@ -1465,7 +1465,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setColor(client.util.getMainColor(interaction.guild))
                                     .setDescription(`✅ Members who send a malicious link will get muted`)
                                     .setAuthor('Automod Update', client.user.displayAvatarURL())
                             ]
@@ -1476,7 +1476,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setColor(client.util.getMainColor(interaction.guild))
                                     .setDescription(`✅ Members who send a malicious links will get banned`)
                                     .setAuthor('Automod Update', client.user.displayAvatarURL())
                             ]
@@ -1487,7 +1487,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setColor(client.util.getMainColor(interaction.guild))
                                     .setDescription(
                                         `✅ Members who send a malicious link will get banned for \`${client.util.duration(
                                             duration
@@ -1502,7 +1502,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setColor(client.util.getMainColor(interaction.guild))
                                     .setDescription(
                                         `✅ Members who send a malicious link will get muted for \`${client.util.duration(
                                             duration
@@ -1517,7 +1517,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(interaction.guild))
+                                    .setColor(client.util.getMainColor(interaction.guild))
                                     .setDescription(`✅ Members who send a malicious link will no longer get punished`)
                                     .setAuthor('Automod Update', client.user.displayAvatarURL())
                             ]
@@ -1531,7 +1531,7 @@ module.exports = {
                     return client.util.throwError(interaction, client.config.errors.missing_argument_channel);
                 const bypassChannel = client.util.getChannel(interaction.guild, toggle['channel']);
                 if (toggle['method'] !== 'add' && toggle['method'] !== 'remove' && bypassChannel)
-                    return client.util.throwError(interaction, 'A channel was provided but was not expected');
+                    return client.util.throwError(interaction, 'a channel was provided but was not expected');
                 if (bypassChannel && !bypassChannel.isText())
                     return client.util.throwError(interaction, client.config.errors.not_type_text_channel);
 
@@ -1605,7 +1605,7 @@ module.exports = {
                                 'No channels are on the automod bypass list! Want to add some? `automod bypass add (channel)`'
                             );
                         const bypassChannelsViewList = new Discord.MessageEmbed()
-                            .setColor(client.util.mainColor(interaction.guild))
+                            .setColor(client.util.getMainColor(interaction.guild))
                             .setAuthor(
                                 `Bypassed channel list for ${interaction.guild.name}`,
                                 client.user.displayAvatarURL()
@@ -1645,7 +1645,7 @@ module.exports = {
                     return client.util.throwError(interaction, client.config.errors.missing_argument_role);
                 const bypassRole = client.util.getRole(interaction.guild, toggle['role']);
                 if (toggle['method'] !== 'add' && toggle['method'] !== 'remove' && bypassRole)
-                    return client.util.throwError(interaction, 'A role was provided but was not expected');
+                    return client.util.throwError(interaction, 'a role was provided but was not expected');
 
                 switch (toggle['method']) {
                     case 'add':
@@ -1713,7 +1713,7 @@ module.exports = {
                                 'No roles are on the automod rolebypass list! Want to add some? `automod rolebypass add (role)`'
                             );
                         const bypassRolesViewList = new Discord.MessageEmbed()
-                            .setColor(client.util.mainColor(interaction.guild))
+                            .setColor(client.util.getMainColor(interaction.guild))
                             .setAuthor(
                                 `Bypassed role list for ${interaction.guild.name}`,
                                 client.user.displayAvatarURL()

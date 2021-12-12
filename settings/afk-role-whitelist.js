@@ -88,7 +88,7 @@ exports.run = async (client, message, args) => {
                 : await client.util.createBin(_allowedRoles.map(role => message.guild.roles.cache.get(role)));
 
         const allowedRolesEmbed = new Discord.MessageEmbed()
-            .setColor(client.util.mainColor(message.guild))
+            .setColor(client.util.getMainColor(message.guild))
             .setAuthor(
                 `Allowed roles list for the afk command in ${message.guild.name}`,
                 client.user.displayAvatarURL()

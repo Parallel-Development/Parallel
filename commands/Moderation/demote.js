@@ -27,7 +27,7 @@ module.exports = {
         if (member === message.guild.owner)
             return client.util.throwError(message, client.config.errors.cannot_punish_owner);
 
-        if (!member.roles.cache.size) return client.util.throwError(message, 'This user does not have any roles');
+        if (!member.roles.cache.size) return client.util.throwError(message, 'this user does not have any roles');
 
         const memberRoles = [];
         for (let i = 0; i !== [...member.roles.cache.values()].length; ++i) {
@@ -51,7 +51,7 @@ module.exports = {
         }
 
         if (member.roles.cache.size === memberRoles.length)
-            return client.util.throwError(message, 'This user does not have any roles with staff permissions');
+            return client.util.throwError(message, 'this user does not have any roles with staff permissions');
         member.roles.set(memberRoles, `Administrator: ${message.author.tag}`);
 
         const demotedEmbed = new Discord.MessageEmbed()

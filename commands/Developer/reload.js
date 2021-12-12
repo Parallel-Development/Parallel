@@ -11,8 +11,8 @@ module.exports = {
         const directory = args[0];
         const fileName = args[1];
 
-        if (!directory) return client.util.throwError(message, 'A directory name must be provided');
-        if (!fileName && directory !== '--all') return client.util.throwError(message, 'A file name must be provided');
+        if (!directory) return client.util.throwError(message, 'a directory name must be provided');
+        if (!fileName && directory !== '--all') return client.util.throwError(message, 'a file name must be provided');
 
         const commandPath = `./${directory}/${fileName}`;
 

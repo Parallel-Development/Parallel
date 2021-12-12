@@ -11,7 +11,7 @@ module.exports = {
     permissions: Discord.Permissions.FLAGS.MANAGE_GUILD,
     async execute(client, message, args) {
         if (!global.confirmationRequests.some(request => request.ID === message.author.id))
-            return client.util.throwError(message, 'You have no pending confirmation request!');
+            return client.util.throwError(message, 'you have no pending confirmation request!');
         if (Date.now() - global.confirmationRequests.find(request => request.ID === message.author.id).at > 10000) {
             global.confirmationRequests.pop({ ID: message.author.id });
             return client.util.throwError(
@@ -39,7 +39,7 @@ module.exports = {
             );
 
             const clearedInfractionsEmbed = new Discord.MessageEmbed()
-                .setColor(client.util.mainColor(message.guild))
+                .setColor(client.util.getMainColor(message.guild))
                 .setAuthor('Action Confirmed!', client.user.displayAvatarURL())
                 .setDescription(
                     `All warnings have been cleared from **${
@@ -59,7 +59,7 @@ module.exports = {
             );
 
             const clearedServerInfractionsEmbed = new Discord.MessageEmbed()
-                .setColor(client.util.mainColor(message.guild))
+                .setColor(client.util.getMainColor(message.guild))
                 .setAuthor('Action Confirmed!', client.user.displayAvatarURL())
                 .setDescription(`All server warnings have been cleared`);
             await message.reply({ embeds: [clearedServerInfractionsEmbed] });
@@ -75,7 +75,7 @@ module.exports = {
             );
 
             const deletedAllShortcutsEmbed = new Discord.MessageEmbed()
-                .setColor(client.util.mainColor(message.guild))
+                .setColor(client.util.getMainColor(message.guild))
                 .setAuthor('Action Confirmed!', client.user.displayAvatarURL())
                 .setDescription(`All server shortcuts have been removed`);
             await message.reply({ embeds: [deletedAllShortcutsEmbed] });
@@ -91,7 +91,7 @@ module.exports = {
             );
 
             const clearedSystem = new Discord.MessageEmbed()
-                .setColor(client.util.mainColor(message.guild))
+                .setColor(client.util.getMainColor(message.guild))
                 .setAuthor('Action Confirmed!', client.user.displayAvatarURL())
                 .setDescription(`Reset the punishment system`);
             await message.reply({ embeds: [clearedSystem] });

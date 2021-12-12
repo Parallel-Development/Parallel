@@ -18,14 +18,14 @@ module.exports = {
     async execute(client, interaction, args) {
         const ID = args['user'];
         if (ID.length !== 18)
-            return client.util.throwError(interaction, 'The provided guild ID is not possible (not a snowflake)');
+            return client.util.throwError(interaction, 'the provided guild ID is not possible (not a snowflake)');
 
         const alreadyBlacklisted = await blacklistSchema.findOne({
             ID: ID,
             server: true
         });
 
-        if (!alreadyBlacklisted) return client.util.throwError(interaction, 'This server is not blacklisted');
+        if (!alreadyBlacklisted) return client.util.throwError(interaction, 'this server is not blacklisted');
 
         const reason = args['reason'];
 
@@ -37,7 +37,7 @@ module.exports = {
         if (client.cache.whitelistedServers.includes(ID)) delete client.cache.whitelistedServers[ID];
 
         const blacklistEmbed = new Discord.MessageEmbed()
-            .setColor(client.util.mainColor(interaction.guild))
+            .setColor(client.util.getMainColor(interaction.guild))
             .setDescription(`✅ Server ID **${ID}** has been whitelisted`);
         return interaction.reply({ embeds: [blacklistEmbed] });
     }

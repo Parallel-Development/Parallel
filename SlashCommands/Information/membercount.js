@@ -7,7 +7,7 @@ module.exports = {
     data: new SlashCommandBuilder().setName('membercount').setDescription('Shows the number of members on the server'),
     async execute(client, interaction, args) {
         const membercountDetailed = new Discord.MessageEmbed()
-            .setColor(client.util.mainColor(interaction.guild))
+            .setColor(client.util.getMainColor(interaction.guild))
             .setAuthor('Member Count', client.user.displayAvatarURL())
             .setTitle(
                 `There are currently \`${interaction.guild.memberCount}\` members in \`${interaction.guild.name}\``

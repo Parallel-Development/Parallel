@@ -7,7 +7,7 @@ module.exports = {
     aliases: ['usercount'],
     async execute(client, message, args) {
         const membercountDetailed = new Discord.MessageEmbed()
-            .setColor(client.util.mainColor(message.guild))
+            .setColor(client.util.getMainColor(message.guild))
             .setAuthor('Member Count', client.user.displayAvatarURL())
             .setTitle(`There are currently \`${message.guild.memberCount}\` members in \`${message.guild.name}\``)
             .setFooter(`Information requested by ${message.author.tag}`, message.author.displayAvatarURL())

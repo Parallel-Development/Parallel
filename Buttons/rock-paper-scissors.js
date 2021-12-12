@@ -20,7 +20,7 @@ module.exports.run = async (client, interaction) => {
 
     if (Date.now() - interaction.message.createdAt > 30000) {
         interaction.message.edit({ content: interaction.message.content, components: [join] });
-        return client.util.throwError(interaction, 'This request has already expired');
+        return client.util.throwError(interaction, 'this request has already expired');
     }
 
     let requested = interaction.message.content.split(' ')[0].replace(',', '');
@@ -49,7 +49,7 @@ module.exports.run = async (client, interaction) => {
     global.openedSession.add(requested);
 
     const gameBoard = new Discord.MessageEmbed()
-        .setColor(client.util.mainColor(interaction.guild))
+        .setColor(client.util.getMainColor(interaction.guild))
         .setDescription('Awaiting response from both users...')
         .setAuthor('Rock Paper Scissors', client.user.displayAvatarURL());
 
@@ -115,7 +115,7 @@ module.exports.run = async (client, interaction) => {
 
             collector.stop();
             finalEmbed = new Discord.MessageEmbed()
-                .setColor(client.util.mainColor(interaction.guild))
+                .setColor(client.util.getMainColor(interaction.guild))
                 .setDescription(
                     `${member1} picked ${member1Option}, ${member2} picked ${member2Option}\n> ${beats}\n${
                         winner === 'tie' ? 'It is a tie' : `The winner is ${winner}`
@@ -136,7 +136,7 @@ module.exports.run = async (client, interaction) => {
             return msg.edit({
                 embeds: [
                     new Discord.MessageEmbed()
-                        .setColor(client.util.mainColor(interaction.guild))
+                        .setColor(client.util.getMainColor(interaction.guild))
                         .setDescription('Did not receive a response from both users within 60 seconds!')
                         .setAuthor('Rock Paper Scissors', client.user.displayAvatarURL())
                 ],

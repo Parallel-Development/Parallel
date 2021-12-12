@@ -9,16 +9,16 @@ module.exports = {
     permissions: Discord.Permissions.FLAGS.MANAGE_GUILD,
     async execute(client, interaction, args) {
         if (!global.confirmationRequests.some(request => request.ID === interaction.user.id))
-            return client.util.throwError(interaction, 'You have no pending confirmation request!');
+            return client.util.throwError(interaction, 'you have no pending confirmation request!');
         if (Date.now() - global.confirmationRequests.find(request => request.ID === interaction.user.id).at > 10000) {
             global.confirmationRequests.pop({ ID: interaction.user.id });
-            return client.util.throwError(interaction, 'Your confirmation request has already expired');
+            return client.util.throwError(interaction, 'your confirmation request has already expired');
         }
 
         global.confirmationRequests.pop({ ID: interaction.user.id });
 
         const cancelEmbed = new Discord.MessageEmbed()
-            .setColor(client.util.mainColor(interaction.guild))
+            .setColor(client.util.getMainColor(interaction.guild))
             .setAuthor('Action Cancelled!', client.user.displayAvatarURL())
             .setDescription(`✅ Successfully cancelled your pending confirmation request`);
 

@@ -16,10 +16,10 @@ module.exports = {
             server: true
         });
 
-        if (!alreadyBlacklisted) return client.util.throwError(message, 'This server is not blacklisted');
+        if (!alreadyBlacklisted) return client.util.throwError(message, 'this server is not blacklisted');
 
         const reason = args.slice(1).join(' ');
-        if (!reason) return client.util.throwError(message, 'A reason is required!');
+        if (!reason) return client.util.throwError(message, 'a reason is required!');
 
         await blacklistSchema.deleteOne({
             ID: ID,
@@ -29,7 +29,7 @@ module.exports = {
         if (client.cache.whitelistedServers.includes(ID)) delete client.cache.whitelistedServers[ID];
 
         const blacklistEmbed = new Discord.MessageEmbed()
-            .setColor(client.util.mainColor(message.guild))
+            .setColor(client.util.getMainColor(message.guild))
             .setDescription(`${client.config.emotes.success} Server with ID **${ID}** has been whitelisted`);
         return message.reply({ embeds: [blacklistEmbed] });
     }

@@ -52,7 +52,7 @@ module.exports = {
         else newChannelState = await channel.setRateLimitPerUser(parseInt(slowmode));
 
         const slowmodeEmbed = new Discord.MessageEmbed()
-            .setColor(client.util.mainColor(interaction.guild))
+            .setColor(client.util.getMainColor(interaction.guild))
             .setDescription(
                 `✅ Set the slowmode for ${channel} to \`${client.util.duration(
                     newChannelState.rateLimitPerUser * 1000

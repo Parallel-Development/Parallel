@@ -28,7 +28,7 @@ module.exports = {
 
 async function getAll(client, interaction, prefix, shortcutCommands, modRoles) {
     const mainHelp = new Discord.MessageEmbed()
-        .setColor(client.util.mainColor(interaction.guild))
+        .setColor(client.util.getMainColor(interaction.guild))
         .setAuthor('Help | Parallel', client.user.displayAvatarURL())
         .setFooter(`To get specific information about a command, run ${prefix}help <command>`);
 
@@ -97,7 +97,7 @@ async function getCMD(client, interaction, input, shortcutCommands, modRoles) {
         )
     ) {
         const scmd = shortcutCommands.find(command => command.name === input);
-        const sembed = new Discord.MessageEmbed().setColor(client.util.mainColor(interaction.guild));
+        const sembed = new Discord.MessageEmbed().setColor(client.util.getMainColor(interaction.guild));
         if (scmd.name) sembed.setAuthor(`Help | ${scmd.name}`, client.user.displayAvatarURL());
         if (scmd.type)
             sembed.addField(
@@ -121,7 +121,7 @@ async function getCMD(client, interaction, input, shortcutCommands, modRoles) {
         return interaction.reply({ embeds: [embed] });
     }
 
-    embed.setColor(client.util.mainColor(interaction.guild));
+    embed.setColor(client.util.getMainColor(interaction.guild));
     if (cmd.name) embed.setAuthor(`Help | ${cmd.name}`, client.user.displayAvatarURL());
     if (cmd.description) embed.addField('Description', cmd.description);
 

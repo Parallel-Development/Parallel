@@ -23,7 +23,7 @@ module.exports = {
         const user = await client.util.getUser(client, target.id);
 
         const avatar = new Discord.MessageEmbed()
-            .setColor(client.util.mainColor(message.guild))
+            .setColor(client.util.getMainColor(message.guild))
             .setAuthor(`${user.tag}'s avatar`, client.user.displayAvatarURL())
             .setImage(
                 target instanceof Discord.GuildMember

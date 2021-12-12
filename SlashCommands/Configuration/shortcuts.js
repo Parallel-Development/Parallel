@@ -139,7 +139,7 @@ module.exports = {
             const shortcutName = deleteArgs['name'];
 
             if (!shortcutCommands.some(command => command.name === shortcutName))
-                return client.util.throwError(interaction, 'Could not find a shortcut with this name');
+                return client.util.throwError(interaction, 'could not find a shortcut with this name');
 
             await settingsSchema.updateOne(
                 {
@@ -156,7 +156,7 @@ module.exports = {
 
             return interaction.reply(`Successfully removed shortcut \`${shortcutName}\``);
         } else if (subArgs['delete-all']) {
-            if (!shortcutCommands.length) return client.util.throwError(interaction, 'This server has no shortcuts');
+            if (!shortcutCommands.length) return client.util.throwError(interaction, 'this server has no shortcuts');
 
             if (global.confirmationRequests.some(request => request.ID === interaction.user.id))
                 global.confirmationRequests.pop({ ID: interaction.user.id });
@@ -173,7 +173,7 @@ module.exports = {
             if (!shortcutCommands?.length) return interaction.reply('No shortcut commands are setup for this server!');
 
             const viewEmbed = new Discord.MessageEmbed()
-                .setColor(client.util.mainColor(interaction.guild))
+                .setColor(client.util.getMainColor(interaction.guild))
                 .setAuthor(`Shortcut commands for ${interaction.guild.name}`, client.user.displayAvatarURL());
             viewEmbed.setDescription(
                 `You can get more information about a shortcut command by running \`/help (shortcut command name)\`\n\n${shortcutCommands

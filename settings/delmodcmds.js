@@ -9,7 +9,7 @@ exports.run = async (client, message, args) => {
         const { delModCmds } = guildSettings;
 
         const delModCmdsStateEmbed = new Discord.MessageEmbed()
-            .setColor(client.util.mainColor(message.guild))
+            .setColor(client.util.getMainColor(message.guild))
             .setDescription(
                 `Moderation command triggers are set to ${
                     delModCmds ? 'get' : '**not** get'

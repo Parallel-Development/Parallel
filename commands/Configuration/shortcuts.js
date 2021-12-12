@@ -36,7 +36,7 @@ module.exports = {
         if (option === 'view') {
             if (!shortcutCommands?.length) return message.reply('No shortcut commands are setup for this server!');
             const viewEmbed = new Discord.MessageEmbed()
-                .setColor(client.util.mainColor(message.guild))
+                .setColor(client.util.getMainColor(message.guild))
                 .setAuthor(`Shortcut commands for ${message.guild.name}`, client.user.displayAvatarURL());
             const scommands = [];
             for (const command of shortcutCommands) scommands.push(`\`${command.name}\``);

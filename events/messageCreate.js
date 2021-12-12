@@ -446,7 +446,7 @@ module.exports = {
                     const alreadyBanned = await message.guild.bans
                         .fetch()
                         .then(bans => bans.find(ban => ban.user.id === member.id));
-                    if (alreadyBanned) return client.util.throwError(message, 'This user is already banned');
+                    if (alreadyBanned) return client.util.throwError(message, 'this user is already banned');
 
                     const { baninfo } = settings;
 
@@ -497,10 +497,10 @@ module.exports = {
                     const role = message.guild.roles.cache.get(muterole) || (await client.util.createMuteRole(message));
 
                     if (role.position >= message.guild.me.roles.highest.position)
-                        return client.util.throwError(message, 'My hierarchy is too low to manage the muted role');
+                        return client.util.throwError(message, 'my hierarchy is too low to manage the muted role');
 
                     if (member?.roles?.cache?.has(role.id))
-                        return client.util.throwError(message, 'This user already currently muted');
+                        return client.util.throwError(message, 'this user already currently muted');
                     else if (hasMuteRecord) {
                         await punishmentSchema.deleteMany({
                             guildID: message.guild.id,

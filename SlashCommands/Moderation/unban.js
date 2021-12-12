@@ -24,7 +24,7 @@ module.exports = {
         const reason = args['reason'] || 'Unspecified';
 
         const userBanned = await interaction.guild.bans.fetch(user.id).catch(() => {});
-        if (!userBanned) return client.util.throwError(interaction, 'This user is not banned');
+        if (!userBanned) return client.util.throwError(interaction, 'this user is not banned');
 
         const settings = await settingsSchema.findOne({
             guildID: interaction.guild.id
@@ -81,7 +81,7 @@ module.exports = {
         });
 
         const unbannedEmbed = new Discord.MessageEmbed()
-            .setColor(client.util.mainColor(interaction.guild))
+            .setColor(client.util.getMainColor(interaction.guild))
             .setDescription(`✅ **${user.tag}** has been unbanned`);
 
         if (delModCmds) {
@@ -89,7 +89,7 @@ module.exports = {
             return interaction.channel.send({
                 embeds: [
                     new Discord.MessageEmbed()
-                        .setColor(client.util.mainColor(interaction.guild))
+                        .setColor(client.util.getMainColor(interaction.guild))
                         .setDescription(`${client.config.emotes.success} **${user.tag}** has been unbanned`)
                 ]
             });

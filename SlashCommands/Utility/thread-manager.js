@@ -24,10 +24,10 @@ module.exports = {
         const option = args['choice'];
         if (!channel.isText()) return client.util.throwError(interaction, client.config.errors.not_type_text_channel);
         if (!channel.permissionsFor(interaction.member).has(Discord.Permissions.FLAGS.MANAGE_CHANNELS))
-            return client.util.throwError(interaction, 'You do not have permission to manage this channel');
+            return client.util.throwError(interaction, 'you do not have permission to manage this channel');
 
         const threads = [...channel.threads.cache.values()];
-        if (!threads.length) return client.util.throwError(interaction, 'There are no threads in this channel');
+        if (!threads.length) return client.util.throwError(interaction, 'there are no threads in this channel');
 
         await interaction.deferReply();
 

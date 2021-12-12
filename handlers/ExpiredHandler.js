@@ -44,7 +44,7 @@ class ExpiredHandler {
                         else await member.roles.remove(role);
 
                         const unmuteDM = new Discord.MessageEmbed()
-                            .setColor(client.util.mainColor(guild))
+                            .setColor(client.util.getMainColor(guild))
                             .setAuthor('Parallel Moderation', client.user.displayAvatarURL())
                             .setTitle(`You were unmuted in ${server.name}`)
                             .addField('Reason', '[AUTO] Mute Expired')

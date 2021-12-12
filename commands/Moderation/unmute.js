@@ -35,7 +35,7 @@ module.exports = {
                 type: 'mute'
             });
 
-            if (!hasMuteRecord) return client.util.throwError(message, 'This user is not currently muted');
+            if (!hasMuteRecord) return client.util.throwError(message, 'this user is not currently muted');
             if (delModCmds) message.delete();
 
             new Infraction(client, 'Unmute', message, message.member, user, {
@@ -63,7 +63,7 @@ module.exports = {
         const { muterole, removerolesonmute } = settings;
         const role = message.guild.roles.cache.get(muterole);
 
-        if (!role) return client.util.throwError(message, 'The muted role does not exist');
+        if (!role) return client.util.throwError(message, 'the muted role does not exist');
         if (role.position >= message.guild.me.roles.highest.position)
             return client.util.throwError(message, client.config.errors.my_hierarchy);
 
@@ -83,7 +83,7 @@ module.exports = {
         else member.roles.remove(role);
 
         if (!member.roles.cache.has(role.id) && !hasMuteRecord)
-            return client.util.throwError(message, 'This user is not currently muted');
+            return client.util.throwError(message, 'this user is not currently muted');
         if (delModCmds) message.delete();
 
         await punishmentSchema.deleteMany({
@@ -138,7 +138,7 @@ module.exports = {
         });
 
         const unmutedEmbed = new Discord.MessageEmbed()
-            .setColor(client.util.mainColor(message.guild))
+            .setColor(client.util.getMainColor(message.guild))
             .setDescription(`${client.config.emotes.success} ${member.toString()} has been unmuted`);
 
         return message.channel.send({ embeds: [unmutedEmbed] });

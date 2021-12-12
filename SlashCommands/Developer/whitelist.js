@@ -21,7 +21,7 @@ module.exports = {
             server: false
         });
 
-        if (!alreadyBlacklisted) return client.util.throwError(interaction, 'This user is not on the blacklist');
+        if (!alreadyBlacklisted) return client.util.throwError(interaction, 'this user is not on the blacklist');
 
         const reason = args['reason'];
 
@@ -33,7 +33,7 @@ module.exports = {
         if (client.cache.whitelistedUsers.includes(user.id)) delete client.cache.whitelistedUsers[user.id];
 
         const blacklistEmbed = new Discord.MessageEmbed()
-            .setColor(client.util.mainColor(interaction.guild))
+            .setColor(client.util.getMainColor(interaction.guild))
             .setDescription(`✅ **${user.tag}** has been removed from the blacklist`);
         return interaction.reply({ embeds: [blacklistEmbed] });
     }

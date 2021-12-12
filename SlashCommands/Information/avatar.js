@@ -24,7 +24,7 @@ module.exports = {
         const absoluteFlagUsed = args['absolute'];
 
         const avatar = new Discord.MessageEmbed()
-            .setColor(client.util.mainColor(interaction.guild))
+            .setColor(client.util.getMainColor(interaction.guild))
             .setAuthor(`${user.tag}'s avatar`, client.user.displayAvatarURL())
             .setImage(
                 target instanceof Discord.GuildMember

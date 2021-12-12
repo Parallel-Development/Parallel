@@ -83,6 +83,8 @@ class Utils {
     }
 
     async createMuteRole(message) {
+        if (!message.guild.me.permissions.has(Discord.Permissions.FLAGS.MANAGE_ROLES)) return false;
+
         const role = await message.guild.roles.create({
             name: 'Muted',
             color: '#546e7a'
@@ -100,16 +102,23 @@ class Utils {
             if (
                 channel &&
                 channel.permissionOverwrites &&
-                channel.permissionsFor(message.guild.me).has(Discord.Permissions.FLAGS.MANAGE_CHANNELS)
+                channel.permissionsFor(message.guild.me).has(Discord.Permissions.FLAGS.MANAGE_CHANNELS) &&
+                channel.permissionsFor(message.guild.me).has(Discord.Permissions.FLAGS.SEND_MESSAGES)
             ) {
-                await channel.permissionOverwrites.edit(role, {
-                    SEND_MESSAGES: false,
-                    ADD_REACTIONS: false,
-                    CONNECT: false,
-                    SEND_MESSAGES_IN_THREADS: false,
-                    CREATE_PUBLIC_THREADS: false,
-                    CREATE_PRIVATE_THREADS: false
-                });
+
+                const overwriteOptions = { SEND_MESSAGES: false };
+                if (channel.permissionsFor(message.guild.me).has(Discord.Permissions.FLAGS.ADD_REACTIONS))
+                    overwriteOptions.ADD_REACTIONS = false;
+                if (channel.permissionsFor(message.guild.me).has(Discord.Permissions.FLAGS.CONNECT))
+                    overwriteOptions.CONNECT = false;
+                if (channel.permissionsFor(message.guild.me).has(Discord.Permissions.FLAGS.SEND_MESSAGES_IN_THREADS))
+                    overwriteOptions.SEND_MESSAGES_IN_THREADS = false;
+                if (channel.permissionsFor(message.guild.me).has(Discord.Permissions.FLAGS.CREATE_PUBLIC_THREADS))
+                    overwriteOptions.CREATE_PUBLIC_THREADS = false;
+                if (channel.permissionsFor(message.guild.me).has(Discord.Permissions.FLAGS.CREATE_PRIVATE_THREADS))
+                    overwriteOptions.CREATE_PRIVATE_THREADS = false;
+
+                await channel.permissionOverwrites.edit(role, overwriteOptions).catch(() => {});
             }
 
             await sleep(0);
@@ -189,7 +198,7 @@ class Utils {
         }
     }
 
-    mainColor(guild) {
+    getMainColor(guild) {
         if (!guild) return client.config.colors.main; // guild is supposed to always not be undefined, but in the bugged case that it is, something will actually be returned lol
         const botRole = guild.me.roles.cache.find(role => role.managed) || guild.me.roles.highest;
         return botRole.hexColor !== '#000000' ? botRole.hexColor : '#09ff2';

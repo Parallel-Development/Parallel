@@ -25,7 +25,7 @@ module.exports = {
         if (role === message.guild.roles.everyone || role.managed)
             return client.util.throwError(message, client.config.errors.unmanagable_role);
         if (member.roles.cache.has(role.id))
-            return client.util.throwError(message, 'This member already has this role!');
+            return client.util.throwError(message, 'this member already has this role!');
 
         await member.roles.add(role, `Responsible Member: ${message.member.user.tag}`);
 
@@ -33,7 +33,7 @@ module.exports = {
         if (args[2] === '--dm') {
             const reason = args.slice(3).join(' ') || 'Unspecified';
             const addedRoleDM = new Discord.MessageEmbed()
-                .setColor(client.util.mainColor(message.guild))
+                .setColor(client.util.getMainColor(message.guild))
                 .setAuthor('Parallel Role Management', client.user.displayAvatarURL())
                 .setTitle(`You were assigned a role in ${message.guild.name}!`)
                 .addField('Added Role', `${role.name} - \`${role.id}\``)
@@ -46,7 +46,7 @@ module.exports = {
 
         await member.roles.add(role, `Responsible Member: ${message.author.tag}`);
         const assignedRole = new Discord.MessageEmbed()
-            .setColor(client.util.mainColor(message.guild))
+            .setColor(client.util.getMainColor(message.guild))
             .setDescription(
                 `${
                     client.config.emotes.success

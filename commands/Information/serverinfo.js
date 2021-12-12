@@ -7,7 +7,7 @@ module.exports = {
     async execute(client, message, args) {
         const serverinfo = new Discord.MessageEmbed()
 
-            .setColor(client.util.mainColor(message.guild))
+            .setColor(client.util.getMainColor(message.guild))
             .setAuthor(`Server Information for ${message.guild.name}`, client.user.displayAvatarURL())
             .addField('Server ID', message.guild.id, true)
             .addField('Member Count', `${message.guild.memberCount}`)

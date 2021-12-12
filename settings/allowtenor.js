@@ -3,14 +3,14 @@ const Discord = require('discord.js');
 
 exports.run = async (client, message, args) => {
     const option = args[1].toLowerCase();
-    if (!option) return client.util.throwError(message, 'Please specify a toggle');
+    if (!option) return client.util.throwError(message, 'please specify a toggle');
 
     if (option === 'current') {
         const guildSettings = await automodSchema.findOne({ guildID: message.guild.id });
         const { allowTenor } = guildSettings;
 
         const currentAllowTenorStateEmbed = new Discord.MessageEmbed()
-            .setColor(client.util.mainColor(message.guild))
+            .setColor(client.util.getMainColor(message.guild))
             .setDescription(
                 `This module is currently ${allowTenor.enabled ? 'enabled' : 'disabled'} ${
                     allowTenor.attachmentPermsOnly

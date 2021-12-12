@@ -14,7 +14,7 @@ module.exports = {
 
         if (!args) {
             const settingsPannel = new Discord.MessageEmbed()
-                .setColor(client.util.mainColor(interaction.guild))
+                .setColor(client.util.getMainColor(interaction.guild))
                 .setDescription(
                     'These are the settings you can manage on the server. Run `settings (setting)` to get more information on a setting | There are more configuration commands that you can find from the `help` menu'
                 )

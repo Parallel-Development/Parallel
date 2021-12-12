@@ -7,7 +7,7 @@ exports.run = async (client, message, args) => {
         const { automodLogging } = guildSettings;
 
         const automodLoggingChannelEmbed = new Discord.MessageEmbed()
-            .setColor(client.util.mainColor(message.guild))
+            .setColor(client.util.getMainColor(message.guild))
             .setDescription(
                 automodLogging === 'none'
                     ? 'There is no channel set for logging automod instances!'

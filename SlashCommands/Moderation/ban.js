@@ -28,7 +28,7 @@ module.exports = {
         if (!member) return client.util.throwError(interaction, client.config.errors.invalid_member);
 
         const alreadyBanned = await interaction.guild.bans.fetch(member.id).catch(() => {});
-        if (alreadyBanned) return client.util.throwError(interaction, 'This user is already banned');
+        if (alreadyBanned) return client.util.throwError(interaction, 'this user is already banned');
 
         const time = args['duration'] ? ms(args['duration']) : null;
         if (time && time > 315576000000) return client.util.throwError(interaction, client.config.errors.time_too_long);

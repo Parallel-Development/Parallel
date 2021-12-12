@@ -33,14 +33,14 @@ module.exports = {
 
         const nickname = args['nickname'] || null;
         if (member.nickname === nickname && nickname === null)
-            return client.util.throwError(interaction, 'Please provide a nickname as this user has none!');
+            return client.util.throwError(interaction, 'please provide a nickname as this user has none!');
         if (member.displayName === nickname)
-            return client.util.throwError(interaction, 'This user already has this nickname!');
-        if (nickname?.length > 32) return client.util.throwError(interaction, 'Nickname length must be 32 or less');
+            return client.util.throwError(interaction, 'this user already has this nickname!');
+        if (nickname?.length > 32) return client.util.throwError(interaction, 'nickname length must be 32 or less');
         await member.setNickname(nickname);
 
         const successEmbed = new Discord.MessageEmbed()
-            .setColor(client.util.mainColor(interaction.guild))
+            .setColor(client.util.getMainColor(interaction.guild))
             .setDescription(`✅ Nickname for ${member} set ${nickname ? `to \`${nickname}\`` : 'back to normal'}`);
         return interaction.reply({ embeds: [successEmbed] });
     }

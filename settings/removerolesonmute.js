@@ -7,7 +7,7 @@ exports.run = async (client, message, args) => {
         const { removerolesonmute } = guildSettings;
 
         const removerolesonmuteStateEmbed = new Discord.MessageEmbed()
-            .setColor(client.util.mainColor(message.guild))
+            .setColor(client.util.getMainColor(message.guild))
             .setDescription(
                 removerolesonmute
                     ? 'All roles will get removed from users when muted, and the muted role will get added'

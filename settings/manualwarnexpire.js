@@ -8,7 +8,7 @@ exports.run = async (client, message, args) => {
         const { manualwarnexpire } = guildSettings;
 
         const manualwarnexpireEmbed = new Discord.MessageEmbed()
-            .setColor(client.util.mainColor(message.guild))
+            .setColor(client.util.getMainColor(message.guild))
             .setDescription(
                 manualwarnexpire === 'disabled'
                     ? 'Manual warnings are currently **not** set to expire if no duration is provided'
@@ -31,7 +31,7 @@ exports.run = async (client, message, args) => {
         );
 
         const disableSuccess = new Discord.MessageEmbed()
-            .setColor(client.util.mainColor(message.guild))
+            .setColor(client.util.getMainColor(message.guild))
             .setDescription(
                 `${client.config.emotes.success} Success! Manual warnings with no duration specified will now never expire`
             );
@@ -42,7 +42,7 @@ exports.run = async (client, message, args) => {
     const duration = ms(args[1]);
     if (!duration) return client.util.throwError(message, client.config.errors.missing_argument_duration);
     if (duration > 315576000000) return client.util.throwError(message, client.config.errors.time_too_long);
-    if (duration < 5000) return client.util.throwError(message, 'The minimum time allowed is 5 seconds');
+    if (duration < 5000) return client.util.throwError(message, 'the minimum time allowed is 5 seconds');
 
     await settingsSchema.updateOne(
         {
@@ -54,7 +54,7 @@ exports.run = async (client, message, args) => {
     );
 
     const success = new Discord.MessageEmbed()
-        .setColor(client.util.mainColor(message.guild))
+        .setColor(client.util.getMainColor(message.guild))
         .setDescription(
             `${
                 client.config.emotes.success

@@ -42,7 +42,7 @@ module.exports = {
         } = automodGrab;
 
         const automodList = new Discord.MessageEmbed()
-            .setColor(client.util.mainColor(message.guild))
+            .setColor(client.util.getMainColor(message.guild))
             .setDescription(
                 'Syntax: `automod (setting) [punishment]` or `automod (setting) disable` to disable. For lists, the options include `add`, `remove`, `removeall`, and `view`\n\nThe valid punishments are `delete`, `warn`, `kick`, `mute`, `tempmute`, and `tempban`'
             )
@@ -571,7 +571,7 @@ module.exports = {
             case 'filterlist':
                 const word = args.slice(2).join(' ');
                 if (!args[2] && args[1] && args[1] !== 'remove' && args[1] !== 'removeall' && args[1] !== 'view')
-                    return client.util.throwError(message, 'Please specify a word');
+                    return client.util.throwError(message, 'please specify a word');
 
                 switch (toggle) {
                     case 'add':
@@ -637,7 +637,7 @@ module.exports = {
                                 'No words are on the filter! Want to add some? `automod filterlist add (word)`'
                             );
                         const filterViewList = new Discord.MessageEmbed()
-                            .setColor(client.util.mainColor(message.guild))
+                            .setColor(client.util.getMainColor(message.guild))
                             .setAuthor(`Filter list for ${message.guild.name}`, client.user.displayAvatarURL())
                             .setDescription(
                                 `${
@@ -663,7 +663,7 @@ module.exports = {
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(message.guild))
+                                    .setColor(client.util.getMainColor(message.guild))
                                     .setDescription(
                                         `${client.config.emotes.success} Members who send fast message spam will get their spam deleted`
                                     )
@@ -676,7 +676,7 @@ module.exports = {
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(message.guild))
+                                    .setColor(client.util.getMainColor(message.guild))
                                     .setDescription(
                                         `${client.config.emotes.success} Members who send fast message spam will get warned`
                                     )
@@ -689,7 +689,7 @@ module.exports = {
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(message.guild))
+                                    .setColor(client.util.getMainColor(message.guild))
                                     .setDescription(
                                         `${client.config.emotes.success} Members who send fast message spam will get kicked`
                                     )
@@ -702,7 +702,7 @@ module.exports = {
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(message.guild))
+                                    .setColor(client.util.getMainColor(message.guild))
                                     .setDescription(
                                         `${client.config.emotes.success} Members who send fast message spam will get muted`
                                     )
@@ -715,7 +715,7 @@ module.exports = {
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(message.guild))
+                                    .setColor(client.util.getMainColor(message.guild))
                                     .setDescription(
                                         `${client.config.emotes.success} Members who send fast message spam will get banned`
                                     )
@@ -728,7 +728,7 @@ module.exports = {
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(message.guild))
+                                    .setColor(client.util.getMainColor(message.guild))
                                     .setDescription(
                                         `${
                                             client.config.emotes.success
@@ -745,7 +745,7 @@ module.exports = {
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(message.guild))
+                                    .setColor(client.util.getMainColor(message.guild))
                                     .setDescription(
                                         `${
                                             client.config.emotes.success
@@ -762,7 +762,7 @@ module.exports = {
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed({})
-                                    .setColor(client.util.mainColor(message.guild))
+                                    .setColor(client.util.getMainColor(message.guild))
                                     .setDescription(
                                         `${client.config.emotes.success} Members who send fast message spam will no longer be automatically punished`
                                     )
@@ -785,7 +785,7 @@ module.exports = {
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(message.guild))
+                                    .setColor(client.util.getMainColor(message.guild))
                                     .setDescription(
                                         `${client.config.emotes.success} Members who send walltext will get their spam deleted`
                                     )
@@ -798,7 +798,7 @@ module.exports = {
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(message.guild))
+                                    .setColor(client.util.getMainColor(message.guild))
                                     .setDescription(
                                         `${client.config.emotes.success} Members who send walltext will get warned`
                                     )
@@ -811,7 +811,7 @@ module.exports = {
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(message.guild))
+                                    .setColor(client.util.getMainColor(message.guild))
                                     .setDescription(
                                         `${client.config.emotes.success} Members who send walltext will get kicked`
                                     )
@@ -824,7 +824,7 @@ module.exports = {
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(message.guild))
+                                    .setColor(client.util.getMainColor(message.guild))
                                     .setDescription(
                                         `${client.config.emotes.success} Members who send walltext will get muted`
                                     )
@@ -837,7 +837,7 @@ module.exports = {
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(message.guild))
+                                    .setColor(client.util.getMainColor(message.guild))
                                     .setDescription(
                                         `${client.config.emotes.success} Members who send walltext will get banned`
                                     )
@@ -850,7 +850,7 @@ module.exports = {
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(message.guild))
+                                    .setColor(client.util.getMainColor(message.guild))
                                     .setDescription(
                                         `${
                                             client.config.emotes.success
@@ -867,7 +867,7 @@ module.exports = {
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(message.guild))
+                                    .setColor(client.util.getMainColor(message.guild))
                                     .setDescription(
                                         `${
                                             client.config.emotes.success
@@ -884,7 +884,7 @@ module.exports = {
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(message.guild))
+                                    .setColor(client.util.getMainColor(message.guild))
                                     .setDescription(
                                         `${client.config.emotes.success} Members who send walltext will no longer be punished`
                                     )
@@ -907,7 +907,7 @@ module.exports = {
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(message.guild))
+                                    .setColor(client.util.getMainColor(message.guild))
                                     .setDescription(
                                         `${client.config.emotes.success} Members who send links will get their message deleted`
                                     )
@@ -920,7 +920,7 @@ module.exports = {
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(message.guild))
+                                    .setColor(client.util.getMainColor(message.guild))
                                     .setDescription(
                                         `${client.config.emotes.success} Members who send links will get warned`
                                     )
@@ -933,7 +933,7 @@ module.exports = {
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(message.guild))
+                                    .setColor(client.util.getMainColor(message.guild))
                                     .setDescription(
                                         `${client.config.emotes.success} Members who send links will get kicked`
                                     )
@@ -946,7 +946,7 @@ module.exports = {
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(message.guild))
+                                    .setColor(client.util.getMainColor(message.guild))
                                     .setDescription(
                                         `${client.config.emotes.success} Members who send links will get muted`
                                     )
@@ -959,7 +959,7 @@ module.exports = {
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(message.guild))
+                                    .setColor(client.util.getMainColor(message.guild))
                                     .setDescription(
                                         `${client.config.emotes.success} Members who send links will get banned`
                                     )
@@ -972,7 +972,7 @@ module.exports = {
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(message.guild))
+                                    .setColor(client.util.getMainColor(message.guild))
                                     .setDescription(
                                         `${
                                             client.config.emotes.success
@@ -989,7 +989,7 @@ module.exports = {
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(message.guild))
+                                    .setColor(client.util.getMainColor(message.guild))
                                     .setDescription(
                                         `${
                                             client.config.emotes.success
@@ -1006,7 +1006,7 @@ module.exports = {
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(message.guild))
+                                    .setColor(client.util.getMainColor(message.guild))
                                     .setDescription(
                                         `${client.config.emotes.success} Members who send links will no longer be automatically punished`
                                     )
@@ -1029,7 +1029,7 @@ module.exports = {
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(message.guild))
+                                    .setColor(client.util.getMainColor(message.guild))
                                     .setDescription(
                                         `${client.config.emotes.success} Members who send invites will get their deleted`
                                     )
@@ -1042,7 +1042,7 @@ module.exports = {
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(message.guild))
+                                    .setColor(client.util.getMainColor(message.guild))
                                     .setDescription(
                                         `${client.config.emotes.success} Members who send invites will get warned`
                                     )
@@ -1055,7 +1055,7 @@ module.exports = {
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(message.guild))
+                                    .setColor(client.util.getMainColor(message.guild))
                                     .setDescription(
                                         `${client.config.emotes.success} Members who send invites will get kicked`
                                     )
@@ -1068,7 +1068,7 @@ module.exports = {
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(message.guild))
+                                    .setColor(client.util.getMainColor(message.guild))
                                     .setDescription(
                                         `${client.config.emotes.success} Members who send invites will get muted`
                                     )
@@ -1081,7 +1081,7 @@ module.exports = {
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(message.guild))
+                                    .setColor(client.util.getMainColor(message.guild))
                                     .setDescription(
                                         `${client.config.emotes.success} Members who send invites will get muted`
                                     )
@@ -1094,7 +1094,7 @@ module.exports = {
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(message.guild))
+                                    .setColor(client.util.getMainColor(message.guild))
                                     .setDescription(
                                         `${
                                             client.config.emotes.success
@@ -1112,7 +1112,7 @@ module.exports = {
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(message.guild))
+                                    .setColor(client.util.getMainColor(message.guild))
                                     .setDescription(
                                         `${
                                             client.config.emotes.success
@@ -1129,7 +1129,7 @@ module.exports = {
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(message.guild))
+                                    .setColor(client.util.getMainColor(message.guild))
                                     .setDescription(
                                         `${client.config.emotes.success} Members who send invites will no longer get punished`
                                     )
@@ -1152,7 +1152,7 @@ module.exports = {
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(message.guild))
+                                    .setColor(client.util.getMainColor(message.guild))
                                     .setDescription(
                                         `${client.config.emotes.success} Members who mention 5+ users will get their message deleted`
                                     )
@@ -1165,7 +1165,7 @@ module.exports = {
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(message.guild))
+                                    .setColor(client.util.getMainColor(message.guild))
                                     .setDescription(
                                         `${client.config.emotes.success} Members who mention 5+ users will get warned`
                                     )
@@ -1178,7 +1178,7 @@ module.exports = {
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(message.guild))
+                                    .setColor(client.util.getMainColor(message.guild))
                                     .setDescription(
                                         `${client.config.emotes.success} Members who mention 5+ users will get kicked`
                                     )
@@ -1191,7 +1191,7 @@ module.exports = {
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(message.guild))
+                                    .setColor(client.util.getMainColor(message.guild))
                                     .setDescription(
                                         `${client.config.emotes.success} Members who mention 5+ users will get muted`
                                     )
@@ -1204,7 +1204,7 @@ module.exports = {
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(message.guild))
+                                    .setColor(client.util.getMainColor(message.guild))
                                     .setDescription(
                                         `${client.config.emotes.success} Members who mention 5+ users will get banned`
                                     )
@@ -1217,7 +1217,7 @@ module.exports = {
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(message.guild))
+                                    .setColor(client.util.getMainColor(message.guild))
                                     .setDescription(
                                         `${
                                             client.config.emotes.success
@@ -1234,7 +1234,7 @@ module.exports = {
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(message.guild))
+                                    .setColor(client.util.getMainColor(message.guild))
                                     .setDescription(
                                         `${
                                             client.config.emotes.success
@@ -1251,7 +1251,7 @@ module.exports = {
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(message.guild))
+                                    .setColor(client.util.getMainColor(message.guild))
                                     .setDescription(
                                         `${client.config.emotes.success} Members who mention 5+ users will no longer get punished`
                                     )
@@ -1275,7 +1275,7 @@ module.exports = {
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(message.guild))
+                                    .setColor(client.util.getMainColor(message.guild))
                                     .setDescription(
                                         `${client.config.emotes.success} Members who send a malicious link will get their message deleted`
                                     )
@@ -1288,7 +1288,7 @@ module.exports = {
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(message.guild))
+                                    .setColor(client.util.getMainColor(message.guild))
                                     .setDescription(
                                         `${client.config.emotes.success} Members who send a malicious link will get warned`
                                     )
@@ -1301,7 +1301,7 @@ module.exports = {
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(message.guild))
+                                    .setColor(client.util.getMainColor(message.guild))
                                     .setDescription(
                                         `${client.config.emotes.success} Members who send a malicious link will get kicked`
                                     )
@@ -1314,7 +1314,7 @@ module.exports = {
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(message.guild))
+                                    .setColor(client.util.getMainColor(message.guild))
                                     .setDescription(
                                         `${client.config.emotes.success} Members who send a malicious link will get muted`
                                     )
@@ -1327,7 +1327,7 @@ module.exports = {
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(message.guild))
+                                    .setColor(client.util.getMainColor(message.guild))
                                     .setDescription(
                                         `${client.config.emotes.success} Members who send a malicious links will get banned`
                                     )
@@ -1340,7 +1340,7 @@ module.exports = {
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(message.guild))
+                                    .setColor(client.util.getMainColor(message.guild))
                                     .setDescription(
                                         `${
                                             client.config.emotes.success
@@ -1357,7 +1357,7 @@ module.exports = {
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(message.guild))
+                                    .setColor(client.util.getMainColor(message.guild))
                                     .setDescription(
                                         `${
                                             client.config.emotes.success
@@ -1374,7 +1374,7 @@ module.exports = {
                         message.reply({
                             embeds: [
                                 new Discord.MessageEmbed()
-                                    .setColor(client.util.mainColor(message.guild))
+                                    .setColor(client.util.getMainColor(message.guild))
                                     .setDescription(
                                         `${client.config.emotes.success} Members who send a malicious link will no longer get punished`
                                     )
@@ -1465,7 +1465,7 @@ module.exports = {
                                 'No channels are on the automod bypass list! Want to add some? `automod bypass add (channel)`'
                             );
                         const bypassChannelsViewList = new Discord.MessageEmbed()
-                            .setColor(client.util.mainColor(message.guild))
+                            .setColor(client.util.getMainColor(message.guild))
                             .setAuthor(
                                 `Bypassed channel list for ${message.guild.name}`,
                                 client.user.displayAvatarURL()
@@ -1582,7 +1582,7 @@ module.exports = {
                                 'No roles are on the automod rolebypass list! Want to add some? `automod rolebypass add (role)`'
                             );
                         const bypassRolesViewList = new Discord.MessageEmbed()
-                            .setColor(client.util.mainColor(message.guild))
+                            .setColor(client.util.getMainColor(message.guild))
                             .setAuthor(`Bypassed role list for ${message.guild.name}`, client.user.displayAvatarURL());
                         const bypassRoles2 = [];
                         for (let i = 0; i !== bypassRoles.length; ++i) {

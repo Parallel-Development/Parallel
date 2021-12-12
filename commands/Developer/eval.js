@@ -23,11 +23,11 @@ module.exports = {
         let startTime;
         let endTime;
 
-        if (!code) return client.util.throwError(message, 'Please input something to run');
+        if (!code) return client.util.throwError(message, 'please input something to run');
         if (delMessage) message.delete();
 
         const tryingToEval = new Discord.MessageEmbed()
-            .setColor(client.util.mainColor(message.guild))
+            .setColor(client.util.getMainColor(message.guild))
             .setDescription(`Evaluating... ${client.config.emotes.loading}`);
 
         const evaluatingMessage = !silent
@@ -64,7 +64,7 @@ module.exports = {
         let outputEmbed;
         if (!silent)
             outputEmbed = new Discord.MessageEmbed()
-                .setColor(client.util.mainColor(message.guild))
+                .setColor(client.util.getMainColor(message.guild))
                 .setDescription(`Input:\`\`\`js\n${code}\`\`\`\nOutput:\`\`\`js\n` + output + `\`\`\``)
                 .setAuthor('Evaluation', client.user.displayAvatarURL())
                 .setTitle(`Completed in ${client.util.duration(endTime - startTime)}`)
@@ -83,7 +83,7 @@ module.exports = {
                     const buttons = new Discord.MessageActionRow().addComponents(_output);
 
                     const newOutputEmbed = new Discord.MessageEmbed()
-                        .setColor(client.util.mainColor(message.guild))
+                        .setColor(client.util.getMainColor(message.guild))
                         .setDescription(`Failed to send output, click the button below to view the returned output`);
                     return evaluatingMessage.edit({ embeds: [newOutputEmbed], components: [buttons] });
                 })

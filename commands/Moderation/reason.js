@@ -30,12 +30,12 @@ module.exports = {
             moderatorID !== message.author.id &&
             !message.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_MESSAGES)
         )
-            return client.util.throwError(message, 'You can only delete warnings that you distributed');
+            return client.util.throwError(message, 'you can only delete warnings that you distributed');
 
         const newReason = args.slice(1).join(' ');
-        if (!newReason) return client.util.throwError(message, 'Please specify a new reason');
+        if (!newReason) return client.util.throwError(message, 'please specify a new reason');
         if (newReason === reason)
-            return client.util.throwError(message, 'The new reason must be different from the old reason!');
+            return client.util.throwError(message, 'the new reason must be different from the old reason!');
 
         await warningSchema.updateOne(
             {
@@ -54,7 +54,7 @@ module.exports = {
         );
 
         const changedInfractionReasonEmbed = new Discord.MessageEmbed()
-            .setColor(client.util.mainColor(message.guild))
+            .setColor(client.util.getMainColor(message.guild))
             .setDescription(
                 `${client.config.emotes.success} Reason for infraction \`${ID}\` has been updated to ${
                     newReason.length <= 1024 ? newReason : await client.util.createBin(newReason)

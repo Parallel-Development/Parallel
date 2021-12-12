@@ -12,7 +12,7 @@ module.exports = {
     permissions: Discord.Permissions.FLAGS.MANAGE_GUILD,
     async execute(client, interaction, args) {
         if (!global.confirmationRequests.some(request => request.ID === interaction.user.id))
-            return client.util.throwError(interaction, 'You have no pending confirmation request!');
+            return client.util.throwError(interaction, 'you have no pending confirmation request!');
         if (Date.now() - global.confirmationRequests.find(request => request.ID === interaction.user.id).at > 10000) {
             global.confirmationRequests.pop({ ID: interaction.user.id });
             return client.util.throwError(
@@ -42,7 +42,7 @@ module.exports = {
             );
 
             const clearedInfractionsEmbed = new Discord.MessageEmbed()
-                .setColor(client.util.mainColor(interaction.guild))
+                .setColor(client.util.getMainColor(interaction.guild))
                 .setAuthor('Action Confirmed!', client.user.displayAvatarURL())
                 .setDescription(
                     `All warnings have been cleared from **${
@@ -62,7 +62,7 @@ module.exports = {
             );
 
             const clearedServerInfractionsEmbed = new Discord.MessageEmbed()
-                .setColor(client.util.mainColor(interaction.guild))
+                .setColor(client.util.getMainColor(interaction.guild))
                 .setAuthor('Action Confirmed!', client.user.displayAvatarURL())
                 .setDescription(`All server warnings have been cleared`);
             await interaction.reply({ embeds: [clearedServerInfractionsEmbed] });
@@ -78,7 +78,7 @@ module.exports = {
             );
 
             const deletedAllShortcutsEmbed = new Discord.MessageEmbed()
-                .setColor(client.util.mainColor(interaction.guild))
+                .setColor(client.util.getMainColor(interaction.guild))
                 .setAuthor('Action Confirmed!', client.user.displayAvatarURL())
                 .setDescription(`All server shortcuts have been removed`);
             await interaction.reply({ embeds: [deletedAllShortcutsEmbed] });
@@ -94,7 +94,7 @@ module.exports = {
             );
 
             const clearedSystem = new Discord.MessageEmbed()
-                .setColor(client.util.mainColor(interaction.guild))
+                .setColor(client.util.getMainColor(interaction.guild))
                 .setAuthor('Action Confirmed!', client.user.displayAvatarURL())
                 .setDescription(`Reset the punishment system`);
             await interaction.reply({ embeds: [clearedSystem] });
@@ -110,7 +110,7 @@ module.exports = {
             );
 
             const clearedSystem = new Discord.MessageEmbed()
-                .setColor(client.util.mainColor(interaction.guild))
+                .setColor(client.util.getMainColor(interaction.guild))
                 .setAuthor('Action Confirmed!', client.user.displayAvatarURL())
                 .setDescription(`Reset the punishment system`);
             await interaction.reply({ embeds: [clearedSystem] });

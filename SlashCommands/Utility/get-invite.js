@@ -15,7 +15,7 @@ module.exports = {
         ),
     async execute(client, interaction, args) {
         const bot = await client.users.fetch(args['bot']);
-        if (!bot.bot) return client.util.throwError(interaction, 'The provided user is not a bot!');
+        if (!bot.bot) return client.util.throwError(interaction, 'the provided user is not a bot!');
 
         const invite = `https://discord.com/oauth2/authorize?client_id=${bot.id}&scope=bot${
             !args['no_slash_commands'] ? '%20applications.commands' : ''

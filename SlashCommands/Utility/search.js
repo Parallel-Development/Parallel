@@ -24,7 +24,7 @@ module.exports = {
         const members = [];
 
         const result = new Discord.MessageEmbed()
-            .setColor(client.util.mainColor(interaction.guild))
+            .setColor(client.util.getMainColor(interaction.guild))
             .setAuthor(
                 `Results for ${displayName} ${
                     exact ? '| The results shown are for users with the exact display name as specified' : ''
@@ -60,7 +60,7 @@ module.exports = {
             return interaction.editReply({
                 embeds: [
                     new Discord.MessageEmbed()
-                        .setColor(client.util.mainColor(interaction.guild))
+                        .setColor(client.util.getMainColor(interaction.guild))
                         .setDescription('No results found')
                 ]
             });
@@ -78,7 +78,7 @@ module.exports = {
                     .join('\n')
             );
             const newResultEmbed = new Discord.MessageEmbed()
-                .setColor(client.util.mainColor(interaction.guild))
+                .setColor(client.util.getMainColor(interaction.guild))
                 .setDescription(
                     `The result may be too large, click to view the result [here](${newResult}) (**${members.length}** results)`
                 );

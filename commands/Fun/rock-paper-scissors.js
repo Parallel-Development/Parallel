@@ -10,7 +10,7 @@ module.exports = {
     aliases: ['rps'],
     async execute(client, message, args) {
         if (global.openedSession.has(message.author.id))
-            return client.util.throwError(message, 'You are already in a game!');
+            return client.util.throwError(message, 'you are already in a game!');
 
         const playerOne = message.member;
         const playerTwo = await client.util.getMember(message.guild, args[0]);
@@ -26,9 +26,9 @@ module.exports = {
                 message,
                 'This user already has a pending request! Please wait for their pending request to expire before trying again'
             );
-        if (!playerTwo) return client.util.throwError(message, 'Please specify a user to play against');
-        if (playerTwo.user.bot) return client.util.throwError(message, 'You cannot play a bot!');
-        if (playerTwo.id === message.author.id) return client.util.throwError(message, 'You cannot play yourself');
+        if (!playerTwo) return client.util.throwError(message, 'please specify a user to play against');
+        if (playerTwo.user.bot) return client.util.throwError(message, 'you cannot play a bot!');
+        if (playerTwo.id === message.author.id) return client.util.throwError(message, 'you cannot play yourself');
 
         global.requestCooldown.add(message.author.id);
         global.requestedCooldown.add(playerTwo.id);

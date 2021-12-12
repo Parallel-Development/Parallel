@@ -21,7 +21,7 @@ module.exports = {
             server: false
         });
 
-        if (alreadyBlacklisted) return client.util.throwError(interaction, 'This user is already on the blacklist');
+        if (alreadyBlacklisted) return client.util.throwError(interaction, 'this user is already on the blacklist');
 
         const reason = args['reason'];
 

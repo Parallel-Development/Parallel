@@ -119,7 +119,7 @@ module.exports = {
         if (channel !== message.channel) message.reply({ content: `Successfully unlocked ${channel}` });
 
         const lockedEmbed = new Discord.MessageEmbed()
-            .setColor(client.util.mainColor(message.guild))
+            .setColor(client.util.getMainColor(message.guild))
             .setAuthor('Channel Unlock', client.user.displayAvatarURL())
             .setTitle('This channel has been unlocked')
             .setDescription('This action undoes the action the initial channel lock did to this channel');

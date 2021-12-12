@@ -35,7 +35,7 @@ exports.run = async (client, message, args) => {
                 : await client.util.createBin(_ignoredChannels.map(channel => message.guild.roles.cache.get(channel)));
 
         const ignoredChannelsEmbed = new Discord.MessageEmbed()
-            .setColor(client.util.mainColor(message.guild))
+            .setColor(client.util.getMainColor(message.guild))
             .setAuthor(
                 `Ignored message logging channels list for ${message.guild.name}`,
                 client.user.displayAvatarURL()

@@ -69,7 +69,7 @@ module.exports = {
         const user = await client.users.fetch(member.id);
 
         const warningsEmbed = new Discord.MessageEmbed()
-            .setColor(client.util.mainColor(message.guild))
+            .setColor(client.util.getMainColor(message.guild))
             .setAuthor(`Warnings for ${user.tag} (${user.id}) - ${userWarnings.length}`, client.user.displayAvatarURL())
             .setFooter(`Page Number: ${pageNumber}/${amountOfPages}`);
         if (

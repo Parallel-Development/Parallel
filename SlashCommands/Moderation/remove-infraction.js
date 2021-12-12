@@ -33,7 +33,7 @@ module.exports = {
             interaction.user.id !== moderatorID &&
             !interaction.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD)
         )
-            return client.util.throwError(message, 'You can only delete warnings that you distributed');
+            return client.util.throwError(message, 'you can only delete warnings that you distributed');
 
         await warningSchema.updateOne(
             {
@@ -54,7 +54,7 @@ module.exports = {
         );
 
         const removedInfractionEmbed = new Discord.MessageEmbed()
-            .setColor(client.util.mainColor(interaction.guild))
+            .setColor(client.util.getMainColor(interaction.guild))
             .setDescription(
                 `✅ Infraction \`${ID}\` has been removed from **${(await client.users.fetch(userID)).tag}**`
             );

@@ -44,7 +44,7 @@ module.exports = {
         if (member === interaction.guild.owner)
             return client.util.throwError(interaction, client.config.errors.cannot_punish_owner);
 
-        if (!member.roles.cache.size) return client.util.throwError(interaction, 'This user does not have any roles');
+        if (!member.roles.cache.size) return client.util.throwError(interaction, 'this user does not have any roles');
 
         const memberRoles = [];
         for (let i = 0; i !== [...member.roles.cache.values()].length; ++i) {
@@ -68,7 +68,7 @@ module.exports = {
         }
 
         if (member.roles.cache.size === memberRoles.length)
-            return client.util.throwError(interaction, 'This user does not have any roles with staff permissions');
+            return client.util.throwError(interaction, 'this user does not have any roles with staff permissions');
 
         await member.roles.set(memberRoles, `Administrator: ${interaction.user.tag}`);
 

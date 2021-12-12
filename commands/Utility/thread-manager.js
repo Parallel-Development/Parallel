@@ -15,10 +15,10 @@ module.exports = {
         if (channel.type !== 'GUILD_TEXT')
             return client.util.throwError(message, client.config.errors.not_type_text_channel);
         if (!channel.permissionsFor(message.member).has(Discord.Permissions.FLAGS.MANAGE_CHANNELS))
-            return client.util.throwError(message, 'You do not have permission to manage this channel');
+            return client.util.throwError(message, 'you do not have permission to manage this channel');
 
         const threads = [...channel.threads.cache.values()];
-        if (!threads.length) return client.util.throwError(message, 'There are no threads in this channel');
+        if (!threads.length) return client.util.throwError(message, 'there are no threads in this channel');
 
         if (option === 'archiveall') {
             const archiving = await message.reply(`Archiving all threads in ${channel}...`);

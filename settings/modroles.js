@@ -10,7 +10,7 @@ exports.run = async (client, message, args) => {
         });
         if (!getModRoles.modRoles.length) return message.reply('No moderation roles are setup for this server');
         const viewModRoles = new Discord.MessageEmbed()
-            .setColor(client.util.mainColor(message.guild))
+            .setColor(client.util.getMainColor(message.guild))
             .setAuthor(`Moderation roles for ${message.guild.name}`, client.user.displayAvatarURL());
         const descriptionArr = [];
         for (let i = 0; i !== getModRoles.modRoles.length; ++i) {
@@ -33,14 +33,14 @@ exports.run = async (client, message, args) => {
         let role =
             client.util.getRole(message.guild, args[2]) ||
             message.guild.roles.cache.find(r => r.name === args.slice(2).join(' '));
-        if (!role) return client.util.throwError(message, 'Please mention the moderator role or specify its name');
+        if (!role) return client.util.throwError(message, 'please mention the moderator role or specify its name');
 
         const isThisAlreadyOnTheList = await settingsSchema.findOne({
             guildID: message.guild.id,
             modRoles: role.id
         });
 
-        if (isThisAlreadyOnTheList) return client.util.throwError(message, 'This role is already on the list!');
+        if (isThisAlreadyOnTheList) return client.util.throwError(message, 'this role is already on the list!');
 
         await settingsSchema.updateOne(
             {
@@ -53,7 +53,7 @@ exports.run = async (client, message, args) => {
             }
         );
         const addedRole = new Discord.MessageEmbed()
-            .setColor(client.util.mainColor(message.guild))
+            .setColor(client.util.getMainColor(message.guild))
             .setDescription(
                 `Role ${role.toString()} has been added to the moderator roles list. This role now has moderator permissions`
             );
@@ -62,7 +62,7 @@ exports.run = async (client, message, args) => {
         let role =
             client.util.getRole(message.guild, args[2]) ||
             message.guild.roles.cache.find(r => r.name === args.slice(2).join(' '));
-        if (!role) return client.util.throwError(message, 'Please mention the moderator role or specify its name');
+        if (!role) return client.util.throwError(message, 'please mention the moderator role or specify its name');
 
         const isThisEvenOnTheList = await settingsSchema.findOne({
             guildID: message.guild.id,
@@ -82,7 +82,7 @@ exports.run = async (client, message, args) => {
             }
         );
         const removedRole = new Discord.MessageEmbed()
-            .setColor(client.util.mainColor(message.guild))
+            .setColor(client.util.getMainColor(message.guild))
             .setDescription(
                 `Role ${role.toString()} has been removed to the moderator roles list. This role no longer has moderator permissions`
             );

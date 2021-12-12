@@ -12,7 +12,7 @@ module.exports = {
         ),
     async execute(client, interaction, args) {
         if (global.openedSession.has(interaction.user.id))
-            return client.util.throwError(interaction, 'You are already in a game!');
+            return client.util.throwError(interaction, 'you are already in a game!');
 
         const playerOne = interaction.member;
         const playerTwo = await client.util.getMember(interaction.guild, args['member']);
@@ -28,10 +28,10 @@ module.exports = {
                 interaction,
                 'This user already has a pending request! Please wait for their pending request to expire before trying again'
             );
-        if (!playerTwo) return client.util.throwError(interaction, 'Please specify a user to play against');
-        if (playerTwo.user.bot) return client.util.throwError(interaction, 'You cannot play a bot!');
+        if (!playerTwo) return client.util.throwError(interaction, 'please specify a user to play against');
+        if (playerTwo.user.bot) return client.util.throwError(interaction, 'you cannot play a bot!');
         if (playerTwo.id === interaction.user.id)
-            return client.util.throwError(interaction, 'You cannot play yourself');
+            return client.util.throwError(interaction, 'you cannot play yourself');
 
         global.requestCooldown.add(interaction.user.id);
         global.requestedCooldown.add(playerTwo.id);

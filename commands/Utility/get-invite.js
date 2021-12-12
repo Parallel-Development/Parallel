@@ -9,7 +9,7 @@ module.exports = {
         const bot = await client.util.getUser(client, args[0]);
         if (!bot) return client.util.throwError(message, client.config.errors.invalid_user);
         const no_slash_commands = args[1] === 'true';
-        if (!bot.bot) return client.util.throwError(message, 'The provided user is not a bot!');
+        if (!bot.bot) return client.util.throwError(message, 'the provided user is not a bot!');
 
         const invite = `https://discord.com/oauth2/authorize?client_id=${bot.id}&scope=bot${
             !no_slash_commands ? '%20applications.commands' : ''

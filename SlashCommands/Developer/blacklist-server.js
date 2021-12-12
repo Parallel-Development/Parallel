@@ -18,14 +18,14 @@ module.exports = {
     async execute(client, interaction, args) {
         const ID = args['guild_id'];
         if (ID.length !== 18)
-            return client.util.throwError(interaction, 'The provided guild ID is not possible (not a snowflake)');
+            return client.util.throwError(interaction, 'the provided guild ID is not possible (not a snowflake)');
 
         const alreadyBlacklisted = await blacklistSchema.findOne({
             ID: ID,
             server: true
         });
 
-        if (alreadyBlacklisted) return client.util.throwError(interaction, 'This server is already on the blacklist');
+        if (alreadyBlacklisted) return client.util.throwError(interaction, 'this server is already on the blacklist');
 
         const reason = args['reason'];
 

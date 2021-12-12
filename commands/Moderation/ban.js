@@ -23,7 +23,7 @@ module.exports = {
         if (!member) return client.util.throwError(message, client.config.errors.invalid_member);
 
         const alreadyBanned = await message.guild.bans.fetch(member.id).catch(() => {});
-        if (alreadyBanned) return client.util.throwError(message, 'This user is already banned');
+        if (alreadyBanned) return client.util.throwError(message, 'this user is already banned');
 
         const __time = args[1];
         const time = parseInt(__time) && __time !== '' ? ms(__time) : null;

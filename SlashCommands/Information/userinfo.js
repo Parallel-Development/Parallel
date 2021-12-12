@@ -17,7 +17,7 @@ module.exports = {
         const user = member.user ? member.user : member;
 
         const userinfo = new Discord.MessageEmbed()
-            .setColor(client.util.mainColor(interaction.guild))
+            .setColor(client.util.getMainColor(interaction.guild))
             .setDescription(
                 `User information for ${member} ${
                     member.user && member.user.username !== member.displayName ? `(${member.user.username})` : ''

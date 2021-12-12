@@ -38,7 +38,7 @@ module.exports = {
                 type: 'mute'
             });
 
-            if (!hasMuteRecord) return client.util.throwError(interaction, 'This user is not currently muted');
+            if (!hasMuteRecord) return client.util.throwError(interaction, 'this user is not currently muted');
             if (delModCmds) interaction.delete();
 
             new Infraction(client, 'Unmute', interaction, interaction.member, user, {
@@ -66,7 +66,7 @@ module.exports = {
         const { muterole, removerolesonmute } = settings;
         const role = interaction.guild.roles.cache.get(muterole);
 
-        if (!role) return client.util.throwError(interaction, 'The muted role does not exist');
+        if (!role) return client.util.throwError(interaction, 'the muted role does not exist');
         if (role.position >= interaction.guild.me.roles.highest.position)
             return client.util.throwError(interaction, client.config.errors.my_hierarchy);
 
@@ -86,7 +86,7 @@ module.exports = {
         else member.roles.remove(role);
 
         if (!member.roles.cache.has(role.id) && !hasMuteRecord)
-            return client.util.throwError(interaction, 'This user is not currently muted');
+            return client.util.throwError(interaction, 'this user is not currently muted');
 
         await punishmentSchema.deleteMany({
             guildID: interaction.guild.id,
@@ -140,7 +140,7 @@ module.exports = {
         });
 
         const unmutedEmbed = new Discord.MessageEmbed()
-            .setColor(client.util.mainColor(interaction.guild))
+            .setColor(client.util.getMainColor(interaction.guild))
             .setDescription(`✅ ${member.toString()} has been unmuted`);
 
         if (delModCmds) {
@@ -148,7 +148,7 @@ module.exports = {
             return interaction.channel.send({
                 embeds: [
                     new Discord.MessageEmbed()
-                        .setColor(client.util.mainColor(interaction.guild))
+                        .setColor(client.util.getMainColor(interaction.guild))
                         .setDescription(`${client.config.emotes.success} ${member.toString()} has been unmuted`)
                 ]
             });

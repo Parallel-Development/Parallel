@@ -132,7 +132,7 @@ module.exports = {
 
             const list = new Discord.MessageEmbed()
                 .setAuthor(`Tags for ${message.guild.name}`, client.user.displayAvatarURL())
-                .setColor(client.util.mainColor(message.guild))
+                .setColor(client.util.getMainColor(message.guild))
                 .setDescription(`You can get a tag's content by running tag-manager get [tag name]\n\n${tagList}`);
 
             return message.reply({ embeds: [list] });
@@ -144,7 +144,7 @@ module.exports = {
 
             const tagInfo = new Discord.MessageEmbed()
                 .setAuthor(`Tag - ${tag.name}`, client.user.displayAvatarURL())
-                .setColor(client.util.mainColor(message.guild))
+                .setColor(client.util.getMainColor(message.guild))
                 .setDescription(tag.content);
 
             return message.reply({ embeds: [tagInfo] });
@@ -225,7 +225,7 @@ module.exports = {
                           );
 
                 const allowedRolesListEmbed = new Discord.MessageEmbed()
-                    .setColor(client.util.mainColor(message.guild))
+                    .setColor(client.util.getMainColor(message.guild))
                     .setAuthor(`Allowed roles list for tags in ${message.guild.name}`, client.user.displayAvatarURL())
                     .setDescription(roleList);
 

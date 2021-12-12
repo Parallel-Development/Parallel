@@ -17,10 +17,10 @@ module.exports = {
             server: false
         });
 
-        if (alreadyBlacklisted) return client.util.throwError(message, 'This user is already on the blacklist');
+        if (alreadyBlacklisted) return client.util.throwError(message, 'this user is already on the blacklist');
 
         const reason = args.slice(1).join(' ');
-        if (!reason) return client.util.throwError(message, 'A reason is required!');
+        if (!reason) return client.util.throwError(message, 'a reason is required!');
 
         await new blacklistSchema({
             ID: member.id,
