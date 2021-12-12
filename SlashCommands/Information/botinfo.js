@@ -18,6 +18,7 @@ module.exports = {
             .addField('Ping (Websocket)', `${client.ws.ping}ms`, true)
             .addField('Servers', `${client.guilds.cache.size}`, true)
             .addField('Uptime', client.util.duration(client.uptime), true)
+            .addField('Memory', `${(process.memoryUsage().rss / 1024 / 1024).toFixed(2)}MiB`)
             .setAuthor('Parallel Discord Bot', client.user.displayAvatarURL())
             .setFooter(`Information requested by ${interaction.user.tag}`, interaction.user.displayAvatarURL())
             .setThumbnail(client.user.displayAvatarURL().replace('.webp', '.png'));
