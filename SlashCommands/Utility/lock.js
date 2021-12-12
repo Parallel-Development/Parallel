@@ -56,7 +56,8 @@ module.exports = {
                 )
             )
         ) {
-            return interaction.reply(
+            return client.util.throwError(
+                interaction,
                 'Error: the action was refused because after the channel had been locked, you would have not had permission to send messages in the channel. Please have an administrator add a permission override in the channel for one of the moderation roles you have and set the Send Messages permission to true'
             );
         }
@@ -69,7 +70,8 @@ module.exports = {
         });
 
         if (alreadyLocked)
-            return interaction.reply(
+            return client.util.throwError(
+                interaction,
                 'This channel is already locked! (If you manually unlocked, just run the unlock command to register this channel as unlocked)'
             );
 
