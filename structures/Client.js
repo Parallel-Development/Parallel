@@ -15,7 +15,6 @@ class Client extends Discord.Client {
                 Discord.Intents.FLAGS.GUILDS,
                 Discord.Intents.FLAGS.GUILD_MESSAGES,
                 Discord.Intents.FLAGS.GUILD_MEMBERS,
-                Discord.Intents.FLAGS.DIRECT_MESSAGES,
                 Discord.Intents.FLAGS.GUILD_BANS,
                 Discord.Intents.FLAGS.GUILD_VOICE_STATES
             ],
