@@ -19,9 +19,8 @@ module.exports = {
                     message.guild.channels.cache.filter(channel => channel.type === 'GUILD_VOICE').size
                 } Voice`
             )
-            .addField('Emoji Count', `${message.guild.emojis.cache.size}`, true)
             .addField('Role Count', `${message.guild.roles.cache.size - 1}`, true)
-            .addField('Highest Role', message.guild.roles.highest.toString())
+            .addField('Highest Role', message.guild.roles.highest.toString(), true)
             .addField(
                 'Nitro Boosts',
                 `<:boost:815451803361214465> ${message.guild.premiumSubscriptionCount} (Level ${

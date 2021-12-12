@@ -18,9 +18,8 @@ module.exports = {
                     interaction.guild.channels.cache.filter(channel => channel.type === 'GUILD_VOICE').size
                 } Voice`
             )
-            .addField('Emoji Count', `${interaction.guild.emojis.cache.size}`, true)
             .addField('Role Count', `${interaction.guild.roles.cache.size - 1}`, true)
-            .addField('Highest Role', interaction.guild.roles.highest.toString())
+            .addField('Highest Role', interaction.guild.roles.highest.toString(), true)
             .addField(
                 'Nitro Boosts',
                 `${interaction.guild.premiumSubscriptionCount} (Level ${
