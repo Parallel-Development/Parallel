@@ -6,7 +6,6 @@ const lockSchema = require('../schemas/lock-schema');
 const systemSchema = require('../schemas/system-schema');
 const tagSchema = require('../schemas/tag-schema');
 const afkSchema = require('../schemas/afk-schema');
-const AutomodChecks = require('../structures/AutomodChecks');
 const rps = require('../Buttons/rock-paper-scissors');
 const infractions = require('../Buttons/infractions');
 

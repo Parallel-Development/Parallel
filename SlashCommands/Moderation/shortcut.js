@@ -2,10 +2,9 @@ const Discord = require('discord.js');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const settingsSchema = require('../../schemas/settings-schema');
 const punishmentSchema = require('../../schemas/punishment-schema');
-const Infraction = require('../../structures/Infraction');
-const Punishment = require('../../structures/Punishment');
-const DMUserInfraction = require('../../structures/DMUserInfraction');
-const ModerationLogger = require('../../structures/ModerationLogger');
+
+
+
 
 module.exports = {
     name: 'shortcut',
@@ -82,7 +81,7 @@ module.exports = {
                 if (alreadyBanned) return client.util.throwError(interaction, 'this user is already banned');
                 const { baninfo } = settings;
                 if (member instanceof Discord.GuildMember)
-                    await new DMUserInfraction(
+                    await client.punishmentManager.createUserInfractionDM(
                         client,
                         'banned',
                         client.config.colors.punishment[2],
@@ -95,20 +94,20 @@ module.exports = {
                             baninfo: baninfo !== 'none' ? baninfo : null
                         }
                     );
-                new ModerationLogger(client, 'Banned', interaction.member, member, interaction.channel, {
+                await client.punishmentManager.createModerationLog(client, 'Banned', interaction.member, member, interaction.channel, {
                     reason: shortcmd.reason,
                     duration: shortcmd.duration,
                     punishmentID: punishmentID
                 });
                 await interaction.guild.members.ban(member.id, { reason: shortcmd.reason });
-                new Infraction(client, 'Ban', interaction, interaction.member, member, {
+                await client.punishmentManager.createInfraction(client, 'Ban', interaction, interaction.member, member, {
                     reason: shortcmd.reason,
                     punishmentID: punishmentID,
                     time: duration,
                     auto: false
                 });
                 if (shortcmd.type === 'tempban')
-                    new Punishment(interaction.guild.name, interaction.guild.id, 'ban', member.id, {
+                    await client.punishmentManager.createPunishment(interaction.guild.name, interaction.guild.id, 'ban', member.id, {
                         reason: shortcmd.reason,
                         time: duration ? Date.now() + duration : 'Never'
                     });
@@ -147,25 +146,25 @@ module.exports = {
                     if (removerolesonmute) await member.roles.set([role, ...unmanagableRoles]);
                     else await client.util.muteMember(interaction, member, role);
 
-                    new DMUserInfraction(client, 'muted', client.config.colors.punishment[1], interaction, member, {
+                    await client.punishmentManager.createUserInfractionDM(client, 'muted', client.config.colors.punishment[1], interaction, member, {
                         reason: shortcmd.reason,
                         punishmentID: punishmentID,
                         time: duration
                     });
                 }
 
-                new Infraction(client, 'Mute', interaction, interaction.member, member, {
+                await client.punishmentManager.createInfraction(client, 'Mute', interaction, interaction.member, member, {
                     reason: shortcmd.reason,
                     punishmentID: punishmentID,
                     time: duration,
                     auto: false
                 });
-                new Punishment(interaction.guild.name, interaction.guild.id, 'mute', member.id, {
+                await client.punishmentManager.createPunishment(interaction.guild.name, interaction.guild.id, 'mute', member.id, {
                     reason: shortcmd.reason,
                     time: duration ? Date.now() + duration : 'Never',
                     roles: memberRoles
                 });
-                new ModerationLogger(client, 'Muted', interaction.member, member, interaction.channel, {
+                await client.punishmentManager.createModerationLog(client, 'Muted', interaction.member, member, interaction.channel, {
                     reason: shortcmd.reason,
                     duration: duration,
                     punishmentID: punishmentID
@@ -189,36 +188,36 @@ module.exports = {
             if (member === interaction.guild.owner)
                 return client.util.throwError(interaction, client.config.errors.cannot_punish_owner);
             if (shortcmd.type === 'kick') {
-                new DMUserInfraction(client, 'kicked', client.config.colors.punishment[1], interaction, member, {
+                await client.punishmentManager.createUserInfractionDM(client, 'kicked', client.config.colors.punishment[1], interaction, member, {
                     reason: shortcmd.reason,
                     punishmentID: punishmentID,
                     time: 'ignore'
                 });
                 await interaction.guild.members.kick(member, { reason: shortcmd.reason });
-                new Infraction(client, 'Kick', interaction, interaction.member, member, {
+                await client.punishmentManager.createInfraction(client, 'Kick', interaction, interaction.member, member, {
                     reason: shortcmd.reason,
                     punishmentID: punishmentID,
                     time: null,
                     auto: false
                 });
-                new ModerationLogger(client, 'Kicked', interaction.member, member, interaction.channel, {
+                await client.punishmentManager.createModerationLog(client, 'Kicked', interaction.member, member, interaction.channel, {
                     reason: shortcmd.reason,
                     duration: null,
                     punishmentID: punishmentID
                 });
             } else if (shortcmd.type === 'warn') {
-                new Infraction(client, 'Warn', interaction, interaction.member, member, {
+                await client.punishmentManager.createInfraction(client, 'Warn', interaction, interaction.member, member, {
                     reason: shortcmd.reason,
                     punishmentID: punishmentID,
                     time: shortcmd.duration,
                     auto: false
                 });
-                new DMUserInfraction(client, 'warned', client.config.colors.punishment[1], interaction, member, {
+                await client.punishmentManager.createUserInfractionDM(client, 'warned', client.config.colors.punishment[1], interaction, member, {
                     reason: shortcmd.reason,
                     punishmentID: punishmentID,
                     time: shortcmd.duration
                 });
-                new ModerationLogger(client, 'Warned', interaction.member, member, interaction.channel, {
+                await client.punishmentManager.createModerationLog(client, 'Warned', interaction.member, member, interaction.channel, {
                     reason: shortcmd.reason,
                     duration: shortcmd.duration,
                     punishmentID: punishmentID

@@ -9,12 +9,6 @@ const afkSchema = require('../schemas/afk-schema');
 
 const AFKTriggerCooldown = new Set();
 
-const ModerationLogger = require('../structures/ModerationLogger');
-const DMUserInfraction = require('../structures/DMUserInfraction');
-const Infraction = require('../structures/Infraction');
-const Punishment = require('../structures/Punishment');
-const AutomodChecks = require('../structures/AutomodChecks');
-
 const Discord = require('discord.js');
 
 module.exports = {
@@ -257,7 +251,7 @@ module.exports = {
             !channelBypassed &&
             !roleBypassed
         ) {
-            const punished = await new AutomodChecks(client, message).execute();
+            const punished = await client.punishmentManager.automodCheck(client, message, false);
             if (punished) return;
         }
 
@@ -385,6 +379,9 @@ module.exports = {
                 client.cache.whitelistedUsers.push(message.guild.id);
             }
 
+            if (!message.channel.permissionsFor(message.guild.me).has(Discord.Permissions.FLAGS.EMBED_LINKS))
+                return message.reply(`Hey there! I send a lot of embeds, but unfortunately I cannot send embeds in this channel. Please have a server administrator enable my permission to send embedded links in this channel`);
+
             const shortcmd = shortcutCommands.find(command => command.name === cmd);
 
             if (client.commands.has(shortcmd.name) || client.aliases.has(shortcmd.name)) {
@@ -451,7 +448,7 @@ module.exports = {
                     const { baninfo } = settings;
 
                     if (member instanceof Discord.GuildMember)
-                        await new DMUserInfraction(
+                        await client.punishmentManager.createUserInfractionDM(
                             client,
                             'banned',
                             client.config.colors.punishment[2],
@@ -464,20 +461,20 @@ module.exports = {
                                 baninfo: baninfo !== 'none' ? baninfo : null
                             }
                         );
-                    new ModerationLogger(client, 'Banned', message.member, member, message.channel, {
+                    await client.punishmentManager.createModerationLog(client, 'Banned', message.member, member, message.channel, {
                         reason: shortcmd.reason,
                         duration: shortcmd.duration,
                         punishmentID: punishmentID
                     });
                     await message.guild.members.ban(member.id, { reason: shortcmd.reason });
-                    new Infraction(client, 'Ban', message, message.member, member, {
+                    await client.punishmentManager.createInfraction(client, 'Ban', message, message.member, member, {
                         reason: shortcmd.reason,
                         punishmentID: punishmentID,
                         time: duration,
                         auto: false
                     });
                     if (shortcmd.type === 'tempban')
-                        new Punishment(message.guild.name, message.guild.id, 'ban', member.id, {
+                        await client.punishmentManager.createPunishment(message.guild.name, message.guild.id, 'ban', member.id, {
                             reason: shortcmd.reason,
                             time: duration ? Date.now() + duration : 'Never'
                         });
@@ -519,25 +516,25 @@ module.exports = {
                         if (removerolesonmute) await member.roles.set([role, ...unmanagableRoles]);
                         else await client.util.muteMember(message, member, role);
 
-                        new DMUserInfraction(client, 'muted', client.config.colors.punishment[1], message, member, {
+                        await client.punishmentManager.createUserInfractionDM(client, 'muted', client.config.colors.punishment[1], message, member, {
                             reason: shortcmd.reason,
                             punishmentID: punishmentID,
                             time: duration
                         });
                     }
 
-                    new Infraction(client, 'Mute', message, message.member, member, {
+                    await client.punishmentManager.createInfraction(client, 'Mute', message, message.member, member, {
                         reason: shortcmd.reason,
                         punishmentID: punishmentID,
                         time: duration,
                         auto: false
                     });
-                    new Punishment(message.guild.name, message.guild.id, 'mute', member.id, {
+                    await client.punishmentManager.createPunishment(message.guild.name, message.guild.id, 'mute', member.id, {
                         reason: shortcmd.reason,
                         time: duration ? Date.now() + duration : 'Never',
                         roles: memberRoles
                     });
-                    new ModerationLogger(client, 'Muted', message.member, member, message.channel, {
+                    await client.punishmentManager.createModerationLog(client, 'Muted', message.member, member, message.channel, {
                         reason: shortcmd.reason,
                         duration: duration,
                         punishmentID: punishmentID
@@ -564,7 +561,7 @@ module.exports = {
                     return client.util.throwError(message, client.config.errors.cannot_punish_owner);
 
                 if (shortcmd.type === 'kick') {
-                    new DMUserInfraction(client, 'kicked', client.config.colors.punishment[1], message, member, {
+                    await client.punishmentManager.createUserInfractionDM(client, 'kicked', client.config.colors.punishment[1], message, member, {
                         reason: shortcmd.reason,
                         punishmentID: punishmentID,
                         time: 'ignore'
@@ -572,30 +569,30 @@ module.exports = {
 
                     await message.guild.members.kick(member, { reason: shortcmd.reason });
 
-                    new Infraction(client, 'Kick', message, message.member, member, {
+                    await client.punishmentManager.createInfraction(client, 'Kick', message, message.member, member, {
                         reason: shortcmd.reason,
                         punishmentID: punishmentID,
                         time: null,
                         auto: false
                     });
-                    new ModerationLogger(client, 'Kicked', message.member, member, message.channel, {
+                    await client.punishmentManager.createModerationLog(client, 'Kicked', message.member, member, message.channel, {
                         reason: shortcmd.reason,
                         duration: null,
                         punishmentID: punishmentID
                     });
                 } else if (shortcmd.type === 'warn') {
-                    new Infraction(client, 'Warn', message, message.member, member, {
+                    await client.punishmentManager.createInfraction(client, 'Warn', message, message.member, member, {
                         reason: shortcmd.reason,
                         punishmentID: punishmentID,
                         time: shortcmd.duration,
                         auto: false
                     });
-                    new DMUserInfraction(client, 'warned', client.config.colors.punishment[1], message, member, {
+                    await client.punishmentManager.createUserInfractionDM(client, 'warned', client.config.colors.punishment[1], message, member, {
                         reason: shortcmd.reason,
                         punishmentID: punishmentID,
                         time: shortcmd.duration
                     });
-                    new ModerationLogger(client, 'Warned', message.member, member, message.channel, {
+                    await client.punishmentManager.createModerationLog(client, 'Warned', message.member, member, message.channel, {
                         reason: shortcmd.reason,
                         duration: shortcmd.duration,
                         punishmentID: punishmentID
@@ -627,6 +624,9 @@ module.exports = {
 
         const command = client.commands.get(cmd) || client.commands.get(client.aliases.get(cmd));
         if (!command) return;
+
+        if (!message.channel.permissionsFor(message.guild.me).has(Discord.Permissions.FLAGS.EMBED_LINKS))
+            return message.reply(`Hey there! I send a lot of embeds, but unfortunately I cannot send embeds in this channel. Please have a server administrator enable my permission to send embedded links in this channel`);
 
         if (!client.cache.whitelistedUsers.includes(message.author.id)) {
             const userBlacklist = await client.helpers.blacklist.check(message.author.id);

@@ -1,7 +1,5 @@
 const settingsSchema = require('../schemas/settings-schema');
 const automodSchema = require('../schemas/automod-schema');
-const AutomodChecks = require('../structures/AutomodChecks');
-const MessageLogger = require('../structures/MessageLogger');
 
 const Discord = require('discord.js');
 
@@ -42,7 +40,7 @@ module.exports = {
             !channelBypassed &&
             !roleBypassed
         )
-            await new AutomodChecks(client, message, true).execute();
+            await client.punishmentManager.automodCheck(client, message, true);
 
         const settings = await settingsSchema.findOne({
             guildID: message.guild.id
@@ -70,6 +68,6 @@ module.exports = {
             !messageLoggingIgnored.includes(message.channel.id) &&
             !messageLoggingIgnored.includes(message.channel.parentId)
         )
-            new MessageLogger(client, message.guild.channels.cache.get(messageLogging), message, oldMessage);
+            await client.punishmentManager.createMessageLog(client, message.guild.channels.cache.get(messageLogging), message, oldMessage);
     }
 };

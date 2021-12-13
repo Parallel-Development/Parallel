@@ -1,6 +1,5 @@
 const warningSchema = require('../schemas/warning-schema');
 const punishmentSchema = require('../schemas/punishment-schema');
-const ExpiredLogger = require('../structures/ExpiredLogger');
 const settingsSchema = require('../schemas/settings-schema');
 const Discord = require('discord.js');
 
@@ -53,7 +52,7 @@ class ExpiredHandler {
                         await member.send({ embeds: [unmuteDM] }).catch(() => {});
                     }
 
-                    new ExpiredLogger(
+                    await client.punishmentManager.createExpiredLog(
                         client,
                         'Unmuted',
                         server,
@@ -73,7 +72,7 @@ class ExpiredHandler {
                         return;
                     });
 
-                    new ExpiredLogger(
+                    await client.punishmentManager.createExpiredLog(
                         client,
                         'Unbannned',
                         server,

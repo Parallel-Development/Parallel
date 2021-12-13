@@ -1,5 +1,4 @@
 const settingsSchema = require('../schemas/settings-schema');
-const MessageLogger = require('../structures/MessageLogger');
 
 module.exports = {
     name: 'messageDelete',
@@ -34,6 +33,6 @@ module.exports = {
             !messageLoggingIgnored.includes(message.channel.id) &&
             !messageLoggingIgnored.includes(message.channel.parentId)
         )
-            new MessageLogger(client, message.guild.channels.cache.get(messageLogging), message);
+            await client.punishmentManager.createMessageLog(client, message.guild.channels.cache.get(messageLogging), message);
     }
 };

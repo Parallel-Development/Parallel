@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
-const Infraction = require('../../structures/Infraction');
-const ModerationLogger = require('../../structures/ModerationLogger');
+
+
 const punishmentSchema = require('../../schemas/punishment-schema');
 const warningSchema = require('../../schemas/warning-schema');
 const settingsSchema = require('../../schemas/settings-schema');
@@ -68,13 +68,13 @@ module.exports = {
 
         const punishmentID = client.util.createSnowflake();
 
-        new Infraction(client, 'Unban', message, message.member, user, {
+        await client.punishmentManager.createInfraction(client, 'Unban', message, message.member, user, {
             reason: reason,
             punishmentID: punishmentID,
             time: null,
             auto: false
         });
-        new ModerationLogger(client, 'Unbanned', message.member, user, message.channel, {
+        await client.punishmentManager.createModerationLog(client, 'Unbanned', message.member, user, message.channel, {
             reason: reason,
             duration: null,
             punishmentID: punishmentID

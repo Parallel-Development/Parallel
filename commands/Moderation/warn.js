@@ -2,9 +2,8 @@ const settingsSchema = require('../../schemas/settings-schema');
 const ms = require('ms');
 const Discord = require('discord.js');
 
-const ModerationLogger = require('../../structures/ModerationLogger');
-const DMUserInfraction = require('../../structures/DMUserInfraction');
-const Infraction = require('../../structures/Infraction');
+
+
 
 module.exports = {
     name: 'warn',
@@ -55,18 +54,18 @@ module.exports = {
         else if (__time === 'permanent' || __time === 'p' || __time === 'forever')
             reason = reason.split(' ').slice(1).join(' ');
 
-        new Infraction(client, 'Warn', message, message.member, member, {
+        await client.punishmentManager.createInfraction(client, 'Warn', message, message.member, member, {
             reason: reason,
             punishmentID: punishmentID,
             time: time,
             auto: false
         });
-        await new DMUserInfraction(client, 'warned', client.config.colors.punishment[1], message, member, {
+        await client.punishmentManager.createUserInfractionDM(client, 'warned', client.config.colors.punishment[1], message, member, {
             reason: reason,
             punishmentID: punishmentID,
             time: time
         });
-        new ModerationLogger(client, 'Warned', message.member, member, message.channel, {
+        await client.punishmentManager.createModerationLog(client, 'Warned', message.member, member, message.channel, {
             reason: reason,
             duration: time,
             punishmentID: punishmentID

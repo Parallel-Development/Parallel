@@ -1,5 +1,6 @@
 const Discord = require('discord.js');
 const Utils = require('./Utils');
+const PunishmentManager = require('./PunishmentManager');
 const Helpers = require('./Helpers');
 const EventHandler = require('../handlers/EventHandler');
 const CommandHandler = require('../handlers/CommandHandler');
@@ -45,6 +46,7 @@ class Client extends Discord.Client {
 
         this.util = new Utils();
         this.helpers = new Helpers();
+        this.punishmentManager = new PunishmentManager();
         this.cache = {
             maliciousLinks: [],
             whitelistedUsers: [],

@@ -3,9 +3,8 @@ const punishmentSchema = require('../../schemas/punishment-schema');
 const settingsSchema = require('../../schemas/settings-schema');
 const warningSchema = require('../../schemas/warning-schema');
 
-const ModerationLogger = require('../../structures/ModerationLogger');
-const DMUserInfraction = require('../../structures/DMUserInfraction');
-const Infraction = require('../../structures/Infraction');
+
+
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
 module.exports = {
@@ -41,13 +40,13 @@ module.exports = {
             if (!hasMuteRecord) return client.util.throwError(interaction, 'this user is not currently muted');
             if (delModCmds) interaction.delete();
 
-            new Infraction(client, 'Unmute', interaction, interaction.member, user, {
+            await client.punishmentManager.createInfraction(client, 'Unmute', interaction, interaction.member, user, {
                 reason: reason,
                 punishmentID: punishmentID,
                 time: null,
                 auto: false
             });
-            new ModerationLogger(client, 'Unmuted', interaction.member, user, interaction.channel, {
+            await client.punishmentManager.createModerationLog(client, 'Unmuted', interaction.member, user, interaction.channel, {
                 reason: reason,
                 duration: null,
                 punishmentID: punishmentID
@@ -122,18 +121,18 @@ module.exports = {
             }
         }
 
-        new Infraction(client, 'Unmute', interaction, interaction.member, member, {
+        await client.punishmentManager.createInfraction(client, 'Unmute', interaction, interaction.member, member, {
             reason: reason,
             punishmentID: punishmentID,
             time: null,
             auto: false
         });
-        new DMUserInfraction(client, 'unmuted', client.config.colors.main, interaction, member, {
+        await client.punishmentManager.createUserInfractionDM(client, 'unmuted', client.config.colors.main, interaction, member, {
             reason: reason,
             time: 'ignore',
             punishmentID: 'ignore'
         });
-        new ModerationLogger(client, 'Unmuted', interaction.member, member, interaction.channel, {
+        await client.punishmentManager.createModerationLog(client, 'Unmuted', interaction.member, member, interaction.channel, {
             reason: reason,
             duration: null,
             punishmentID: punishmentID

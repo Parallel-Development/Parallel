@@ -3,7 +3,6 @@ const afkSchema = require('../../schemas/afk-schema');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const settingsSchema = require('../../schemas/settings-schema');
 const automodSchema = require('../../schemas/automod-schema');
-const AutomodChecks = require('../../structures/AutomodChecks');
 
 module.exports = {
     name: 'afk',
@@ -30,7 +29,7 @@ module.exports = {
             const message = interaction.channel.messages.cache.find(m => m.interaction?.id === interaction.id);
             message.content = args['reason'];
 
-            const punished = await new AutomodChecks(client, message, false).execute(true);
+            const punished = await client.punishmentManager.automodCheck(client, message, false, true);
             if (punished) {
                 await message.delete();
                 return interaction.user

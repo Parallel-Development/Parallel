@@ -4,10 +4,9 @@ const settingsSchema = require('../../schemas/settings-schema');
 const punishmentSchema = require('../../schemas/punishment-schema');
 const warningSchema = require('../../schemas/warning-schema');
 
-const ModerationLogger = require('../../structures/ModerationLogger');
-const DMUserInfraction = require('../../structures/DMUserInfraction');
-const Infraction = require('../../structures/Infraction');
-const Punishment = require('../../structures/Punishment');
+
+
+
 
 module.exports = {
     name: 'mute',
@@ -49,17 +48,17 @@ module.exports = {
 
             if (hasMuteRecord) return client.util.throwError(message, 'this user already currently muted');
 
-            new Infraction(client, 'Mute', message, message.member, user, {
+            await client.punishmentManager.createInfraction(client, 'Mute', message, message.member, user, {
                 reason: reason,
                 punishmentID: punishmentID,
                 time: time,
                 auto: false
             });
-            new Punishment(message.guild.name, message.guild.id, 'mute', user.id, {
+            await client.punishmentManager.createPunishment(message.guild.name, message.guild.id, 'mute', user.id, {
                 reason: reason,
                 time: time ? Date.now() + time : 'Never'
             });
-            new ModerationLogger(client, 'Muted', message.member, user, message.channel, {
+            await client.punishmentManager.createModerationLog(client, 'Muted', message.member, user, message.channel, {
                 reason: reason,
                 duration: time,
                 punishmentID: punishmentID
@@ -149,23 +148,23 @@ module.exports = {
             await member.roles.set([role, ...unmanagableRoles]);
         } else await client.util.muteMember(message, member, role);
 
-        new Infraction(client, 'Mute', message, message.member, member, {
+        await client.punishmentManager.createInfraction(client, 'Mute', message, message.member, member, {
             reason: reason,
             punishmentID: punishmentID,
             time: time,
             auto: false
         });
-        new Punishment(message.guild.name, message.guild.id, 'mute', member.id, {
+        await client.punishmentManager.createPunishment(message.guild.name, message.guild.id, 'mute', member.id, {
             reason: reason,
             time: time ? Date.now() + time : 'Never',
             roles: memberRoles
         });
-        new DMUserInfraction(client, 'muted', client.config.colors.punishment[1], message, member, {
+        await client.punishmentManager.createUserInfractionDM(client, 'muted', client.config.colors.punishment[1], message, member, {
             reason: reason,
             punishmentID: punishmentID,
             time: time
         });
-        new ModerationLogger(client, 'Muted', message.member, member, message.channel, {
+        await client.punishmentManager.createModerationLog(client, 'Muted', message.member, member, message.channel, {
             reason: reason,
             duration: time,
             punishmentID: punishmentID

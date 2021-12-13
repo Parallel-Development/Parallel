@@ -3,9 +3,8 @@ const punishmentSchema = require('../../schemas/punishment-schema');
 const settingsSchema = require('../../schemas/settings-schema');
 const warningSchema = require('../../schemas/warning-schema');
 
-const ModerationLogger = require('../../structures/ModerationLogger');
-const DMUserInfraction = require('../../structures/DMUserInfraction');
-const Infraction = require('../../structures/Infraction');
+
+
 
 module.exports = {
     name: 'unmute',
@@ -38,13 +37,13 @@ module.exports = {
             if (!hasMuteRecord) return client.util.throwError(message, 'this user is not currently muted');
             if (delModCmds) message.delete();
 
-            new Infraction(client, 'Unmute', message, message.member, user, {
+            await client.punishmentManager.createInfraction(client, 'Unmute', message, message.member, user, {
                 reason: reason,
                 punishmentID: punishmentID,
                 time: null,
                 auto: false
             });
-            new ModerationLogger(client, 'Unmuted', message.member, user, message.channel, {
+            await client.punishmentManager.createModerationLog(client, 'Unmuted', message.member, user, message.channel, {
                 reason: reason,
                 duration: null,
                 punishmentID: punishmentID
@@ -120,18 +119,18 @@ module.exports = {
             }
         }
 
-        new Infraction(client, 'Unmute', message, message.member, member, {
+        await client.punishmentManager.createInfraction(client, 'Unmute', message, message.member, member, {
             reason: reason,
             punishmentID: punishmentID,
             time: null,
             auto: false
         });
-        new DMUserInfraction(client, 'unmuted', client.config.colors.main, message, member, {
+        await client.punishmentManager.createUserInfractionDM(client, 'unmuted', client.config.colors.main, message, member, {
             reason: reason,
             time: 'ignore',
             punishmentID: 'ignore'
         });
-        new ModerationLogger(client, 'Unmuted', message.member, member, message.channel, {
+        await client.punishmentManager.createModerationLog(client, 'Unmuted', message.member, member, message.channel, {
             reason: reason,
             duration: null,
             punishmentID: punishmentID

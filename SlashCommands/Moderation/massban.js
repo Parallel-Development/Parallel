@@ -1,10 +1,9 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const Discord = require('discord.js');
 const settingsSchema = require('../../schemas/settings-schema');
-const ModerationLogger = require('../../structures/ModerationLogger');
-const DMUserInfraction = require('../../structures/DMUserInfraction');
-const Infraction = require('../../structures/Infraction');
-const Punishment = require('../../structures/Punishment');
+
+
+
 const warningSchema = require('../../schemas/warning-schema');
 const punishmentSchema = require('../../schemas/punishment-schema');
 const ms = require('ms');
@@ -141,7 +140,7 @@ module.exports = {
                 });
 
                 if (user instanceof Discord.GuildMember)
-                    await new DMUserInfraction(
+                    await client.punishmentManager.createUserInfractionDM(
                         client,
                         'banned',
                         client.config.colors.punishment[2],
@@ -155,7 +154,7 @@ module.exports = {
                         }
                     );
 
-                new ModerationLogger(client, 'Banned', interaction.member, user, interaction.channel, {
+                await client.punishmentManager.createModerationLog(client, 'Banned', interaction.member, user, interaction.channel, {
                     reason: reason,
                     duration: time,
                     punishmentID: punishmentID
@@ -165,14 +164,14 @@ module.exports = {
                     .ban(user, { reason: reason })
                     .catch(() => unsuccessfullyBannedUsers.push(user));
 
-                new Infraction(client, 'Ban', interaction, interaction.member, user, {
+                await client.punishmentManager.createInfraction(client, 'Ban', interaction, interaction.member, user, {
                     reason: reason,
                     punishmentID: punishmentID,
                     time: time,
                     auto: false
                 });
                 if (time)
-                    new Punishment(interaction.guild.name, interaction.guild.id, 'ban', user.id, {
+                    await client.punishmentManager.createPunishment(interaction.guild.name, interaction.guild.id, 'ban', user.id, {
                         reason: reason,
                         time: time ? Date.now() + time : 'Never'
                     });

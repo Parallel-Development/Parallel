@@ -1,6 +1,5 @@
 const settingsSchema = require('../schemas/settings-schema');
 const punishmentSchema = require('../schemas/punishment-schema');
-const Punishment = require('../structures/Punishment');
 const Discord = require('discord.js');
 
 module.exports = {
@@ -39,7 +38,7 @@ module.exports = {
             return;
         } else if (newMember.roles.cache.has(muterole)) {
             await punishmentSchema.deleteOne({ guildID: oldMember.guild.id, userID: oldMember.id });
-            return new Punishment(oldMember.guild.name, oldMember.guild.id, 'mute', newMember.id, {
+            return await client.punishmentManager.createPunishment(oldMember.guild.name, oldMember.guild.id, 'mute', newMember.id, {
                 reason: 'The mute role was added to a user',
                 time: 'Never'
             });

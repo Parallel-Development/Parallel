@@ -1,8 +1,7 @@
 const Discord = require('discord.js');
 const settingsSchema = require('../../schemas/settings-schema');
-const ModerationLogger = require('../../structures/ModerationLogger');
-const DMUserInfraction = require('../../structures/DMUserInfraction');
-const Infraction = require('../../structures/Infraction');
+
+
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
 module.exports = {
@@ -45,7 +44,7 @@ module.exports = {
 
         const { delModCmds } = settings;
 
-        await new DMUserInfraction(client, 'kicked', client.config.colors.punishment[1], interaction, member, {
+        await client.punishmentManager.createUserInfractionDM(client, 'kicked', client.config.colors.punishment[1], interaction, member, {
             reason: reason,
             punishmentID: punishmentID,
             time: 'ignore'
@@ -53,13 +52,13 @@ module.exports = {
 
         await member.kick(reason);
 
-        new Infraction(client, 'Kick', interaction, interaction.member, member, {
+        await client.punishmentManager.createInfraction(client, 'Kick', interaction, interaction.member, member, {
             reason: reason,
             punishmentID: punishmentID,
             time: null,
             auto: false
         });
-        new ModerationLogger(client, 'Kicked', interaction.member, member, interaction.channel, {
+        await client.punishmentManager.createModerationLog(client, 'Kicked', interaction.member, member, interaction.channel, {
             reason: reason,
             duration: null,
             punishmentID: punishmentID

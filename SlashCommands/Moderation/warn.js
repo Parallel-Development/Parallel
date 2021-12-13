@@ -3,9 +3,8 @@ const ms = require('ms');
 const Discord = require('discord.js');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
-const ModerationLogger = require('../../structures/ModerationLogger');
-const DMUserInfraction = require('../../structures/DMUserInfraction');
-const Infraction = require('../../structures/Infraction');
+
+
 
 module.exports = {
     name: 'warn',
@@ -59,18 +58,18 @@ module.exports = {
         )
             time = parseInt(manualwarnexpire);
 
-        new Infraction(client, 'Warn', interaction, interaction.member, member, {
+        await client.punishmentManager.createInfraction(client, 'Warn', interaction, interaction.member, member, {
             reason: reason,
             punishmentID: punishmentID,
             time: time,
             auto: false
         });
-        await new DMUserInfraction(client, 'warned', client.config.colors.punishment[1], interaction, member, {
+        await client.punishmentManager.createUserInfractionDM(client, 'warned', client.config.colors.punishment[1], interaction, member, {
             reason: reason,
             punishmentID: punishmentID,
             time: time
         });
-        new ModerationLogger(client, 'Warned', interaction.member, member, interaction.channel, {
+        await client.punishmentManager.createModerationLog(client, 'Warned', interaction.member, member, interaction.channel, {
             reason: reason,
             duration: time,
             punishmentID: punishmentID
