@@ -27,8 +27,8 @@ module.exports = {
         }
 
 
-        const sortedMessages = messages
-            .sort(message => +message.createdAt)
+        const sortedMessages = [...messages.values()]
+            .reverse()
             .map(message =>
                 `${message?.author.tag || 'Unknown'}: ${message?.content || 'No content provided'}`
             )
@@ -41,18 +41,15 @@ module.exports = {
             .addField('Channel', channel.toString(), true)
             .addField('Purged Message Count', messages.size.toString(), true)
             .addField('Purged Messages', sortedMessages.length >= 1024 ? await client.util.createBin(sortedMessages) : sortedMessages);
-
-
-            
         const bin = await client.util.createBin(
             [...messages.values()]
                 .filter(message => message.content || message.attachments.size)
-                .sort(message => +message.createdAt)
+                .reverse()
                 .map(message => 
-                    `On "${moment.utc(+message.createdAt).format('dddd, MMMM Do YYYY, h:mm:ss A')}" from "${message.author.tag}" with ID ${message.author.id}:${message.content ? `\n- Content: ${message.content}` : ''}${message.attachments.size > 0 ? `\n- Attachments: ${message.attachments.map(attachment => attachment.url).join(' + ')}` : ''}`
+                    `[ ${moment.utc(message.createdTimestamp).format('h:mm:ss A')} ] from "${message.author.tag}" with ID ${message.author.id}:${message.content ? `\n- Content: ${message.content}` : ''}${message.attachments.size > 0 ? `\n- Attachments:\n ${message.attachments.map(attachment => attachment.url).join('\n ')}` : ''}`
                 )
                 .filter(message => message)
-                .join('\n') 
+                .join('\n\n') 
                 
             || 'No detailed information on the purged messages could be found'
         );

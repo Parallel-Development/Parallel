@@ -18,7 +18,7 @@ module.exports.run = async (client, interaction) => {
 
     const join = new Discord.MessageActionRow().addComponents(joinButton, denyButton);
 
-    if (Date.now() - interaction.message.createdAt > 30000) {
+    if (Date.now() - interaction.message.createdTimestamp > 30000) {
         interaction.message.edit({ content: interaction.message.content, components: [join] });
         return client.util.throwError(interaction, 'this request has already expired');
     }
