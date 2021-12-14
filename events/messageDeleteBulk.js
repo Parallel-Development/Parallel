@@ -26,6 +26,8 @@ module.exports = {
             return;
         }
 
+        if (messageLoggingIgnored.includes(channel.id) || messageLoggingIgnored.includes(channel.parentId)) return;
+
 
         const sortedMessages = [...messages.values()]
             .reverse()
