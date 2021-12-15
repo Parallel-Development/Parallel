@@ -6,6 +6,11 @@ const FlakeIdGen = require('flake-idgen'),
 const settingsSchema = require('../schemas/settings-schema');
 
 class Utils {
+    /**
+     * create a new hastebin URL with the given content
+     * @param {string} data the data to be parsed into the bin
+     * @returns {Promise<string>} the returned hastebin URL
+     */
     async createBin(data) {
         if (!data) throw new Error("required argument 'text' is missing");
 
@@ -18,6 +23,11 @@ class Utils {
         return `Error uploading content to hst.sh, status code ${res.statusCode} | This issue is most likely because of hastebin, however if you believe it is not, report this bug with the status code`;
     }
 
+    /**
+     * convert milliseconds into a human readable format
+     * @param {number} ms the time in milliseconds 
+     * @returns {string} the time in a human readable format
+     */
     duration(ms) {
         if (!ms && ms != 0) throw new Error("required argument 'ms' is missing");
 
@@ -74,14 +84,29 @@ class Utils {
         return product.length > 2 ? product.join(', ') : product.join(' ');
     }
 
+    /**
+     * create a new Discord timestamp format
+     * @param {number} time the elapsed time in milliseconds since the JS epoch
+     * @param {boolean} relative whether or not to use a relateive timestamp
+     * @returns {string} the Discord timestamp
+     */
     timestamp(time = Date.now(), { relative = false } = {}) {
         return `<t:${Math.floor(time / 1000)}${relative ? ':R' : ''}>`;
     }
 
+    /**
+     * create a new snowflake
+     * @returns {string} a new snowflake
+     */
     createSnowflake() {
         return intformat(generator.next());
     }
 
+    /**
+     * create the muted role in the guild if one is lacking
+     * @param {Discord.Message} message the message that triggered the bot to create the muted role
+     * @returns {Promise<Discord.Role> | boolean} the muted role, or false if the muted role was not created
+     */
     async createMuteRole(message) {
         if (!message.guild.me.permissions.has(Discord.Permissions.FLAGS.MANAGE_ROLES)) return false;
 
@@ -136,11 +161,31 @@ class Utils {
         return role;
     }
 
+    /**
+     * add the muted role to the member
+     * @param {Discord.Message} message the message that triggered the bot to mute the member
+     * @param {Discord.GuildMember} member the member to mute
+     * @param {Discord.Role} muteRole the role to mute the user with
+     * @returns {Promise<Discord.GuildMember> | boolean} the member that was muted, or false if the member was not muted
+     */
     async muteMember(message, member, muteRole) {
-        await member.roles.add(muteRole).catch(() => {});
+        try {
+            await member.roles.add(muteRole)
+        } catch {
+            return false;
+        }
+
         if (member.voice.channel) await member.voice.disconnect().catch(() => {});
+
+        return member;
     }
 
+    /**
+     * fetch a guild member
+     * @param {Discord.Guild} guild the guild to fetch the member in
+     * @param {string} mention the mention or ID of the member to fetch
+     * @returns {Promise<Discord.GuildMember> | undefined} the member that was fetched
+     */
     async getMember(guild, mention) {
         if (!mention) return;
         if (mention.startsWith('<@') && mention.endsWith('>')) {
@@ -150,6 +195,12 @@ class Utils {
         return guild.members.fetch(mention).catch(() => undefined);
     }
 
+    /**
+     * fetch a user
+     * @param {Discord.Client} client the client to fetch the user with
+     * @param {string} mention the mention or ID of the user to fetch
+     * @returns {Promise<Discord.User> | undefined} the user that was fetched
+     */
     async getUser(client, mention) {
         if (!mention) return;
         if (mention.startsWith('<@') && mention.endsWith('>')) {
@@ -159,12 +210,24 @@ class Utils {
         return client.users.fetch(mention).catch(() => undefined);
     }
 
+    /**
+     * get a guild role from the cache
+     * @param {Discord.Guild} guild the guild to find the role in
+     * @param {string} mention the mention or the ID of the role to get
+     * @returns {Discord.Role | undefined} the role that was found
+     */
     getRole(guild, mention) {
         if (!mention) return;
         if (mention.startsWith('<@&') && mention.endsWith('>')) mention = mention.slice(3, -1);
         return guild.roles.cache.get(mention);
     }
 
+    /**
+     * get a guild channel from the cache
+     * @param {Discord.Guild} guild the guild to find the channel in
+     * @param {string} mention the mention or the ID of the channel to get
+     * @returns {Discord.Role | undefined} the channel that was found
+     */
     getChannel(guild, mention) {
         if (!mention) return;
         if (mention.startsWith('<#') && mention.endsWith('>')) mention = mention.slice(2, -1);
@@ -179,6 +242,12 @@ class Utils {
         return global.collectionPrevention.pop({ guildID: guildID, memberID: memberID });
     }
 
+    /**
+     * reply to a message with an error
+     * @param {Discord.Message} message the message to reply to
+     * @param {string} errorName the error content
+     * @returns {boolean} true
+     */
     async throwError(message, errorName) {
         if (message.type === 'APPLICATION_COMMAND' || message.type === 'MESSAGE_COMPONENT') {
             await message.reply({ content: `Error: ${errorName}`, ephemeral: true }).catch(async () => {
@@ -196,8 +265,15 @@ class Utils {
                 message.delete().catch(() => {});
             }, errorConfig.deleteDelay);
         }
+
+        return true;
     }
 
+    /**
+     * get the default color for the bot from the guild
+     * @param {Discord.Guild} guild the guild
+     * @returns {string} the default color in hex code
+     */
     getMainColor(guild) {
         if (!guild) return client.config.colors.main; // guild is supposed to always not be undefined, but in the bugged case that it is, something will actually be returned lol
         const botRole = guild.me.roles.cache.find(role => role.managed) || guild.me.roles.highest;

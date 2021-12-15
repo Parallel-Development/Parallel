@@ -4,10 +4,19 @@ const automodSchema = require('../schemas/automod-schema');
 const warningSchema = require('../schemas/warning-schema');
 const punishmentSchema = require('../schemas/punishment-schema');
 const fetch = require('petitio');
+const { falseDependencies } = require('mathjs/lib/cjs/entry/dependenciesAny.generated');
 const userMap = new Map();
 
 class PunishmentManager {
     
+    /**
+     * send a log to the message logging channel with the message deletion or update data
+     * @param {Discord.Client} client the client
+     * @param {Discord.GuildChannel} channel the channel the message was deleted or updated in
+     * @param {Discord.Message} message the deleted or old message object
+     * @param {Discord.Message | null} oldMessage the new message content if the message was updated, or null if not
+     * @returns {Promise<Discord.Message> | boolean} the sent message resolvable or false if it failed to send
+     */
     async createMessageLog(client, channel, message, oldMessage = null) {
 
         const logEmbed = new Discord.MessageEmbed()
@@ -56,11 +65,22 @@ class PunishmentManager {
             }
         }
 
-        return channel.send({ embeds: [logEmbed] }).catch(() => { });
+        return channel.send({ embeds: [logEmbed] }).catch(() => false);
     }
 
-    // ======================================================
-
+    /**
+     * send a DM to a user with an infraction's information
+     * @param {Discord.Client} client the client
+     * @param {string} type the type of the punishment 
+     * @param {string} color the hex code or rgb integer for the embed color
+     * @param {Discord.Message} message the message of the command used to issue the punishment or where it was automatically issued
+     * @param {Discord.GuildMember | Discord.User} member the member or user with the issued punishment
+     * @param {string} reason the reason for the punishment
+     * @param {string} punishmentID the punishment ID snowflake
+     * @param {string} time the duration of the punishment
+     * @param {string} baninfo if the punishment is a ban, the additional ban information sent to the user
+     * @returns {Promise<Discord.Message> | boolean} the sent message resolvable or false if it failed to send
+     */
     async createUserInfractionDM(client, type, color, message, member, { reason, punishmentID, time, baninfo = null } = {}) {
 
         const infractionEmbed = new Discord.MessageEmbed();
@@ -88,11 +108,18 @@ class PunishmentManager {
         if (baninfo) infractionEmbed.addField('Additional Ban Information', baninfo);
         if (punishmentID && punishmentID !== 'ignore') infractionEmbed.setFooter(`Punishment ID: ${punishmentID}`);
 
-        return member.send({ embeds: [infractionEmbed] }).catch(() => { });
+        return member.send({ embeds: [infractionEmbed] }).catch(() => false);
     }
 
-    // ======================================================
-
+    /**
+     * log to the expired log channel information about a punishment that had expired
+     * @param {Discord.Client} client the client
+     * @param {string} type the type of the punishment 
+     * @param {Discord.Guild} server the guild in the expired punishment expired in
+     * @param {Discord.User} user the user whos punishment expired
+     * @param {string} reason the reason for the expiration
+     * @returns {Promise<Discord.Message> | boolean} the sent message resolvable or false if it failed to send
+     */
     async createExpiredLog(client, type, server, user, reason) {
         const getAutomodLogChannel = await settingsSchema.findOne({
             guildID: server.id
@@ -125,11 +152,22 @@ class PunishmentManager {
             .addField('Reason', reason);
 
         const automodLogChannel = server.channels.cache.get(automodLogging);
-        automodLogChannel.send({ embeds: [expiredLog] });
+        return automodLogChannel.send({ embeds: [expiredLog] }).catch(() => false);
     };
 
-    // ======================================================
-
+    /**
+     * create a new user infraction
+     * @param {Discord.Client} client the client
+     * @param {string} type the type of the punishment
+     * @param {Discord.Message} message the message the command used to issue the punishment, or where it was automatically issued
+     * @param {Discord.GuildMember} moderator the moderator who issued the punishment
+     * @param {Discord.GuildMember | Discord.User} member the target member or user
+     * @param {string} reason the reason for the punishment
+     * @param {string} punishmentID the punishment ID snowflake
+     * @param {string} time the duration of the punishment
+     * @param {boolean} auto whether the punishment was automatically issued
+     * @returns {boolean} true
+     */
     async createInfraction(client, type, message, moderator, member, { reason, punishmentID, time, auto = false } = {}) {
         await warningSchema.updateOne(
             {
@@ -155,8 +193,17 @@ class PunishmentManager {
         return true;
     }
 
-    // ======================================================
-
+    /**
+     * create a new punishment
+     * @param {string} guildname the name of the guild
+     * @param {string} guildID the ID of the guild
+     * @param {string} type the type of the punishment
+     * @param {string} userID the user ID
+     * @param {string} reason the reason for the punishment
+     * @param {string} time the duration of the punishment
+     * @param {[string]} roles the roles the user had before a mute punishment
+     * @returns {boolean} true
+     */
     async createPunishment(guildname, guildID, type, userID, { reason, time, roles } = {}) {
         await new punishmentSchema({
             guildname: guildname,
@@ -174,8 +221,19 @@ class PunishmentManager {
         return true;
     }
 
-    // ======================================================
-
+    /**
+     * log to the moderation log channel information about a punishment
+     * @param {Discord.Client} client the client
+     * @param {string} type the type of the punishment
+     * @param {Discord.GuildMember} moderator the moderator who issued the punishment
+     * @param {Discord.GuildMember | Discord.User} target the target member or user
+     * @param {Discord.GuildChannel} channel the channel the punishment was issued in 
+     * @param {string} reason the reason for the punishment
+     * @param {string} duration the duration of the punishment
+     * @param {string} punishmentID the punishment ID snowflake
+     * @param {boolean} auto if the punishment was automatically issued
+     * @returns {Promise<Discord.Message> | boolean} the sent message resolvable or false if it failed to send
+     */
     async createModerationLog(client, type, moderator, target, channel, { reason, duration, punishmentID, auto } = {}) {
         const user = await client.users.fetch(target.id);
 
@@ -222,11 +280,17 @@ class PunishmentManager {
         modLog.addField(`${type} in`, channel.toString(), true);
 
         const modLogChannel = moderator.guild.channels.cache.get(auto ? automodLogging : moderationLogging);
-        modLogChannel.send({ embeds: [modLog] }).catch(() => { });
+        return modLogChannel.send({ embeds: [modLog] }).catch(() => falseDependencies);
     }
 
-    // ======================================================
-
+    /**
+     * check if a message sent by a user has triggered the automod checks
+     * @param {Discord.Client} client the client
+     * @param {Discord.Message} message the message to check
+     * @param {boolean} edit if the message was edited
+     * @param {boolean} onlyCheck to only check if the message has triggered the automod and not to punish the user
+     * @returns {Promise<boolean>} whether the message has triggered the automod AND got the user punished
+     */
     async automodCheck(client, message, edit = false, onlyCheck = false) {
 
         const automodSettings = await automodSchema.findOne({
