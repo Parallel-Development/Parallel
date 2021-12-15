@@ -23,6 +23,9 @@ module.exports.run = async (client, interaction) => {
 
     if (interaction.user !== whoToCheck)
         return client.util.throwError(interaction, client.config.errors.no_button_access);
+
+    if (interaction.customId === 'stop') return interaction.update({ components: [] });
+
     let currentPage = +interaction.channel.messages.cache
         .get(interaction.message.id)
         .embeds[0].footer.text.slice(13, 14);

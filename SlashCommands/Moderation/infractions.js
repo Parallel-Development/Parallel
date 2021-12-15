@@ -97,18 +97,20 @@ module.exports = {
         }
 
         const jumpToBeginning = new Discord.MessageButton()
-            .setEmoji('↩')
+            .setLabel('<<')
             .setCustomId('jumpToBeginning')
-            .setStyle('PRIMARY');
-        const goBack = new Discord.MessageButton().setEmoji('◀').setCustomId('goBack').setStyle('PRIMARY');
-        const goForward = new Discord.MessageButton().setEmoji('▶').setCustomId('goForward').setStyle('PRIMARY');
-        const jumpToBack = new Discord.MessageButton().setEmoji('↪').setCustomId('jumpToBack').setStyle('PRIMARY');
+            .setStyle('SECONDARY');
+        const goBack = new Discord.MessageButton().setLabel('<').setCustomId('goBack').setStyle('SECONDARY');
+        const goForward = new Discord.MessageButton().setLabel('>').setCustomId('goForward').setStyle('SECONDARY');
+        const jumpToBack = new Discord.MessageButton().setLabel('>>').setCustomId('jumpToBack').setStyle('SECONDARY');
+        const stop = new Discord.MessageButton().setLabel('#').setCustomId('stop').setStyle('SECONDARY');
         const pageButtons = new Discord.MessageActionRow().addComponents(
             jumpToBeginning,
             goBack,
             goForward,
-            jumpToBack
-        );
+            jumpToBack,
+            stop
+        )
 
         return interaction.reply({ embeds: [warningsEmbed], components: [pageButtons] });
     }

@@ -175,7 +175,8 @@ module.exports = {
                 interaction.customId === 'jumpToBeginning' ||
                 interaction.customId === 'goBack' ||
                 interaction.customId === 'goForward' ||
-                interaction.customId === 'jumpToBack'
+                interaction.customId === 'jumpToBack' ||
+                interaction.customId === 'stop'
             )
                 return infractions.run(client, interaction);
 
