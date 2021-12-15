@@ -42,18 +42,22 @@ module.exports = {
             .setTitle(`Messages Purged`)
             .addField('Channel', channel.toString(), true)
             .addField('Purged Message Count', messages.size.toString(), true)
+            .addField('Date', client.util.timestamp(Date.now()), true)
             .addField('Purged Messages', sortedMessages.length >= 1024 ? await client.util.createBin(sortedMessages) : sortedMessages);
-        const bin = await client.util.createBin(
+
+        const binContent = 
             [...messages.values()]
-                .filter(message => message.content || message.attachments.size)
-                .reverse()
-                .map(message => 
-                    `[ ${moment.utc(message.createdTimestamp).format('h:mm:ss A')} ] from "${message.author.tag}" with ID ${message.author.id}:${message.content ? `\n- Content: ${message.content}` : ''}${message.attachments.size > 0 ? `\n- Attachments:\n ${message.attachments.map(attachment => attachment.url).join('\n ')}` : ''}`
-                )
-                .filter(message => message)
-                .join('\n\n') 
-                
-            || 'No detailed information on the purged messages could be found'
+            .filter(message => message.content || message.attachments.size)
+            .reverse()
+            .map(message =>
+                `[ ${moment.utc(message.createdTimestamp).format('h:mm:ss A')} ] from "${message.author.tag}" with ID ${message.author.id}:${message.content ? `\n- Content: ${message.content}` : ''}${message.attachments.size > 0 ? `\n- Attachments:\n ${message.attachments.map(attachment => attachment.url).join('\n ')}` : ''}`
+            )
+            .filter(message => message)
+            .join('\n\n');
+
+        
+        const bin = await client.util.createBin(
+            binContent ? `// Note: all listed times are in UTC\n\n${binContent}` : 'No detailed message data could be logged'
         );
         
         const viewDetailed = new Discord.MessageButton().setStyle('LINK').setURL(bin).setLabel('View Detailed Log')

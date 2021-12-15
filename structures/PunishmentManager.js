@@ -19,6 +19,7 @@ class PunishmentManager {
             const binnedContent = await client.util.createBin(message.content);
             logEmbed.setDescription(`[Jump to message](${message.url})`);
             logEmbed.setTitle('Message Update');
+            logEmbed.addField('Date', client.util.timestamp(Date.now()))
             logEmbed.addField(
                 'Old Message Content',
                 oldMessage.content.length <= 1024 ? oldMessage.content : binnedOldContent
@@ -30,6 +31,7 @@ class PunishmentManager {
             logEmbed.addField('Edited in', message.channel.toString());
         } else {
             logEmbed.setTitle('Message Deleted');
+            logEmbed.addField('Date', client.util.timestamp(Date.now()))
             logEmbed.addField('Deleted in', message.channel.toString());
             if (message.content)
                 logEmbed.addField(
