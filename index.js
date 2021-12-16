@@ -7,4 +7,5 @@ if (process.argv.slice(2).includes('--perpendicular') || process.argv.slice(2).i
 
 const Client = require('./structures/Client');
 const client = new Client();
+
 client.login(global.perpendicular ? client.config.perpendicularToken : client.config.token);
