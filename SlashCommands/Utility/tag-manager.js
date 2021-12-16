@@ -100,6 +100,7 @@ module.exports = {
             const tagText = createArgs['tag_content'];
             if (tagText.length > 2000)
                 return interaction.reply('Error: the tag text length exceeded the limit of **2000** characters');
+            if (tagText.split(' ').length > 1) return interaction.reply('Error: the tag name may not have spaces');
 
             await tagSchema.updateOne(
                 {
