@@ -5,6 +5,7 @@ const warningSchema = require('../schemas/warning-schema');
 const punishmentSchema = require('../schemas/punishment-schema');
 const fetch = require('petitio');;
 const userMap = new Map();
+const automodCooldown = new Set();
 
 class PunishmentManager {
     
