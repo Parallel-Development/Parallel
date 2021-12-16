@@ -87,11 +87,8 @@ module.exports.run = async (client, interaction) => {
             interaction.channel.messages.cache.get(interaction.message.id).embeds[0].description
         );
 
-    let count = 0;
-    let i = (currentPage - 1) * 7;
-    while (i !== userWarnings.length && count !== 7) {
+    for (let i = (currentPage - 1) * 7, count = 0; i !== userWarnings.length && count !== 7; ++i, ++count) {
         const infraction = userWarnings[i];
-        count++;
         if (infraction.reason.length > 60) {
             infraction.reason = infraction.reason.substr(0, 60) + '...';
         }
@@ -99,7 +96,6 @@ module.exports.run = async (client, interaction) => {
             `${i + 1}: ${infraction.type}`,
             `Reason: \`${infraction.reason}\`\nDate: ${infraction.date}\nPunishment ID: \`${infraction.punishmentID}\``
         );
-        ++i;
     }
 
     return interaction.update({ embeds: [warningsEmbed] });

@@ -81,11 +81,8 @@ module.exports = {
                     .map(flag => `\`${flag}\``)}`
             );
 
-        let count = 0;
-        let i = (pageNumber - 1) * 7;
-        while (i !== userWarnings.length && count !== 7) {
+        for (let i = (pageNumber - 1) * 7, count = 0; i !== userWarnings.length && count !== 7; ++i, ++count) {
             const infraction = userWarnings[i];
-            count++;
             if (infraction.reason.length > 60) {
                 infraction.reason = infraction.reason.substr(0, 60) + '...';
             }
@@ -93,7 +90,6 @@ module.exports = {
                 `${i + 1}: ${infraction.type}`,
                 `Reason: \`${infraction.reason}\`\nDate: ${infraction.date}\nPunishment ID: \`${infraction.punishmentID}\``
             );
-            ++i;
         }
 
         const jumpToBeginning = new Discord.MessageButton()

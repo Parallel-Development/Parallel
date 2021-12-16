@@ -3,8 +3,7 @@ const settingsSchema = require('../schemas/settings-schema');
 const automodSchema = require('../schemas/automod-schema');
 const warningSchema = require('../schemas/warning-schema');
 const punishmentSchema = require('../schemas/punishment-schema');
-const fetch = require('petitio');
-const { falseDependencies } = require('mathjs/lib/cjs/entry/dependenciesAny.generated');
+const fetch = require('petitio');;
 const userMap = new Map();
 
 class PunishmentManager {
