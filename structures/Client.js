@@ -33,7 +33,6 @@ class Client extends Discord.Client {
                     sweepFilter: user => user.id !== '745401642664460319'
                 },
                 GuildMemberManager: {
-                    maxSize: 2000,
                     sweepInterval: 1800000,
                     sweepFilter: member => member.id !== '745401642664460319'
                 }

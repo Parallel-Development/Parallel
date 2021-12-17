@@ -12,6 +12,7 @@ module.exports = {
             message.guild.roles.cache.find(r => r.name == args.join(' '));
 
         if (!role) return client.util.throwError(message, client.config.errors.invalid_role);
+        await message.guild.members.fetch();
 
         const roleInfoEmbed = new Discord.MessageEmbed()
             .setColor(role.hexColor !== '#000000' ? role.hexColor : client.config.colors.main)
@@ -20,6 +21,7 @@ module.exports = {
             .addField('Role ID', role.id, true)
             .addField('Role Hex Color', `${role.hexColor}`)
             .addField('Hoisted?', role.hoist ? 'Yes' : 'No', true)
+            .addField('Role Members', role.members.size.toString())
             .addField('Created on', client.util.timestamp(role.createdAt))
             .setFooter(`Information requested by ${message.author.tag}`, message.author.displayAvatarURL());
 

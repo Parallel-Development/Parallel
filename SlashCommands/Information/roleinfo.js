@@ -14,6 +14,7 @@ module.exports = {
         const role = client.util.getRole(interaction.guild, args['role']);
 
         await interaction.deferReply();
+        await interaction.guild.members.fetch();
 
         const roleInfoEmbed = new Discord.MessageEmbed()
             .setColor(role.hexColor !== '#000000' ? role.hexColor : client.config.colors.main)
@@ -22,6 +23,7 @@ module.exports = {
             .addField('Role ID', role.id, true)
             .addField('Role Hex Color', `${role.hexColor}`)
             .addField('Hoisted?', role.hoist ? 'Yes' : 'No', true)
+            .addField('Role Members', role.members.size.toString())
             .addField('Created on', client.util.timestamp(role.createdAt))
             .setFooter(`Information requested by ${interaction.user.tag}`, interaction.user.displayAvatarURL());
 
