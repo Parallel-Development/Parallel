@@ -106,7 +106,7 @@ module.exports = {
             goForward,
             jumpToBack,
             stop
-        )
+        );
 
         return interaction.reply({ embeds: [warningsEmbed], components: [pageButtons] });
     }

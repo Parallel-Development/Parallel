@@ -1,7 +1,6 @@
 const Discord = require('discord.js');
 const settingsSchema = require('../../schemas/settings-schema');
 
-
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
 module.exports = {
@@ -44,11 +43,18 @@ module.exports = {
 
         const { delModCmds } = settings;
 
-        await client.punishmentManager.createUserInfractionDM(client, 'kicked', client.config.colors.punishment[1], interaction, member, {
-            reason: reason,
-            punishmentID: punishmentID,
-            time: 'ignore'
-        });
+        await client.punishmentManager.createUserInfractionDM(
+            client,
+            'kicked',
+            client.config.colors.punishment[1],
+            interaction,
+            member,
+            {
+                reason: reason,
+                punishmentID: punishmentID,
+                time: 'ignore'
+            }
+        );
 
         await member.kick(reason);
 
@@ -58,11 +64,18 @@ module.exports = {
             time: null,
             auto: false
         });
-        await client.punishmentManager.createModerationLog(client, 'Kicked', interaction.member, member, interaction.channel, {
-            reason: reason,
-            duration: null,
-            punishmentID: punishmentID
-        });
+        await client.punishmentManager.createModerationLog(
+            client,
+            'Kicked',
+            interaction.member,
+            member,
+            interaction.channel,
+            {
+                reason: reason,
+                duration: null,
+                punishmentID: punishmentID
+            }
+        );
 
         const kickedEmbed = new Discord.MessageEmbed()
             .setColor(client.config.colors.punishment[1])

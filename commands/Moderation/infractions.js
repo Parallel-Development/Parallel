@@ -105,7 +105,7 @@ module.exports = {
             goForward,
             jumpToBack,
             stop
-        )
+        );
 
         return message.reply({ embeds: [warningsEmbed], components: [pageButtons] });
     }

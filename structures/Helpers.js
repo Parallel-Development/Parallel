@@ -3,15 +3,13 @@ const cooldown = new Map();
 const blacklistSchema = require('../schemas/blacklist-schema');
 
 class Helpers {
-
     cooldown = {
-
         /**
-        * check if a user is still in cooldown, and if @param {boolean} keep is set to false, remove the user from the cooldown
-        * @param {Discord.User} user the user to check
-        * @param {boolean} keep to keep the user in the cooldown if their cooldown time is already over
-        * @returns {object} the cooldown information including the cooldown status
-        */
+         * check if a user is still in cooldown, and if @param {boolean} keep is set to false, remove the user from the cooldown
+         * @param {Discord.User} user the user to check
+         * @param {boolean} keep to keep the user in the cooldown if their cooldown time is already over
+         * @returns {object} the cooldown information including the cooldown status
+         */
         check(user, keep = false) {
             const isValidMember = validateUser(user);
             if (isValidMember === undefined) return Promise.reject('expected 1 argument `user`, found undefined');
@@ -88,7 +86,7 @@ class Helpers {
         },
 
         /**
-         * make a user's cooldown status show that they have been informed that they are on cooldown, 
+         * make a user's cooldown status show that they have been informed that they are on cooldown,
          * so if they run a command again on cooldown, they don't need to be reinformed
          * @param {Discord.User} user the user to set the cooldown status to triggered
          * @returns the new cooldown map
@@ -159,13 +157,11 @@ class Helpers {
                         sent: true
                     }
                 );
-
             } catch {
                 return false;
             }
         },
 
-        
         /**
          * send a message to a channel regarding the server blacklist, then leave the server
          * @param {Discord.Client} client the client
@@ -175,12 +171,10 @@ class Helpers {
          * @returns {Promise<Discord.Message> | boolean} the message resolvable or false if sending failed
          */
         async sendServerBlacklist(client, message, reason, date) {
-
             try {
-                await message.channel
-                    .send(
-                        `**[IMPORTANT NOTICE]**\nPlease do not delete this message until it has been regarded!\n\nUnfortunately, this server has been blacklisted. This means the server may not use Parallel anymore. Further information is listed below:\n\n**Reason:** ${reason}\n**Date:** ${date}\n\nIf you wish to appeal this server blacklist, appeal at https://docs.google.com/forms/d/1xedhPPJONP3tGmL58xQAiTd-XVQ1V8tCkEqUu9q1LWM/edit?usp=drive_web`
-                    )
+                await message.channel.send(
+                    `**[IMPORTANT NOTICE]**\nPlease do not delete this message until it has been regarded!\n\nUnfortunately, this server has been blacklisted. This means the server may not use Parallel anymore. Further information is listed below:\n\n**Reason:** ${reason}\n**Date:** ${date}\n\nIf you wish to appeal this server blacklist, appeal at https://docs.google.com/forms/d/1xedhPPJONP3tGmL58xQAiTd-XVQ1V8tCkEqUu9q1LWM/edit?usp=drive_web`
+                );
                 await message.guild.leave();
                 await blacklistSchema.updateOne(
                     {
@@ -191,11 +185,10 @@ class Helpers {
                         sent: true
                     }
                 );
-            } catch { 
+            } catch {
                 await message.guild.leave();
-                return false; 
+                return false;
             }
-
         }
     };
 }

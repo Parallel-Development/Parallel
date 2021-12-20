@@ -2,9 +2,6 @@ const settingsSchema = require('../../schemas/settings-schema');
 const ms = require('ms');
 const Discord = require('discord.js');
 
-
-
-
 module.exports = {
     name: 'warn',
     description: 'Issue a warning against a member',
@@ -60,11 +57,18 @@ module.exports = {
             time: time,
             auto: false
         });
-        await client.punishmentManager.createUserInfractionDM(client, 'warned', client.config.colors.punishment[1], message, member, {
-            reason: reason,
-            punishmentID: punishmentID,
-            time: time
-        });
+        await client.punishmentManager.createUserInfractionDM(
+            client,
+            'warned',
+            client.config.colors.punishment[1],
+            message,
+            member,
+            {
+                reason: reason,
+                punishmentID: punishmentID,
+                time: time
+            }
+        );
         await client.punishmentManager.createModerationLog(client, 'Warned', message.member, member, message.channel, {
             reason: reason,
             duration: time,

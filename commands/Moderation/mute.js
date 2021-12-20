@@ -4,10 +4,6 @@ const settingsSchema = require('../../schemas/settings-schema');
 const punishmentSchema = require('../../schemas/punishment-schema');
 const warningSchema = require('../../schemas/warning-schema');
 
-
-
-
-
 module.exports = {
     name: 'mute',
     description: 'Mutes a member denying their permission to speak in the rest of the server',
@@ -94,7 +90,11 @@ module.exports = {
         });
 
         const role = message.guild.roles.cache.get(muterole) || (await client.util.createMuteRole(message));
-        if (!role) return client.util.throwError(message, 'the muted role was not found, so I tried to create one, but I failed due to bad permissions');
+        if (!role)
+            return client.util.throwError(
+                message,
+                'the muted role was not found, so I tried to create one, but I failed due to bad permissions'
+            );
         if (role.id !== muterole) client.cache.settings.delete(message.guild.id);
 
         if (role.position >= message.guild.me.roles.highest.position)
@@ -159,11 +159,18 @@ module.exports = {
             time: time ? Date.now() + time : 'Never',
             roles: memberRoles
         });
-        await client.punishmentManager.createUserInfractionDM(client, 'muted', client.config.colors.punishment[1], message, member, {
-            reason: reason,
-            punishmentID: punishmentID,
-            time: time
-        });
+        await client.punishmentManager.createUserInfractionDM(
+            client,
+            'muted',
+            client.config.colors.punishment[1],
+            message,
+            member,
+            {
+                reason: reason,
+                punishmentID: punishmentID,
+                time: time
+            }
+        );
         await client.punishmentManager.createModerationLog(client, 'Muted', message.member, member, message.channel, {
             reason: reason,
             duration: time,

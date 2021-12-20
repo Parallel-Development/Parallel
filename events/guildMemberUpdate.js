@@ -38,10 +38,16 @@ module.exports = {
             return;
         } else if (newMember.roles.cache.has(muterole)) {
             await punishmentSchema.deleteOne({ guildID: oldMember.guild.id, userID: oldMember.id });
-            return await client.punishmentManager.createPunishment(oldMember.guild.name, oldMember.guild.id, 'mute', newMember.id, {
-                reason: 'The mute role was added to a user',
-                time: 'Never'
-            });
+            return await client.punishmentManager.createPunishment(
+                oldMember.guild.name,
+                oldMember.guild.id,
+                'mute',
+                newMember.id,
+                {
+                    reason: 'The mute role was added to a user',
+                    time: 'Never'
+                }
+            );
         }
     }
 };

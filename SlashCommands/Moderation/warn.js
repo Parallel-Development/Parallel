@@ -3,9 +3,6 @@ const ms = require('ms');
 const Discord = require('discord.js');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
-
-
-
 module.exports = {
     name: 'warn',
     description: 'Issue a warning against a member',
@@ -64,16 +61,30 @@ module.exports = {
             time: time,
             auto: false
         });
-        await client.punishmentManager.createUserInfractionDM(client, 'warned', client.config.colors.punishment[1], interaction, member, {
-            reason: reason,
-            punishmentID: punishmentID,
-            time: time
-        });
-        await client.punishmentManager.createModerationLog(client, 'Warned', interaction.member, member, interaction.channel, {
-            reason: reason,
-            duration: time,
-            punishmentID: punishmentID
-        });
+        await client.punishmentManager.createUserInfractionDM(
+            client,
+            'warned',
+            client.config.colors.punishment[1],
+            interaction,
+            member,
+            {
+                reason: reason,
+                punishmentID: punishmentID,
+                time: time
+            }
+        );
+        await client.punishmentManager.createModerationLog(
+            client,
+            'Warned',
+            interaction.member,
+            member,
+            interaction.channel,
+            {
+                reason: reason,
+                duration: time,
+                punishmentID: punishmentID
+            }
+        );
 
         const warnedEmbed = new Discord.MessageEmbed()
             .setColor(client.config.colors.punishment[0])

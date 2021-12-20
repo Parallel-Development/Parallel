@@ -2,8 +2,6 @@ const ms = require('ms');
 const Discord = require('discord.js');
 const settingsSchema = require('../../schemas/settings-schema');
 
-
-
 const warningSchema = require('../../schemas/warning-schema');
 const punishmentSchema = require('../../schemas/punishment-schema');
 
@@ -90,12 +88,19 @@ module.exports = {
         });
 
         if (member instanceof Discord.GuildMember)
-            await client.punishmentManager.createUserInfractionDM(client, 'banned', client.config.colors.punishment[2], message, member, {
-                reason: reason,
-                punishmentID: punishmentID,
-                time: time,
-                baninfo: baninfo !== 'none' ? baninfo : null
-            });
+            await client.punishmentManager.createUserInfractionDM(
+                client,
+                'banned',
+                client.config.colors.punishment[2],
+                message,
+                member,
+                {
+                    reason: reason,
+                    punishmentID: punishmentID,
+                    time: time,
+                    baninfo: baninfo !== 'none' ? baninfo : null
+                }
+            );
 
         await client.punishmentManager.createModerationLog(client, 'Banned', message.member, member, message.channel, {
             reason: reason,

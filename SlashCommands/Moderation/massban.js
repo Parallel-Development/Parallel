@@ -2,8 +2,6 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const Discord = require('discord.js');
 const settingsSchema = require('../../schemas/settings-schema');
 
-
-
 const warningSchema = require('../../schemas/warning-schema');
 const punishmentSchema = require('../../schemas/punishment-schema');
 const ms = require('ms');
@@ -154,11 +152,18 @@ module.exports = {
                         }
                     );
 
-                await client.punishmentManager.createModerationLog(client, 'Banned', interaction.member, user, interaction.channel, {
-                    reason: reason,
-                    duration: time,
-                    punishmentID: punishmentID
-                });
+                await client.punishmentManager.createModerationLog(
+                    client,
+                    'Banned',
+                    interaction.member,
+                    user,
+                    interaction.channel,
+                    {
+                        reason: reason,
+                        duration: time,
+                        punishmentID: punishmentID
+                    }
+                );
 
                 await interaction.guild.members
                     .ban(user, { reason: reason })
@@ -171,10 +176,16 @@ module.exports = {
                     auto: false
                 });
                 if (time)
-                    await client.punishmentManager.createPunishment(interaction.guild.name, interaction.guild.id, 'ban', user.id, {
-                        reason: reason,
-                        time: time ? Date.now() + time : 'Never'
-                    });
+                    await client.punishmentManager.createPunishment(
+                        interaction.guild.name,
+                        interaction.guild.id,
+                        'ban',
+                        user.id,
+                        {
+                            reason: reason,
+                            time: time ? Date.now() + time : 'Never'
+                        }
+                    );
             }
         }
 

@@ -96,11 +96,16 @@ module.exports = {
                 tags: { $elemMatch: { name: tagName } }
             });
 
-            if (validateTag) return interaction.reply({ content: 'Error: a tag with this name already exists', ephemeral: true });
+            if (validateTag)
+                return interaction.reply({ content: 'Error: a tag with this name already exists', ephemeral: true });
             const tagText = createArgs['tag_content'];
             if (tagText.length > 2000)
-                return interaction.reply({ content: 'Error: the tag text length exceeded the limit of **2000** characters', ephemeral: true });
-            if (tagName.split(' ').length > 1) return interaction.reply({ content: 'Error: the tag name may not have spaces', ephemeral: true});
+                return interaction.reply({
+                    content: 'Error: the tag text length exceeded the limit of **2000** characters',
+                    ephemeral: true
+                });
+            if (tagName.split(' ').length > 1)
+                return interaction.reply({ content: 'Error: the tag name may not have spaces', ephemeral: true });
 
             await tagSchema.updateOne(
                 {

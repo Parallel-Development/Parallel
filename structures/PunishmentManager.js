@@ -9,7 +9,6 @@ const userMap = new Map();
 const automodCooldown = new Set();
 
 class PunishmentManager {
-    
     /**
      * send a log to the message logging channel with the message deletion or update data
      * @param {Discord.Client} client the client
@@ -19,7 +18,6 @@ class PunishmentManager {
      * @returns {Promise<Discord.Message> | boolean} the sent message resolvable or false if it failed to send
      */
     async createMessageLog(client, channel, message, oldMessage = null) {
-
         const logEmbed = new Discord.MessageEmbed()
             .setColor(client.config.colors.log)
             .setAuthor('Parallel Logging', client.user.displayAvatarURL())
@@ -29,7 +27,7 @@ class PunishmentManager {
             const binnedContent = await client.util.createBin(message.content);
             logEmbed.setDescription(`[Jump to message](${message.url})`);
             logEmbed.setTitle('Message Update');
-            logEmbed.addField('Date', client.util.timestamp(Date.now()))
+            logEmbed.addField('Date', client.util.timestamp(Date.now()));
             logEmbed.addField(
                 'Old Message Content',
                 oldMessage.content.length <= 1024 ? oldMessage.content : binnedOldContent
@@ -41,7 +39,7 @@ class PunishmentManager {
             logEmbed.addField('Edited in', message.channel.toString());
         } else {
             logEmbed.setTitle('Message Deleted');
-            logEmbed.addField('Date', client.util.timestamp(Date.now()))
+            logEmbed.addField('Date', client.util.timestamp(Date.now()));
             logEmbed.addField('Deleted in', message.channel.toString());
             if (message.content)
                 logEmbed.addField(
@@ -72,7 +70,7 @@ class PunishmentManager {
     /**
      * send a DM to a user with an infraction's information
      * @param {Discord.Client} client the client
-     * @param {string} type the type of the punishment 
+     * @param {string} type the type of the punishment
      * @param {string} color the hex code or rgb integer for the embed color
      * @param {Discord.Message} message the message of the command used to issue the punishment or where it was automatically issued
      * @param {Discord.GuildMember | Discord.User} member the member or user with the issued punishment
@@ -82,8 +80,14 @@ class PunishmentManager {
      * @param {string} baninfo if the punishment is a ban, the additional ban information sent to the user
      * @returns {Promise<Discord.Message> | boolean} the sent message resolvable or false if it failed to send
      */
-    async createUserInfractionDM(client, type, color, message, member, { reason, punishmentID, time, baninfo = null } = {}) {
-
+    async createUserInfractionDM(
+        client,
+        type,
+        color,
+        message,
+        member,
+        { reason, punishmentID, time, baninfo = null } = {}
+    ) {
         const infractionEmbed = new Discord.MessageEmbed();
         infractionEmbed.setAuthor('Parallel Moderation', client.user.displayAvatarURL());
         infractionEmbed.setColor(color);
@@ -115,7 +119,7 @@ class PunishmentManager {
     /**
      * log to the expired log channel information about a punishment that had expired
      * @param {Discord.Client} client the client
-     * @param {string} type the type of the punishment 
+     * @param {string} type the type of the punishment
      * @param {Discord.Guild} server the guild in the expired punishment expired in
      * @param {Discord.User} user the user whos punishment expired
      * @param {string} reason the reason for the expiration
@@ -154,7 +158,7 @@ class PunishmentManager {
 
         const automodLogChannel = server.channels.cache.get(automodLogging);
         return automodLogChannel.send({ embeds: [expiredLog] }).catch(() => false);
-    };
+    }
 
     /**
      * create a new user infraction
@@ -169,7 +173,14 @@ class PunishmentManager {
      * @param {boolean} auto whether the punishment was automatically issued
      * @returns {boolean} true
      */
-    async createInfraction(client, type, message, moderator, member, { reason, punishmentID, time, auto = false } = {}) {
+    async createInfraction(
+        client,
+        type,
+        message,
+        moderator,
+        member,
+        { reason, punishmentID, time, auto = false } = {}
+    ) {
         await warningSchema.updateOne(
             {
                 guildID: message.guild.id
@@ -228,7 +239,7 @@ class PunishmentManager {
      * @param {string} type the type of the punishment
      * @param {Discord.GuildMember} moderator the moderator who issued the punishment
      * @param {Discord.GuildMember | Discord.User} target the target member or user
-     * @param {Discord.GuildChannel} channel the channel the punishment was issued in 
+     * @param {Discord.GuildChannel} channel the channel the punishment was issued in
      * @param {string} reason the reason for the punishment
      * @param {string} duration the duration of the punishment
      * @param {string} punishmentID the punishment ID snowflake
@@ -293,7 +304,6 @@ class PunishmentManager {
      * @returns {Promise<boolean>} whether the message has triggered the automod AND got the user punished
      */
     async automodCheck(client, message, edit = false, onlyCheck = false) {
-
         const automodSettings = await automodSchema.findOne({
             guildID: message.guild.id
         });
@@ -301,7 +311,7 @@ class PunishmentManager {
         // Malicious Link Check;
 
         if (client.cache.maliciousLinks.some(url => message.content.includes(url))) {
-            let punished = await this._createAutomodPunishment(client, message, 'maliciouslinks', onlyCheck)
+            let punished = await this._createAutomodPunishment(client, message, 'maliciouslinks', onlyCheck);
             if (punished !== false) return true;
         }
 
@@ -328,7 +338,7 @@ class PunishmentManager {
                     client.cache.maliciousLinks = client.cache.maliciousLinks.concat(
                         data.matches.map(match => match.url)
                     );
-                let punished = await this._createAutomodPunishment(client, message, 'maliciouslinks', onlyCheck)
+                let punished = await this._createAutomodPunishment(client, message, 'maliciouslinks', onlyCheck);
                 if (punished !== false) return true;
             }
         }
@@ -365,21 +375,21 @@ class PunishmentManager {
                             .includes(word))
             )
         ) {
-            let punished = await this._createAutomodPunishment(client, message, 'filter', onlyCheck)
+            let punished = await this._createAutomodPunishment(client, message, 'filter', onlyCheck);
             if (punished !== false) return true;
         }
 
         // Mass Mention
 
         if (!edit && message.mentions.users.filter(user => !user.bot).size >= 5) {
-            let punished = await this._createAutomodPunishment(client, message, 'massmention', onlyCheck)
+            let punished = await this._createAutomodPunishment(client, message, 'massmention', onlyCheck);
             if (punished !== false) return true;
         }
         // Walltext
 
         const walltextCheck = message.content.split('\n');
         if (walltextCheck.length >= 9 || message.content.length >= 700) {
-            let punished = await this._createAutomodPunishment(client, message, 'walltext', onlyCheck)
+            let punished = await this._createAutomodPunishment(client, message, 'walltext', onlyCheck);
             if (punished !== false) return true;
         }
         // Spam
@@ -390,7 +400,7 @@ class PunishmentManager {
                 let msgCount = userData.msgCount;
                 if (parseInt(msgCount) === 4) {
                     userMap.delete(message.author.id);
-                    let punished = await this._createAutomodPunishment(client, message, 'fast', onlyCheck)
+                    let punished = await this._createAutomodPunishment(client, message, 'fast', onlyCheck);
                     if (punished !== false) return true;
                 } else {
                     msgCount++;
@@ -413,7 +423,7 @@ class PunishmentManager {
 
         const inviteCheck = /discord(?:app)?.(?:com\/invite|gg)\/[a-zA-Z0-9]+\/?/i;
         if (inviteCheck.test(message.content.toLowerCase())) {
-            let punished = await this._createAutomodPunishment(client, message, 'invites', onlyCheck)
+            let punished = await this._createAutomodPunishment(client, message, 'invites', onlyCheck);
             if (punished !== false) return true;
         }
         // Links
@@ -439,11 +449,11 @@ class PunishmentManager {
                 allowTenor.attachmentPermsOnly &&
                 !message.channel.permissionsFor(message.member).has(Discord.Permissions.FLAGS.ATTACH_FILES)
             ) {
-                let punished = await this._createAutomodPunishment(client, message, 'links', onlyCheck)
+                let punished = await this._createAutomodPunishment(client, message, 'links', onlyCheck);
                 if (punished !== false) return true;
             }
         } else if (linkRegex.test(message.content.toLowerCase())) {
-            let punished = await this._createAutomodPunishment(client, message, 'links', onlyCheck)
+            let punished = await this._createAutomodPunishment(client, message, 'links', onlyCheck);
             if (punished !== false) return true;
         }
     }
@@ -451,7 +461,6 @@ class PunishmentManager {
     // ======================================================
 
     async _createAutomodPunishment(client, message, type, onlyCheck) {
-
         const automod = await automodSchema.findOne({ guildID: message.guild.id });
 
         const {
@@ -486,7 +495,7 @@ class PunishmentManager {
         const structure = async (name, reason, time, color) => {
             if (onlyCheck) return;
 
-            message.delete().catch(() => { });
+            message.delete().catch(() => {});
             if (name === 'delete') return;
 
             if (automodCooldown.has(message.author.id)) return;
@@ -552,9 +561,10 @@ class PunishmentManager {
             );
             await this.createModerationLog(
                 client,
-                `${name.charAt(0).toUpperCase() +
-                name.slice(1) +
-                (name.endsWith('e') ? '' : name.endsWith('ban') ? 'ne' : 'e')
+                `${
+                    name.charAt(0).toUpperCase() +
+                    name.slice(1) +
+                    (name.endsWith('e') ? '' : name.endsWith('ban') ? 'ne' : 'e')
                 }d`,
                 message.guild.me,
                 message.member,
@@ -568,7 +578,8 @@ class PunishmentManager {
             const punishedEmbed = new Discord.MessageEmbed()
                 .setColor(color)
                 .setDescription(
-                    `${member.toString()} has been automatically ${name.endsWith('e') ? name : name.endsWith('ban') ? name + 'ne' : name + 'e'
+                    `${member.toString()} has been automatically ${
+                        name.endsWith('e') ? name : name.endsWith('ban') ? name + 'ne' : name + 'e'
                     }d with ID \`${punishmentID}\``
                 );
 
@@ -606,12 +617,19 @@ class PunishmentManager {
             punishmentID = client.util.createSnowflake();
 
             if (instance.punishment === 'ban' || instance.punishment === 'tempban') {
-                await this.createUserInfractionDM(client, 'banned', client.config.colors.punishment[2], message, message.member, {
-                    reason: _reason,
-                    punishmentID: punishmentID,
-                    time: instance.duration,
-                    baninfo: baninfo !== 'none' ? baninfo : null
-                });
+                await this.createUserInfractionDM(
+                    client,
+                    'banned',
+                    client.config.colors.punishment[2],
+                    message,
+                    message.member,
+                    {
+                        reason: _reason,
+                        punishmentID: punishmentID,
+                        time: instance.duration,
+                        baninfo: baninfo !== 'none' ? baninfo : null
+                    }
+                );
 
                 await this.createModerationLog(client, 'Banned', message.guild.me, message.member, message.channel, {
                     reason: _reason,
@@ -638,7 +656,7 @@ class PunishmentManager {
 
                 if (!message.member.roles.cache.has(role.id)) {
                     if (removerolesonmute) {
-                        await member.voice.disconnect().catch(() => { });
+                        await member.voice.disconnect().catch(() => {});
                         await member.roles.set([role, ...unmanagableRoles]);
                     } else await client.util.muteMember(message, member, role);
                 }
@@ -654,11 +672,18 @@ class PunishmentManager {
                     time: instance.duration ? Date.now() + instance.duration : 'Never',
                     roles: memberRoles
                 });
-                await this.createUserInfractionDM(client, 'muted', client.config.colors.punishment[1], message, message.member, {
-                    reason: _reason,
-                    punishmentID: punishmentID,
-                    time: instance.duration
-                });
+                await this.createUserInfractionDM(
+                    client,
+                    'muted',
+                    client.config.colors.punishment[1],
+                    message,
+                    message.member,
+                    {
+                        reason: _reason,
+                        punishmentID: punishmentID,
+                        time: instance.duration
+                    }
+                );
                 await this.createModerationLog(client, 'Muted', message.guild.me, message.member, message.channel, {
                     reason: _reason,
                     duration: instance.duration,
@@ -666,11 +691,18 @@ class PunishmentManager {
                     auto: true
                 });
             } else if (instance.punishment === 'kick') {
-                await this.createUserInfractionDM(client, 'kicked', client.config.colors.punishment[1], message, member, {
-                    reason: _reason,
-                    punishmentID: punishmentID,
-                    time: time
-                });
+                await this.createUserInfractionDM(
+                    client,
+                    'kicked',
+                    client.config.colors.punishment[1],
+                    message,
+                    member,
+                    {
+                        reason: _reason,
+                        punishmentID: punishmentID,
+                        time: time
+                    }
+                );
                 await this.createInfraction(client, 'Kick', message, message.guild.me, message.member, {
                     reason: _reason,
                     punishmentID: punishmentID,
@@ -714,7 +746,7 @@ class PunishmentManager {
                 const msg = messages[i];
                 if (msg?.author.id === message.author.id) userMessages.push(msg);
             }
-            if (fast !== 'disabled') message.channel.bulkDelete(userMessages).catch(() => { });
+            if (fast !== 'disabled') message.channel.bulkDelete(userMessages).catch(() => {});
         }
 
         switch (type) {
@@ -726,15 +758,15 @@ class PunishmentManager {
                     maliciouslinksTempMuteDuration
                         ? maliciouslinksTempMuteDuration
                         : maliciouslinksTempBanDuration
-                            ? maliciouslinksTempBanDuration
-                            : null,
+                        ? maliciouslinksTempBanDuration
+                        : null,
                     maliciouslinks === 'warn'
                         ? client.config.colors.punishment[0]
                         : maliciouslinks === 'mute' || maliciouslinks === 'tempmute'
-                            ? client.config.colors.punishment[1]
-                            : maliciouslinks === 'ban' || maliciouslinks === 'tempban'
-                                ? client.config.colors.punishment[2]
-                                : null
+                        ? client.config.colors.punishment[1]
+                        : maliciouslinks === 'ban' || maliciouslinks === 'tempban'
+                        ? client.config.colors.punishment[2]
+                        : null
                 );
             case 'filter':
                 if (filter === 'disabled') return false;
@@ -744,15 +776,15 @@ class PunishmentManager {
                     filterTempMuteDuration
                         ? filterTempMuteDuration
                         : filterTempBanDuration
-                            ? filterTempBanDuration
-                            : null,
+                        ? filterTempBanDuration
+                        : null,
                     filter === 'warn'
                         ? client.config.colors.punishment[0]
                         : filter === 'mute' || filter === 'tempmute'
-                            ? client.config.colors.punishment[1]
-                            : filter === 'ban' || filter === 'tempban'
-                                ? client.config.colors.punishment[2]
-                                : null
+                        ? client.config.colors.punishment[1]
+                        : filter === 'ban' || filter === 'tempban'
+                        ? client.config.colors.punishment[2]
+                        : null
                 );
             case 'massmention':
                 if (massmention === 'disabled') return false;
@@ -762,15 +794,15 @@ class PunishmentManager {
                     massmentionTempMuteDuration
                         ? massmentionTempMuteDuration
                         : massmentionTempBanDuration
-                            ? massmentionTempBanDuration
-                            : null,
+                        ? massmentionTempBanDuration
+                        : null,
                     massmention === 'warn'
                         ? client.config.colors.punishment[0]
                         : massmention === 'mute' || massmention === 'tempmute'
-                            ? client.config.colors.punishment[1]
-                            : massmention === 'ban' || massmention === 'tempban'
-                                ? client.config.colors.punishment[2]
-                                : null
+                        ? client.config.colors.punishment[1]
+                        : massmention === 'ban' || massmention === 'tempban'
+                        ? client.config.colors.punishment[2]
+                        : null
                 );
             case 'walltext':
                 if (walltext === 'disabled') return false;
@@ -780,15 +812,15 @@ class PunishmentManager {
                     walltextTempMuteDuration
                         ? walltextTempMuteDuration
                         : walltextTempBanDuration
-                            ? walltextTempBanDuration
-                            : null,
+                        ? walltextTempBanDuration
+                        : null,
                     walltext === 'warn'
                         ? client.config.colors.punishment[0]
                         : walltext === 'mute' || walltext === 'tempmute'
-                            ? client.config.colors.punishment[1]
-                            : walltext === 'ban' || walltext === 'tempban'
-                                ? client.config.colors.punishment[2]
-                                : null
+                        ? client.config.colors.punishment[1]
+                        : walltext === 'ban' || walltext === 'tempban'
+                        ? client.config.colors.punishment[2]
+                        : null
                 );
 
             case 'fast':
@@ -800,10 +832,10 @@ class PunishmentManager {
                     fast === 'warn'
                         ? client.config.colors.punishment[0]
                         : fast === 'mute' || fast === 'tempmute'
-                            ? client.config.colors.punishment[1]
-                            : fast === 'ban' || fast === 'tempban'
-                                ? client.config.colors.punishment[2]
-                                : null
+                        ? client.config.colors.punishment[1]
+                        : fast === 'ban' || fast === 'tempban'
+                        ? client.config.colors.punishment[2]
+                        : null
                 );
             case 'invites':
                 if (invites === 'disabled') return false;
@@ -813,15 +845,15 @@ class PunishmentManager {
                     invitesTempMuteDuration
                         ? invitesTempMuteDuration
                         : invitesTempBanDuration
-                            ? invitesTempBanDuration
-                            : null,
+                        ? invitesTempBanDuration
+                        : null,
                     invites === 'warn'
                         ? client.config.colors.punishment[0]
                         : invites === 'mute' || invites === 'tempmute'
-                            ? client.config.colors.punishment[1]
-                            : invites === 'ban' || invites === 'tempban'
-                                ? client.config.colors.punishment[2]
-                                : null
+                        ? client.config.colors.punishment[1]
+                        : invites === 'ban' || invites === 'tempban'
+                        ? client.config.colors.punishment[2]
+                        : null
                 );
             case 'links':
                 if (links === 'disabled') return false;
@@ -832,10 +864,10 @@ class PunishmentManager {
                     links === 'warn'
                         ? client.config.colors.punishment[0]
                         : links === 'mute' || links === 'tempmute'
-                            ? client.config.colors.punishment[1]
-                            : links === 'ban' || links === 'tempban'
-                                ? client.config.colors.punishment[2]
-                                : null
+                        ? client.config.colors.punishment[1]
+                        : links === 'ban' || links === 'tempban'
+                        ? client.config.colors.punishment[2]
+                        : null
                 );
         }
     }
