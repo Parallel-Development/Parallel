@@ -79,9 +79,9 @@ class Client extends Discord.Client {
 
                 // lean all query options by default
                 const __setOptions = mongoose.Query.prototype.setOptions;
-                mongoose.Query.prototype.setOptions = function (options, overwrite) {
+                mongoose.Query.prototype.setOptions = function (options) {
                     __setOptions.apply(this, arguments);
-                    if (this.options.lean == null) this.options.lean = true;
+                    if (!this.mongooseOptions().lean) this.mongooseOptions().lean = true;
                     return this;
                 };
 
