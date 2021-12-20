@@ -1,8 +1,6 @@
 const Discord = require('discord.js');
 const settingsSchema = require('../../schemas/settings-schema');
 
-
-
 module.exports = {
     name: 'kick',
     description: 'Kick a member from the server',
@@ -41,11 +39,18 @@ module.exports = {
         const { delModCmds } = settings;
         if (delModCmds) message.delete();
 
-        await client.punishmentManager.createUserInfractionDM(client, 'kicked', client.config.colors.punishment[1], message, member, {
-            reason: reason,
-            punishmentID: punishmentID,
-            time: 'ignore'
-        });
+        await client.punishmentManager.createUserInfractionDM(
+            client,
+            'kicked',
+            client.config.colors.punishment[1],
+            message,
+            member,
+            {
+                reason: reason,
+                punishmentID: punishmentID,
+                time: 'ignore'
+            }
+        );
 
         await member.kick(reason);
 

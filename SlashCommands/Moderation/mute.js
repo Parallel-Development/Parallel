@@ -4,9 +4,6 @@ const settingsSchema = require('../../schemas/settings-schema');
 const warningSchema = require('../../schemas/warning-schema');
 const punishmentSchema = require('../../schemas/punishment-schema');
 
-
-
-
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
 module.exports = {
@@ -57,15 +54,28 @@ module.exports = {
                 time: time,
                 auto: false
             });
-            await client.punishmentManager.createPunishment(interaction.guild.name, interaction.guild.id, 'mute', user.id, {
-                reason: reason,
-                time: time ? Date.now() + time : 'Never'
-            });
-            await client.punishmentManager.createModerationLog(client, 'Muted', interaction.member, user, interaction.channel, {
-                reason: reason,
-                duration: time,
-                punishmentID: punishmentID
-            });
+            await client.punishmentManager.createPunishment(
+                interaction.guild.name,
+                interaction.guild.id,
+                'mute',
+                user.id,
+                {
+                    reason: reason,
+                    time: time ? Date.now() + time : 'Never'
+                }
+            );
+            await client.punishmentManager.createModerationLog(
+                client,
+                'Muted',
+                interaction.member,
+                user,
+                interaction.channel,
+                {
+                    reason: reason,
+                    duration: time,
+                    punishmentID: punishmentID
+                }
+            );
 
             return interaction.reply(
                 `**${user.tag}** has been muted. They are not currently on the server, but if they join they will be muted`
@@ -97,7 +107,11 @@ module.exports = {
         });
 
         const role = interaction.guild.roles.cache.get(muterole) || (await client.util.createMuteRole(interaction));
-        if (!role) return client.util.throwError(interaction, 'the muted role was not found, so I tried to create one, but I failed due to bad permissions');
+        if (!role)
+            return client.util.throwError(
+                interaction,
+                'the muted role was not found, so I tried to create one, but I failed due to bad permissions'
+            );
         if (role.id !== muterole) client.cache.settings.delete(interaction.guild.id);
 
         if (role.position >= interaction.guild.me.roles.highest.position)
@@ -155,21 +169,41 @@ module.exports = {
             time: time,
             auto: false
         });
-        await client.punishmentManager.createPunishment(interaction.guild.name, interaction.guild.id, 'mute', member.id, {
-            reason: reason,
-            time: time ? Date.now() + time : 'Never',
-            roles: memberRoles
-        });
-        await client.punishmentManager.createUserInfractionDM(client, 'muted', client.config.colors.punishment[1], interaction, member, {
-            reason: reason,
-            punishmentID: punishmentID,
-            time: time
-        });
-        await client.punishmentManager.createModerationLog(client, 'Muted', interaction.member, member, interaction.channel, {
-            reason: reason,
-            duration: time,
-            punishmentID: punishmentID
-        });
+        await client.punishmentManager.createPunishment(
+            interaction.guild.name,
+            interaction.guild.id,
+            'mute',
+            member.id,
+            {
+                reason: reason,
+                time: time ? Date.now() + time : 'Never',
+                roles: memberRoles
+            }
+        );
+        await client.punishmentManager.createUserInfractionDM(
+            client,
+            'muted',
+            client.config.colors.punishment[1],
+            interaction,
+            member,
+            {
+                reason: reason,
+                punishmentID: punishmentID,
+                time: time
+            }
+        );
+        await client.punishmentManager.createModerationLog(
+            client,
+            'Muted',
+            interaction.member,
+            member,
+            interaction.channel,
+            {
+                reason: reason,
+                duration: time,
+                punishmentID: punishmentID
+            }
+        );
 
         const mutedEmbed = new Discord.MessageEmbed()
             .setColor(client.config.colors.punishment[1])

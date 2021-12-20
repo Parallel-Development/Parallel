@@ -68,11 +68,13 @@ class Client extends Discord.Client {
         global.lockdownCooldown = new Set();
         global.notMutedUsers = [];
 
-        mongoose.connect(this.config.mongoURL, {
-            keepAlive: true,
-            useNewUrlParser: true,
-            useUnifiedTopology: true
-        }).then(() => console.log('Successfully connected to database'));
+        mongoose
+            .connect(this.config.mongoURL, {
+                keepAlive: true,
+                useNewUrlParser: true,
+                useUnifiedTopology: true
+            })
+            .then(() => console.log('Successfully connected to database'));
 
         new EventHandler(this), new CommandHandler(this), new ExpiredHandler(this), new ProcessEventsHandler();
     }

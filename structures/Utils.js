@@ -25,7 +25,7 @@ class Utils {
 
     /**
      * convert milliseconds into a human readable format
-     * @param {number} ms the time in milliseconds 
+     * @param {number} ms the time in milliseconds
      * @returns {string} the time in a human readable format
      */
     duration(ms) {
@@ -130,7 +130,6 @@ class Utils {
                 channel.permissionsFor(message.guild.me).has(Discord.Permissions.FLAGS.MANAGE_CHANNELS) &&
                 channel.permissionsFor(message.guild.me).has(Discord.Permissions.FLAGS.SEND_MESSAGES)
             ) {
-
                 const overwriteOptions = { SEND_MESSAGES: false };
                 if (channel.permissionsFor(message.guild.me).has(Discord.Permissions.FLAGS.ADD_REACTIONS))
                     overwriteOptions.ADD_REACTIONS = false;
@@ -170,7 +169,7 @@ class Utils {
      */
     async muteMember(message, member, muteRole) {
         try {
-            await member.roles.add(muteRole)
+            await member.roles.add(muteRole);
         } catch {
             return false;
         }

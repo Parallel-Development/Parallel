@@ -68,6 +68,11 @@ module.exports = {
             !messageLoggingIgnored.includes(message.channel.id) &&
             !messageLoggingIgnored.includes(message.channel.parentId)
         )
-            await client.punishmentManager.createMessageLog(client, message.guild.channels.cache.get(messageLogging), message, oldMessage);
+            await client.punishmentManager.createMessageLog(
+                client,
+                message.guild.channels.cache.get(messageLogging),
+                message,
+                oldMessage
+            );
     }
 };

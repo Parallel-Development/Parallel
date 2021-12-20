@@ -1,6 +1,5 @@
 const Discord = require('discord.js');
 
-
 const punishmentSchema = require('../../schemas/punishment-schema');
 const warningSchema = require('../../schemas/warning-schema');
 const settingsSchema = require('../../schemas/settings-schema');
@@ -74,11 +73,18 @@ module.exports = {
             time: null,
             auto: false
         });
-        await client.punishmentManager.createModerationLog(client, 'Unbanned', interaction.member, user, interaction.channel, {
-            reason: reason,
-            duration: null,
-            punishmentID: punishmentID
-        });
+        await client.punishmentManager.createModerationLog(
+            client,
+            'Unbanned',
+            interaction.member,
+            user,
+            interaction.channel,
+            {
+                reason: reason,
+                duration: null,
+                punishmentID: punishmentID
+            }
+        );
 
         const unbannedEmbed = new Discord.MessageEmbed()
             .setColor(client.util.getMainColor(interaction.guild))

@@ -2,8 +2,6 @@ const ms = require('ms');
 const Discord = require('discord.js');
 const settingsSchema = require('../../schemas/settings-schema');
 
-
-
 const warningSchema = require('../../schemas/warning-schema');
 const punishmentSchema = require('../../schemas/punishment-schema');
 
@@ -92,18 +90,32 @@ module.exports = {
         });
 
         if (member instanceof Discord.GuildMember)
-            await client.punishmentManager.createUserInfractionDM(client, 'banned', client.config.colors.punishment[2], interaction, member, {
-                reason: reason,
-                punishmentID: punishmentID,
-                time: time,
-                baninfo: baninfo !== 'none' ? baninfo : null
-            });
+            await client.punishmentManager.createUserInfractionDM(
+                client,
+                'banned',
+                client.config.colors.punishment[2],
+                interaction,
+                member,
+                {
+                    reason: reason,
+                    punishmentID: punishmentID,
+                    time: time,
+                    baninfo: baninfo !== 'none' ? baninfo : null
+                }
+            );
 
-        await client.punishmentManager.createModerationLog(client, 'Banned', interaction.member, member, interaction.channel, {
-            reason: reason,
-            duration: time,
-            punishmentID: punishmentID
-        });
+        await client.punishmentManager.createModerationLog(
+            client,
+            'Banned',
+            interaction.member,
+            member,
+            interaction.channel,
+            {
+                reason: reason,
+                duration: time,
+                punishmentID: punishmentID
+            }
+        );
 
         await interaction.guild.members.ban(member, { reason: reason });
 
@@ -114,10 +126,16 @@ module.exports = {
             auto: false
         });
         if (time)
-            await client.punishmentManager.createPunishment(interaction.guild.name, interaction.guild.id, 'ban', member.id, {
-                reason: reason,
-                time: time ? Date.now() + time : 'Never'
-            });
+            await client.punishmentManager.createPunishment(
+                interaction.guild.name,
+                interaction.guild.id,
+                'ban',
+                member.id,
+                {
+                    reason: reason,
+                    time: time ? Date.now() + time : 'Never'
+                }
+            );
 
         const banEmbed = new Discord.MessageEmbed()
             .setColor(client.config.colors.punishment[2])

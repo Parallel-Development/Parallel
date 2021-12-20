@@ -3,9 +3,6 @@ const punishmentSchema = require('../../schemas/punishment-schema');
 const settingsSchema = require('../../schemas/settings-schema');
 const warningSchema = require('../../schemas/warning-schema');
 
-
-
-
 module.exports = {
     name: 'unmute',
     description: 'Unmutes a member allowing them to speak in the server',
@@ -43,11 +40,18 @@ module.exports = {
                 time: null,
                 auto: false
             });
-            await client.punishmentManager.createModerationLog(client, 'Unmuted', message.member, user, message.channel, {
-                reason: reason,
-                duration: null,
-                punishmentID: punishmentID
-            });
+            await client.punishmentManager.createModerationLog(
+                client,
+                'Unmuted',
+                message.member,
+                user,
+                message.channel,
+                {
+                    reason: reason,
+                    duration: null,
+                    punishmentID: punishmentID
+                }
+            );
 
             await punishmentSchema.deleteMany({
                 guildID: message.guild.id,
@@ -125,11 +129,18 @@ module.exports = {
             time: null,
             auto: false
         });
-        await client.punishmentManager.createUserInfractionDM(client, 'unmuted', client.config.colors.main, message, member, {
-            reason: reason,
-            time: 'ignore',
-            punishmentID: 'ignore'
-        });
+        await client.punishmentManager.createUserInfractionDM(
+            client,
+            'unmuted',
+            client.config.colors.main,
+            message,
+            member,
+            {
+                reason: reason,
+                time: 'ignore',
+                punishmentID: 'ignore'
+            }
+        );
         await client.punishmentManager.createModerationLog(client, 'Unmuted', message.member, member, message.channel, {
             reason: reason,
             duration: null,

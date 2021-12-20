@@ -3,8 +3,6 @@ const punishmentSchema = require('../../schemas/punishment-schema');
 const settingsSchema = require('../../schemas/settings-schema');
 const warningSchema = require('../../schemas/warning-schema');
 
-
-
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
 module.exports = {
@@ -46,11 +44,18 @@ module.exports = {
                 time: null,
                 auto: false
             });
-            await client.punishmentManager.createModerationLog(client, 'Unmuted', interaction.member, user, interaction.channel, {
-                reason: reason,
-                duration: null,
-                punishmentID: punishmentID
-            });
+            await client.punishmentManager.createModerationLog(
+                client,
+                'Unmuted',
+                interaction.member,
+                user,
+                interaction.channel,
+                {
+                    reason: reason,
+                    duration: null,
+                    punishmentID: punishmentID
+                }
+            );
 
             await punishmentSchema.deleteMany({
                 guildID: interaction.guild.id,
@@ -127,16 +132,30 @@ module.exports = {
             time: null,
             auto: false
         });
-        await client.punishmentManager.createUserInfractionDM(client, 'unmuted', client.config.colors.main, interaction, member, {
-            reason: reason,
-            time: 'ignore',
-            punishmentID: 'ignore'
-        });
-        await client.punishmentManager.createModerationLog(client, 'Unmuted', interaction.member, member, interaction.channel, {
-            reason: reason,
-            duration: null,
-            punishmentID: punishmentID
-        });
+        await client.punishmentManager.createUserInfractionDM(
+            client,
+            'unmuted',
+            client.config.colors.main,
+            interaction,
+            member,
+            {
+                reason: reason,
+                time: 'ignore',
+                punishmentID: 'ignore'
+            }
+        );
+        await client.punishmentManager.createModerationLog(
+            client,
+            'Unmuted',
+            interaction.member,
+            member,
+            interaction.channel,
+            {
+                reason: reason,
+                duration: null,
+                punishmentID: punishmentID
+            }
+        );
 
         const unmutedEmbed = new Discord.MessageEmbed()
             .setColor(client.util.getMainColor(interaction.guild))
