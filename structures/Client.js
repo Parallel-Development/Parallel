@@ -72,9 +72,20 @@ class Client extends Discord.Client {
             .connect(this.config.mongoURL, {
                 keepAlive: true,
                 useNewUrlParser: true,
-                useUnifiedTopology: true
+                useUnifiedTopology: true,
             })
-            .then(() => console.log('Successfully connected to database'));
+            .then(() => {
+                console.log('Successfully connected to database');
+
+                // lean all query options by default
+                const __setOptions = mongoose.Query.prototype.setOptions;
+                mongoose.Query.prototype.setOptions = function (options, overwrite) {
+                    __setOptions.apply(this, arguments);
+                    if (this.options.lean == null) this.options.lean = true;
+                    return this;
+                };
+
+            });
 
         new EventHandler(this), new CommandHandler(this), new ExpiredHandler(this), new ProcessEventsHandler();
     }
