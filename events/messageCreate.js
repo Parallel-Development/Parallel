@@ -57,7 +57,7 @@ module.exports = {
 
         if (!client.cache.settings.has(message.guild.id)) client.cache.settings.set(message.guild.id, settings);
 
-        let prefix = global.perpendicular ? '=' : settings.prefix || client.config.prefix;
+        let prefix = global.parallele ? '=' : settings.prefix || client.config.prefix;
         if (new RegExp(`^<@!?${client.user.id}>`).exec(message.content)?.index === 0)
             prefix = message.content.split(' ')[0] + ' ';
         const { muterole, removerolesonmute, modRoles, modRolePermissions, errorConfig, locked } = settings;
