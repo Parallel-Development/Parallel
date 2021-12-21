@@ -33,11 +33,13 @@ module.exports.run = async (client, interaction) => {
         return client.util.throwError(interaction, client.config.errors.no_button_access);
 
     if (interaction.customId === 'deny') {
-
         global.requestedCooldown.splice(global.requestedCooldown.indexOf(requested), 1);
         global.requestCooldown.splice(global.requestCooldown.indexOf(interaction.user.id), 1);
 
-        return interaction.update({ content: 'The Rock Paper Scissors game request was denied by the requested user', components: [] });
+        return interaction.update({
+            content: 'The Rock Paper Scissors game request was denied by the requested user',
+            components: []
+        });
     }
 
     global.openedSession.add(gameStarter.user.id);
@@ -61,17 +63,17 @@ module.exports.run = async (client, interaction) => {
     let finalEmbed;
 
     collector.on('collect', async _interaction => {
-
-        if (_interaction.user.id !== requested && _interaction.user.id !== gameStarter.user.id) 
+        if (_interaction.user.id !== requested && _interaction.user.id !== gameStarter.user.id)
             return _interaction.reply({ content: client.config.errors.no_button_access, ephemeral: true });
 
         if (answers.some(answer => answer.ID === _interaction.user.id))
             return client.util.throwError(_interaction, 'You already answered!');
 
-        if (!answers.length) await _interaction.reply({
-            content: `Your answer ${_interaction.customId} has been collected, please wait for the other player to answer`,
-            ephemeral: true
-        });
+        if (!answers.length)
+            await _interaction.reply({
+                content: `Your answer ${_interaction.customId} has been collected, please wait for the other player to answer`,
+                ephemeral: true
+            });
 
         answers.push({ ID: _interaction.user.id, answer: _interaction.customId });
 
@@ -120,7 +122,6 @@ module.exports.run = async (client, interaction) => {
     });
 
     collector.on('end', (_, reason) => {
-
         global.requestCooldown.splice(global.requestCooldown.indexOf(gameStarter.user.id), 1);
         global.requestCooldown.splice(global.requestCooldown.indexOf(requested), 1);
         global.requestedCooldown.splice(global.requestedCooldown.indexOf(gameStarter.user.id), 1);
@@ -128,15 +129,18 @@ module.exports.run = async (client, interaction) => {
         global.openedSession.delete(gameStarter.user.id);
 
         if (reason === 'time')
-            return interaction.message.edit({
-                embeds: [
-                    new Discord.MessageEmbed()
-                        .setColor(client.util.getMainColor(interaction.guild))
-                        .setDescription('Did not receive both responses within 60 seconds!')
-                        .setAuthor('Rock Paper Scissors', client.user.displayAvatarURL())
-                ],
-                components: []
-            }).catch(() => {});
-        if (answers.length !== 2) return interaction.update({ content: 'Game ended unexpectedly', embeds: [], components: [] });
+            return interaction.message
+                .edit({
+                    embeds: [
+                        new Discord.MessageEmbed()
+                            .setColor(client.util.getMainColor(interaction.guild))
+                            .setDescription('Did not receive both responses within 60 seconds!')
+                            .setAuthor('Rock Paper Scissors', client.user.displayAvatarURL())
+                    ],
+                    components: []
+                })
+                .catch(() => {});
+        if (answers.length !== 2)
+            return interaction.update({ content: 'Game ended unexpectedly', embeds: [], components: [] });
     });
 };

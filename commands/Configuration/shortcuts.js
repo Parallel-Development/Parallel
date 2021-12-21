@@ -171,7 +171,11 @@ module.exports = {
                 at: Date.now()
             });
             return message.reply(
-                `Are you sure? This will delete all shortcut commands. To confirm, run the \`${client.cache.settings.get(message.guild.id).prefix}confirm\` command. To cancel, run the \`${client.cache.settings.get(message.guild.id).prefix}cancel\` command`
+                `Are you sure? This will delete all shortcut commands. To confirm, run the \`${
+                    client.cache.settings.get(message.guild.id).prefix
+                }confirm\` command. To cancel, run the \`${
+                    client.cache.settings.get(message.guild.id).prefix
+                }cancel\` command`
             );
         }
     }

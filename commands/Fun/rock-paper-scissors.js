@@ -43,18 +43,16 @@ module.exports = {
         });
 
         setTimeout(() => {
-
             if (msg.editedTimestamp) return;
-            
+
             global.requestCooldown.splice(global.requestCooldown.indexOf(message.author.id), 1);
             global.requestedCooldown.splice(global.requestedCooldown.indexOf(playerTwo.id), 1);
 
-            msg
-                .edit({
-                    content: 'The Rock Paper Scissors game request has been cancelled; no response from the user within 30 seconds',
-                    components: []
-                })
-                .catch(() => {});
+            msg.edit({
+                content:
+                    'The Rock Paper Scissors game request has been cancelled; no response from the user within 30 seconds',
+                components: []
+            }).catch(() => {});
         }, 30000);
 
         return;

@@ -46,7 +46,6 @@ module.exports = {
         });
 
         setTimeout(() => {
-
             if (interaction.replied) return;
 
             global.requestCooldown.splice(global.requestCooldown.indexOf(interaction.user.id), 1);
@@ -54,7 +53,8 @@ module.exports = {
 
             interaction
                 .editReply({
-                    content: 'The Rock Paper Scissors game request has been cancelled; no response from the user within 30 seconds',
+                    content:
+                        'The Rock Paper Scissors game request has been cancelled; no response from the user within 30 seconds',
                     components: []
                 })
                 .catch(() => {});
