@@ -6,7 +6,7 @@ const settingsSchema = require('../../schemas/settings-schema');
 module.exports = {
     name: 'unlock',
     description: 'Grants the permission for members to speak in the specified channel',
-    requiredBotPermission: Discord.Permissions.FLAGS.MANAGE_CHANNELS,
+    requiredBotPermissions: Discord.Permissions.FLAGS.MANAGE_CHANNELS,
     permissions: Discord.Permissions.FLAGS.MANAGE_CHANNELS,
     data: new SlashCommandBuilder()
         .setName('unlock')

@@ -15,7 +15,7 @@ module.exports = {
         .addUserOption(option => option.setName('user').setDescription('The user to unban').setRequired(true))
         .addStringOption(option => option.setName('reason').setDescription('The reason for unbanning the user')),
     permissions: Discord.Permissions.FLAGS.BAN_MEMBERS,
-    requiredBotPermission: Discord.Permissions.FLAGS.BAN_MEMBERS,
+    requiredBotPermissions: Discord.Permissions.FLAGS.BAN_MEMBERS,
     async execute(client, interaction, args) {
         const user = await client.util.getUser(client, args['user']);
         if (!user) return client.util.throwError(interaction, client.config.errors.invalid_user);

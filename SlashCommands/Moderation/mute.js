@@ -16,7 +16,7 @@ module.exports = {
         .addStringOption(option => option.setName('duration').setDescription('The duration of the mute'))
         .addStringOption(option => option.setName('reason').setDescription('The reason for muting the user')),
     permissions: Discord.Permissions.FLAGS.MANAGE_ROLES,
-    requiredBotPermission: Discord.Permissions.FLAGS.MANAGE_ROLES,
+    requiredBotPermissions: Discord.Permissions.FLAGS.MANAGE_ROLES,
     async execute(client, interaction, args) {
         const settings = await settingsSchema.findOne({
             guildID: interaction.guild.id

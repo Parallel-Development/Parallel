@@ -5,7 +5,7 @@ module.exports = {
     name: 'removerole',
     description: 'Removes a role from a member',
     permissions: Discord.Permissions.FLAGS.MANAGE_ROLES,
-    requiredBotPermission: Discord.Permissions.FLAGS.MANAGE_ROLES,
+    requiredBotPermissions: Discord.Permissions.FLAGS.MANAGE_ROLES,
     data: new SlashCommandBuilder()
         .setName('removerole')
         .setDescription('Remove a role to a member')

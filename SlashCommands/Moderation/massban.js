@@ -20,7 +20,7 @@ module.exports = {
         .addStringOption(option => option.setName('reason').setDescription('The reason for the bans'))
         .addStringOption(option => option.setName('duration').setDescription('The duration of the bans')),
     description: 'Ban multiple users at once, up to 20 members',
-    requiredBotPermission: Discord.Permissions.FLAGS.BAN_MEMBERS,
+    requiredBotPermissions: Discord.Permissions.FLAGS.BAN_MEMBERS,
     permissions: Discord.Permissions.FLAGS.BAN_MEMBERS,
     async execute(client, interaction, args) {
         const rawUsers = args['users'].split(' ');

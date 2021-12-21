@@ -27,7 +27,7 @@ module.exports = {
             at: Date.now()
         });
         message.reply(
-            'Are you sure? This will remove all warnings from the server and there is no way to get them back. To confirm, run the `confirm` command. To cancel, run the `cancel` command'
+            `Are you sure? This will remove all warnings from the server and there is no way to get them back. To confirm, run the \`${client.cache.settings.get(message.guild.id).prefix}confirm\` command. To cancel, run the \`${client.cache.settings.get(message.guild.id).prefix}cancel\` command`
         );
     }
 };

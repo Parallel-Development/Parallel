@@ -5,7 +5,7 @@ module.exports = {
     description: 'Change the nickname of a user',
     usage: 'nick [member] <new nickname>\nnick [name]',
     permissions: Discord.Permissions.FLAGS.MANAGE_NICKNAMES,
-    requiredBotPermission: Discord.Permissions.FLAGS.MANAGE_NICKNAMES,
+    requiredBotPermissions: Discord.Permissions.FLAGS.MANAGE_NICKNAMES,
     async execute(client, message, args) {
         if (!args[0]) return client.util.throwError(message, client.config.errors.missing_argument_member);
 

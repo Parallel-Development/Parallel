@@ -5,7 +5,7 @@ module.exports = {
     name: 'set-nick',
     description: 'Change the nickname of a user',
     permissions: Discord.Permissions.FLAGS.MANAGE_NICKNAMES,
-    requiredBotPermission: Discord.Permissions.FLAGS.MANAGE_NICKNAMES,
+    requiredBotPermissions: Discord.Permissions.FLAGS.MANAGE_NICKNAMES,
     data: new SlashCommandBuilder()
         .setName('set-nick')
         .setDescription('Change the nickname of a user')

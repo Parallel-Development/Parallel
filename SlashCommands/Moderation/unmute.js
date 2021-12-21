@@ -14,7 +14,7 @@ module.exports = {
         .addUserOption(option => option.setName('user').setDescription('The user to unmute').setRequired(true))
         .addStringOption(option => option.setName('reason').setDescription('The reason for muting the user')),
     permissions: Discord.Permissions.FLAGS.MANAGE_ROLES,
-    requiredBotPermission: Discord.Permissions.FLAGS.MANAGE_ROLES,
+    requiredBotPermissions: Discord.Permissions.FLAGS.MANAGE_ROLES,
     aliases: ['unshut', 'um'],
     async execute(client, interaction, args) {
         const reason = args['reason'] || 'Unspecified';

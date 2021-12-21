@@ -17,7 +17,7 @@ module.exports = {
         .addStringOption(option => option.setName('duration').setDescription('The duration of the ban'))
         .addStringOption(option => option.setName('reason').setDescription('The reason for banning the user')),
     permissions: Discord.Permissions.FLAGS.BAN_MEMBERS,
-    requiredBotPermission: Discord.Permissions.FLAGS.BAN_MEMBERS,
+    requiredBotPermissions: Discord.Permissions.FLAGS.BAN_MEMBERS,
     async execute(client, interaction, args) {
         const member =
             (await client.util.getMember(interaction.guild, args['user'])) ||

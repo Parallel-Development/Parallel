@@ -12,7 +12,7 @@ module.exports = {
             option.setName('user').setDescription('The user to get ban information on').setRequired(true)
         ),
     permissions: Discord.Permissions.FLAGS.BAN_MEMBERS,
-    requiredBotPermission: Discord.Permissions.FLAGS.BAN_MEMBERS,
+    requiredBotPermissions: Discord.Permissions.FLAGS.BAN_MEMBERS,
     async execute(client, interaction, args) {
         const user = await client.util.getUser(client, args['user']);
 

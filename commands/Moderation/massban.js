@@ -9,7 +9,7 @@ module.exports = {
     name: 'massban',
     description: 'Ban multiple users at once, up to 20 members',
     usage: 'massban [...users]\nmassban [...users] * <duration>\nmassban [...users] * {reason}\nmassban [...users] * <duration> {reason}',
-    requiredBotPermission: Discord.Permissions.FLAGS.BAN_MEMBERS,
+    requiredBotPermissions: Discord.Permissions.FLAGS.BAN_MEMBERS,
     permissions: Discord.Permissions.FLAGS.BAN_MEMBERS,
     async execute(client, message, args) {
         const indexOfStar = args.includes('*') ? args.indexOf('*') : args.length;

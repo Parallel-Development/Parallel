@@ -7,7 +7,7 @@ module.exports = {
     usage: 'slowmode\nslowmode [slowmode]\nslowmode [slowmode] <channel>',
     aliases: ['sm', 'slow'],
     permissions: Discord.Permissions.FLAGS.MANAGE_CHANNELS,
-    requiredBotPermission: Discord.Permissions.FLAGS.MANAGE_CHANNELS,
+    requiredBotPermissions: Discord.Permissions.FLAGS.MANAGE_CHANNELS,
     async execute(client, message, args) {
         if (!args[0])
             return message.reply(

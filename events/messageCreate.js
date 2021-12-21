@@ -351,7 +351,7 @@ module.exports = {
         };
 
         const missingPerms = commandRequiredBotPermission => {
-            if (command.requiredBotPermission && !message.guild.me.permissions.has(command.requiredBotPermission)) {
+            if (command.requiredBotPermissions && !message.guild.me.permissions.has(command.requiredBotPermissions)) {
                 let missingPermission = new Discord.Permissions(commandRequiredBotPermission);
                 missingPermission = missingPermission.toArray();
                 if (missingPermission.length > 1) missingPermission = 'ADMINISTRATOR';
@@ -748,8 +748,8 @@ module.exports = {
         )
             return denyAccess(command.name);
 
-        if (command.requiredBotPermission && !message.guild.me.permissions.has(command.requiredBotPermission))
-            return missingPerms(command.requiredBotPermission);
+        if (command.requiredBotPermissions && !message.guild.me.permissions.has(command.requiredBotPermissions))
+            return missingPerms(command.requiredBotPermissions);
 
         if (locked.includes(message.channel.id) || locked.includes(message.channel.parentId)) {
             if (

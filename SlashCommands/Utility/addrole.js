@@ -5,7 +5,7 @@ module.exports = {
     name: 'addrole',
     description: 'Add a role to a member',
     permissions: Discord.Permissions.FLAGS.MANAGE_ROLES,
-    requiredBotPermission: Discord.Permissions.FLAGS.MANAGE_ROLES,
+    requiredBotPermissions: Discord.Permissions.FLAGS.MANAGE_ROLES,
     data: new SlashCommandBuilder()
         .setName('addrole')
         .setDescription('Add a role to a member')

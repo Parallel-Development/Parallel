@@ -13,7 +13,7 @@ module.exports = {
     usage: 'ban [member]\nban [member] <reason>\nban [member] <duration>\nban [member] <duration> (reason)',
     aliases: ['gtfo', 'banish', 'b'],
     permissions: Discord.Permissions.FLAGS.BAN_MEMBERS,
-    requiredBotPermission: Discord.Permissions.FLAGS.BAN_MEMBERS,
+    requiredBotPermissions: Discord.Permissions.FLAGS.BAN_MEMBERS,
     async execute(client, message, args) {
         const member =
             (await client.util.getMember(message.guild, args[0])) || (await client.util.getUser(client, args[0]));

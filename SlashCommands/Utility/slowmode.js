@@ -6,7 +6,7 @@ module.exports = {
     name: 'slowmode',
     description: 'Set the slowmode for the channel',
     permissions: Discord.Permissions.FLAGS.MANAGE_CHANNELS,
-    requiredBotPermission: Discord.Permissions.FLAGS.MANAGE_CHANNELS,
+    requiredBotPermissions: Discord.Permissions.FLAGS.MANAGE_CHANNELS,
     data: new SlashCommandBuilder()
         .setName('slowmode')
         .setDescription('Set the slowmode for the channel')

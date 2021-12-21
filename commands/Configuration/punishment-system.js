@@ -46,7 +46,7 @@ module.exports = {
                 at: Date.now()
             });
             return message.reply(
-                'Are you sure? This will reset the **entire** punishment system. To confirm, run the `confirm` command. To cancel. run the `cancel` command'
+                `Are you sure? This will reset the **entire** punishment system. To confirm, run the \`${client.cache.settings.get(message.guild.id).prefix}confirm\` command. To cancel. run the \`${client.cache.settings.get(message.guild.id).prefix}cancel\` command`
             );
         }
         if (warningsCount && !ms(warningsCount))

@@ -8,7 +8,7 @@ module.exports = {
     description: 'Unmutes a member allowing them to speak in the server',
     usage: 'unmute [member]\nunmute [member] <reason>',
     permissions: Discord.Permissions.FLAGS.MANAGE_ROLES,
-    requiredBotPermission: Discord.Permissions.FLAGS.MANAGE_ROLES,
+    requiredBotPermissions: Discord.Permissions.FLAGS.MANAGE_ROLES,
     aliases: ['unshut', 'um'],
     async execute(client, message, args) {
         if (!args[0]) return client.util.throwError(message, client.config.errors.missing_argument_member);

@@ -14,7 +14,7 @@ module.exports = {
         )
         .addStringOption(option => option.setName('reason').setDescription('The reason for kicking the member')),
     permissions: Discord.Permissions.FLAGS.KICK_MEMBERS,
-    requiredBotPermission: Discord.Permissions.FLAGS.KICK_MEMBERS,
+    requiredBotPermissions: Discord.Permissions.FLAGS.KICK_MEMBERS,
     async execute(client, interaction, args) {
         const member = await client.util.getMember(interaction.guild, args['member']);
         if (!member) return client.util.throwError(interaction, client.config.errors.invalid_member);

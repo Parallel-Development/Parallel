@@ -7,7 +7,7 @@ module.exports = {
     usage: 'moderate-nick [member]\nmoderate-nick [member] --dm\nmoderate-nick [member] --dm <reason>',
     aliases: ['moderate-nickname', 'modnick', 'moderate', 'mod'],
     permissions: Discord.Permissions.FLAGS.MANAGE_NICKNAMES,
-    requiredBotPermission: Discord.Permissions.FLAGS.MANAGE_NICKNAMES,
+    requiredBotPermissions: Discord.Permissions.FLAGS.MANAGE_NICKNAMES,
     async execute(client, message, args) {
         if (!args[0]) return client.util.throwError(message, client.config.errors.missing_argument_member);
 

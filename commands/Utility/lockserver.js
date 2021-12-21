@@ -8,7 +8,7 @@ module.exports = {
         'Lock all server channels. The bot will ignore channels in which non-moderators cannot talk in or view',
     usage: 'lockserver\nlockserver --include-staff-channels',
     permissions: Discord.Permissions.FLAGS.ADMINISTRATOR,
-    requiredBotPermission: Discord.Permissions.FLAGS.ADMINISTRATOR,
+    requiredBotPermissions: Discord.Permissions.FLAGS.ADMINISTRATOR,
     aliases: ['lockall'],
     async execute(client, message, args) {
         if (global.lockdownCooldown.has(message.guild.id))

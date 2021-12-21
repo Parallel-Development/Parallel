@@ -10,7 +10,7 @@ module.exports = {
     usage: 'mute [member]\nmute [member] <reason>\nmute [member] <duration>\nmute [member] <duration> (reason)',
     permissions: Discord.Permissions.FLAGS.MANAGE_ROLES,
     aliases: ['shut', 'stfu', 'm'],
-    requiredBotPermission: Discord.Permissions.FLAGS.MANAGE_ROLES,
+    requiredBotPermissions: Discord.Permissions.FLAGS.MANAGE_ROLES,
     async execute(client, message, args) {
         const settings = await settingsSchema.findOne({
             guildID: message.guild.id

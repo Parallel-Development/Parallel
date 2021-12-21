@@ -6,7 +6,7 @@ module.exports = {
     usage: 'demote [member]\ndemote [member] --dm\ndemote [member] --dm <reason>',
     aliases: ['removeallstaffroles', 'removeallmoderationroles'],
     permissions: Discord.Permissions.FLAGS.ADMINISTRATOR,
-    requiredBotPermission: Discord.Permissions.FLAGS.MANAGE_ROLES,
+    requiredBotPermissions: Discord.Permissions.FLAGS.MANAGE_ROLES,
     async execute(client, message, args) {
         if (!args[0]) return client.util.throwError(message, client.config.errors.missing_argument_member);
 

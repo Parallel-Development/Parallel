@@ -226,8 +226,8 @@ module.exports = {
         )
             return denyAccess(command.name);
 
-        if (command.requiredBotPermission && !interaction.guild.me.permissions.has(command.requiredBotPermission)) {
-            let missingPermission = new Discord.Permissions(command.requiredBotPermission);
+        if (command.requiredBotPermissions && !interaction.guild.me.permissions.has(command.requiredBotPermissions)) {
+            let missingPermission = new Discord.Permissions(command.requiredBotPermissions);
             missingPermission = missingPermission.toArray();
             if (missingPermission.length > 1) missingPermission = 'ADMINISTRATOR';
             else missingPermission = missingPermission[0].replaceAll('_', ' ');

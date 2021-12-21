@@ -7,7 +7,7 @@ module.exports = {
     usage: 'baninfo [user]',
     aliases: ['baninformation', 'ban-information'],
     permissions: Discord.Permissions.FLAGS.BAN_MEMBERS,
-    requiredBotPermission: Discord.Permissions.FLAGS.BAN_MEMBERS,
+    requiredBotPermissions: Discord.Permissions.FLAGS.BAN_MEMBERS,
     async execute(client, message, args) {
         if (!args[0]) return client.util.throwError(message, client.config.errors.missing_argument_user);
 

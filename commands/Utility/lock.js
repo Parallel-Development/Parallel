@@ -6,7 +6,7 @@ module.exports = {
     name: 'lock',
     description: 'Denies the permission for members to speak in the specified channel',
     usage: 'lock <channel>',
-    requiredBotPermission: Discord.Permissions.FLAGS.MANAGE_CHANNELS,
+    requiredBotPermissions: Discord.Permissions.FLAGS.MANAGE_CHANNELS,
     permissions: Discord.Permissions.FLAGS.MANAGE_CHANNELS,
     async execute(client, message, args) {
         let channel = client.util.getChannel(message.guild, args[0]);

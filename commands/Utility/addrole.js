@@ -5,7 +5,7 @@ module.exports = {
     description: 'Add a role to a member',
     usage: 'addrole [member] <role>\naddrole [member] <role> --dm\naddrole [member] <role> --dm (reason)\n\nIf you are to use the DM flag, you cannot target the role by its name!',
     permissions: Discord.Permissions.FLAGS.MANAGE_ROLES,
-    requiredBotPermission: Discord.Permissions.FLAGS.MANAGE_ROLES,
+    requiredBotPermissions: Discord.Permissions.FLAGS.MANAGE_ROLES,
     aliases: ['grant', 'giverole'],
     async execute(client, message, args) {
         if (!args[0]) return client.util.throwError(message, client.config.errors.missing_argument_member);

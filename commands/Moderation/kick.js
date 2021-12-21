@@ -7,7 +7,7 @@ module.exports = {
     usage: 'kick [member]\nkick [member] <reason>',
     aliases: ['k', 'boot'],
     permissions: Discord.Permissions.FLAGS.KICK_MEMBERS,
-    requiredBotPermission: Discord.Permissions.FLAGS.KICK_MEMBERS,
+    requiredBotPermissions: Discord.Permissions.FLAGS.KICK_MEMBERS,
     async execute(client, message, args) {
         if (!args[0]) return client.util.throwError(message, client.config.errors.missing_argument_member);
 

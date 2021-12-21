@@ -7,7 +7,7 @@ module.exports = {
     description: 'Unlock all locked channels',
     usage: 'unlockserver',
     permissions: Discord.Permissions.FLAGS.ADMINISTRATOR,
-    requiredBotPermission: Discord.Permissions.FLAGS.ADMINISTRATOR,
+    requiredBotPermissions: Discord.Permissions.FLAGS.ADMINISTRATOR,
     async execute(client, message, args) {
         if (global.lockdownCooldown.has(message.guild.id))
             return client.util.throwError(

@@ -5,7 +5,7 @@ module.exports = {
     name: 'clear',
     description: 'Clears messages in a channel',
     permissions: Discord.Permissions.FLAGS.MANAGE_MESSAGES,
-    requiredBotPermission: Discord.Permissions.FLAGS.MANAGE_MESSAGES,
+    requiredBotPermissions: Discord.Permissions.FLAGS.MANAGE_MESSAGES,
     data: new SlashCommandBuilder()
         .setName('clear')
         .setDescription('Bulk delete messages in a channel')

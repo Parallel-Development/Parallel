@@ -5,7 +5,7 @@ module.exports = {
     description: 'Removes a role from a member',
     usage: 'removerole [member] <role>\nremoverole [member] <role> --dm\nremoverole [member] <role> --dm (reason)\n\nIf you are to use the DM flag, you cannot target the role by its name!',
     permissions: Discord.Permissions.FLAGS.MANAGE_ROLES,
-    requiredBotPermission: Discord.Permissions.FLAGS.MANAGE_ROLES,
+    requiredBotPermissions: Discord.Permissions.FLAGS.MANAGE_ROLES,
     aliases: ['takerole'],
     async execute(client, message, args) {
         if (!args[0]) return client.util.throwError(message, client.config.errors.missing_argument_member);

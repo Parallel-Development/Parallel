@@ -16,7 +16,7 @@ module.exports = {
                 .setDescription('The message sent to the user regarding their nickname change if you are to DM them')
         ),
     permissions: Discord.Permissions.FLAGS.MANAGE_NICKNAMES,
-    requiredBotPermission: Discord.Permissions.FLAGS.MANAGE_NICKNAMES,
+    requiredBotPermissions: Discord.Permissions.FLAGS.MANAGE_NICKNAMES,
     async execute(client, interaction, args) {
         if (args['reason'] && !args['dm'])
             return client.util.throwError(interaction, client.config.errors.reason_but_no_dm);

@@ -6,7 +6,7 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 module.exports = {
     name: 'lock',
     description: 'Denies the permission for members to speak in the specified channel',
-    requiredBotPermission: Discord.Permissions.FLAGS.MANAGE_CHANNELS,
+    requiredBotPermissions: Discord.Permissions.FLAGS.MANAGE_CHANNELS,
     permissions: Discord.Permissions.FLAGS.MANAGE_CHANNELS,
     userPermissions: [
         {

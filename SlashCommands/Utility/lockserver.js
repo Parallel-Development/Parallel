@@ -18,7 +18,7 @@ module.exports = {
                 .setDescription('Include channels non-moderators cannot talk in or view')
         ),
     permissions: Discord.Permissions.FLAGS.ADMINISTRATOR,
-    requiredBotPermission: Discord.Permissions.FLAGS.ADMINISTRATOR,
+    requiredBotPermissions: Discord.Permissions.FLAGS.ADMINISTRATOR,
     async execute(client, interaction, args) {
         if (global.lockdownCooldown.has(interaction.guild.id))
             return client.util.throwError(
