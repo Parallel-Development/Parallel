@@ -137,6 +137,6 @@ module.exports.run = async (client, interaction) => {
                 ],
                 components: []
             });
-        if (answers.length !== 2) return interaction.update({ content: 'Game ended unexpectedly', components: [] });
+        if (answers.length !== 2) return interaction.update({ content: 'Game ended unexpectedly', embeds: [], components: [] });
     });
 };
