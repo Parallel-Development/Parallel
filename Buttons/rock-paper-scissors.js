@@ -136,7 +136,7 @@ module.exports.run = async (client, interaction) => {
                         .setAuthor('Rock Paper Scissors', client.user.displayAvatarURL())
                 ],
                 components: []
-            });
+            }).catch(() => {});
         if (answers.length !== 2) return interaction.update({ content: 'Game ended unexpectedly', embeds: [], components: [] });
     });
 };
