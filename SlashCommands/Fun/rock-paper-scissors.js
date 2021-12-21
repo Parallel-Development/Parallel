@@ -18,12 +18,12 @@ module.exports = {
         const playerTwo = await client.util.getMember(interaction.guild, args['member']);
         if (!playerTwo) return client.util.throwError(interaction, client.config.errors.invalid_member);
 
-        if (global.requestCooldown.has(interaction.user.id))
+        if (global.requestCooldown.includes(interaction.user.id))
             return client.util.throwError(
                 interaction,
                 'You already have a pending request! Please wait for it to expire before trying again'
             );
-        if (global.requestedCooldown.has(playerTwo.id))
+        if (global.requestedCooldown.includes(playerTwo.id))
             return client.util.throwError(
                 interaction,
                 'This user already has a pending request! Please wait for their pending request to expire before trying again'
@@ -33,8 +33,8 @@ module.exports = {
         if (playerTwo.id === interaction.user.id)
             return client.util.throwError(interaction, 'you cannot play yourself');
 
-        global.requestCooldown.add(interaction.user.id);
-        global.requestedCooldown.add(playerTwo.id);
+        global.requestCooldown.push(interaction.user.id);
+        global.requestedCooldown.push(playerTwo.id);
 
         const joinButton = new Discord.MessageButton().setLabel('Play').setStyle('SUCCESS').setCustomId('join');
         const denyButton = new Discord.MessageButton().setLabel('Deny').setStyle('DANGER').setCustomId('deny');
@@ -46,25 +46,16 @@ module.exports = {
         });
 
         setTimeout(() => {
-            const joinButton_ = new Discord.MessageButton()
-                .setLabel('Play')
-                .setStyle('SUCCESS')
-                .setCustomId('join')
-                .setDisabled(true);
-            const denyButton_ = new Discord.MessageButton()
-                .setLabel('Deny')
-                .setStyle('DANGER')
-                .setCustomId('deny')
-                .setDisabled(true);
-            const join_ = new Discord.MessageActionRow().addComponents(joinButton_, denyButton_);
 
-            global.requestCooldown.delete(interaction.user.id);
-            global.requestedCooldown.delete(playerTwo.id);
+            if (interaction.replied) return;
+
+            global.requestCooldown.splice(global.requestCooldown.indexOf(interaction.user.id), 1);
+            global.requestedCooldown.splice(global.requestedCooldown.indexOf(playerTwo.id), 1);
 
             interaction
                 .editReply({
-                    content: `${playerTwo}, ${playerOne} would like to play you in rock-paper-scissors | To play, hit the \`Play\` button below\n\nThis request has expired`,
-                    components: [join_]
+                    content: 'The Rock Paper Scissors game request has been cancelled; no response from the user within 30 seconds',
+                    components: []
                 })
                 .catch(() => {});
         }, 30000);

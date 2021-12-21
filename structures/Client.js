@@ -62,8 +62,8 @@ class Client extends Discord.Client {
 
         global.collectionPrevention = [];
         global.confirmationRequests = [];
-        global.requestCooldown = new Set();
-        global.requestedCooldown = new Set();
+        global.requestCooldown = [];
+        global.requestedCooldown = [];
         global.openedSession = new Set();
         global.lockdownCooldown = new Set();
         global.notMutedUsers = [];

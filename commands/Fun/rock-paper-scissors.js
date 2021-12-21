@@ -16,12 +16,12 @@ module.exports = {
         const playerTwo = await client.util.getMember(message.guild, args[0]);
         if (!playerTwo) return client.util.throwError(message, client.config.errors.invalid_member);
 
-        if (global.requestCooldown.has(message.author.id))
+        if (global.requestCooldown.includes(message.author.id))
             return client.util.throwError(
                 message,
                 'You already have a pending request! Please wait for it to expire before trying again'
             );
-        if (global.requestedCooldown.has(playerTwo.id))
+        if (global.requestedCooldown.includes(playerTwo.id))
             return client.util.throwError(
                 message,
                 'This user already has a pending request! Please wait for their pending request to expire before trying again'
@@ -30,38 +30,29 @@ module.exports = {
         if (playerTwo.user.bot) return client.util.throwError(message, 'you cannot play a bot!');
         if (playerTwo.id === message.author.id) return client.util.throwError(message, 'you cannot play yourself');
 
-        global.requestCooldown.add(message.author.id);
-        global.requestedCooldown.add(playerTwo.id);
+        global.requestCooldown.push(message.author.id);
+        global.requestedCooldown.push(playerTwo.id);
 
         const joinButton = new Discord.MessageButton().setLabel('Play').setStyle('SUCCESS').setCustomId('join');
         const denyButton = new Discord.MessageButton().setLabel('Deny').setStyle('DANGER').setCustomId('deny');
         const join = new Discord.MessageActionRow().addComponents(joinButton, denyButton);
 
-        message.reply({
+        const msg = await message.reply({
             content: `${playerTwo}, ${playerOne} would like to play you in rock-paper-scissors | To play, hit the \`Play\` button below`,
             components: [join]
         });
 
         setTimeout(() => {
-            const joinButton_ = new Discord.MessageButton()
-                .setLabel('Play')
-                .setStyle('SUCCESS')
-                .setCustomId('join')
-                .setDisabled(true);
-            const denyButton_ = new Discord.MessageButton()
-                .setLabel('Deny')
-                .setStyle('DANGER')
-                .setCustomId('deny')
-                .setDisabled(true);
-            const join_ = new Discord.MessageActionRow().addComponents(joinButton_, denyButton_);
 
-            global.requestCooldown.delete(message.author.id);
-            global.requestedCooldown.delete(playerTwo.id);
+            if (msg.editedTimestamp) return;
+            
+            global.requestCooldown.splice(global.requestCooldown.indexOf(message.author.id), 1);
+            global.requestedCooldown.splice(global.requestedCooldown.indexOf(playerTwo.id), 1);
 
-            message
+            msg
                 .edit({
-                    content: `${playerTwo}, ${playerOne} would like to play you in rock-paper-scissors | To play, hit the \`Play\` button below\n\nThis request has expired`,
-                    components: [join_]
+                    content: 'The Rock Paper Scissors game request has been cancelled; no response from the user within 30 seconds',
+                    components: []
                 })
                 .catch(() => {});
         }, 30000);

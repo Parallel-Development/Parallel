@@ -33,17 +33,12 @@ module.exports.run = async (client, interaction) => {
         return client.util.throwError(interaction, client.config.errors.no_button_access);
 
     if (interaction.customId === 'deny') {
-        global.requestCooldown.delete(interaction.user.id);
-        global.requestedCooldown.delete(requested);
 
-        await interaction.reply('The request was denied by the requested user');
-        return interaction.message.edit({
-            content: interaction.message.content + '\n\nThis request has expired',
-            components: [join]
-        });
+        global.requestedCooldown.splice(global.requestedCooldown.indexOf(requested), 1);
+        global.requestCooldown.splice(global.requestCooldown.indexOf(interaction.user.id), 1);
+
+        return interaction.update({ content: 'The Rock Paper Scissors game request was denied by the requested user', components: [] });
     }
-
-    interaction.message.edit({ content: interaction.message.content, components: [join] });
 
     global.openedSession.add(gameStarter.user.id);
     global.openedSession.add(requested);
@@ -59,28 +54,26 @@ module.exports.run = async (client, interaction) => {
 
     const choices = new Discord.MessageActionRow().addComponents(rockButton, paperButton, scissorsButton);
 
-    interaction.reply({ content: 'You accepted the game', ephemeral: true });
-    interaction.message.edit({
-        content: interaction.message.content + '\n\nThis request has expired',
-        components: [join]
-    });
-
-    const filter = i => i.user.id === requested || i.user.id === gameStarter.user.id;
-
-    const msg = await interaction.channel.send({ embeds: [gameBoard], components: [choices] });
-    const collector = msg.createMessageComponentCollector({ filter: filter, time: 60000 });
+    await interaction.update({ embeds: [gameBoard], components: [choices], content: null });
+    const collector = interaction.message.createMessageComponentCollector({ time: 60000 });
 
     const answers = [];
     let finalEmbed;
 
     collector.on('collect', async _interaction => {
+
+        if (_interaction.user.id !== requested && _interaction.user.id !== gameStarter.user.id) 
+            return _interaction.reply({ content: client.config.errors.no_button_access, ephemeral: true });
+
         if (answers.some(answer => answer.ID === _interaction.user.id))
             return client.util.throwError(_interaction, 'You already answered!');
-        answers.push({ ID: _interaction.user.id, answer: _interaction.customId });
-        await _interaction.reply({
-            content: `Your answer ${_interaction.customId} has been collected`,
+
+        if (!answers.length) await _interaction.reply({
+            content: `Your answer ${_interaction.customId} has been collected, please wait for the other player to answer`,
             ephemeral: true
         });
+
+        answers.push({ ID: _interaction.user.id, answer: _interaction.customId });
 
         if (answers.length === 2) {
             const member1 = await client.util.getMember(
@@ -122,26 +115,28 @@ module.exports.run = async (client, interaction) => {
                     }`
                 )
                 .setAuthor('Rock Paper Scissors', client.user.displayAvatarURL());
-            return msg.edit({ embeds: [finalEmbed], components: [] });
+            return interaction.message.edit({ embeds: [finalEmbed], components: [] });
         }
     });
 
     collector.on('end', (_, reason) => {
-        global.requestCooldown.delete(gameStarter.user.id);
-        global.requestedCooldown.delete(requested);
+
+        global.requestCooldown.splice(global.requestCooldown.indexOf(gameStarter.user.id), 1);
+        global.requestCooldown.splice(global.requestCooldown.indexOf(requested), 1);
+        global.requestedCooldown.splice(global.requestedCooldown.indexOf(gameStarter.user.id), 1);
+        global.requestedCooldown.splice(global.requestedCooldown.indexOf(requested), 1);
         global.openedSession.delete(gameStarter.user.id);
-        global.openedSession.delete(requested);
 
         if (reason === 'time')
-            return msg.edit({
+            return interaction.message.edit({
                 embeds: [
                     new Discord.MessageEmbed()
                         .setColor(client.util.getMainColor(interaction.guild))
-                        .setDescription('Did not receive a response from both users within 60 seconds!')
+                        .setDescription('Did not receive both responses within 60 seconds!')
                         .setAuthor('Rock Paper Scissors', client.user.displayAvatarURL())
                 ],
                 components: []
             });
-        if (answers.length !== 2) return msg.edit({ embeds: [gameBoard], components: [choices_] });
+        if (answers.length !== 2) return interaction.update({ content: 'Game ended unexpectedly', components: [] });
     });
 };
