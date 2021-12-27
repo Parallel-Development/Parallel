@@ -44,6 +44,6 @@ exports.run = async (client, message, args) => {
             break;
         default:
             if (!option) return message.reply(client.config.errors.missing_argument_option);
-            else return message.reply(client.config.invalid_option);
+            else return message.reply(client.config.errors.invalid_option);
     }
 };

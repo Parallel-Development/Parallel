@@ -292,7 +292,7 @@ class PunishmentManager {
         modLog.addField(`${type} in`, channel.toString(), true);
 
         const modLogChannel = moderator.guild.channels.cache.get(auto ? automodLogging : moderationLogging);
-        return modLogChannel.send({ embeds: [modLog] }).catch(() => falseDependencies);
+        return modLogChannel.send({ embeds: [modLog] }).catch(() => false);
     }
 
     /**
