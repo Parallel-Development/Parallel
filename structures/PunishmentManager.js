@@ -255,7 +255,7 @@ class PunishmentManager {
 
         const { moderationLogging, automodLogging } = settings;
         if ((moderationLogging === 'none' && !auto) || (automodLogging === 'none' && auto)) return;
-        if (!moderator.guild.channels.cache.get(moderationLogging)) {
+        if (!moderator.guild.channels.cache.get(moderationLogging) && moderationLogging !== 'none') {
             await settingsSchema.updateOne(
                 {
                     guildID: moderator.guild.id
@@ -266,7 +266,8 @@ class PunishmentManager {
             );
             return;
         }
-        if (!moderator.guild.channels.cache.get(automodLogging)) {
+
+        if (!moderator.guild.channels.cache.get(automodLogging) && automodLogging !== 'none') {
             await settingsSchema.updateOne(
                 {
                     guildID: moderator.guild.id
@@ -292,7 +293,7 @@ class PunishmentManager {
         modLog.addField(`${type} in`, channel.toString(), true);
 
         const modLogChannel = moderator.guild.channels.cache.get(auto ? automodLogging : moderationLogging);
-        return modLogChannel.send({ embeds: [modLog] }).catch(() => false);
+        return modLogChannel.send({ embeds: [modLog] })//.catch(() => false);
     }
 
     /**
