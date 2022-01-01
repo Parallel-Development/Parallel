@@ -331,11 +331,13 @@ class PunishmentManager {
             } catch {
                 return false;
             }
+
+            console.log(data);
             if (data.match) {
                 if (
                     data.matches.length &&
                     !client.cache.maliciousLinks.some(link => data.matches.map(match => match.url).includes(link)) &&
-                    match.url !== 'undefined'
+                    data.match.url !== 'undefined'
                 )
                     client.cache.maliciousLinks = client.cache.maliciousLinks.concat(
                         data.matches.map(match => match.url)
