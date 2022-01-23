@@ -772,9 +772,19 @@ module.exports = {
         }
 
         try {
-            command.execute(client, message, args);
-        } catch {
-            return;
+            if ((command.name === 'lockserver' || command.name === 'unlockserver')) {
+                if (global.lockdownCooldown.includes(message.guild.id)) return client.util.throwError(message, 'a server lock or unlock is currently ongoing. Please wait for it to finish before running this command');
+                else global.lockdownCooldown.push(message.guild.id);
+            }
+
+            await command.execute(client, message, args);
+            if (global.lockdownCooldown.includes(message.guild.id)) 
+                global.lockdownCooldown.splice(global.lockdownCooldown.indexOf(message.guild.id), 1);
+        } catch (err) {
+            if (global.lockdownCooldown.includes(message.guild.id))
+                global.lockdownCooldown.splice(global.lockdownCooldown.indexOf(message.guild.id), 1);
+            message.reply(`Something went wrong executing this command...`).catch(() => {});
+            console.error(err)
         }
     }
 };

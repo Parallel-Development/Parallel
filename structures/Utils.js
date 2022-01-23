@@ -6,6 +6,75 @@ const FlakeIdGen = require('flake-idgen'),
 const settingsSchema = require('../schemas/settings-schema');
 
 class Utils {
+
+    getFlag(input, flag) {
+
+        const flagRegex =
+            /(^| )(--|—)([^-—=:\s]{1,}[^=:\s]{1,})(=|:)?((("([^"]|\\"){0,}")($| )|'([^']|\\'){0,}'($| )|`([^`]|\\`){0,}`($| )|(“([^“”]|\\“|\\”){0,}”($| ))|\/([^\/]|\\\/){0,}\/([gmiesuUAJD]{1,10})?($| )|([^"'`“”/\s]|\\"|\\'|\\`|\\“|\\”|\\\/){1,}($| )))?/g;
+        const matches = [];
+        let next;
+
+        while ((next = flagRegex.exec(input))) matches.push(next);
+        if (!matches.length) return null;
+
+        const targetFlag = matches.find(f => f[0].trim().startsWith(`--${flag}`))?.[0].trim();
+        if (!targetFlag) return null;
+
+        let targetFlagValue = targetFlag
+            .split(/=|:/)[1]
+            ?.replaceAll('\\"', '"')
+            ?.replaceAll("\\'", "'")
+            ?.replaceAll('\\', '`')
+            ?.replaceAll('\\“', '“')
+            ?.replaceAll('\\”', '”')
+            ?.replaceAll('\\/', '/');
+
+        if (!targetFlagValue)
+            return {
+                name: flag,
+                formatted: targetFlag,
+                value: true
+            };
+
+        if (
+            targetFlagValue.startsWith('"') ||
+            targetFlagValue.startsWith("'") ||
+            targetFlagValue.startsWith('`') ||
+            targetFlagValue.startsWith('“')
+        )
+            targetFlagValue = targetFlagValue.slice(1, -1);
+
+        if (targetFlagValue.startsWith('/')) {
+            const flags = targetFlagValue.split('/')[2].split('');
+            targetFlagValue = targetFlagValue.split('/')[1];
+
+            return {
+                name: flag,
+                regexFlags: flags.length ? flags : null,
+                formatted: targetFlag,
+                value: targetFlagValue
+            };
+        }
+
+        if (targetFlagValue === 'true')
+            return {
+                name: flag,
+                formatted: targetFlag,
+                value: true
+            };
+        if (targetFlagValue === 'false')
+            return {
+                name: flag,
+                formatted: targetFlag,
+                value: false
+            };
+        return {
+            name: flag,
+            formatted: targetFlag,
+            value: targetFlagValue
+        };
+    }
+
     /**
      * create a new hastebin URL with the given content
      * @param {string} data the data to be parsed into the bin
@@ -277,6 +346,12 @@ class Utils {
         if (!guild) return client.config.colors.main; // guild is supposed to always not be undefined, but in the bugged case that it is, something will actually be returned lol
         const botRole = guild.me.roles.cache.find(role => role.managed) || guild.me.roles.highest;
         return botRole.hexColor !== '#000000' ? botRole.hexColor : '#09ff2';
+    }
+    
+    async contentOrBin(content, threshold = 2000) {
+        if (content.length > threshold) return this.createBin(content);
+
+        return content;
     }
 }
 

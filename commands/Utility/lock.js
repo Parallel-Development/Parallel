@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 const lockSchema = require('../../schemas/lock-schema');
 const settingsSchema = require('../../schemas/settings-schema');
+const { MessageEmbed, Permissions } = require('discord.js');
 
 module.exports = {
     name: 'lock',
@@ -10,161 +11,194 @@ module.exports = {
     permissions: Discord.Permissions.FLAGS.MANAGE_CHANNELS,
     async execute(client, message, args) {
         let channel = client.util.getChannel(message.guild, args[0]);
-        let reason = args.slice(1).join(' ') || 'Unspecified';
-        if (!channel) {
-            channel = message.channel;
-            reason = args.join(' ') || 'Unspecified';
+        if (channel) {
+            if (!channel.isText()) return client.util.throwError(message, 'the channel must be a text channel');
+            if (channel.isThread())
+                return client.util.throwError(message, 'the target channel cannot be a thread channel');
+
+            args.splice(0, 1);
         }
+
+        channel ??= message.channel;
 
         const guildSettings = await settingsSchema.findOne({ guildID: message.guild.id });
         const { modRoles } = guildSettings;
 
-        if (channel.type !== 'GUILD_TEXT')
-            return client.util.throwError(message, client.config.errors.not_type_text_channel);
         if (
             !channel
                 .permissionsFor(message.guild.me)
-                .has([Discord.Permissions.FLAGS.MANAGE_CHANNELS, Discord.Permissions.FLAGS.SEND_MESSAGES])
+                .has([Permissions.FLAGS.MANAGE_CHANNELS, Permissions.FLAGS.MANAGE_ROLES])
         )
-            return client.util.throwError(message, client.config.errors.my_channel_access_denied);
+            return message.reply(
+                `I do not have permission to manage permissions in ${channel !== message.channel ? 'that' : 'this'
+                } channel.`,
+                true
+            );
+
         if (
             !channel
                 .permissionsFor(message.member)
-                .has([Discord.Permissions.FLAGS.MANAGE_CHANNELS, Discord.Permissions.FLAGS.SEND_MESSAGES]) &&
+                .has([Permissions.FLAGS.MANAGE_CHANNELS, Permissions.FLAGS.MANAGE_ROLES]) &&
             !message.member.roles.cache.some(role => modRoles.includes(role.id))
         )
-            return client.util.throwError(message, client.config.errors.your_channel_access_denied);
-        if (
-            !message.member.permissions.has(Discord.Permissions.FLAGS.ADMINISTRATOR) &&
-            !message.member.roles.cache.some(role =>
-                channel.permissionOverwrites.cache.some(
-                    overwrite =>
-                        overwrite.id === role.id && overwrite.allow.has(Discord.Permissions.FLAGS.SEND_MESSAGES)
-                )
-            )
-        ) {
-            return message.reply(
-                'Error: the action was refused because after the channel had been locked, you would have not had permission to send messages in the channel. Please have an administrator add a permission override in the channel for one of the moderation roles you have and set the Send Messages permission to true'
-            );
-        }
-
-        const alreadyLocked = await lockSchema.findOne({
-            guildID: message.guild.id,
-            channels: {
-                $elemMatch: { ID: channel.id }
-            }
-        });
-
-        if (alreadyLocked)
-            return message.reply(
-                'This channel is already locked! (If you manually unlocked, just run the unlock command to register this channel as unlocked)'
-            );
-
-        const permissionOverwrites = channel.permissionOverwrites.cache;
-
-        // The permissions that the channel will be set to in the end;
-        let newPermissionOverwrites = permissionOverwrites;
-
-        const enabledOverwrites = [...permissionOverwrites.values()].filter(
-            overwrite =>
-                overwrite.type === 'role' &&
-                !channel.permissionsFor(overwrite.id).has(Discord.Permissions.FLAGS.MANAGE_MESSAGES) &&
-                !overwrite.deny.has(Discord.Permissions.FLAGS.SEND_MESSAGES) &&
-                !modRoles.includes(overwrite.id) &&
-                overwrite.allow.has(Discord.Permissions.FLAGS.SEND_MESSAGES)
-        );
-
-        let neutralOverwrites = [...permissionOverwrites.values()].filter(
-            overwrite =>
-                overwrite.type === 'role' &&
-                !channel.permissionsFor(overwrite.id).has(Discord.Permissions.FLAGS.MANAGE_MESSAGES) &&
-                !overwrite.deny.has(Discord.Permissions.FLAGS.SEND_MESSAGES) &&
-                !modRoles.includes(overwrite.id) &&
-                !overwrite.deny.has(Discord.Permissions.FLAGS.SEND_MESSAGES) &&
-                !overwrite.allow.has(Discord.Permissions.FLAGS.SEND_MESSAGES)
-        );
-
-        const allOverwrites = neutralOverwrites.concat(enabledOverwrites);
-
-        // It is not unexpected that this returns undefined!
-        const everyoneRoleOverwrite = channel.permissionOverwrites.cache.get(message.guild.roles.everyone.id);
-
-        if (!allOverwrites.length && everyoneRoleOverwrite)
             return client.util.throwError(
                 message,
-                'this channel will end up with the same after the lock! No non-moderator can currently send messages in this channel'
+                `You do not have permission to lock ${channel !== message.channel ? 'that' : 'this'
+                } channel.`
             );
 
-        /* Momentarily removing the permission overwrites we are affecting. We also remove the everyone role overwrite
-        because there are instances where the everyone role overwrite isn't even a marked overwrite until a permission has been udpated;
-        So the everyone role override will be added at the end
-        */
+        const targetOverwrites = channel.permissionOverwrites.cache.filter(overwrite => {
+            const role = message.guild.roles.cache.get(overwrite.id);
+            if (!role) return false;
+            return overwrite.id === message.guild.id
+                ? !overwrite.deny.has(Permissions.FLAGS.SEND_MESSAGES)
+                : !role.permissions.has(Permissions.FLAGS.MANAGE_MESSAGES) &&
+                !modRoles.includes(role.id) && 
+                overwrite.allow.has(Permissions.FLAGS.SEND_MESSAGES)
+        });
 
-        newPermissionOverwrites = permissionOverwrites.filter(
-            overwrite =>
-                !enabledOverwrites.some(enabledOverwrite => enabledOverwrite.id === overwrite.id) &&
-                !neutralOverwrites.some(neutralOverwrite => neutralOverwrite.id === overwrite.id) &&
-                overwrite.id !== message.guild.roles.everyone.id
-        );
-
-        if (!everyoneRoleOverwrite) {
-            newPermissionOverwrites.set(message.guild.roles.everyone.id, {
-                id: message.guild.roles.everyone.id,
+        const updatedOverwrites = targetOverwrites.map(overwrite => {
+            return {
+                id: overwrite.id,
                 type: 'role',
-                deny: Discord.Permissions.FLAGS.SEND_MESSAGES,
-                allow: 0n
-            });
-
-            neutralOverwrites.push(message.guild.roles.everyone.id);
-        }
-
-        for (let i = 0; i !== allOverwrites.length; ++i) {
-            const overwrite = allOverwrites[i];
-            const initialPermissionOverwrite = channel.permissionOverwrites.cache.get(overwrite.id);
-            const newPermissionOverwrite = {
-                id: initialPermissionOverwrite.id,
-                type: initialPermissionOverwrite.type,
-                deny: initialPermissionOverwrite.deny + Discord.Permissions.FLAGS.SEND_MESSAGES,
-                allow: initialPermissionOverwrite.allow.has(Discord.Permissions.FLAGS.SEND_MESSAGES)
-                    ? initialPermissionOverwrite.allow - Discord.Permissions.FLAGS.SEND_MESSAGES
-                    : initialPermissionOverwrite.allow
+                allow: overwrite.allow.has(Permissions.FLAGS.SEND_MESSAGES)
+                    ? overwrite.allow.bitfield - Permissions.FLAGS.SEND_MESSAGES
+                    : overwrite.allow.bitfield,
+                deny: overwrite.deny.bitfield + Permissions.FLAGS.SEND_MESSAGES
             };
+        });
 
-            newPermissionOverwrites.set(newPermissionOverwrite.id, newPermissionOverwrite);
+        if (!updatedOverwrites.some(overwrite => overwrite.id === message.guild.id)) {
+            const everyoneOverwrite = channel.permissionOverwrites.cache.get(message.guild.id);
+            if (!everyoneOverwrite || !everyoneOverwrite.deny.has(Permissions.FLAGS.SEND_MESSAGES))
+                updatedOverwrites.push({
+                    id: message.guild.id,
+                    type: 'role',
+                    allow: 0n,
+                    deny: Permissions.FLAGS.SEND_MESSAGES
+                });
         }
+
+        if (
+            !updatedOverwrites.length ||
+            (!channel.permissionsFor(message.guild.id).has(Permissions.FLAGS.VIEW_CHANNEL) &&
+                channel.permissionOverwrites.cache
+                    .filter(overwrite => overwrite.type === 'role' && overwrite.id !== message.guild.id)
+                    .every(
+                        overwrite =>
+                            message
+                                .guild.roles.cache.get(overwrite.id)
+                                .permissions.has(Permissions.FLAGS.MANAGE_MESSAGES) ||
+                            !channel.permissionsFor(overwrite.id).has(Permissions.FLAGS.VIEW_CHANNEL)
+                    )) ||
+            (!channel.permissionsFor(message.guild.id).has(Permissions.FLAGS.SEND_MESSAGES) &&
+                !message.guild.roles.cache.some(
+                    role =>
+                        channel.permissionsFor(role.id).has(Permissions.FLAGS.SEND_MESSAGES) &&
+                        !channel.permissionsFor(role.id).has(Permissions.FLAGS.MANAGE_MESSAGES)
+                ))
+        )
+            return client.util.throwError(
+                message,
+                "this channel doesn't have any overrides to update; already in a locked state."
+            );
+
+        if (
+            !message.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR) &&
+            !channel.permissionOverwrites.cache.some(overwrite => {
+                if (
+                    message.member.roles.cache.some(
+                        role =>
+                            overwrite.id === role.id &&
+                            overwrite.allow.has(Permissions.FLAGS.SEND_MESSAGES) &&
+                            !updatedOverwrites.some(o => o.id === overwrite.id)
+                    )
+                )
+                    return true;
+
+                return overwrite.id === message.member.id && overwrite.allow.has(Permissions.FLAGS.SEND_MESSAGES);
+            })
+        )
+            return client.util.throwError(
+                message,
+                'You cannot lock this channel. If you believe this is an error — which you likely do — have an administrator set a new override in this channel for a moderator role you have and grant it the Send Mesasges permission.'
+            );
+
+        if (
+            !message.guild.me.permissions.has(Permissions.FLAGS.ADMINISTRATOR) &&
+            !channel.permissionOverwrites.cache.some(overwrite => {
+                if (
+                    message.guild.me.roles.cache.some(
+                        role =>
+                            overwrite.id === role.id &&
+                            overwrite.allow.has(Permissions.FLAGS.SEND_MESSAGES) &&
+                            !updatedOverwrites.some(o => o.id === overwrite.id)
+                    )
+                )
+                    return true;
+
+                return overwrite.id === message.guild.me.id && overwrite.allow.has(Permissions.FLAGS.SEND_MESSAGES);
+            })
+        )
+            return message.reply(
+                'I am unable to lock this channel. There are two possible solutions to resolve this issue; set a new override in this channel for me and grant it the Send Mesasges permission, or give me the Administrator permission.'
+            );
+
+        const reason = args.join(' ');
+
+        const newOverwrites = [
+            ...updatedOverwrites,
+            ...channel.permissionOverwrites.cache
+                .filter(overwrite => !updatedOverwrites.some(o => o.id === overwrite.id))
+                .map(overwrite => {
+                    return {
+                        id: overwrite.id,
+                        type: overwrite.type,
+                        allow: overwrite.allow.bitfield,
+                        deny: overwrite.deny.bitfield
+                    };
+                })
+        ];
 
         await channel.permissionOverwrites.set(
-            newPermissionOverwrites,
-            `Command lock ran by ${message.author.tag} (${message.author.id})`
+            newOverwrites,
+            `Locked by ${message.author.tag} ${reason ? `| ${await client.util.contentOrBin(reason)}` : ''}`
         );
 
-        await lockSchema.updateOne(
-            {
-                guildID: message.guild.id
-            },
-            {
-                $push: {
-                    channels: {
-                        ID: channel.id,
-                        enabledOverwrites: enabledOverwrites,
-                        neutralOverwrites: neutralOverwrites
-                    }
-                }
-            }
-        );
+        const lockInformation = await lockSchema.findOne({ guildID: message.guild.id });
+        const isLocked = lockInformation?.channels.some(ch => ch.id === channel.id);
 
-        if (channel !== message.channel) message.reply({ content: `Successfully locked ${channel}` });
+        const allowedOverwrites = targetOverwrites
+            .filter(overwrite => overwrite.allow.has(Permissions.FLAGS.SEND_MESSAGES))
+            .map(overwrite => overwrite.id);
 
-        const lockedEmbed = new Discord.MessageEmbed()
-            .setColor(client.util.getMainColor(message.guild))
+        const everyoneRoleType = targetOverwrites.get(message.guild.id)?.allow.has(Permissions.FLAGS.SEND_MESSAGES)
+            ? 'allowed'
+            : targetOverwrites.get(message.guild.id)?.deny.has(Permissions.FLAGS.SEND_MESSAGES)
+                ? 'denied'
+                : 'neutral';
+        const data = {
+            id: channel.id,
+            allowedOverwrites,
+            everyoneRoleType: everyoneRoleType
+        };
+
+        if (isLocked) {
+            const newLocked = [
+                ...lockInformation.channels.filter(ch => ch.id !== channel.id),
+                data
+            ];
+            await lockSchema.updateOne({ guildID: message.guild.id }, { channels: newLocked });
+        } else await lockSchema.updateOne({ guildID: message.guild.id }, { $push: { channels: data } } );
+
+        const lockedEmbed = new MessageEmbed()
+            .setColor(client.config.colors.punishment[1])
             .setAuthor('Channel Lock', client.user.displayAvatarURL())
-            .setTitle('This channel has been locked')
-            .setDescription('This channel has been locked. Only moderators may speak in this channel');
-        if (
-            (!client.util.getChannel(message.guild, args[0]) && args.join(' ')) ||
-            (client.util.getChannel(message.guild, args[0]) && args.slice(1).join(' '))
-        )
-            lockedEmbed.addField('Reason', reason.length >= 1024 ? await client.util.createBin(reason) : reason);
-        await channel.send({ embeds: [lockedEmbed] }).catch(() => {});
+            .setTitle('This channel has been locked');
+        if (reason) lockedEmbed.setDescription(await client.util.contentOrBin(reason));
+
+        await channel.send({ embeds: [lockedEmbed] });
+
+        if (channel !== message.channel) return message.reply(`${channel} has been locked.`);
     }
 };

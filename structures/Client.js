@@ -65,7 +65,7 @@ class Client extends Discord.Client {
         global.requestCooldown = [];
         global.requestedCooldown = [];
         global.openedSession = new Set();
-        global.lockdownCooldown = new Set();
+        global.lockdownCooldown = [];
         global.notMutedUsers = [];
 
         mongoose

@@ -332,7 +332,6 @@ class PunishmentManager {
                 return false;
             }
 
-            console.log(data);
             if (data.match) {
                 if (
                     data.matches.length &&
