@@ -784,6 +784,7 @@ module.exports = {
             if (global.lockdownCooldown.includes(message.guild.id))
                 global.lockdownCooldown.splice(global.lockdownCooldown.indexOf(message.guild.id), 1);
             message.reply(`Something went wrong executing this command...`).catch(() => {});
+            errorLogs.push(err);
             console.error(err)
         }
     }

@@ -87,7 +87,6 @@ module.exports = {
                         .filter(overwrite => {
                             const role = message.guild.roles.cache.get(overwrite.id);
                             if (!role) return false;
-                            if (role.permissions.has(Permissions.FLAGS.SEND_MESSAGES)) return false;
                             return overwrite.id === message.guild.id
                                 ? !overwrite.deny.has(Permissions.FLAGS.SEND_MESSAGES)
                                 : !role.permissions.has(Permissions.FLAGS.MANAGE_MESSAGES) &&
@@ -336,7 +335,6 @@ module.exports = {
                     ? !overwrite.deny.has(Permissions.FLAGS.SEND_MESSAGES)
                     : !role.permissions.has(Permissions.FLAGS.MANAGE_MESSAGES) &&
                     overwrite.allow.has(Permissions.FLAGS.SEND_MESSAGES) &&
-                    channel.permissionsFor(role).has(Permissions.FLAGS.VIEW_CHANNEL) &&
                     !modRoles.includes(overwrite.id);
             });
 
