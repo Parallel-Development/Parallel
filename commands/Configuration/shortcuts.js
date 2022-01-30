@@ -5,7 +5,7 @@ const ms = require('ms');
 module.exports = {
     name: 'shortcuts',
     description: 'Add custom punishment shortcut commands in which have can have a default reason and duration',
-    usage: 'shortcuts create [shortcut name] <duration> (reason)\nshortcuts remove [shortcut name]\nshortcuts removeall\nshortcuts view',
+    usage: 'shortcuts create [shortcut name] [punishment] <duration> (reason)\nshortcuts remove [shortcut name]\nshortcuts removeall\nshortcuts view',
     aliases: ['shortcut', 'short'],
     async execute(client, message, args) {
         if (!args[0]) return client.util.throwError(message, client.config.errors.missing_argument_option);
