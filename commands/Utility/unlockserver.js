@@ -95,7 +95,7 @@ module.exports = {
                         };
                     });
 
-                if (channelLockData.everyoneRoleType === 'neutral') {
+                if (channelLockData.everyoneRoleType !== 'denied') {
                     const everyoneOverwrite = channel.permissionOverwrites.cache.get(
                         message.guild.id
                     );
@@ -103,7 +103,7 @@ module.exports = {
                         updatedOverwrites.push({
                             id: everyoneOverwrite.id,
                             type: 'role',
-                            allow: everyoneOverwrite.allow.bitfield,
+                            allow: everyoneOverwrite.allow.bitfield + (channelLockData.everyoneRoleType === 'allowed' ? Permissions.FLAGS.SEND_MESSAGES : 0n),
                             deny: everyoneOverwrite.deny.has(Permissions.FLAGS.SEND_MESSAGES)
                                 ? everyoneOverwrite.deny.bitfield - Permissions.FLAGS.SEND_MESSAGES
                                 : everyoneOverwrite.deny.bitfield
@@ -358,13 +358,13 @@ module.exports = {
                     };
                 });
 
-            if (channelLockData.everyoneRoleType === 'neutral') {
+            if (channelLockData.everyoneRoleType !== 'denied') {
                 const everyoneOverwrite = channel.permissionOverwrites.cache.get(message.guild.id);
                 if (everyoneOverwrite.deny.has(Permissions.FLAGS.SEND_MESSAGES)) {
                     updatedOverwrites.push({
                         id: everyoneOverwrite.id,
                         type: 'role',
-                        allow: everyoneOverwrite.allow.bitfield,
+                        allow: everyoneOverwrite.allow.bitfield + (channelLockData.everyoneRoleType === 'allowed' ? Permissions.FLAGS.SEND_MESSAGES : 0n),
                         deny: everyoneOverwrite.deny.has(Permissions.FLAGS.SEND_MESSAGES)
                             ? everyoneOverwrite.deny.bitfield - Permissions.FLAGS.SEND_MESSAGES
                             : everyoneOverwrite.deny.bitfield
