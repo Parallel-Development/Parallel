@@ -42,12 +42,15 @@ module.exports = {
         if (users.some(user => user.id === message.author.id))
             return msg.edit(`Error: ${client.config.errors.cannot_punish_yourself}`);
 
+        if (users.some(user => user.id === message.guild.ownerId))
+            return msg.edit(`Error: ${client.config.errors.cannot_punish_owner}`)
+
         if (
             users.some(
                 user =>
                     user instanceof Discord.GuildMember &&
                     user.roles.highest.position >= message.member.roles.highest.position &&
-                    !message.guild.ownerId === message.author.id
+                    message.guild.ownerId !== message.author.id
             )
         )
             return msg.edit(`Error: ${client.config.errors.hierarchy}`);

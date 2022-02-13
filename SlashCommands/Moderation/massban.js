@@ -53,12 +53,14 @@ module.exports = {
             return client.util.throwError(interaction, client.config.errors.cannot_punish_myself);
         if (users.some(user => user.id === interaction.user.id))
             return client.util.throwError(interaction, client.config.errors.cannot_punish_yourself);
+        if (users.some(user => user.id === message.guild.ownerId))
+            return msg.edit(`Error: ${client.config.errors.cannot_punish_owner}`)
         if (
             users.some(
                 user =>
                     user instanceof Discord.GuildMember &&
                     user.roles.highest.position >= interaction.member.roles.highest.position &&
-                    !interaction.guild.ownerId === interaction.user.id
+                    interaction.guild.ownerId !== interaction.user.id
             )
         )
             return client.util.throwError(interaction, client.config.errors.hierarchy);
