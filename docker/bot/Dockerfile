@@ -1,4 +1,4 @@
-FROM node:17.0-alpine AS builder
+FROM node:17.8-alpine AS builder
 
 RUN apk add build-base
 
@@ -8,7 +8,7 @@ RUN wget -O - https://github.com/jemalloc/jemalloc/releases/download/5.2.1/jemal
   make && \
   make install
 
-FROM node:17.0-alpine
+FROM node:17.8-alpine
 
 RUN ln -sf pkgconf /usr/bin/pkg-config
 
