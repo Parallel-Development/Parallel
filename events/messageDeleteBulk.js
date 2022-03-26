@@ -69,9 +69,9 @@ module.exports = {
         const viewDetailed = new Discord.MessageButton().setStyle('LINK').setURL(bin).setLabel('View Detailed Log');
         const row = new Discord.MessageActionRow().addComponents(viewDetailed);
 
-        return channel.guild.channels.cache
-            .get(messageLogging)
-            .send({ embeds: [logEmbed], components: [row] })
-            .catch(() => {});
+        const logChannel = await channel.guild.channels.fetch(messageLogging).catch(() => null);
+        if (!logChannel) return;
+
+        return logChannel.send({ embeds: [logEmbed], components: [row] }).catch(() => {});
     }
 };
