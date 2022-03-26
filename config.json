@@ -4,7 +4,7 @@
     "prefix": ">",
     "youtubeapi": "AIzaSyAdL-sUZVA7JzexThmarLCy7lQwvXIvT4Y",
     "mongoURL": "mongodb+srv://Piyeris:1BwlI3Zn02t7sOs1@razor.ghfnk.mongodb.net/Razor?retryWrites=true&w=majority",
-    "developers": ["633776442366361601", "671882127041626143"],
+    "developers": ["633776442366361601", "671882127041626143", "461750180388274180"],
     "colors": {
         "err": "#FF0000",
         "main": "#09ff2",
