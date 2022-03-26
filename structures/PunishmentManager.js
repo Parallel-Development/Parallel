@@ -293,7 +293,7 @@ class PunishmentManager {
         modLog.addField(`${type} in`, channel.toString(), true);
 
         const modLogChannel = moderator.guild.channels.cache.get(auto ? automodLogging : moderationLogging);
-        return modLogChannel.send({ embeds: [modLog] })//.catch(() => false);
+        return modLogChannel.send({ embeds: [modLog] }); //.catch(() => false);
     }
 
     /**
@@ -335,11 +335,10 @@ class PunishmentManager {
             if (data.match) {
                 if (
                     data.matches.length &&
-                    !client.cache.maliciousLinks.some(link => data.matches.map(match => match.url).includes(link)) &&
-                    data.match.url !== 'undefined'
+                    !client.cache.maliciousLinks.some(link => data.matches.map(match => match.url).includes(link))
                 )
                     client.cache.maliciousLinks = client.cache.maliciousLinks.concat(
-                        data.matches.map(match => match.url)
+                        data.matches.map(match => match.url).filter(m => m !== 'undefined')
                     );
                 let punished = await this._createAutomodPunishment(client, message, 'maliciouslinks', onlyCheck);
                 if (punished !== false) return true;
@@ -349,7 +348,7 @@ class PunishmentManager {
         // Filter Check;
 
         const { filterList } = automodSettings;
-        const allowedChars = 'abcdefghjiklmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ ';
+        const allowedChars = 'abcdefghjiklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ ';
 
         const messageCharacters = message.content
             .split('')
