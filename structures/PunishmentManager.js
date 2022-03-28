@@ -338,7 +338,7 @@ class PunishmentManager {
                     !client.cache.maliciousLinks.some(link => data.matches.map(match => match.url).includes(link))
                 )
                     client.cache.maliciousLinks = client.cache.maliciousLinks.concat(
-                        data.matches.map(match => match.url).filter(m => m !== 'undefined')
+                        data.matches.map(match => match.url).filter(m => m.url !== 'undefined')
                     );
                 let punished = await this._createAutomodPunishment(client, message, 'maliciouslinks', onlyCheck);
                 if (punished !== false) return true;
