@@ -15,7 +15,7 @@ module.exports = {
             .addField('Library & Version', `<:discordjs:810209255353352242> discord.js ${Discord.version}`, true)
             .addField('Developers', `${client.application.owner.members.map(u => u.user.tag).join(', ')}`, true)
             .addField('Ping (Websocket)', `${client.ws.ping}ms`, true)
-            .addField('Servers', `${client.guilds.cache.size}`, true)
+            .addField('Servers', `${client.guilds.cache.size.toLocaleString()}`, true)
             .addField('Uptime', client.util.duration(client.uptime), true)
             .addField('Memory', `${(process.memoryUsage().rss / 1024 / 1024).toFixed(2)}MiB`, true)
             .setAuthor('Parallel Discord Bot', client.user.displayAvatarURL())
