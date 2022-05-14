@@ -40,7 +40,8 @@ class Client extends Discord.Client {
             allowedMentions: {
                 parse: ['users'],
                 repliedUser: false
-            }
+            },
+            shardCount: 2
         });
 
         this.util = new Utils();
