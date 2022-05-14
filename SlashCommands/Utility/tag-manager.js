@@ -49,9 +49,11 @@ module.exports = {
                         .setName('method')
                         .setDescription('To add, remove, or view the allowed roles')
                         .setRequired(true)
-                        .addChoice('Add', 'add')
-                        .addChoice('Remove', 'remove')
-                        .addChoice('View', 'view')
+                        .addChoices(
+                            { name: 'Add', value: 'add' },
+                            { name: 'Remove', value: 'remove' },
+                            { name: 'View', value: 'view' }
+                        )
                 )
                 .addRoleOption(option => option.setName('role').setDescription('The role to target'))
         )

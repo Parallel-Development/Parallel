@@ -13,8 +13,7 @@ module.exports = {
                 .setName('choice')
                 .setDescription('To archive all or delete all?')
                 .setRequired(true)
-                .addChoice('Archive All', 'archive')
-                .addChoice('Delete All', 'delete')
+                .addChoices({ name: 'Archive All', value: 'archive' }, { name: 'Delete All', value: 'delete' })
                 .setRequired(true)
         )
         .addChannelOption(option => option.setName('channel').setDescription('The channel to manage threads in')),

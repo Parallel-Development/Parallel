@@ -26,12 +26,14 @@ module.exports = {
                         .setName('type')
                         .setDescription('The punishment type')
                         .setRequired(true)
-                        .addChoice('Warn', 'warn')
-                        .addChoice('Kick', 'kick')
-                        .addChoice('Mute', 'mute')
-                        .addChoice('Ban', 'ban')
-                        .addChoice('Temp-mute', 'tempmute')
-                        .addChoice('Temp-ban', 'tempban')
+                        .addChoices(
+                            { name: 'Warn', value: 'warn' },
+                            { name: 'Kick', value: 'kick' },
+                            { name: 'Mute', value: 'mute' },
+                            { name: 'Ban', value: 'ban' },
+                            { name: 'Temp-mute', value: 'tempmute' },
+                            { name: 'Temp-ban', value: 'tempban' }
+                        )
                 )
                 .addStringOption(option => option.setName('duration').setDescription('The duration of the punishment'))
         )

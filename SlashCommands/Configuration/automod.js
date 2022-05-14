@@ -21,14 +21,16 @@ module.exports = {
                         .setName('punishment')
                         .setDescription('The punishment given for triggering this automod')
                         .setRequired(true)
-                        .addChoice('Delete', 'delete')
-                        .addChoice('Warn', 'warn')
-                        .addChoice('Kick', 'kick')
-                        .addChoice('Mute', 'mute')
-                        .addChoice('Ban', 'ban')
-                        .addChoice('Temp-mute', 'tempmute')
-                        .addChoice('Temp-ban', 'tempban')
-                        .addChoice('Disable', 'disable')
+                        .addChoices(
+                            { name: 'Delete', value: 'delete' },
+                            { name: 'Warn', value: 'warn' },
+                            { name: 'Kick', value: 'kick' },
+                            { name: 'Mute', value: 'mute' },
+                            { name: 'Ban', value: 'ban' },
+                            { name: 'Temp-mute', value: 'tempmute' },
+                            { name: 'Temp-ban', value: 'tempban' },
+                            { name: 'Disable', value: 'disable' }
+                        )
                 )
                 .addStringOption(option => option.setName('duration').setDescription('The duration of the punishment'))
         )
@@ -41,14 +43,16 @@ module.exports = {
                         .setName('punishment')
                         .setDescription('The punishment given for triggering this automod')
                         .setRequired(true)
-                        .addChoice('Delete', 'delete')
-                        .addChoice('Warn', 'warn')
-                        .addChoice('Kick', 'kick')
-                        .addChoice('Mute', 'mute')
-                        .addChoice('Ban', 'ban')
-                        .addChoice('Temp-mute', 'tempmute')
-                        .addChoice('Temp-ban', 'tempban')
-                        .addChoice('Disable', 'disable')
+                        .addChoices(
+                            { name: 'Delete', value: 'delete' },
+                            { name: 'Warn', value: 'warn' },
+                            { name: 'Kick', value: 'kick' },
+                            { name: 'Mute', value: 'mute' },
+                            { name: 'Ban', value: 'ban' },
+                            { name: 'Temp-mute', value: 'tempmute' },
+                            { name: 'Temp-ban', value: 'tempban' },
+                            { name: 'Disable', value: 'disable' }
+                        )
                 )
                 .addStringOption(option => option.setName('duration').setDescription('The duration of the punishment'))
         )
@@ -61,14 +65,16 @@ module.exports = {
                         .setName('punishment')
                         .setDescription('The punishment given for triggering this automod')
                         .setRequired(true)
-                        .addChoice('Delete', 'delete')
-                        .addChoice('Warn', 'warn')
-                        .addChoice('Kick', 'kick')
-                        .addChoice('Mute', 'mute')
-                        .addChoice('Ban', 'ban')
-                        .addChoice('Temp-mute', 'tempmute')
-                        .addChoice('Temp-ban', 'tempban')
-                        .addChoice('Disable', 'disable')
+                        .addChoices(
+                            { name: 'Delete', value: 'delete' },
+                            { name: 'Warn', value: 'warn' },
+                            { name: 'Kick', value: 'kick' },
+                            { name: 'Mute', value: 'mute' },
+                            { name: 'Ban', value: 'ban' },
+                            { name: 'Temp-mute', value: 'tempmute' },
+                            { name: 'Temp-ban', value: 'tempban' },
+                            { name: 'Disable', value: 'disable' }
+                        )
                 )
                 .addStringOption(option => option.setName('duration').setDescription('The duration of the punishment'))
         )
@@ -81,14 +87,16 @@ module.exports = {
                         .setName('punishment')
                         .setDescription('The punishment given for triggering this automod')
                         .setRequired(true)
-                        .addChoice('Delete', 'delete')
-                        .addChoice('Warn', 'warn')
-                        .addChoice('Kick', 'kick')
-                        .addChoice('Mute', 'mute')
-                        .addChoice('Ban', 'ban')
-                        .addChoice('Temp-mute', 'tempmute')
-                        .addChoice('Temp-ban', 'tempban')
-                        .addChoice('Disable', 'disable')
+                        .addChoices(
+                            { name: 'Delete', value: 'delete' },
+                            { name: 'Warn', value: 'warn' },
+                            { name: 'Kick', value: 'kick' },
+                            { name: 'Mute', value: 'mute' },
+                            { name: 'Ban', value: 'ban' },
+                            { name: 'Temp-mute', value: 'tempmute' },
+                            { name: 'Temp-ban', value: 'tempban' },
+                            { name: 'Disable', value: 'disable' }
+                        )
                 )
                 .addStringOption(option => option.setName('duration').setDescription('The duration of the punishment'))
         )
@@ -101,14 +109,16 @@ module.exports = {
                         .setName('punishment')
                         .setDescription('The punishment given for triggering this automod')
                         .setRequired(true)
-                        .addChoice('Delete', 'delete')
-                        .addChoice('Warn', 'warn')
-                        .addChoice('Kick', 'kick')
-                        .addChoice('Mute', 'mute')
-                        .addChoice('Ban', 'ban')
-                        .addChoice('Temp-mute', 'tempmute')
-                        .addChoice('Temp-ban', 'tempban')
-                        .addChoice('Disable', 'disable')
+                        .addChoices(
+                            { name: 'Delete', value: 'delete' },
+                            { name: 'Warn', value: 'warn' },
+                            { name: 'Kick', value: 'kick' },
+                            { name: 'Mute', value: 'mute' },
+                            { name: 'Ban', value: 'ban' },
+                            { name: 'Temp-mute', value: 'tempmute' },
+                            { name: 'Temp-ban', value: 'tempban' },
+                            { name: 'Disable', value: 'disable' }
+                        )
                 )
                 .addStringOption(option => option.setName('duration').setDescription('The duration of the punishment'))
         )
@@ -121,14 +131,16 @@ module.exports = {
                         .setName('punishment')
                         .setDescription('The punishment given for triggering this automod')
                         .setRequired(true)
-                        .addChoice('Delete', 'delete')
-                        .addChoice('Warn', 'warn')
-                        .addChoice('Kick', 'kick')
-                        .addChoice('Mute', 'mute')
-                        .addChoice('Ban', 'ban')
-                        .addChoice('Temp-mute', 'tempmute')
-                        .addChoice('Temp-ban', 'tempban')
-                        .addChoice('Disable', 'disable')
+                        .addChoices(
+                            { name: 'Delete', value: 'delete' },
+                            { name: 'Warn', value: 'warn' },
+                            { name: 'Kick', value: 'kick' },
+                            { name: 'Mute', value: 'mute' },
+                            { name: 'Ban', value: 'ban' },
+                            { name: 'Temp-mute', value: 'tempmute' },
+                            { name: 'Temp-ban', value: 'tempban' },
+                            { name: 'Disable', value: 'disable' }
+                        )
                 )
                 .addStringOption(option => option.setName('duration').setDescription('The duration of the punishment'))
         )
@@ -141,14 +153,16 @@ module.exports = {
                         .setName('punishment')
                         .setDescription('The punishment given for triggering this automod')
                         .setRequired(true)
-                        .addChoice('Delete', 'delete')
-                        .addChoice('Warn', 'warn')
-                        .addChoice('Kick', 'kick')
-                        .addChoice('Mute', 'mute')
-                        .addChoice('Ban', 'ban')
-                        .addChoice('Temp-mute', 'tempmute')
-                        .addChoice('Temp-ban', 'tempban')
-                        .addChoice('Disable', 'disable')
+                        .addChoices(
+                            { name: 'Delete', value: 'delete' },
+                            { name: 'Warn', value: 'warn' },
+                            { name: 'Kick', value: 'kick' },
+                            { name: 'Mute', value: 'mute' },
+                            { name: 'Ban', value: 'ban' },
+                            { name: 'Temp-mute', value: 'tempmute' },
+                            { name: 'Temp-ban', value: 'tempban' },
+                            { name: 'Disable', value: 'disable' }
+                        )
                 )
                 .addStringOption(option => option.setName('duration').setDescription('The duration of the punishment'))
         )
@@ -161,10 +175,12 @@ module.exports = {
                         .setName('method')
                         .setDescription('To add, remove, remove all, or view')
                         .setRequired(true)
-                        .addChoice('Add', 'add')
-                        .addChoice('Remove', 'remove')
-                        .addChoice('Remove All', 'removeall')
-                        .addChoice('View', 'view')
+                        .addChoices(
+                            { name: 'Add', value: 'add' },
+                            { name: 'Remove', value: 'remove' },
+                            { name: 'Remove All', value: 'removeall' },
+                            { name: 'View', value: 'view' }
+                        )
                 )
                 .addStringOption(option =>
                     option.setName('word').setDescription('The word to add or remove from the filter list')
@@ -179,10 +195,12 @@ module.exports = {
                         .setName('method')
                         .setDescription('To add, remove, remove all, or to view')
                         .setRequired(true)
-                        .addChoice('Add', 'add')
-                        .addChoice('Remove', 'remove')
-                        .addChoice('Remove All', 'removeall')
-                        .addChoice('View', 'view')
+                        .addChoices(
+                            { name: 'Add', value: 'add' },
+                            { name: 'Remove', value: 'remove' },
+                            { name: 'Remove All', value: 'removeall' },
+                            { name: 'View', value: 'view' }
+                        )
                 )
                 .addChannelOption(option =>
                     option.setName('channel').setDescription('The channel to add or remove from the channel bypass')
@@ -197,10 +215,12 @@ module.exports = {
                         .setName('method')
                         .setDescription('To add, remove, remove all, or to view')
                         .setRequired(true)
-                        .addChoice('Add', 'add')
-                        .addChoice('Remove', 'remove')
-                        .addChoice('Remove All', 'removeall')
-                        .addChoice('View', 'view')
+                        .addChoices(
+                            { name: 'Add', value: 'add' },
+                            { name: 'Remove', value: 'remove' },
+                            { name: 'Remove All', value: 'removeall' },
+                            { name: 'View', value: 'view' }
+                        )
                 )
                 .addRoleOption(option =>
                     option.setName('role').setDescription('The role to add or remove from the channel bypass')

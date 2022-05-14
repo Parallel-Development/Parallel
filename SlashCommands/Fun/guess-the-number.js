@@ -13,11 +13,13 @@ module.exports = {
             option
                 .setName('mode')
                 .setDescription('The difficulty of the minigame')
-                .addChoice('Easy', 'easy')
-                .addChoice('Medium', 'medium')
-                .addChoice('Hard', 'hard')
-                .addChoice('Insane', 'insane')
-                .addChoice('Extreme', 'extreme')
+                .addChoices(
+                    { name: 'Easy', value: 'easy' },
+                    { name: 'Medium', value: 'medium' },
+                    { name: 'Hard', value: 'hard' },
+                    { name: 'Insane', value: 'insane' },
+                    { name: 'Extreme', value: 'extreme' }
+                )
         ),
     async execute(client, interaction, args) {
         if (openedSession.has(interaction.user.id))
