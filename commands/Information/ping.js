@@ -7,7 +7,9 @@ module.exports = {
         const now = performance.now();
         const msg = await message.reply('Pinging...');
         return msg.edit(
-            `Pong! Websocket: \`${client.ws.ping}ms\`, Bot latency: \`${Math.round(performance.now() - now)}ms\``
+            `Pong! Websocket: \`${message.guild.shard.ping}ms\`, Bot latency: \`${Math.round(
+                performance.now() - now
+            )}ms\``
         );
     }
 };

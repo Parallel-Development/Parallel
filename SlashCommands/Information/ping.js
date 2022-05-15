@@ -9,7 +9,9 @@ module.exports = {
         const now = performance.now();
         interaction.editReply('Pinging...').then(() => {
             return interaction.editReply(
-                `Pong! Websocket: \`${client.ws.ping}ms\`, Bot latency: \`${Math.floor(performance.now() - now)}ms\``
+                `Pong! Websocket: \`${interaction.guild.shard.ping}ms\`, Bot latency: \`${Math.floor(
+                    performance.now() - now
+                )}ms\``
             );
         });
     }
