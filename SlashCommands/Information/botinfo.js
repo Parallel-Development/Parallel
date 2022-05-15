@@ -16,12 +16,15 @@ module.exports = {
             .addField('Library & Version', `discord.js ${Discord.version}`, true)
             .addField('Developers', `${client.application.owner.members.map(u => u.user.tag).join(', ')}`, true)
             .addField('Ping (Websocket)', `${client.ws.ping}ms`, true)
-            .addField('Servers', `${client.guilds.cache.size.toLocaleString()} (${client.ws.shards.size} shards)`, true)
+            .addField('Servers', `${client.guilds.cache.size.toLocaleString()}`, true)
             .addField('Uptime', client.util.duration(client.uptime), true)
             .addField('Memory', `${(process.memoryUsage().rss / 1024 / 1024).toFixed(2)}MiB`, true)
             .setAuthor('Parallel Discord Bot', client.user.displayAvatarURL())
-            .setFooter(`Information requested by ${interaction.user.tag}`, interaction.user.displayAvatarURL())
-            .setThumbnail(client.user.displayAvatarURL().replace('.webp', '.png'));
+            .setFooter(
+                `Information requested by ${interaction.user.tag} • You're on shard ${interaction.guild.shardId}`,
+                interaction.user.displayAvatarURL()
+            )
+            .setThumbnail(client.user.displayAvatarURL());
 
         return interaction.reply({ embeds: [botinfo] });
     }
