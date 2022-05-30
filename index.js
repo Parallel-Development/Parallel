@@ -5,6 +5,8 @@ if (process.argv.slice(2).includes('--parallele') || process.argv.slice(2).inclu
     global.parallele = true;
 }
 
+global.errorLogs = [];
+
 const Client = require('./structures/Client');
 const client = new Client();
 

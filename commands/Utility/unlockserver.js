@@ -1,12 +1,7 @@
 const Discord = require('discord.js');
 const settingsSchema = require('../../schemas/settings-schema');
 const lockSchema = require('../../schemas/lock-schema');
-const {
-    MessageActionRow,
-    MessageButton,
-    MessageEmbed,
-    Permissions
-} = require('discord.js');
+const { MessageActionRow, MessageButton, MessageEmbed, Permissions } = require('discord.js');
 
 module.exports = {
     name: 'unlockserver',
@@ -16,19 +11,17 @@ module.exports = {
     permissions: Discord.Permissions.FLAGS.ADMINISTRATOR,
     requiredBotPermissions: Discord.Permissions.FLAGS.MANAGE_CHANNELS,
     async execute(client, message, args) {
-
         const informUnlockedChannels = client.util.getFlag(message.content, 'inform-unlocked-channels');
         const _ignoredChannels = client.util.getFlag(message.content, 'ignored-channels');
         const ignoredChannels =
             typeof _ignoredChannels?.value === 'string'
                 ? _ignoredChannels?.value
-                    .trim()
-                    .split(' ')
-                    .map(ch => client.util.getChannel(message.guild, ch))
-                    .filter(ch => ch && ch.isText() && !ch.isThread())
-                    .map(ch => ch.id)
+                      .trim()
+                      .split(' ')
+                      .map(ch => client.util.getChannel(message.guild, ch))
+                      .filter(ch => ch && ch.isText() && !ch.isThread())
+                      .map(ch => ch.id)
                 : [];
-;
         if (_ignoredChannels?.value)
             args.splice(
                 args.indexOf(_ignoredChannels.formatted.split(' ')[0]),
@@ -42,8 +35,7 @@ module.exports = {
 
         const informedChannel = client.util.getChannel(message.guild, args[0]);
         if (informedChannel) {
-            if (!informedChannel.isText())
-                return client.util.throwError(message, 'the channel must be a text channel');
+            if (!informedChannel.isText()) return client.util.throwError(message, 'the channel must be a text channel');
             args.shift();
         }
 
@@ -52,21 +44,19 @@ module.exports = {
 
         const reason = args.join(' ');
 
-        const guildLocked = await lockSchema.findOne({ guildID: message.guild.id } );
+        const guildLocked = await lockSchema.findOne({ guildID: message.guild.id });
 
         const failedChannels = [];
 
         const channels = guildLocked.channels
             .filter(_channel => {
-                const channel = message.guild.channels.cache.get(
-                    _channel.id
-                );
+                const channel = message.guild.channels.cache.get(_channel.id);
 
                 if (!channel) return false;
 
                 if (ignoredChannels.includes(channel.id)) return false;
 
-                const channelLockData = guildLocked.channels.find(ch => (ch.id === channel.id));
+                const channelLockData = guildLocked.channels.find(ch => ch.id === channel.id);
 
                 if (!channelLockData) return false;
 
@@ -78,7 +68,7 @@ module.exports = {
                             ? channelLockData.everyoneRoleType === 'allowed'
                                 ? overwrite.allow.has(Permissions.FLAGS.SEND_MESSAGES)
                                 : channelLockData.everyoneRoleType === 'denied' &&
-                                overwrite.deny.has(Permissions.FLAGS.SEND_MESSAGES)
+                                  overwrite.deny.has(Permissions.FLAGS.SEND_MESSAGES)
                             : overwrite.deny.has(Permissions.FLAGS.SEND_MESSAGES);
                     })
                     .map(overwrite => {
@@ -96,14 +86,14 @@ module.exports = {
                     });
 
                 if (channelLockData.everyoneRoleType !== 'denied') {
-                    const everyoneOverwrite = channel.permissionOverwrites.cache.get(
-                        message.guild.id
-                    );
+                    const everyoneOverwrite = channel.permissionOverwrites.cache.get(message.guild.id);
                     if (everyoneOverwrite.deny.has(Permissions.FLAGS.SEND_MESSAGES)) {
                         updatedOverwrites.push({
                             id: everyoneOverwrite.id,
                             type: 'role',
-                            allow: everyoneOverwrite.allow.bitfield + (channelLockData.everyoneRoleType === 'allowed' ? Permissions.FLAGS.SEND_MESSAGES : 0n),
+                            allow:
+                                everyoneOverwrite.allow.bitfield +
+                                (channelLockData.everyoneRoleType === 'allowed' ? Permissions.FLAGS.SEND_MESSAGES : 0n),
                             deny: everyoneOverwrite.deny.has(Permissions.FLAGS.SEND_MESSAGES)
                                 ? everyoneOverwrite.deny.bitfield - Permissions.FLAGS.SEND_MESSAGES
                                 : everyoneOverwrite.deny.bitfield
@@ -112,7 +102,8 @@ module.exports = {
                 }
 
                 if (!updatedOverwrites.length) {
-                    lockSchema.updateOne({
+                    lockSchema.updateOne(
+                        {
                             guildID: message.guild.id
                         },
                         {
@@ -181,8 +172,7 @@ module.exports = {
                             return true;
 
                         return (
-                            overwrite.id === message.guild.me.id &&
-                            overwrite.allow.has(Permissions.FLAGS.SEND_MESSAGES)
+                            overwrite.id === message.guild.me.id && overwrite.allow.has(Permissions.FLAGS.SEND_MESSAGES)
                         );
                     })
                 )
@@ -193,76 +183,69 @@ module.exports = {
             .map(ch => client.util.getChannel(message.guild, ch.id));
 
         if (failedChannels.length) {
-            let yourFailed = failedChannels
-                .filter(fail => fail.reason === 'you')
-                .map(fail => fail.channel);
+            let yourFailed = failedChannels.filter(fail => fail.reason === 'you').map(fail => fail.channel);
 
             yourFailed =
                 yourFailed.length == 0
                     ? ''
                     : yourFailed.length == 1
-                        ? yourFailed[0].toString()
-                        : yourFailed.slice(0, -1).join(', ') +
-                        `${yourFailed.length != 2 ? ',' : ''} and ${yourFailed.slice(-1)}`;
+                    ? yourFailed[0].toString()
+                    : yourFailed.slice(0, -1).join(', ') +
+                      `${yourFailed.length != 2 ? ',' : ''} and ${yourFailed.slice(-1)}`;
 
-            let myFailed = failedChannels
-                .filter(fail => fail.reason === 'me')
-                .map(fail => fail.channel);
+            let myFailed = failedChannels.filter(fail => fail.reason === 'me').map(fail => fail.channel);
 
             myFailed =
                 myFailed.length == 0
                     ? ''
                     : myFailed.length == 1
-                        ? myFailed[0].toString()
-                        : myFailed.slice(0, -1).join(', ') + `${myFailed.length != 2 ? ',' : ''} and ${myFailed.slice(-1)}`;
+                    ? myFailed[0].toString()
+                    : myFailed.slice(0, -1).join(', ') + `${myFailed.length != 2 ? ',' : ''} and ${myFailed.slice(-1)}`;
 
-            let yourBasicFailed = failedChannels
-                .filter(fail => fail.reason === 'you:basic')
-                .map(fail => fail.channel);
+            let yourBasicFailed = failedChannels.filter(fail => fail.reason === 'you:basic').map(fail => fail.channel);
 
             yourBasicFailed =
                 yourBasicFailed.length == 0
                     ? ''
                     : yourBasicFailed.length == 1
-                        ? yourBasicFailed[0].toString()
-                        : yourBasicFailed.slice(0, -1).join(', ') +
-                        `${yourBasicFailed.length != 2 ? ',' : ''} and ${yourBasicFailed.slice(-1)}`;
+                    ? yourBasicFailed[0].toString()
+                    : yourBasicFailed.slice(0, -1).join(', ') +
+                      `${yourBasicFailed.length != 2 ? ',' : ''} and ${yourBasicFailed.slice(-1)}`;
 
-            let myBasicFailed = failedChannels
-                .filter(fail => fail.reason === 'me:basic')
-                .map(fail => fail.channel);
+            let myBasicFailed = failedChannels.filter(fail => fail.reason === 'me:basic').map(fail => fail.channel);
 
             myBasicFailed =
                 myBasicFailed.length == 0
                     ? ''
                     : myBasicFailed.length == 1
-                        ? myBasicFailed[0].toString()
-                        : myBasicFailed.slice(0, -1).join(', ') +
-                        `${myBasicFailed.length != 2 ? ',' : ''} and ${myBasicFailed.slice(-1)}`;
+                    ? myBasicFailed[0].toString()
+                    : myBasicFailed.slice(0, -1).join(', ') +
+                      `${myBasicFailed.length != 2 ? ',' : ''} and ${myBasicFailed.slice(-1)}`;
 
             const failEmbed = new MessageEmbed()
                 .setColor(client.config.colors.punishment[1])
                 .setAuthor('Warning')
                 .setDescription(
                     "Some channels could not be unlocked. Here's more information.\n\n" +
-                    (yourBasicFailed
-                        ? `${yourBasicFailed} could not be unlocked due to you lacking either the Manage Channels and Roles permission or simply the View Channel permission\n\n`
-                        : '') +
-                    (myBasicFailed
-                        ? `${myBasicFailed} could not be unlocked due to me lacking either the Manage Channels and Roles permission or simply the View Channel permission\n\n`
-                        : '') +
-                    (yourFailed
-                        ? `${yourFailed} could not be unlocked due to you not having an overwrite in those channels that isn't a target that has the Send Messages permission\n\n`
-                        : '') +
-                    (myFailed
-                        ? `${myFailed} could not be unlocked due to me not having an overwrite in those channels that isn't a target that has the Send Messages permission\n\n`
-                        : '')
+                        (yourBasicFailed
+                            ? `${yourBasicFailed} could not be unlocked due to you lacking either the Manage Channels and Roles permission or simply the View Channel permission\n\n`
+                            : '') +
+                        (myBasicFailed
+                            ? `${myBasicFailed} could not be unlocked due to me lacking either the Manage Channels and Roles permission or simply the View Channel permission\n\n`
+                            : '') +
+                        (yourFailed
+                            ? `${yourFailed} could not be unlocked due to you not having an overwrite in those channels that isn't a target that has the Send Messages permission\n\n`
+                            : '') +
+                        (myFailed
+                            ? `${myFailed} could not be unlocked due to me not having an overwrite in those channels that isn't a target that has the Send Messages permission\n\n`
+                            : '')
                 )
                 .addField(
                     'Solution',
-                    `If you don\'t want to unlock these channels, specify they are on the ignored channel list with the \`--ignored-channels\` flag. Example: \`--ignored-channels="#general #announcements"\`${channels.length
-                        ? '. If you want to proceed to unlock only all the channels that you have permission to lock, press the "Continue anyway" button'
-                        : ''
+                    `If you don\'t want to unlock these channels, specify they are on the ignored channel list with the \`--ignored-channels\` flag. Example: \`--ignored-channels="#general #announcements"\`${
+                        channels.length
+                            ? '. If you want to proceed to unlock only all the channels that you have permission to lock, press the "Continue anyway" button'
+                            : ''
                     }`
                 );
 
@@ -287,20 +270,22 @@ module.exports = {
                 if (interaction.customId === 'unlockserver:cancel') return collector.stop();
                 else if (interaction.customId === 'unlockserver:continue') {
                     const forged = message;
-                    forged.content = `${client.cache.settings.get(message.guild.id).prefix}unlockserver ${informedChannel ?? ''
-                        } ${reason || ''} ${informUnlockedChannels ? '--inform-unlocked-channels' : ''
-                        } --ignored-channels="${ignoredChannels
-                            .concat(failedChannels.map(fail => fail.channel.id))
-                            .join(' ')}"`;
-                    
+                    forged.content = `${client.cache.settings.get(message.guild.id).prefix}unlockserver ${
+                        informedChannel ?? ''
+                    } ${reason || ''} ${
+                        informUnlockedChannels ? '--inform-unlocked-channels' : ''
+                    } --ignored-channels="${ignoredChannels
+                        .concat(failedChannels.map(fail => fail.channel.id))
+                        .join(' ')}"`;
+
                     collector.stop();
                     return void this.execute(client, forged, forged.content.split(' ').slice(1));
                 }
             });
 
             collector.on('end', (_, reason) => {
-                if (reason === 'time' && channels.length) msg.edit({ components: [newRow] })
-            })
+                if (reason === 'time' && channels.length) msg.edit({ components: [newRow] });
+            });
 
             return;
         }
@@ -341,7 +326,7 @@ module.exports = {
                         ? channelLockData.everyoneRoleType === 'allowed'
                             ? overwrite.allow.has(Permissions.FLAGS.SEND_MESSAGES)
                             : channelLockData.everyoneRoleType === 'denied' &&
-                            overwrite.deny.has(Permissions.FLAGS.SEND_MESSAGES)
+                              overwrite.deny.has(Permissions.FLAGS.SEND_MESSAGES)
                         : overwrite.deny.has(Permissions.FLAGS.SEND_MESSAGES);
                 })
                 .map(overwrite => {
@@ -364,7 +349,9 @@ module.exports = {
                     updatedOverwrites.push({
                         id: everyoneOverwrite.id,
                         type: 'role',
-                        allow: everyoneOverwrite.allow.bitfield + (channelLockData.everyoneRoleType === 'allowed' ? Permissions.FLAGS.SEND_MESSAGES : 0n),
+                        allow:
+                            everyoneOverwrite.allow.bitfield +
+                            (channelLockData.everyoneRoleType === 'allowed' ? Permissions.FLAGS.SEND_MESSAGES : 0n),
                         deny: everyoneOverwrite.deny.has(Permissions.FLAGS.SEND_MESSAGES)
                             ? everyoneOverwrite.deny.bitfield - Permissions.FLAGS.SEND_MESSAGES
                             : everyoneOverwrite.deny.bitfield
@@ -400,13 +387,13 @@ module.exports = {
                                     'The server unlock was halted due to the error threshold of **3** being reached. Did my permissions change during the lock?',
                                 components: []
                             })
-                            .catch(() => { });
+                            .catch(() => {});
                     else
                         await message.channel
                             ?.send(
                                 'The server unlock was halted due to the error threshold of **3** being reached. Did my permissions change during the lock?'
                             )
-                            .catch(() => { });
+                            .catch(() => {});
 
                     collector.stop();
                     return;
@@ -415,10 +402,11 @@ module.exports = {
                 continue;
             }
 
-            await lockSchema.updateOne({
+            await lockSchema.updateOne(
+                {
                     guildID: message.guild.id
                 },
-                 {
+                {
                     channels: guildLocked.channels.filter(ch => ch.id !== channel.id)
                 }
             );
@@ -448,18 +436,20 @@ module.exports = {
         if (!uneditable)
             await unlockMsg
                 ?.edit({
-                    content: `Server unlock completed, unlocked **${channels.length}** channel${channels.length == 1 ? '' : 's'
-                        }${failed > 0 ? `, but failed to lock **${failed}** channel${failed == 1 ? '' : 's'}` : ''}`,
+                    content: `Server unlock completed, unlocked **${channels.length}** channel${
+                        channels.length == 1 ? '' : 's'
+                    }${failed > 0 ? `, but failed to lock **${failed}** channel${failed == 1 ? '' : 's'}` : ''}`,
                     components: []
                 })
-                .catch(() => { });
+                .catch(() => {});
         else
             message.channel
                 .send(
-                    `Server lock completed, unlocked **${channels.length}** channel${channels.length == 1 ? '' : 's'}${failed > 0 ? `, but failed to unlock **${failed}** channel${failed == 1 ? '' : 's'}` : ''
+                    `Server lock completed, unlocked **${channels.length}** channel${channels.length == 1 ? '' : 's'}${
+                        failed > 0 ? `, but failed to unlock **${failed}** channel${failed == 1 ? '' : 's'}` : ''
                     }.`
                 )
-                .catch(() => { });
+                .catch(() => {});
 
         if (informedChannel) {
             const lockedServerEmbed = new MessageEmbed()
@@ -475,7 +465,8 @@ module.exports = {
         // why do this if I remove each one in the for loop? Or why not just do this at the end and not remove them in the for loop?
         // The main reasoning is: halting. If something interupts Paralle in the middle and it isn't able to finish, that's a bunch of locked channels that have no unlock data
         // That would be quite frustrating to undo for the server administration
-        await lockSchema.updateOne({
+        await lockSchema.updateOne(
+            {
                 guildID: message.guild.id
             },
             {

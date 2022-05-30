@@ -2,12 +2,7 @@ const Discord = require('discord.js');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const settingsSchema = require('../../schemas/settings-schema');
 const lockSchema = require('../../schemas/lock-schema');
-const {
-    MessageActionRow,
-    MessageButton,
-    MessageEmbed,
-    Permissions,
-} = require('discord.js');
+const { MessageActionRow, MessageButton, MessageEmbed, Permissions } = require('discord.js');
 
 module.exports = {
     name: 'lockserver',
@@ -19,28 +14,48 @@ module.exports = {
             'Lock all server channels. The bot will ignore channels in which non-mods cannot talk in or view'
         )
         .addStringOption(option => option.setName('reason').setDescription('The reason for locking the server'))
-        .addChannelOption(option => option.setName('channel').setDescription('The channel that will be informed about the server lock'))
-        .addBooleanOption(option => option.setName('inform_locked_channels').setDescription('Inform all locked channels that the server was locked'))
-        .addStringOption(option => option.setName('ignored_channels').setDescription('A list of channels to ignore when locking the server')),
+        .addChannelOption(option =>
+            option.setName('channel').setDescription('The channel that will be informed about the server lock')
+        )
+        .addBooleanOption(option =>
+            option
+                .setName('inform_locked_channels')
+                .setDescription('Inform all locked channels that the server was locked')
+        )
+        .addStringOption(option =>
+            option.setName('ignored_channels').setDescription('A list of channels to ignore when locking the server')
+        ),
     permissions: Discord.Permissions.FLAGS.MANAGE_CHANNELS,
     requiredBotPermissions: Discord.Permissions.FLAGS.MANAGE_CHANNELS,
     async execute(client, interaction, args) {
-
         if (!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_ROLES))
             return interaction.reply('You need the `Manage Roles` permission as well to execute this command');
 
         if (!interaction.guild.me.permissions.has(Permissions.FLAGS.MANAGE_ROLES))
             return interaction.reply('I need the `Manage Roles` permission as well to execute this command');
 
-        const ignoredChannels = args.ignored_channels?.trim().split(' ').map(ch => client.util.getChannel(interaction.guild, ch)).filter(ch => ch && ch.isText() && !ch.isThread()).map(ch => ch.id) ?? [];
+        const ignoredChannels =
+            args.ignored_channels
+                ?.trim()
+                .split(' ')
+                .map(ch => client.util.getChannel(interaction.guild, ch))
+                .filter(ch => ch && ch.isText() && !ch.isThread())
+                .map(ch => ch.id) ?? [];
         const informLockedChannels = Boolean(args.inform_locked_channels);
         const informedChannel = client.util.getChannel(interaction.guild, args.channel);
 
         if (informedChannel && !informedChannel.isText()) {
             if (!informedChannel.isText())
                 return client.util.throwError(interaction, 'the informed channel must be a text channel');
-            if (!informedChannel.permissionsFor(message.guild.me).has([Permissions.FLAGS.SEND_MESSAGES, Permissions.FLAGS.EMBED_LINKS]))
-                return client.util.throwError(message, 'I cannot send messages and/or embed links in the target informed channel');
+            if (
+                !informedChannel
+                    .permissionsFor(message.guild.me)
+                    .has([Permissions.FLAGS.SEND_MESSAGES, Permissions.FLAGS.EMBED_LINKS])
+            )
+                return client.util.throwError(
+                    message,
+                    'I cannot send messages and/or embed links in the target informed channel'
+                );
         }
 
         const guildSettings = await settingsSchema.findOne({ guildID: interaction.guild.id });
@@ -51,8 +66,8 @@ module.exports = {
         const failedChannels = [];
 
         const channels = [
-            ...interaction
-                .guild.channels.cache.filter(channel => {
+            ...interaction.guild.channels.cache
+                .filter(channel => {
                     if (!channel.isText() || channel.isThread()) return false;
 
                     if (ignoredChannels.includes(channel.id)) return false;
@@ -86,8 +101,8 @@ module.exports = {
                             return overwrite.id === interaction.guild.id
                                 ? !overwrite.deny.has(Permissions.FLAGS.SEND_MESSAGES)
                                 : !role.permissions.has(Permissions.FLAGS.MANAGE_MESSAGES) &&
-                                overwrite.allow.has(Permissions.FLAGS.SEND_MESSAGES) &&
-                                !interaction.member.roles.cache.some(role => modRoles.includes(role.id))
+                                      overwrite.allow.has(Permissions.FLAGS.SEND_MESSAGES) &&
+                                      !interaction.member.roles.cache.some(role => modRoles.includes(role.id));
                         })
                         .map(overwrite => {
                             return {
@@ -101,9 +116,7 @@ module.exports = {
                         });
 
                     if (!_targetOverwrites.some(overwrite => overwrite.id === interaction.guild.id)) {
-                        const everyoneOverwrite = channel.permissionOverwrites.cache.get(
-                            interaction.guild.id
-                        );
+                        const everyoneOverwrite = channel.permissionOverwrites.cache.get(interaction.guild.id);
                         if (!everyoneOverwrite || !everyoneOverwrite.deny.has(Permissions.FLAGS.SEND_MESSAGES))
                             _targetOverwrites.push({
                                 id: interaction.guild.id,
@@ -116,14 +129,12 @@ module.exports = {
                     if (
                         !_targetOverwrites.length ||
                         (!channel.permissionsFor(interaction.guild.id).has(Permissions.FLAGS.VIEW_CHANNEL) &&
-                            channel.permissionOverwrites.cache
-                                .filter(overwrite => overwrite.type === 'role' && overwrite.id !== interaction.guild.id)
+                            interaction.guild.roles.cache
+                                .filter(role => role.id !== interaction.guild.id)
                                 .every(
-                                    overwrite =>
-                                        interaction
-                                            .guild.roles.cache.get(overwrite.id)
-                                            .permissions.has(Permissions.FLAGS.MANAGE_MESSAGES) ||
-                                        !channel.permissionsFor(overwrite.id).has(Permissions.FLAGS.VIEW_CHANNEL)
+                                    role =>
+                                        role.permissions.has(Permissions.FLAGS.MANAGE_MESSAGES) ||
+                                        !channel.permissionsFor(role.id).has(Permissions.FLAGS.VIEW_CHANNEL)
                                 )) ||
                         (!channel.permissionsFor(interaction.guild.id).has(Permissions.FLAGS.SEND_MESSAGES) &&
                             !interaction.guild.roles.cache.some(
@@ -182,76 +193,69 @@ module.exports = {
         ];
 
         if (failedChannels.length) {
-            let yourFailed = failedChannels
-                .filter(fail => fail.reason === 'you')
-                .map(fail => fail.channel);
+            let yourFailed = failedChannels.filter(fail => fail.reason === 'you').map(fail => fail.channel);
 
             yourFailed =
                 yourFailed.length == 0
                     ? ''
                     : yourFailed.length == 1
-                        ? yourFailed[0].toString()
-                        : yourFailed.slice(0, -1).join(', ') +
-                        `${yourFailed.length != 2 ? ',' : ''} and ${yourFailed.slice(-1)}`;
+                    ? yourFailed[0].toString()
+                    : yourFailed.slice(0, -1).join(', ') +
+                      `${yourFailed.length != 2 ? ',' : ''} and ${yourFailed.slice(-1)}`;
 
-            let myFailed = failedChannels
-                .filter(fail => fail.reason === 'me')
-                .map(fail => fail.channel);
+            let myFailed = failedChannels.filter(fail => fail.reason === 'me').map(fail => fail.channel);
 
             myFailed =
                 myFailed.length == 0
                     ? ''
                     : myFailed.length == 1
-                        ? myFailed[0].toString()
-                        : myFailed.slice(0, -1).join(', ') + `${myFailed.length != 2 ? ',' : ''} and ${myFailed.slice(-1)}`;
+                    ? myFailed[0].toString()
+                    : myFailed.slice(0, -1).join(', ') + `${myFailed.length != 2 ? ',' : ''} and ${myFailed.slice(-1)}`;
 
-            let yourBasicFailed = failedChannels
-                .filter(fail => fail.reason === 'you:basic')
-                .map(fail => fail.channel);
+            let yourBasicFailed = failedChannels.filter(fail => fail.reason === 'you:basic').map(fail => fail.channel);
 
             yourBasicFailed =
                 yourBasicFailed.length == 0
                     ? ''
                     : yourBasicFailed.length == 1
-                        ? yourBasicFailed[0].toString()
-                        : yourBasicFailed.slice(0, -1).join(', ') +
-                        `${yourBasicFailed.length != 2 ? ',' : ''} and ${yourBasicFailed.slice(-1)}`;
+                    ? yourBasicFailed[0].toString()
+                    : yourBasicFailed.slice(0, -1).join(', ') +
+                      `${yourBasicFailed.length != 2 ? ',' : ''} and ${yourBasicFailed.slice(-1)}`;
 
-            let myBasicFailed = failedChannels
-                .filter(fail => fail.reason === 'me:basic')
-                .map(fail => fail.channel);
+            let myBasicFailed = failedChannels.filter(fail => fail.reason === 'me:basic').map(fail => fail.channel);
 
             myBasicFailed =
                 myBasicFailed.length == 0
                     ? ''
                     : myBasicFailed.length == 1
-                        ? myBasicFailed[0].toString()
-                        : myBasicFailed.slice(0, -1).join(', ') +
-                        `${myBasicFailed.length != 2 ? ',' : ''} and ${myBasicFailed.slice(-1)}`;
+                    ? myBasicFailed[0].toString()
+                    : myBasicFailed.slice(0, -1).join(', ') +
+                      `${myBasicFailed.length != 2 ? ',' : ''} and ${myBasicFailed.slice(-1)}`;
 
             const failEmbed = new MessageEmbed()
                 .setColor(client.config.colors.punishment[1])
                 .setAuthor('Warning')
                 .setDescription(
                     "Some channels could not be locked. Here's more information.\n\n" +
-                    (yourBasicFailed
-                        ? `${yourBasicFailed} could not be locked due to you lacking either the Manage Channels and Roles permission or simply the View Channel permission\n\n`
-                        : '') +
-                    (myBasicFailed
-                        ? `${myBasicFailed} could not be locked due to me lacking either the Manage Channels and Roles permission or simply the View Channel permission\n\n`
-                        : '') +
-                    (yourFailed
-                        ? `${yourFailed} could not be locked due to you not having an overwrite in those channels that isn't a target that has the Send Messages permission\n\n`
-                        : '') +
-                    (myFailed
-                        ? `${myFailed} could not be locked due to me not having an overwrite in those channels that isn't a target that has the Send Messages permission\n\n`
-                        : '')
+                        (yourBasicFailed
+                            ? `${yourBasicFailed} could not be locked due to you lacking either the Manage Channels and Roles permission or simply the View Channel permission\n\n`
+                            : '') +
+                        (myBasicFailed
+                            ? `${myBasicFailed} could not be locked due to me lacking either the Manage Channels and Roles permission or simply the View Channel permission\n\n`
+                            : '') +
+                        (yourFailed
+                            ? `${yourFailed} could not be locked due to you not having an overwrite in those channels that isn't a target that has the Send Messages permission\n\n`
+                            : '') +
+                        (myFailed
+                            ? `${myFailed} could not be locked due to me not having an overwrite in those channels that isn't a target that has the Send Messages permission\n\n`
+                            : '')
                 )
                 .addField(
                     'Solution',
-                    `If you don\'t want to lock these channels, specify they are on the ignored channel list with the \`--ignored-channels\` flag. Example: \`--ignored-channels="#general #announcements"\`${channels.length
-                        ? '. If you want to proceed to lock only all the channels that you have permission to lock, press the "Continue anyway" button'
-                        : ''
+                    `If you don\'t want to lock these channels, specify they are on the ignored channel list with the \`--ignored-channels\` flag. Example: \`--ignored-channels="#general #announcements"\`${
+                        channels.length
+                            ? '. If you want to proceed to lock only all the channels that you have permission to lock, press the "Continue anyway" button'
+                            : ''
                     }`
                 );
 
@@ -278,13 +282,17 @@ module.exports = {
                 if (_interaction.customId === 'lockserver:cancel') return collector.stop();
                 else if (_interaction.customId === 'lockserver:continue') {
                     const forged = msg;
-                    forged.content = `${client.cache.settings.get(interaction.guild.id).prefix}lockserver ${informedChannel ?? ''
-                        } ${reason || ''} ${informLockedChannels ? '--inform-locked-channels' : ''
-                        } --ignored-channels="${ignoredChannels
-                            .concat(failedChannels.map(fail => fail.channel.id))
-                            .join(' ')}"`;
-                    
-                    return void client.commands.get('lockserver').execute(client, forged, forged.content.split(' ').slice(1));
+                    forged.content = `${client.cache.settings.get(interaction.guild.id).prefix}lockserver ${
+                        informedChannel ?? ''
+                    } ${reason || ''} ${
+                        informLockedChannels ? '--inform-locked-channels' : ''
+                    } --ignored-channels="${ignoredChannels
+                        .concat(failedChannels.map(fail => fail.channel.id))
+                        .join(' ')}"`;
+
+                    return void client.commands
+                        .get('lockserver')
+                        .execute(client, forged, forged.content.split(' ').slice(1));
                 }
             });
 
@@ -332,8 +340,8 @@ module.exports = {
                 return overwrite.id === interaction.guild.id
                     ? !overwrite.deny.has(Permissions.FLAGS.SEND_MESSAGES)
                     : !role.permissions.has(Permissions.FLAGS.MANAGE_MESSAGES) &&
-                    overwrite.allow.has(Permissions.FLAGS.SEND_MESSAGES) &&
-                    !modRoles.includes(overwrite.id);
+                          overwrite.allow.has(Permissions.FLAGS.SEND_MESSAGES) &&
+                          !modRoles.includes(overwrite.id);
             });
 
             const updatedOverwrites = targetOverwrites.map(overwrite => {
@@ -381,7 +389,8 @@ module.exports = {
             try {
                 await channel.permissionOverwrites.set(
                     newOverwrites,
-                    `Locked by ${interaction.user.tag} with the lockserver command ${reason ? `| ${await client.util.contentOrBin(reason)}` : ''
+                    `Locked by ${interaction.user.tag} with the lockserver command ${
+                        reason ? `| ${await client.util.contentOrBin(reason)}` : ''
                     }`
                 );
             } catch {
@@ -396,13 +405,13 @@ module.exports = {
                                     'The server lock was halted due to the error threshold of **3** being reached. Did my permissions change during the lock?',
                                 components: []
                             })
-                            .catch(() => { });
+                            .catch(() => {});
                     else
                         await interaction.channel
                             .send(
                                 'The server lock was halted due to the error threshold of **3** being reached. Did my permissions change during the lock?'
                             )
-                            .catch(() => { });
+                            .catch(() => {});
 
                     collector.stop();
                     return;
@@ -416,28 +425,25 @@ module.exports = {
             const allowedOverwrites = targetOverwrites
                 .filter(overwrite => overwrite.allow.has(Permissions.FLAGS.SEND_MESSAGES))
                 .map(overwrite => overwrite.id);
-            const everyoneRoleType = targetOverwrites.get(interaction.guild.id)?.allow.has(Permissions.FLAGS.SEND_MESSAGES)
+            const everyoneRoleType = targetOverwrites
+                .get(interaction.guild.id)
+                ?.allow.has(Permissions.FLAGS.SEND_MESSAGES)
                 ? 'allowed'
                 : targetOverwrites.get(interaction.guild.id)?.deny.has(Permissions.FLAGS.SEND_MESSAGES)
-                    ? 'denied'
-                    : 'neutral';
+                ? 'denied'
+                : 'neutral';
             const data = {
                 id: channel.id,
                 allowedOverwrites,
                 everyoneRoleType: everyoneRoleType
             };
 
-            if (informLockedChannels === true)
-                await channel.send('This channel has been locked from a server lock');
+            if (informLockedChannels === true) await channel.send('This channel has been locked from a server lock');
 
             if (isLocked) {
-                const newLocked = [
-                    ...lockInformation.channels.filter(ch => ch.id !== channel.id),
-                    data
-                ];
+                const newLocked = [...lockInformation.channels.filter(ch => ch.id !== channel.id), data];
                 await lockSchema.updateOne({ guildID: interaction.guild.id }, { channels: newLocked });
-            } else
-                await lockSchema.updateOne({ guildID: interaction.guild.id }, { $push: { channels: data } });
+            } else await lockSchema.updateOne({ guildID: interaction.guild.id }, { $push: { channels: data } });
 
             if (i == 0) continue;
 
@@ -460,18 +466,20 @@ module.exports = {
         if (!uneditable)
             await lockMsg
                 ?.edit({
-                    content: `Server lock completed, locked **${channels.length}** channel${channels.length == 1 ? '' : 's'
-                        }${failed > 0 ? `, but failed to lock **${failed}** channel${failed == 1 ? '' : 's'}` : ''}`,
+                    content: `Server lock completed, locked **${channels.length}** channel${
+                        channels.length == 1 ? '' : 's'
+                    }${failed > 0 ? `, but failed to lock **${failed}** channel${failed == 1 ? '' : 's'}` : ''}`,
                     components: []
                 })
-                .catch(() => { });
+                .catch(() => {});
         else
             interaction.channel
                 .send(
-                    `Server lock completed, locked **${channels.length}** channel${channels.length == 1 ? '' : 's'}${failed > 0 ? `, but failed to lock **${failed}** channel${failed == 1 ? '' : 's'}` : ''
+                    `Server lock completed, locked **${channels.length}** channel${channels.length == 1 ? '' : 's'}${
+                        failed > 0 ? `, but failed to lock **${failed}** channel${failed == 1 ? '' : 's'}` : ''
                     }`
                 )
-                .catch(() => { });
+                .catch(() => {});
 
         if (informedChannel) {
             const lockedServerEmbed = new MessageEmbed()

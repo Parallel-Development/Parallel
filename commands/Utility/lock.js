@@ -30,7 +30,8 @@ module.exports = {
                 .has([Permissions.FLAGS.MANAGE_CHANNELS, Permissions.FLAGS.MANAGE_ROLES])
         )
             return message.reply(
-                `I do not have permission to manage permissions in ${channel !== message.channel ? 'that' : 'this'
+                `I do not have permission to manage permissions in ${
+                    channel !== message.channel ? 'that' : 'this'
                 } channel.`,
                 true
             );
@@ -43,8 +44,7 @@ module.exports = {
         )
             return client.util.throwError(
                 message,
-                `You do not have permission to lock ${channel !== message.channel ? 'that' : 'this'
-                } channel.`
+                `You do not have permission to lock ${channel !== message.channel ? 'that' : 'this'} channel.`
             );
 
         const targetOverwrites = channel.permissionOverwrites.cache.filter(overwrite => {
@@ -53,8 +53,8 @@ module.exports = {
             return overwrite.id === message.guild.id
                 ? !overwrite.deny.has(Permissions.FLAGS.SEND_MESSAGES)
                 : !role.permissions.has(Permissions.FLAGS.MANAGE_MESSAGES) &&
-                !modRoles.includes(role.id) && 
-                overwrite.allow.has(Permissions.FLAGS.SEND_MESSAGES)
+                      !modRoles.includes(role.id) &&
+                      overwrite.allow.has(Permissions.FLAGS.SEND_MESSAGES);
         });
 
         const updatedOverwrites = targetOverwrites.map(overwrite => {
@@ -82,14 +82,12 @@ module.exports = {
         if (
             !updatedOverwrites.length ||
             (!channel.permissionsFor(message.guild.id).has(Permissions.FLAGS.VIEW_CHANNEL) &&
-                channel.permissionOverwrites.cache
-                    .filter(overwrite => overwrite.type === 'role' && overwrite.id !== message.guild.id)
+                message.guild.roles.cache
+                    .filter(role => role.id !== message.guild.id)
                     .every(
-                        overwrite =>
-                            message
-                                .guild.roles.cache.get(overwrite.id)
-                                .permissions.has(Permissions.FLAGS.MANAGE_MESSAGES) ||
-                            !channel.permissionsFor(overwrite.id).has(Permissions.FLAGS.VIEW_CHANNEL)
+                        role =>
+                            role.permissions.has(Permissions.FLAGS.MANAGE_MESSAGES) ||
+                            !channel.permissionsFor(role.id).has(Permissions.FLAGS.VIEW_CHANNEL)
                     )) ||
             (!channel.permissionsFor(message.guild.id).has(Permissions.FLAGS.SEND_MESSAGES) &&
                 !message.guild.roles.cache.some(
@@ -175,8 +173,8 @@ module.exports = {
         const everyoneRoleType = targetOverwrites.get(message.guild.id)?.allow.has(Permissions.FLAGS.SEND_MESSAGES)
             ? 'allowed'
             : targetOverwrites.get(message.guild.id)?.deny.has(Permissions.FLAGS.SEND_MESSAGES)
-                ? 'denied'
-                : 'neutral';
+            ? 'denied'
+            : 'neutral';
         const data = {
             id: channel.id,
             allowedOverwrites,
@@ -184,12 +182,9 @@ module.exports = {
         };
 
         if (isLocked) {
-            const newLocked = [
-                ...lockInformation.channels.filter(ch => ch.id !== channel.id),
-                data
-            ];
+            const newLocked = [...lockInformation.channels.filter(ch => ch.id !== channel.id), data];
             await lockSchema.updateOne({ guildID: message.guild.id }, { channels: newLocked });
-        } else await lockSchema.updateOne({ guildID: message.guild.id }, { $push: { channels: data } } );
+        } else await lockSchema.updateOne({ guildID: message.guild.id }, { $push: { channels: data } });
 
         const lockedEmbed = new MessageEmbed()
             .setColor(client.config.colors.punishment[1])

@@ -6,9 +6,7 @@ const FlakeIdGen = require('flake-idgen'),
 const settingsSchema = require('../schemas/settings-schema');
 
 class Utils {
-
     getFlag(input, flag) {
-
         const flagRegex =
             /(^| )(--|—)([^-—=:\s]{1,}[^=:\s]{1,})(=|:)?((("([^"]|\\"){0,}")($| )|'([^']|\\'){0,}'($| )|`([^`]|\\`){0,}`($| )|(“([^“”]|\\“|\\”){0,}”($| ))|\/([^\/]|\\\/){0,}\/([gmiesuUAJD]{1,10})?($| )|([^"'`“”/\s]|\\"|\\'|\\`|\\“|\\”|\\\/){1,}($| )))?/g;
         const matches = [];
@@ -347,7 +345,7 @@ class Utils {
         const botRole = guild.me.roles.cache.find(role => role.managed) || guild.me.roles.highest;
         return botRole.hexColor !== '#000000' ? botRole.hexColor : '#09ff2';
     }
-    
+
     async contentOrBin(content, threshold = 2000) {
         if (content.length > threshold) return this.createBin(content);
 

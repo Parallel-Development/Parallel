@@ -34,7 +34,8 @@ module.exports = {
         )
             return client.util.throwError(
                 interaction,
-                `I do not have permission to manage permissions in ${channel !== interaction.channel ? 'that' : 'this'
+                `I do not have permission to manage permissions in ${
+                    channel !== interaction.channel ? 'that' : 'this'
                 } channel.`,
                 true
             );
@@ -47,8 +48,7 @@ module.exports = {
         )
             return client.util.throwError(
                 interaction,
-                `You do not have permission to lock ${channel !== interaction.channel ? 'that' : 'this'
-                } channel.`
+                `You do not have permission to lock ${channel !== interaction.channel ? 'that' : 'this'} channel.`
             );
 
         const targetOverwrites = channel.permissionOverwrites.cache.filter(overwrite => {
@@ -57,8 +57,8 @@ module.exports = {
             return overwrite.id === interaction.guild.id
                 ? !overwrite.deny.has(Permissions.FLAGS.SEND_MESSAGES)
                 : !role.permissions.has(Permissions.FLAGS.MANAGE_MESSAGES) &&
-                !modRoles.includes(role.id) &&
-                overwrite.allow.has(Permissions.FLAGS.SEND_MESSAGES)
+                      !modRoles.includes(role.id) &&
+                      overwrite.allow.has(Permissions.FLAGS.SEND_MESSAGES);
         });
 
         const updatedOverwrites = targetOverwrites.map(overwrite => {
@@ -86,14 +86,12 @@ module.exports = {
         if (
             !updatedOverwrites.length ||
             (!channel.permissionsFor(interaction.guild.id).has(Permissions.FLAGS.VIEW_CHANNEL) &&
-                channel.permissionOverwrites.cache
-                .filter(overwrite => overwrite.type === 'role' && overwrite.id !== interaction.guild.id)
+                interaction.guild.roles.cache
+                    .filter(role => role.id !== interaction.guild.id)
                     .every(
-                        overwrite =>
-                            interaction
-                                .guild.roles.cache.get(overwrite.id)
-                                .permissions.has(Permissions.FLAGS.MANAGE_MESSAGES) ||
-                            !channel.permissionsFor(overwrite.id).has(Permissions.FLAGS.VIEW_CHANNEL)
+                        role =>
+                            role.permissions.has(Permissions.FLAGS.MANAGE_MESSAGES) ||
+                            !channel.permissionsFor(role.id).has(Permissions.FLAGS.VIEW_CHANNEL)
                     )) ||
             (!channel.permissionsFor(interaction.guild.id).has(Permissions.FLAGS.SEND_MESSAGES) &&
                 !interaction.guild.roles.cache.some(
@@ -180,8 +178,8 @@ module.exports = {
         const everyoneRoleType = targetOverwrites.get(interaction.guild.id)?.allow.has(Permissions.FLAGS.SEND_MESSAGES)
             ? 'allowed'
             : targetOverwrites.get(interaction.guild.id)?.deny.has(Permissions.FLAGS.SEND_MESSAGES)
-                ? 'denied'
-                : 'neutral';
+            ? 'denied'
+            : 'neutral';
         const data = {
             id: channel.id,
             allowedOverwrites,
@@ -189,10 +187,7 @@ module.exports = {
         };
 
         if (isLocked) {
-            const newLocked = [
-                ...lockInformation.channels.filter(ch => ch.id !== channel.id),
-                data
-            ];
+            const newLocked = [...lockInformation.channels.filter(ch => ch.id !== channel.id), data];
             await lockSchema.updateOne({ guildID: interaction.guild.id }, { channels: newLocked });
         } else await lockSchema.updateOne({ guildID: interaction.guild.id }, { $push: { channels: data } });
 

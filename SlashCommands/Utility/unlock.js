@@ -35,7 +35,8 @@ module.exports = {
                 .has([Permissions.FLAGS.MANAGE_CHANNELS, Permissions.FLAGS.MANAGE_ROLES])
         )
             return interaction.reply(
-                `I do not have permission to manage permissions in ${channel !== interaction.channel ? 'that' : 'this'
+                `I do not have permission to manage permissions in ${
+                    channel !== interaction.channel ? 'that' : 'this'
                 } channel.`,
                 true
             );
@@ -48,12 +49,13 @@ module.exports = {
         )
             return client.util.throwError(
                 interaction,
-                `You do not have permission to manage permissions in ${channel !== interaction.channel ? 'that' : 'this'
+                `You do not have permission to manage permissions in ${
+                    channel !== interaction.channel ? 'that' : 'this'
                 } channel.`
             );
 
-        const guildLockData = (await lockSchema.findOne({ guildID: interaction.guild.id }));
-        const channelLockData = guildLockData.channels.find(ch => ch.id === channel.id);;
+        const guildLockData = await lockSchema.findOne({ guildID: interaction.guild.id });
+        const channelLockData = guildLockData.channels.find(ch => ch.id === channel.id);
         if (!channelLockData) return client.util.throwError(interaction, 'this channel is not recognized as locked.');
 
         const updatedOverwrites = channelLockData.allowedOverwrites
@@ -64,7 +66,7 @@ module.exports = {
                     ? channelLockData.everyoneRoleType === 'allowed'
                         ? overwrite.allow.has(Permissions.FLAGS.SEND_MESSAGES)
                         : channelLockData.everyoneRoleType === 'denied' &&
-                        overwrite.deny.has(Permissions.FLAGS.SEND_MESSAGES)
+                          overwrite.deny.has(Permissions.FLAGS.SEND_MESSAGES)
                     : overwrite.deny.has(Permissions.FLAGS.SEND_MESSAGES);
             })
             .map(overwrite => {
@@ -87,7 +89,9 @@ module.exports = {
                 updatedOverwrites.push({
                     id: everyoneOverwrite.id,
                     type: 'role',
-                    allow: everyoneOverwrite.allow.bitfield + (channelLockData.everyoneRoleType === 'allowed' ? Permissions.FLAGS.SEND_MESSAGES : 0n),
+                    allow:
+                        everyoneOverwrite.allow.bitfield +
+                        (channelLockData.everyoneRoleType === 'allowed' ? Permissions.FLAGS.SEND_MESSAGES : 0n),
                     deny: everyoneOverwrite.deny.has(Permissions.FLAGS.SEND_MESSAGES)
                         ? everyoneOverwrite.deny.bitfield - Permissions.FLAGS.SEND_MESSAGES
                         : everyoneOverwrite.deny.bitfield
@@ -96,9 +100,10 @@ module.exports = {
         }
 
         if (!updatedOverwrites.length) {
-            await lockSchema.updateOne({
-                guildID: interaction.guild.id
-            },
+            await lockSchema.updateOne(
+                {
+                    guildID: interaction.guild.id
+                },
                 {
                     channels: guildLockData.channels.filter(ch => ch.id !== channel.id)
                 }
@@ -170,9 +175,10 @@ module.exports = {
 
         await channel.permissionOverwrites.set(newOverwrites, reason);
 
-        await lockSchema.updateOne({
-            guildID: interaction.guild.id
-        },
+        await lockSchema.updateOne(
+            {
+                guildID: interaction.guild.id
+            },
             {
                 channels: guildLockData.channels.filter(ch => ch.id !== channel.id)
             }

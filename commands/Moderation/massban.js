@@ -43,7 +43,7 @@ module.exports = {
             return msg.edit(`Error: ${client.config.errors.cannot_punish_yourself}`);
 
         if (users.some(user => user.id === message.guild.ownerId))
-            return msg.edit(`Error: ${client.config.errors.cannot_punish_owner}`)
+            return msg.edit(`Error: ${client.config.errors.cannot_punish_owner}`);
 
         if (
             users.some(

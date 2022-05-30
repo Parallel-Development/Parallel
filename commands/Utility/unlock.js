@@ -30,7 +30,8 @@ module.exports = {
                 .has([Permissions.FLAGS.MANAGE_CHANNELS, Permissions.FLAGS.MANAGE_ROLES])
         )
             return message.reply(
-                `I do not have permission to manage permissions in ${channel !== message.channel ? 'that' : 'this'
+                `I do not have permission to manage permissions in ${
+                    channel !== message.channel ? 'that' : 'this'
                 } channel.`,
                 true
             );
@@ -38,17 +39,18 @@ module.exports = {
         if (
             !channel
                 .permissionsFor(message.member)
-                .has([Permissions.FLAGS.MANAGE_CHANNELS, Permissions.FLAGS.MANAGE_ROLES]) && 
+                .has([Permissions.FLAGS.MANAGE_CHANNELS, Permissions.FLAGS.MANAGE_ROLES]) &&
             !message.member.roles.cache.some(role => modRoles.includes(role.id))
         )
             return client.util.throwError(
                 message,
-                `You do not have permission to manage permissions in ${channel !== message.channel ? 'that' : 'this'
+                `You do not have permission to manage permissions in ${
+                    channel !== message.channel ? 'that' : 'this'
                 } channel.`
             );
 
-        const guildLockData = (await lockSchema.findOne({ guildID: message.guild.id } ));
-        const channelLockData = guildLockData.channels.find(ch => ch.id === channel.id);;
+        const guildLockData = await lockSchema.findOne({ guildID: message.guild.id });
+        const channelLockData = guildLockData.channels.find(ch => ch.id === channel.id);
         if (!channelLockData) return client.util.throwError(message, 'this channel is not recognized as locked.');
 
         //const allowedOverwrites = channelLockData.allowedOverwrites;
@@ -60,7 +62,7 @@ module.exports = {
                     ? channelLockData.everyoneRoleType === 'allowed'
                         ? overwrite.allow.has(Permissions.FLAGS.SEND_MESSAGES)
                         : channelLockData.everyoneRoleType === 'denied' &&
-                        overwrite.deny.has(Permissions.FLAGS.SEND_MESSAGES)
+                          overwrite.deny.has(Permissions.FLAGS.SEND_MESSAGES)
                     : overwrite.deny.has(Permissions.FLAGS.SEND_MESSAGES);
             })
             .map(overwrite => {
@@ -83,7 +85,9 @@ module.exports = {
                 updatedOverwrites.push({
                     id: everyoneOverwrite.id,
                     type: 'role',
-                    allow: everyoneOverwrite.allow.bitfield + (channelLockData.everyoneRoleType === 'allowed' ? Permissions.FLAGS.SEND_MESSAGES : 0n),
+                    allow:
+                        everyoneOverwrite.allow.bitfield +
+                        (channelLockData.everyoneRoleType === 'allowed' ? Permissions.FLAGS.SEND_MESSAGES : 0n),
                     deny: everyoneOverwrite.deny.has(Permissions.FLAGS.SEND_MESSAGES)
                         ? everyoneOverwrite.deny.bitfield - Permissions.FLAGS.SEND_MESSAGES
                         : everyoneOverwrite.deny.bitfield
@@ -92,7 +96,8 @@ module.exports = {
         }
 
         if (!updatedOverwrites.length) {
-            await lockSchema.updateOne({
+            await lockSchema.updateOne(
+                {
                     guildID: message.guild.id
                 },
                 {
@@ -165,7 +170,8 @@ module.exports = {
 
         await channel.permissionOverwrites.set(newOverwrites, reason);
 
-        await lockSchema.updateOne({
+        await lockSchema.updateOne(
+            {
                 guildID: message.guild.id
             },
             {
