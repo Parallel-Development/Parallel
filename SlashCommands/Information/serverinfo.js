@@ -14,7 +14,7 @@ module.exports = {
             .addField('Member Count', `${interaction.guild.memberCount}`)
             .addField(
                 'Channel Count',
-                `${interaction.guild.channels.cache.filter(channel => channel.isText()).size} Text, ${
+                `${interaction.guild.channels.cache.filter(channel => channel.type === 'GUILD_TEXT').size} Text, ${
                     interaction.guild.channels.cache.filter(channel => channel.isVoice()).size
                 } Voice`
             )
