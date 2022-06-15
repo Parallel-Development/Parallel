@@ -14,9 +14,9 @@ module.exports = {
             .addField(
                 'Channel Count',
                 `<:text:815451803733852160> ${
-                    message.guild.channels.cache.filter(channel => channel.type === 'GUILD_TEXT').size
+                    message.guild.channels.cache.filter(channel => channel.isText()).size
                 } Text<:spacer:815451803642626068><:voice:815451803331854367>${
-                    message.guild.channels.cache.filter(channel => channel.type === 'GUILD_VOICE').size
+                    message.guild.channels.cache.filter(channel => channel.isVoice()).size
                 } Voice`
             )
             .addField('Role Count', `${message.guild.roles.cache.size - 1}`, true)
