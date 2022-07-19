@@ -386,6 +386,12 @@ module.exports = {
                     })
             ];
 
+            const everyoneRoleType = channel.permissionOverwrites.cache.get(interaction.guildId).allow.has(Permissions.FLAGS.SEND_MESSAGES)
+            ? 'allowed'
+            :  channel.permissionOverwrites.cache.get(interaction.guildId).deny.has(Permissions.FLAGS.SEND_MESSAGES)
+            ? 'denied'
+            : 'neutral';
+
             try {
                 await channel.permissionOverwrites.set(
                     newOverwrites,
@@ -425,13 +431,7 @@ module.exports = {
             const allowedOverwrites = targetOverwrites
                 .filter(overwrite => overwrite.allow.has(Permissions.FLAGS.SEND_MESSAGES))
                 .map(overwrite => overwrite.id);
-            const everyoneRoleType = targetOverwrites
-                .get(interaction.guild.id)
-                ?.allow.has(Permissions.FLAGS.SEND_MESSAGES)
-                ? 'allowed'
-                : targetOverwrites.get(interaction.guild.id)?.deny.has(Permissions.FLAGS.SEND_MESSAGES)
-                ? 'denied'
-                : 'neutral';
+
             const data = {
                 id: channel.id,
                 allowedOverwrites,
