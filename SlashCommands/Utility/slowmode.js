@@ -33,7 +33,7 @@ module.exports = {
         if (slowmode > 21600)
             return client.util.throwError(interaction, 'slowmode must be less than or equal to 21,600 seconds');
 
-        const channel = client.util.getChannel(interaction.guild, args['channel']) || interaction.channel;
+        const channel = await client.util.getChannel(interaction.guild, args['channel']) || interaction.channel;
         if (!channel.permissionsFor(interaction.guild.me).has(Discord.Permissions.FLAGS.MANAGE_CHANNELS))
             return client.util.throwError(interaction, client.config.errors.my_channel_access_denied);
 
