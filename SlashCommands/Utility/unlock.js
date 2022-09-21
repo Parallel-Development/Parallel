@@ -17,7 +17,7 @@ module.exports = {
             option.setName('reason').setDescription('The shown reason for unlocking the channel')
         ),
     async execute(client, interaction, args) {
-        let channel = client.util.getChannel(interaction.guild, args.channel);
+        let channel = await client.util.getChannel(interaction.guild, args.channel);
         if (channel) {
             if (!channel.isText()) return client.util.throwError(interaction, 'the channel must be a text channel');
             if (channel.isThread())
