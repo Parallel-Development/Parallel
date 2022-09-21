@@ -10,7 +10,7 @@ module.exports = {
     requiredBotPermissions: Discord.Permissions.FLAGS.MANAGE_CHANNELS,
     permissions: Discord.Permissions.FLAGS.MANAGE_CHANNELS,
     async execute(client, message, args) {
-        let channel = client.util.getChannel(message.guild, args[0]);
+        let channel = await client.util.getChannel(message.guild, args[0]);
         if (channel) {
             if (!channel.isText()) return client.util.throwError(message, 'the channel must be a text channel');
             if (channel.isThread())
