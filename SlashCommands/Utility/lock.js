@@ -15,7 +15,7 @@ module.exports = {
         .addChannelOption(option => option.setName('channel').setDescription('The channel to lock'))
         .addStringOption(option => option.setName('reason').setDescription('The shown reason for locking the channel')),
     async execute(client, interaction, args) {
-        let channel = client.util.getChannel(interaction.guild, args.channel);
+        let channel = await client.util.getChannel(interaction.guild, args.channel);
         if (channel) {
             if (!channel.isText()) return client.util.throwError(interaction, 'the channel must be a text channel');
             if (channel.isThread())
@@ -27,10 +27,14 @@ module.exports = {
         const guildSettings = await settingsSchema.findOne({ guildID: interaction.guild.id });
         const { modRoles } = guildSettings;
 
+        // Fetch all channel permissions to prevent an edge-case
+        // where they're not fetched
+        await channel.fetch();
+
         if (
             !channel
                 .permissionsFor(interaction.guild.me)
-                .has([Permissions.FLAGS.MANAGE_CHANNELS, Permissions.FLAGS.MANAGE_ROLES])
+                ?.has([Permissions.FLAGS.MANAGE_CHANNELS, Permissions.FLAGS.MANAGE_ROLES])
         )
             return client.util.throwError(
                 interaction,
@@ -43,7 +47,7 @@ module.exports = {
         if (
             !channel
                 .permissionsFor(interaction.member)
-                .has([Permissions.FLAGS.MANAGE_CHANNELS, Permissions.FLAGS.MANAGE_ROLES]) &&
+                ?.has([Permissions.FLAGS.MANAGE_CHANNELS, Permissions.FLAGS.MANAGE_ROLES]) &&
             !interaction.member.roles.cache.some(role => modRoles.includes(role.id))
         )
             return client.util.throwError(
@@ -85,19 +89,19 @@ module.exports = {
 
         if (
             !updatedOverwrites.length ||
-            (!channel.permissionsFor(interaction.guild.id).has(Permissions.FLAGS.VIEW_CHANNEL) &&
+            (!channel.permissionsFor(interaction.guild.id)?.has(Permissions.FLAGS.VIEW_CHANNEL) &&
                 interaction.guild.roles.cache
                     .filter(role => role.id !== interaction.guild.id)
                     .every(
                         role =>
                             role.permissions.has(Permissions.FLAGS.MANAGE_MESSAGES) ||
-                            !channel.permissionsFor(role.id).has(Permissions.FLAGS.VIEW_CHANNEL)
+                            !channel.permissionsFor(role.id)?.has(Permissions.FLAGS.VIEW_CHANNEL)
                     )) ||
-            (!channel.permissionsFor(interaction.guild.id).has(Permissions.FLAGS.SEND_MESSAGES) &&
+            (!channel.permissionsFor(interaction.guild.id)?.has(Permissions.FLAGS.SEND_MESSAGES) &&
                 !interaction.guild.roles.cache.some(
                     role =>
-                        channel.permissionsFor(role.id).has(Permissions.FLAGS.SEND_MESSAGES) &&
-                        !channel.permissionsFor(role.id).has(Permissions.FLAGS.MANAGE_MESSAGES)
+                        channel.permissionsFor(role.id)?.has(Permissions.FLAGS.SEND_MESSAGES) &&
+                        !channel.permissionsFor(role.id)?.has(Permissions.FLAGS.MANAGE_MESSAGES)
                 ))
         )
             return client.util.throwError(

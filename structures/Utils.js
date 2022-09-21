@@ -294,10 +294,10 @@ class Utils {
      * @param {string} mention the mention or the ID of the channel to get
      * @returns {Discord.Role | undefined} the channel that was found
      */
-    getChannel(guild, mention) {
+    async getChannel(guild, mention) {
         if (!mention) return;
         if (mention.startsWith('<#') && mention.endsWith('>')) mention = mention.slice(2, -1);
-        return guild.channels.cache.get(mention);
+        return guild.channels.fetch(mention);
     }
 
     addMemberToCollectionPrevention(guildID, memberID) {

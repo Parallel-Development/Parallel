@@ -10,7 +10,7 @@ module.exports = {
     requiredBotPermissions: Discord.Permissions.FLAGS.MANAGE_CHANNELS,
     permissions: Discord.Permissions.FLAGS.MANAGE_CHANNELS,
     async execute(client, message, args) {
-        let channel = client.util.getChannel(message.guild, args[0]);
+        let channel = await client.util.getChannel(message.guild, args[0]);
         if (channel) {
             if (!channel.isText()) return client.util.throwError(message, 'the channel must be a text channel');
             if (channel.isThread())
@@ -24,10 +24,14 @@ module.exports = {
         const guildSettings = await settingsSchema.findOne({ guildID: message.guild.id });
         const { modRoles } = guildSettings;
 
+        // Fetch all channel permissions to prevent an edge-case
+        // where they're not fetched
+        await channel.fetch();
+
         if (
             !channel
                 .permissionsFor(message.guild.me)
-                .has([Permissions.FLAGS.MANAGE_CHANNELS, Permissions.FLAGS.MANAGE_ROLES])
+                ?.has([Permissions.FLAGS.MANAGE_CHANNELS, Permissions.FLAGS.MANAGE_ROLES])
         )
             return message.reply(
                 `I do not have permission to manage permissions in ${
@@ -39,7 +43,7 @@ module.exports = {
         if (
             !channel
                 .permissionsFor(message.member)
-                .has([Permissions.FLAGS.MANAGE_CHANNELS, Permissions.FLAGS.MANAGE_ROLES]) &&
+                ?.has([Permissions.FLAGS.MANAGE_CHANNELS, Permissions.FLAGS.MANAGE_ROLES]) &&
             !message.member.roles.cache.some(role => modRoles.includes(role.id))
         )
             return client.util.throwError(
@@ -81,19 +85,19 @@ module.exports = {
 
         if (
             !updatedOverwrites.length ||
-            (!channel.permissionsFor(message.guild.id).has(Permissions.FLAGS.VIEW_CHANNEL) &&
+            (!channel.permissionsFor(message.guild.id)?.has(Permissions.FLAGS.VIEW_CHANNEL) &&
                 message.guild.roles.cache
                     .filter(role => role.id !== message.guild.id)
                     .every(
                         role =>
                             role.permissions.has(Permissions.FLAGS.MANAGE_MESSAGES) ||
-                            !channel.permissionsFor(role.id).has(Permissions.FLAGS.VIEW_CHANNEL)
+                            !channel.permissionsFor(role.id)?.has(Permissions.FLAGS.VIEW_CHANNEL)
                     )) ||
-            (!channel.permissionsFor(message.guild.id).has(Permissions.FLAGS.SEND_MESSAGES) &&
+            (!channel.permissionsFor(message.guild.id)?.has(Permissions.FLAGS.SEND_MESSAGES) &&
                 !message.guild.roles.cache.some(
                     role =>
-                        channel.permissionsFor(role.id).has(Permissions.FLAGS.SEND_MESSAGES) &&
-                        !channel.permissionsFor(role.id).has(Permissions.FLAGS.MANAGE_MESSAGES)
+                        channel.permissionsFor(role.id)?.has(Permissions.FLAGS.SEND_MESSAGES) &&
+                        !channel.permissionsFor(role.id)?.has(Permissions.FLAGS.MANAGE_MESSAGES)
                 ))
         )
             return client.util.throwError(

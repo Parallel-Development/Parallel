@@ -16,10 +16,12 @@ module.exports = {
     async execute(client, message) {
         if (global.void === true && !client.config.developers.includes(message.author.id)) return;
 
+        await message.channel.fetch();
+
         if (
             message.author.bot ||
             !message.guild ||
-            !message.channel.permissionsFor(message.guild.me).has(Discord.Permissions.FLAGS.SEND_MESSAGES)
+            !message.channel.permissionsFor(message.guild.me)?.has(Discord.Permissions.FLAGS.SEND_MESSAGES)
         )
             return;
 
