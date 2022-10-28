@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE")
+}
+
+enum DisputeMethod {
+  Modal
+  Link
+}
+
+enum InfractionType {
+  Warn
+  Mute
+  Kick
+  Ban
+  Unmute
+  Unban
+}
+
+model Guild {
+  id                        String        @id
+  infractionModeratorPublic Boolean       @default(false)
+  notifyInfractionChange    Boolean       @default(false)
+  allowDispute              Boolean       @default(false)
+  disputeAlertChannelId     String?
+  disputeMethod             DisputeMethod @default(Modal)
+  disputeModalQuestions     String[]      @default(["Provide context and reasoning for why you are disputing this infraction."])
+  disregardDisputeAfter     BigInt        @default(2592000000)
+  disputeBlacklist          String[]
+  infoWarn                  String?
+  infoMute                  String?
+  infoKick                  String?
+  infoBan                   String?
+
+  infractions Infraction[]
+  tasks       Task[]
+}
+
+model Infraction {
+  id          Int            @id @default(autoincrement())
+  userId      String
+  guildId     String
+  type        InfractionType @default(Warn)
+  date        BigInt
+  expires     BigInt?
+  reason      String         @default("Unspecified reason.")
+  moderatorId String         @default("833792285120528394")
+
+  dispute Dispute? 
+  guild   Guild    @relation(fields: [guildId], references: [id], onDelete: Cascade)
+}
+
+model Task {
+  id      Int           @id @default(autoincrement()) @map("_id")
+  userId  String
+  guildId String
+  type    InfractionType
+  expires BigInt
+  missed  Boolean        @default(false)
+
+  @@unique([userId, guildId, type])
+  guild      Guild       @relation(fields: [guildId], references: [id], onDelete: Cascade)
+}
+
+model Dispute {
+  id       Int    @id
+  userId   String
+  guildId  String
+  response String
+
+  infraction Infraction? @relation(fields: [id], references: [id], onDelete: Cascade)
+}
