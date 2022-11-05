@@ -3,4 +3,3 @@ dist
 .DS_Store
 .env
 yarn-error.log
-whiteboard.md

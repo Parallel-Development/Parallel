@@ -30,6 +30,7 @@ class WarnCommand extends Command {
     const member = interaction.options.getMember('member');
     if (!member) throw 'The provided user is not in this guild.';
     if (member.id === interaction.user.id) throw 'You cannot warn yourself.';
+    if (member.id === client.user!.id) throw 'You cannot warn me.';
 
     if (!client.util.adequateHierarchy(interaction.member, member))
       throw 'You cannot warn this member due to inadequete hierarchy.';

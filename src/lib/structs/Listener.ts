@@ -1,6 +1,6 @@
 abstract class Listener {
-  public name: string;
-  public once: boolean;
+  public readonly name: string;
+  public readonly once: boolean;
 
   constructor(name: string, once: boolean = false) {
     this.name = name;

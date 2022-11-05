@@ -16,13 +16,16 @@ class RemoveInfractionCommand extends Command {
     super(
       new SlashCommandBuilder()
       .setName('remove-infraction')
-      .setDescription('Remove an infraction')
+      .setDescription('Remove an infraction.')
       .setDefaultMemberPermissions(Permissions.ModerateMembers)
       .addIntegerOption(option =>
         option.setName('id')
         .setDescription('The infraction ID.')
-        .setMinValue(0)
+        .setMinValue(1)
         .setRequired(true))
+      .addStringOption(option =>
+        option.setName('reason')
+        .setDescription('The reason for removing the infraction.'))
       .addBooleanOption(option =>
         option.setName('undo-punishment')
         .setDescription('Undo the associated punishment with the infraction. For example, ban => unban, unban => ban'))
@@ -32,7 +35,7 @@ class RemoveInfractionCommand extends Command {
   async run(interaction: ChatInputCommandInteraction<'cached'>) {
     const id = interaction.options.getInteger('id', true);
     const undo = interaction.options.getBoolean('undo-punishment') ?? false;
-    let action: string = '???';
+    const reason = interaction.options.getString('reason') ?? undefined;
 
     const infraction = await client.db.infraction.findUnique({
       where: {
@@ -53,14 +56,14 @@ class RemoveInfractionCommand extends Command {
         case InfractionType.Ban:
           if (!interaction.guild.members.me!.permissions.has(Permissions.BanMembers))
             throw 'I cannot undo the punishment because I do not have the Ban Members permission.';
-          await interaction.guild.members.unban(infraction.userId)
+          await interaction.guild.members.unban(infraction.userId, reason)
           .catch(() => { throw 'That member is not banned.' });
           break;
         case InfractionType.Mute:
           if (!interaction.guild.members.me!.permissions.has(Permissions.ModerateMembers))
             throw 'I cannot undo the punishment because I do not have the Moderate Members permission.';
             await interaction.guild.members.fetch(infraction.userId)
-            .then(member => member.timeout(null))
+            .then(member => member.timeout(null, reason))
             .catch(() => { throw 'I could not undo the punishment because the member is not in the guild.' });
           break;
         default:
@@ -89,7 +92,7 @@ class RemoveInfractionCommand extends Command {
       .setAuthor({ name: 'Parallel Moderation', iconURL: client.user!.displayAvatarURL() })
       .setTitle('Infraction Removed')
       .setColor(Colors.Green)
-      .setDescription(`Infraction ID: \`${infraction.id}\`\nInfraction punishment: \`${infraction.type.toString()}\`${undo ? '\n\n***•** The correlated punishment to this infraction has also been undone.*' : ''}`);
+      .setDescription(`**Infraction ID:** \`${infraction.id}\`\n**Infraction punishment:** \`${infraction.type.toString()}\`${reason ? `\n${reason}` : ''}${undo ? '\n\n***•** The correlated punishment to this infraction has also been undone.*' : ''}`);
 
       const member = await client.util.getMember(interaction.guildId, infraction.userId);
       if (member) await member.send({ embeds: [notifyDM] }).catch(() => {});

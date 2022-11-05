@@ -26,9 +26,10 @@ model Guild {
   infractionModeratorPublic Boolean       @default(false)
   notifyInfractionChange    Boolean       @default(false)
   allowDispute              Boolean       @default(false)
-  disputeAlertChannelId     String?
+  disputeAlertWebhookId     String?
   disputeMethod             DisputeMethod @default(Modal)
-  disputeModalQuestions     String[]      @default(["Provide context and reasoning for why you are disputing this infraction."])
+  disputeLink               String?
+  disputeModalQuestions     String[]      @default(["Reason for dispute."])
   disregardDisputeAfter     BigInt        @default(2592000000)
   disputeBlacklist          String[]
   infoWarn                  String?
@@ -37,6 +38,7 @@ model Guild {
   infoBan                   String?
 
   infractions Infraction[]
+  disputes    Dispute[]
   tasks       Task[]
 }
 
@@ -50,27 +52,28 @@ model Infraction {
   reason      String         @default("Unspecified reason.")
   moderatorId String         @default("833792285120528394")
 
-  dispute Dispute? 
+  dispute Dispute?
   guild   Guild    @relation(fields: [guildId], references: [id], onDelete: Cascade)
 }
 
 model Task {
-  id      Int           @id @default(autoincrement()) @map("_id")
+  id      Int            @id @default(autoincrement()) @map("_id")
   userId  String
   guildId String
   type    InfractionType
   expires BigInt
   missed  Boolean        @default(false)
+  guild   Guild          @relation(fields: [guildId], references: [id], onDelete: Cascade)
 
   @@unique([userId, guildId, type])
-  guild      Guild       @relation(fields: [guildId], references: [id], onDelete: Cascade)
 }
 
 model Dispute {
   id       Int    @id
   userId   String
   guildId  String
-  response String
+  response Json[]
 
   infraction Infraction? @relation(fields: [id], references: [id], onDelete: Cascade)
+  guild      Guild       @relation(fields: [guildId], references: [id], onDelete: Cascade)
 }

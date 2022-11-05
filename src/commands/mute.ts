@@ -30,6 +30,7 @@ class MuteCommand extends Command {
     const member = interaction.options.getMember('member');
     if (!member) throw 'The provided user is not in this guild.';
     if (member.id === interaction.user.id) throw 'You cannot mute yourself.';
+    if (member.id === client.user!.id) throw 'You cannot mute me.';
 
     if (!client.util.adequateHierarchy(interaction.member, member))
       throw 'You cannot mute this member due to inadequete hierarchy.';
@@ -51,7 +52,7 @@ class MuteCommand extends Command {
 
     await interaction.deferReply();
 
-    await member.timeout(Number(expires));
+    await member.timeout(Number(expires), reason);
 
     const infraction = await client.db.infraction.create({
       data: {

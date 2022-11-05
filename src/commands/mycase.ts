@@ -17,7 +17,7 @@ class MyCaseCommand extends Command {
         .setName('mycase')
         .setDescription('View detailed information on an infraction that you have.')
         .addIntegerOption(option =>
-          option.setName('id').setDescription('Infraction ID').setMinValue(0).setRequired(true)
+          option.setName('id').setDescription('Infraction ID').setMinValue(1).setRequired(true)
         )
     );
   }

@@ -33,13 +33,13 @@ class MyInfractionsCommand extends Command {
         guildId: interaction.guildId,
         userId: user.id
       },
-      include: { dispute: true },
+      include: { dispute: true, guild: { select: { infractionModeratorPublic: true } } },
       take: infractionsPerPage,
       skip: infractionsPerPage * (page - 1)
     });
 
     const infractionsEmbed = new EmbedBuilder()
-      .setAuthor({ name: `Your inractions`, iconURL: user.displayAvatarURL() })
+      .setAuthor({ name: `Your infractions`, iconURL: user.displayAvatarURL() })
       .setDescription(`Total infractions: \`${infractionCount}\`\nPage: \`${page}\`/\`${pages}\``)
       .setColor(mainColor);
 
@@ -47,9 +47,9 @@ class MyInfractionsCommand extends Command {
     for (const infraction of infractions) {
       const field: EmbedField = {
         name: `ID ${infraction.id}: ${infraction.type.toString()}`,
-        value: `${infraction.reason.slice(0, 100)}${infraction.reason.length > 100 ? '...' : ''}${infraction.dispute ? `\n*- You made a dispute for this infraction.*` : ''}\n*- <t:${
-          infraction.date
-        }>`,
+        value: `${infraction.reason.slice(0, 100)}${infraction.reason.length > 100 ? '...' : ''}${
+          infraction.dispute ? `\n*- You made a dispute for this infraction.*` : ''
+        }\n*- <t:${infraction.date}>${infraction.guild.infractionModeratorPublic ? `, issued by <@${infraction.moderatorId}> (${infraction.moderatorId})` : ''}*`,
         inline: false
       };
 

@@ -1,7 +1,7 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 
 abstract class Command {
-  data: Partial<SlashCommandBuilder>;
+  public readonly data: Partial<SlashCommandBuilder>;
 
   constructor(data: Partial<SlashCommandBuilder>) {
     this.data = data;

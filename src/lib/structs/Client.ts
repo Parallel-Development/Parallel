@@ -1,15 +1,16 @@
 import { Client as DJSClient, IntentsBitField as Intents, Options, Sweepers } from 'discord.js';
-import type Button from './Button';
 import { PrismaClient } from '@prisma/client';
+import { createPrismaRedisCache } from 'prisma-redis-middleware';
 import fs from 'fs';
 import type Command from './Command';
 import * as util from '../util/functions';
 import type Listener from './Listener';
+import type Modal from './Modal';
 
 class Client extends DJSClient {
   public db = new PrismaClient();
   public commands: Map<string, Command> = new Map();
-  public buttons: Map<string, Button> = new Map();
+  public modals: Map<string, Modal> = new Map();
   public util = util;
 
   constructor() {
@@ -37,23 +38,21 @@ class Client extends DJSClient {
     })
   }
 
+  async _cacheModals() {
+    const files = fs.readdirSync('src/modals');
+    for (const file of files) {
+      const modalClass = (await import(`../../modals/${file.slice(0, -3)}`)).default;
+      const modalInstant: Modal = new modalClass();
+      this.modals.set(modalInstant.name, modalInstant);
+    }
+  }
+
   async _cacheCommands() {
     const files = fs.readdirSync('src/commands');
     for (const file of files) {
       const cmdClass = (await import(`../../commands/${file.slice(0, -3)}`)).default;
       const cmdInsant: Command = new cmdClass();
       this.commands.set(cmdInsant.data.name!, cmdInsant);
-    }
-  }
-
-  async _cacheButtons() {
-    const files = fs.readdirSync('src/buttons');
-    for (const file of files) {
-      const btnClass = (await import(`../../buttons/${file.slice(0, -3)}`)).default;
-      const btnInstant: Button = new btnClass();
-      for (const id of btnInstant.associatedIds) {
-        this.buttons.set(id, btnInstant);
-      }
     }
   }
 
@@ -70,9 +69,20 @@ class Client extends DJSClient {
 
   override async login(token: string) {
     await this._cacheCommands();
-    await this._cacheButtons();
+    await this._cacheModals();
     await this._loadListeners();
-    await this.db.$connect();
+
+    this.db.$use(createPrismaRedisCache({
+      storage: {
+        type: 'memory',
+        options: {
+          invalidation: true
+        }
+      },
+      cacheTime: 600000
+    })); 
+    await this.db.$connect(); 
+
     return super.login(token);
   }
 }
