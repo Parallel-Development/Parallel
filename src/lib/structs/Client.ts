@@ -14,13 +14,18 @@ class Client extends DJSClient {
   constructor() {
     super({
       intents: [Intents.Flags.Guilds, Intents.Flags.GuildMembers, Intents.Flags.GuildMessages],
-      makeCache: Options.cacheEverything(),
+      makeCache: Options.cacheWithLimits({
+        ...Options.DefaultMakeCacheSettings,
+        ReactionManager: 0,
+        MessageManager: 0,
+        GuildEmojiManager: 0,
+        GuildStickerManager: 0,
+        VoiceStateManager: 0,
+        GuildInviteManager: 0,
+        GuildScheduledEventManager: 0
+      }),
       sweepers: {
         ...Options.DefaultSweeperSettings,
-        messages: {
-          interval: 180,
-          lifetime: 900
-        },
         guildMembers: {
           interval: 300,
           filter: Sweepers.filterByLifetime({
@@ -29,7 +34,7 @@ class Client extends DJSClient {
           })
         }
       },
-      shardCount: 1,
+      shards: 'auto',
       allowedMentions: {
         parse: []
       }
