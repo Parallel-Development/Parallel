@@ -1,7 +1,7 @@
 import { InfractionType } from "@prisma/client";
 import { SlashCommandBuilder, PermissionFlagsBits as Permissions, ChatInputCommandInteraction, EmbedBuilder, Colors } from "discord.js";
-import client from "../client";
 import Command from "../lib/structs/Command";
+import { adequateHierarchy } from "../lib/util/functions";
 
 class MuteCommand extends Command {
   constructor() {
@@ -26,7 +26,7 @@ class MuteCommand extends Command {
     if (member.id === interaction.user.id) throw 'You cannot unmute yourself.';
     if (!member.isCommunicationDisabled()) throw 'This member is not muted.';
 
-    if (!client.util.adequateHierarchy(interaction.guild.members.me!, member))
+    if (!adequateHierarchy(interaction.guild.members.me!, member))
       throw 'I cannot unmute this member due to inadequete hierarchy';
 
     const reason = interaction.options.getString('reason') ?? 'None';
@@ -36,7 +36,7 @@ class MuteCommand extends Command {
 
     await member.timeout(null);
 
-    await client.db.task.delete({
+    await this.client.db.task.delete({
       where: {
         userId_guildId_type: {
           guildId: interaction.guildId,
@@ -46,7 +46,7 @@ class MuteCommand extends Command {
       }
     }).catch(() => {});
 
-    const infraction = (await client.db.infraction.create({
+    const infraction = (await this.client.db.infraction.create({
       data: {
         userId: member.id,
         guildId: interaction.guildId,
@@ -55,13 +55,13 @@ class MuteCommand extends Command {
         date,
         reason
       },
-      select: { guild: { select: { infractionModeratorPublic: true }} }
+      include: { guild: { select: { infractionModeratorPublic: true }} }
     }))!;
 
     const { infractionModeratorPublic } = infraction.guild;
 
     const dm = new EmbedBuilder()
-      .setAuthor({ name: 'Parallel Moderation', iconURL: client.user!.displayAvatarURL() })
+      .setAuthor({ name: 'Parallel Moderation', iconURL: this.client.user!.displayAvatarURL() })
       .setTitle(`You were unmuted in ${interaction.guild.name}`)
       .setColor(Colors.Green)
       .setDescription(
@@ -70,6 +70,8 @@ class MuteCommand extends Command {
       .setTimestamp();
 
     await member.send({ embeds: [dm] }).catch(() => {});
+
+    this.client.emit('punishLog', infraction);
 
     return interaction.editReply(`Unmuted **${member.user.tag}**.`);
   }

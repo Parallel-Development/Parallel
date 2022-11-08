@@ -6,7 +6,6 @@ import {
   type EmbedField
 } from 'discord.js';
 import Command from '../lib/structs/Command';
-import client from '../client';
 import { infractionsPerPage, mainColor } from '../lib/util/constants';
 
 class InfractionsCommand extends Command {
@@ -27,7 +26,7 @@ class InfractionsCommand extends Command {
     const user = interaction.options.getUser('user', true);
     let page = interaction.options.getNumber('page') ?? 1;
 
-    const infractionCount = await client.db.infraction.count({
+    const infractionCount = await this.client.db.infraction.count({
       where: {
         guildId: interaction.guildId,
         userId: user.id,
@@ -38,7 +37,7 @@ class InfractionsCommand extends Command {
     const pages = Math.ceil(infractionCount / 7);
     if (page > pages) page = pages;
 
-    const infractions = await client.db.infraction.findMany({
+    const infractions = await this.client.db.infraction.findMany({
       where: {
         guildId: interaction.guildId,
         userId: user.id,

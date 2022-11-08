@@ -1,6 +1,5 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 import Command from '../lib/structs/Command';
-import client from '../client';
 
 class PingCommand extends Command {
   constructor() {
@@ -15,7 +14,7 @@ class PingCommand extends Command {
     const end = performance.now();
 
     const timeTaken = Math.round(end - start);
-    const ws = client.ws.ping;
+    const ws = this.client.ws.ping;
 
     return interaction.editReply(`Pong! Latency: \`${timeTaken}ms\` | WebSocket ping: \`${ws}ms\``);
   }

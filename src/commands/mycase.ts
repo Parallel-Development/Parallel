@@ -6,7 +6,6 @@ import {
   Colors
 } from 'discord.js';
 import Command from '../lib/structs/Command';
-import client from '../client';
 import { InfractionType } from '@prisma/client';
 import ms from 'ms';
 
@@ -24,17 +23,18 @@ class MyCaseCommand extends Command {
 
   async run(interaction: ChatInputCommandInteraction<'cached'>) {
     const id = interaction.options.getInteger('id', true);
-    const infraction = await client.db.infraction.findUnique({
+    const infraction = await this.client.db.infraction.findUnique({
       where: {
         id
-      }
+      },
+      include: { dispute: true }
     });
 
     if (infraction?.guildId !== interaction.guildId)
       throw 'No infraction with that ID exists in this guild.';
     if (infraction.userId !== interaction.user.id) throw 'That infraction is not on your record.';
 
-    const { infractionModeratorPublic } = (await client.db.guild.findUnique({
+    const { infractionModeratorPublic } = (await this.client.db.guild.findUnique({
       where: {
         id: interaction.guildId
       },
@@ -65,7 +65,7 @@ class MyCaseCommand extends Command {
                 Number(infraction.expires) / 1000
               )}:R>)`
             : ''
-        }\n**Reason:** ${infraction.reason}`
+        }\n**Reason:** ${infraction.reason}${infraction.dispute ? '\n***•** You made a dispute for this infraction*' : ''}`
       );
 
     return interaction.reply({ embeds: [infractionEmbed] });

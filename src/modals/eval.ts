@@ -12,26 +12,30 @@ class EvalModal extends Modal {
     if (interaction.user.id !== '633776442366361601') throw 'You cannot run this command.';
     
     const code = interaction.fields.getTextInputValue('code');
+    const asyncronous = interaction.fields.getTextInputValue('async').toLowerCase() === 'true';
     const depth = +interaction.fields.getTextInputValue('depth') || 0;
-
-    const asyncronous = code.includes('await');
 
     await interaction.deferReply();
     let output;
     let error = false;
-    const start = performance.now();
-    try { 
-      output = await eval(asyncronous ? `(async() => { ${code} })()` : code)
-    } catch (e) {
-      output = e;
-      error = true;
-    }
-    const end = performance.now();
-    const timeTaken = end - start;
-    const type = typeof output;
-    output = util.inspect(output, { depth });
 
-    const unit = timeTaken < 1 ? `${Math.round(timeTaken / 1e-2)} microseconds` : ms(Math.round(timeTaken), { long: true });
+     // time the evaluation
+     let start: number;
+     let timeTaken: number;
+     try {
+       start = performance.now();
+       output = await eval(asyncronous ? `(async() => { ${code} })()` : code);
+       timeTaken = performance.now() - start;
+     } catch (e) {
+       timeTaken = performance.now() - start!;
+       output = e;
+       error = true;
+     }
+ 
+     const type = typeof output;
+     output = typeof output === 'string' ? output : util.inspect(output, { depth });
+
+    const unit = timeTaken < 1 ? `${Math.round(timeTaken / 1e-2)} microseconds` : ms(Math.round(timeTaken), { long: true }); // gotta eatl
     return interaction.editReply(`**Status:** ${error ? 'Error' : 'Success'}\n**Time taken:** ${unit}\n**Return type:** ${type}\n**Output:** \`\`\`js\n${output}\`\`\``)
 
   }

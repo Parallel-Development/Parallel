@@ -32,6 +32,7 @@ model Guild {
   disputeModalQuestions     String[]      @default(["Reason for dispute."])
   disregardDisputeAfter     BigInt        @default(2592000000)
   disputeBlacklist          String[]
+  logWebhookId              String?
   infoWarn                  String?
   infoMute                  String?
   infoKick                  String?

@@ -1,9 +1,8 @@
 import { EmbedBuilder, ModalSubmitInteraction } from "discord.js";
-import client from "../client";
 import Modal from "../lib/structs/Modal";
-import util from 'util';
 import { mainColor } from '../lib/util/constants';
 import { InfractionType } from "@prisma/client";
+import type { DisputeResponse } from '../types';
 
 class DisputeModal extends Modal {
   constructor() {
@@ -17,7 +16,7 @@ class DisputeModal extends Modal {
     const infractionId = +interaction.fields.getTextInputValue('id');
     if ((!infractionId && infractionId !== 0) || infractionId < 1) throw 'Invalid infraction ID.';
 
-    const infraction = await client.db.infraction.findUnique({
+    const infraction = await this.client.db.infraction.findUnique({
       where: {
         id: infractionId
       },
@@ -44,10 +43,10 @@ class DisputeModal extends Modal {
 
     if ([...interaction.fields.fields.values()].slice(1).join('').length > 1000) throw 'Length of answers combined totals to a length greater than 1000.';
 
-    const response = interaction.fields.fields.map(field => { return { question: field.customId, value: field.value }});
+    const response: DisputeResponse = interaction.fields.fields.map(field => { return { question: field.customId, response: field.value }});
     response.shift();
 
-    await client.db.dispute.create({
+    await this.client.db.dispute.create({
       data: {
         id: infraction.id,
         guildId: interaction.guildId,
@@ -57,9 +56,9 @@ class DisputeModal extends Modal {
     });
 
     if (guild.disputeAlertWebhookId) {
-      const webhook = await client.fetchWebhook(guild.disputeAlertWebhookId);
+      const webhook = await this.client.fetchWebhook(guild.disputeAlertWebhookId);
       if (!webhook) {
-        await client.db.guild.update({
+        await this.client.db.guild.update({
           where: {
             id: interaction.guildId
           },
@@ -73,7 +72,7 @@ class DisputeModal extends Modal {
 
       let embedDescription = '';
       embedDescription += `**Infraction ID:** ${infraction.id}\n**Infraction Type:** ${infraction.type.toString()}\n\n`;
-      embedDescription += response.map(q => `Question: ${q.question}\nResponse: ${q.value}`).join('\n\n');
+      embedDescription += response.map(q => `Question: ${q.question}\nResponse: ${q.response}`).join('\n\n');
 
       const embed = new EmbedBuilder()
       .setColor(mainColor)

@@ -1,4 +1,3 @@
-import client from "../client";
 import Listener from "../lib/structs/Listener";
 
 class ReadyListener extends Listener {
@@ -7,7 +6,7 @@ class ReadyListener extends Listener {
   }
 
   async run() {
-    console.log(`Logged in as ${client.user!.tag}`);
+    console.log(`Logged in as ${this.client.user!.tag}`);
   }
 }
 

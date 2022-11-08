@@ -3,7 +3,6 @@ import { PrismaClient } from '@prisma/client';
 import { createPrismaRedisCache } from 'prisma-redis-middleware';
 import fs from 'fs';
 import type Command from './Command';
-import * as util from '../util/functions';
 import type Listener from './Listener';
 import type Modal from './Modal';
 
@@ -11,7 +10,6 @@ class Client extends DJSClient {
   public db = new PrismaClient();
   public commands: Map<string, Command> = new Map();
   public modals: Map<string, Modal> = new Map();
-  public util = util;
 
   constructor() {
     super({

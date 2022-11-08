@@ -1,8 +1,8 @@
 import { InfractionType } from "@prisma/client";
 import { SlashCommandBuilder, PermissionFlagsBits as Permissions, ChatInputCommandInteraction, EmbedBuilder, Colors } from "discord.js";
 import ms from "ms";
-import client from "../client";
 import Command from "../lib/structs/Command";
+import { adequateHierarchy } from "../lib/util/functions";
 const d28 = ms('28d');
 
 class MuteCommand extends Command {
@@ -30,12 +30,12 @@ class MuteCommand extends Command {
     const member = interaction.options.getMember('member');
     if (!member) throw 'The provided user is not in this guild.';
     if (member.id === interaction.user.id) throw 'You cannot mute yourself.';
-    if (member.id === client.user!.id) throw 'You cannot mute me.';
+    if (member.id === this.client.user!.id) throw 'You cannot mute me.';
 
-    if (!client.util.adequateHierarchy(interaction.member, member))
+    if (!adequateHierarchy(interaction.member, member))
       throw 'You cannot mute this member due to inadequete hierarchy.';
 
-    if (!client.util.adequateHierarchy(interaction.guild.members.me!, member))
+    if (!adequateHierarchy(interaction.guild.members.me!, member))
       throw 'I cannot mute this member due to inadequete hierarchy';
 
     const reason = interaction.options.getString('reason') ?? 'None';
@@ -45,16 +45,16 @@ class MuteCommand extends Command {
     if (!expires) throw 'Invalid duration.';
     
     if (expires > d28)
-      throw 'You cannot mute a member for more than `28 days.`';
+      throw 'You cannot mute a member for more than `28 days.`'; 
     if (expires < 1000)
-      throw `Mute duration must be at least 1 second. Consider using <t:/unmute:${client.user!.id}> if you want to unmute the user.`
+      throw `Mute duration must be at least 1 second. Consider using <t:/unmute:${this.client.user!.id}> if you want to unmute the user.`
     const expirationTimestamp = expires + date;
-
-    await interaction.deferReply();
+    
+    await interaction.deferReply()
 
     await member.timeout(Number(expires), reason);
 
-    const infraction = await client.db.infraction.create({
+    const infraction = await this.client.db.infraction.create({
       data: {
         userId: member.id,
         guildId: interaction.guildId,
@@ -74,8 +74,8 @@ class MuteCommand extends Command {
       expires: expirationTimestamp
     }
 
-    await client.db.task.upsert({
-      where: { userId_guildId_type: { userId: interaction.user.id, guildId: interaction.guildId, type: InfractionType.Mute} },
+    await this.client.db.task.upsert({
+      where: { userId_guildId_type: { userId: member.id, guildId: interaction.guildId, type: InfractionType.Mute} },
       update: data,
       create: data
     });
@@ -84,7 +84,7 @@ class MuteCommand extends Command {
     const expiresStr = Math.floor(Number(infraction.expires) / 1000);
 
     const dm = new EmbedBuilder()
-      .setAuthor({ name: 'Parallel Moderation', iconURL: client.user!.displayAvatarURL() })
+      .setAuthor({ name: 'Parallel Moderation', iconURL: this.client.user!.displayAvatarURL() })
       .setTitle(`You were muted in ${interaction.guild.name}`)
       .setColor(Colors.Yellow)
       .setDescription(
@@ -100,6 +100,8 @@ class MuteCommand extends Command {
     ]);
 
     await member.send({ embeds: [dm] }).catch(() => {});
+
+    this.client.emit('punishLog', infraction);
 
     return interaction.editReply(`Muted **${member.user.tag}** with ID \`${infraction.id}\``);
   }

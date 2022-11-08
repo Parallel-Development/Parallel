@@ -1,5 +1,4 @@
 import Listener from "../lib/structs/Listener";
-import client from "../client";
 import { type ModalSubmitInteraction } from "discord.js";
 
 class ModalSubmitCommandListener extends Listener {
@@ -10,7 +9,7 @@ class ModalSubmitCommandListener extends Listener {
   async run(interaction: ModalSubmitInteraction) {
     if (!interaction.inCachedGuild()) return interaction.reply({ content: 'Not sure how this happened...', ephemeral: true });
 
-    const modal = client.modals.get(interaction.customId.split(':')?.[1]);
+    const modal = this.client.modals.get(interaction.customId.split(':')?.[1]);
     if (!modal) return interaction.reply({ content: 'Unknown modal interaction.', ephemeral: true });
 
     try {

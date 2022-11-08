@@ -1,10 +1,4 @@
-export {};
-
-export interface BasicPunishmentOptions {
-  guildId: string;
-  userId: string;
-  date: bigint;
-  reason: string;
-  expires?: bigint;
-  moderatorId?: string;
-}
+export type DisputeResponse = {
+  question: string;
+  response: string;
+}[]

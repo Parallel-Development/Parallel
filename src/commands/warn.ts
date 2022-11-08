@@ -6,8 +6,8 @@ import {
   Colors
 } from 'discord.js';
 import Command from '../lib/structs/Command';
-import client from '../client';
 import ms from 'ms';
+import { adequateHierarchy } from '../lib/util/functions';
 
 class WarnCommand extends Command {
   constructor() {
@@ -30,9 +30,9 @@ class WarnCommand extends Command {
     const member = interaction.options.getMember('member');
     if (!member) throw 'The provided user is not in this guild.';
     if (member.id === interaction.user.id) throw 'You cannot warn yourself.';
-    if (member.id === client.user!.id) throw 'You cannot warn me.';
+    if (member.id === this.client.user!.id) throw 'You cannot warn me.';
 
-    if (!client.util.adequateHierarchy(interaction.member, member))
+    if (!adequateHierarchy(interaction.member, member))
       throw 'You cannot warn this member due to inadequete hierarchy.';
 
     const reason = interaction.options.getString('reason') ?? 'None';
@@ -42,7 +42,7 @@ class WarnCommand extends Command {
 
     await interaction.deferReply();
 
-    const infraction = await client.db.infraction.create({
+    const infraction = await this.client.db.infraction.create({
       data: {
         userId: member.id,
         guildId: interaction.guildId,
@@ -51,13 +51,13 @@ class WarnCommand extends Command {
         expires: expires ?? null,
         reason
       },
-      include: { guild: { select: { infractionModeratorPublic: true, infoWarn: true }} }
+      include: { guild: { select: { infractionModeratorPublic: true, infoWarn: true, logWebhookId: true }} }
     });
 
-    const { infractionModeratorPublic, infoWarn } = infraction.guild;
+    const { infractionModeratorPublic, infoWarn, logWebhookId } = infraction.guild;
 
     const dm = new EmbedBuilder()
-      .setAuthor({ name: 'Parallel Moderation', iconURL: client.user!.displayAvatarURL() })
+      .setAuthor({ name: 'Parallel Moderation', iconURL: this.client.user!.displayAvatarURL() })
       .setTitle(`You received a warning in ${interaction.guild.name}`)
       .setColor(Colors.Yellow)
       .setDescription(
@@ -73,6 +73,7 @@ class WarnCommand extends Command {
     ]);
 
     await member.send({ embeds: [dm] }).catch(() => {});
+    this.client.emit('punishLog', infraction)
 
     return interaction.editReply(`Warning issued for **${member.user.tag}** with ID \`${infraction.id}\``);
   }

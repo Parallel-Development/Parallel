@@ -6,10 +6,10 @@ import {
   EmbedBuilder,
   Colors
 } from 'discord.js';
-import client from '../client';
 import Command from '../lib/structs/Command';
 import { mainColor } from '../lib/util/constants';
 import { bin } from '../lib/util/functions';
+import { DisputeResponse } from '../types';
 
 /*
  * /dispute view [id]
@@ -112,12 +112,11 @@ class DisputeManagerCommand extends Command {
               .setDescription('Remove all users from the blacklist.'))
             .addSubcommand(command => command.setName('view').setDescription('View the blacklist.'))
         )
-    ); // dude I am so confused by the docs literally nothing I search for comes up
-  } // how lol
- // anyways im heading out
+    ); 
+  }
   async run(interaction: ChatInputCommandInteraction<'cached'>) {
     const id = interaction.options.getInteger('id')!;
-    const dontUndo = interaction.options.getString('dont-undo') ?? false;
+    const dontUndo = interaction.options.getBoolean('dont-undo') ?? false;
     const reason = interaction.options.getString('reason') ?? undefined;
     const command = interaction.options.getSubcommand();
     const group = interaction.options.getSubcommandGroup();
@@ -125,7 +124,7 @@ class DisputeManagerCommand extends Command {
     if (group === 'blacklist') {
       const user = interaction.options.getUser('user')!;
 
-      const { disputeBlacklist } = (await client.db.guild.findUnique({
+      const { disputeBlacklist } = (await this.client.db.guild.findUnique({
         where: {
           id: interaction.guildId
         },
@@ -138,7 +137,7 @@ class DisputeManagerCommand extends Command {
         case 'add':
           if (disputeBlacklist.includes(user.id)) throw 'That user is already blacklisted from creating disputes.';
 
-          await client.db.guild.update({
+          await this.client.db.guild.update({
             where: {
               id: interaction.guildId
             },
@@ -155,7 +154,7 @@ class DisputeManagerCommand extends Command {
 
           disputeBlacklist.splice(disputeBlacklist.indexOf(user.id), 1);
 
-          await client.db.guild.update({
+          await this.client.db.guild.update({
             where: {
               id: interaction.guildId
             },
@@ -164,10 +163,10 @@ class DisputeManagerCommand extends Command {
             }
           });
           return interaction.reply(`${user} has been removed from the blacklist.`);
-        case 'view': // this needs to be a file, pastebin or smth
-          return interaction.reply(`View the blacklist list here: ${await bin(`Total blacklists: ${disputeBlacklist.length}\n\n${disputeBlacklist.join('\n')}`)}`)
+        case 'view':
+          return interaction.reply(`View the blacklist here: ${await bin(`Total blacklists: ${disputeBlacklist.length}\n\n${disputeBlacklist.join('\n')}`)}`)
         case 'clear':
-          await client.db.guild.update({
+          await this.client.db.guild.update({
             where: {
               id: interaction.guildId
             },
@@ -182,7 +181,7 @@ class DisputeManagerCommand extends Command {
       return;
     }
 
-    const dispute = await client.db.dispute.findUnique({
+    const dispute = await this.client.db.dispute.findUnique({
       where: {
         id
       },
@@ -196,17 +195,17 @@ class DisputeManagerCommand extends Command {
       case 'view':
         let embedDescription = '';
         embedDescription += `**Infraction ID:** ${dispute.id}\n**Infraction Type:** ${infraction.type.toString()}\n\n`;
-        embedDescription += dispute.response
+        embedDescription += (dispute.response as DisputeResponse)
           .map((field: any) => `Question: ${field.question}\nResponse: ${field.response}`)
           .join('\n\n');
 
-        const user = (await client.users.fetch(dispute.userId))!;
+        const user = (await this.client.users.fetch(dispute.userId))!;
 
         const viewEmbed = new EmbedBuilder()
           .setColor(mainColor)
           .setAuthor({
             name: `Infraction dispute from ${user.tag} (${user.id})`,
-            iconURL: interaction.user.displayAvatarURL()
+            iconURL: user.displayAvatarURL()
           })
           .setDescription(embedDescription)
           .setFooter({ text: `Use /case id:${infraction.id} to get context.` })
@@ -214,7 +213,7 @@ class DisputeManagerCommand extends Command {
 
         return interaction.reply({ embeds: [viewEmbed] });
       case 'disregard':
-        await client.db.dispute.delete({
+        await this.client.db.dispute.delete({
           where: {
             id
           }
@@ -222,7 +221,7 @@ class DisputeManagerCommand extends Command {
 
         return interaction.reply(`Dispute disregarded.`);
       case 'accept':
-        await client.db.dispute.delete({
+        await this.client.db.dispute.delete({
           where: {
             id
           },
@@ -253,7 +252,7 @@ class DisputeManagerCommand extends Command {
         }
 
         const acceptEmbed = new EmbedBuilder()
-          .setAuthor({ name: 'Parallel Moderation', iconURL: client.user!.displayAvatarURL() })
+          .setAuthor({ name: 'Parallel Moderation', iconURL: this.client.user!.displayAvatarURL() })
           .setTitle('Dispute Accepted')
           .setColor(Colors.Green)
           .setDescription(
@@ -263,21 +262,21 @@ class DisputeManagerCommand extends Command {
           );
 
         if (dispute.guild.notifyInfractionChange)
-          await client.users
+          await this.client.users
             .fetch(dispute.userId)
             .then(user => user.send({ embeds: [acceptEmbed] }))
             .catch(() => {});
 
         return interaction.reply('Dispute accepted.');
       case 'deny':
-        await client.db.dispute.delete({
+        await this.client.db.dispute.delete({
           where: {
             id
           }
         });
 
         const denyEmbed = new EmbedBuilder()
-          .setAuthor({ name: 'Parallel Moderation', iconURL: client.user!.displayAvatarURL() })
+          .setAuthor({ name: 'Parallel Moderation', iconURL: this.client.user!.displayAvatarURL() })
           .setTitle('Dispute Denied')
           .setColor(Colors.Red)
           .setDescription(
@@ -287,7 +286,7 @@ class DisputeManagerCommand extends Command {
           );
 
         if (dispute.guild.notifyInfractionChange)
-          await client.users
+          await this.client.users
             .fetch(dispute.userId)
             .then(user => user.send({ embeds: [denyEmbed] }))
             .catch(() => {});

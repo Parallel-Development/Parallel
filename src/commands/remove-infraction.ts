@@ -6,10 +6,8 @@ import {
   Colors
 } from 'discord.js';
 import Command from '../lib/structs/Command';
-import client from '../client';
-import ms from 'ms';
+import { getMember } from '../lib/util/functions';
 import { Infraction, InfractionType } from '@prisma/client';
-import {  } from '../lib/util/constants';
 
 class RemoveInfractionCommand extends Command {
   constructor() {
@@ -37,7 +35,9 @@ class RemoveInfractionCommand extends Command {
     const undo = interaction.options.getBoolean('undo-punishment') ?? false;
     const reason = interaction.options.getString('reason') ?? undefined;
 
-    const infraction = await client.db.infraction.findUnique({
+    await interaction.deferReply();
+
+    const infraction = await this.client.db.infraction.findUnique({
       where: {
         id
       },
@@ -69,15 +69,24 @@ class RemoveInfractionCommand extends Command {
         default:
           throw 'I cannot undo that type of punishment.';
       }
+
+      this.client.emit('punishLog', {
+        userId: infraction.userId,
+        guildId: interaction.guildId,
+        moderatorId: interaction.user.id,
+        reason,
+        type: infraction.type === InfractionType.Ban ? InfractionType.Unban : InfractionType.Unmute,
+        date: BigInt(Date.now())
+      } as Infraction)
     }
 
-    await client.db.infraction.delete({
+    await this.client.db.infraction.delete({
       where: {
         id
       }
     });
 
-    await client.db.task.delete({
+    await this.client.db.task.delete({
       where: {
         userId_guildId_type: {
           userId: infraction.userId,
@@ -89,16 +98,16 @@ class RemoveInfractionCommand extends Command {
 
     if (notifyInfractionChange) {
       const notifyDM = new EmbedBuilder()
-      .setAuthor({ name: 'Parallel Moderation', iconURL: client.user!.displayAvatarURL() })
+      .setAuthor({ name: 'Parallel Moderation', iconURL: this.client.user!.displayAvatarURL() })
       .setTitle('Infraction Removed')
       .setColor(Colors.Green)
-      .setDescription(`**Infraction ID:** \`${infraction.id}\`\n**Infraction punishment:** \`${infraction.type.toString()}\`${reason ? `\n${reason}` : ''}${undo ? '\n\n***•** The correlated punishment to this infraction has also been undone.*' : ''}`);
+      .setDescription(`**Infraction ID:** \`${infraction.id}\`\n**Infraction punishment:** \`${infraction.type.toString()}\`${reason ? `\n${reason}` : ''}${undo ? `\n\n***•** You were also ${infraction.type === InfractionType.Mute ? 'unmuted' : 'unbanned' }.*` : ''}`);
 
-      const member = await client.util.getMember(interaction.guildId, infraction.userId);
+      const member = await getMember(interaction.guildId, infraction.userId);
       if (member) await member.send({ embeds: [notifyDM] }).catch(() => {});
     }
 
-    return interaction.reply(`Infraction \`${infraction.id}\` for <@${infraction.userId}> (${infraction.userId}) has been removed. ${undo ? `The correlated punishment was also undone.` : ''}`)
+    return interaction.editReply(`Infraction \`${infraction.id}\` for <@${infraction.userId}> (${infraction.userId}) has been removed. ${undo ? `The user was also ${infraction.type === InfractionType.Mute ? 'unmuted.' : 'unbanned' }` : ''}`)
 
   }
 }

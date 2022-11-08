@@ -1,5 +1,4 @@
 import Listener from "../lib/structs/Listener";
-import client from "../client";
 import { type Interaction } from "discord.js";
 
 class InteractionCreateListener extends Listener {
@@ -9,9 +8,9 @@ class InteractionCreateListener extends Listener {
 
   async run(interaction: Interaction) {
     if (interaction.isChatInputCommand())
-      return client.emit('chatInputCommand', interaction);
+      return this.client.emit('chatInputCommand', interaction);
     else if (interaction.isModalSubmit())
-      return client.emit('modalSubmit', interaction);
+      return this.client.emit('modalSubmit', interaction);
   }
 }
 

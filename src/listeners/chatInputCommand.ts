@@ -1,5 +1,4 @@
 import Listener from "../lib/structs/Listener";
-import client from "../client";
 import { type ChatInputCommandInteraction } from "discord.js";
 const guildReadyCache: Set<string> = new Set();
 
@@ -11,7 +10,7 @@ class ChatInputCommandListener extends Listener {
   async run(interaction: ChatInputCommandInteraction) {
     if (!interaction.inCachedGuild()) return interaction.reply({ content: 'Commands must be ran in a guild.', ephemeral: true });
 
-    const command = client.commands.get(interaction.commandName);
+    const command = this.client.commands.get(interaction.commandName);
     if (!command) return interaction.reply({ content: 'Unknown Command.', ephemeral: true });
 
     await this.confirmGuild(interaction);
@@ -30,7 +29,7 @@ class ChatInputCommandListener extends Listener {
   }
 
   private async confirmGuild(interaction: ChatInputCommandInteraction<'cached'>) {
-    const guild = await client.db.guild.findUnique({
+    const guild = await this.client.db.guild.findUnique({
       where: {
         id: interaction.guildId
       }
@@ -38,7 +37,7 @@ class ChatInputCommandListener extends Listener {
 
     if (guild) return true;
 
-    await client.db.guild.create({
+    await this.client.db.guild.create({
       data: {
         id: interaction.guildId
       }

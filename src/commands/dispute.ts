@@ -9,7 +9,6 @@ import {
   ModalActionRowComponentBuilder,
   TextInputStyle
 } from 'discord.js';
-import client from '../client';
 import Command from '../lib/structs/Command';
 
 class DisputeCommand extends Command {
@@ -29,7 +28,7 @@ class DisputeCommand extends Command {
   }
 
   async run(interaction: ChatInputCommandInteraction<'cached'>) {
-    const infraction = await client.db.infraction.findUnique({
+    const infraction = await this.client.db.infraction.findUnique({
       where: {
         id: interaction.options.getInteger('id', true)
       },

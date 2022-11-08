@@ -1,7 +1,8 @@
 import { EmbedBuilder } from '@discordjs/builders';
 import { Colors, PermissionFlagsBits as Permissions } from 'discord.js';
-import { InfractionType } from '@prisma/client';
+import { Infraction, InfractionType } from '@prisma/client';
 import client from './client';
+import { getMember } from './lib/util/functions';
 
 setInterval(async () => {
   await client.db.infraction.deleteMany({
@@ -54,7 +55,7 @@ setInterval(async () => {
       if (task.type === InfractionType.Ban) {
         await guild.members.unban(task.userId).catch(() => {});
       } else {
-        const member = await client.util.getMember(guild, task.userId);
+        const member = await getMember(guild, task.userId);
         if (member) {
           // parallel listens for timeout changes, but in the event that it misses it, we still double check
           // if the user is timed out for more than `10` seconds then we'll update the expiration date accordingly
@@ -88,6 +89,15 @@ setInterval(async () => {
           id: task.id
         }
       });
+
+      client.emit('punishLog', {
+        userId: task.userId,
+        guildId: task.guildId,
+        moderatorId: client.user!.id,
+        reason: `${task.type === InfractionType.Ban ? 'Ban' : 'Timeout'} Expired.`,
+        type: task.type === InfractionType.Ban ? InfractionType.Unban : InfractionType.Unmute,
+        date: BigInt(Date.now())
+      } as Infraction)
     }
   }
 }, 60000);

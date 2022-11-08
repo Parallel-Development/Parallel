@@ -13,6 +13,10 @@ class EvalCommand extends Command {
         option
           .setName('code')
           .setDescription('The code to execute. Leaving this empty will open a modal.'))
+      .addBooleanOption(option =>
+        option
+          .setName('async')
+          .setDescription('Evaluate the code in an async function.'))
       .addIntegerOption(option =>
         option.setName('depth')
         .setDescription('Output depth.')
@@ -38,42 +42,59 @@ class EvalCommand extends Command {
 
       codeRow.setComponents(codeText);
 
+      const asyncRow = new ActionRowBuilder<ModalActionRowComponentBuilder>();
+      const asyncText = new TextInputBuilder()
+      .setLabel('Async')
+      .setCustomId('async')
+      .setMinLength(4)
+      .setMaxLength(5)
+      .setStyle(TextInputStyle.Short)
+      .setValue('false')
+
+      asyncRow.setComponents(asyncText);
+
       const depthRow = new ActionRowBuilder<ModalActionRowComponentBuilder>();
       const depthText = new TextInputBuilder()
       .setLabel('Depth')
       .setCustomId('depth')
       .setStyle(TextInputStyle.Short)
-      .setRequired(false)
+      .setValue('0')
 
       depthRow.setComponents(depthText);
 
-      modal.setComponents(codeRow, depthRow);
+      modal.setComponents(codeRow, asyncRow, depthRow);
 
       interaction.showModal(modal);
       return;
     }
 
-    const asyncronous = code.includes('await ');
+    const asyncronous = interaction.options.getBoolean('async') ?? false;
     const depth = interaction.options.getInteger('depth') ?? 0;
 
     await interaction.deferReply();
     let output;
     let error = false;
-    const start = performance.now();
-    try { 
-      output = await eval(asyncronous ? `(async() => { ${code} })()` : code)
+
+    // time the evaluation
+    let start: number;
+    let timeTaken: number;
+    try {
+      start = performance.now();
+      output = await eval(asyncronous ? `(async() => { ${code} })()` : code);
+      timeTaken = performance.now() - start;
     } catch (e) {
+      timeTaken = performance.now() - start!;
       output = e;
       error = true;
     }
-    const end = performance.now();
-    const timeTaken = end - start;
+
     const type = typeof output;
-    output = util.inspect(output, { depth });
+    output = typeof output === 'string' ? output : util.inspect(output, { depth });
 
     const unit = timeTaken < 1 ? `${Math.round(timeTaken / 1e-2)} microseconds` : ms(Math.round(timeTaken), { long: true });
     return interaction.editReply(`**Status:** ${error ? 'Error' : 'Success'}\n**Time taken:** ${unit}\n**Return type:** ${type}\n**Output:** \`\`\`js\n${output}\`\`\``)
 
   }
 }
+
 export default EvalCommand;
