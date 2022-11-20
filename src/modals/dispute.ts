@@ -56,7 +56,7 @@ class DisputeModal extends Modal {
     });
 
     if (guild.disputeAlertWebhookId) {
-      const webhook = await this.client.fetchWebhook(guild.disputeAlertWebhookId);
+      const webhook = await this.client.fetchWebhook(guild.disputeAlertWebhookId).catch(() => null);
       if (!webhook) {
         await this.client.db.guild.update({
           where: {
