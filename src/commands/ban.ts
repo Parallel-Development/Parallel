@@ -32,7 +32,8 @@ class BanCommand extends Command {
               { name: 'Previous 3 days', value: '3d' },
               { name: 'Previous 7 days', value: '7d' }
             )
-        )
+        ),
+      [Permissions.BanMembers]
     );
   }
   async run(interaction: ChatInputCommandInteraction<'cached'>) {

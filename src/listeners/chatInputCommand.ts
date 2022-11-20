@@ -1,6 +1,5 @@
 import Listener from "../lib/structs/Listener";
 import { type ChatInputCommandInteraction } from "discord.js";
-const guildReadyCache: Set<string> = new Set();
 
 class ChatInputCommandListener extends Listener {
   constructor() {
@@ -12,6 +11,11 @@ class ChatInputCommandListener extends Listener {
 
     const command = this.client.commands.get(interaction.commandName);
     if (!command) return interaction.reply({ content: 'Unknown Command.', ephemeral: true });
+
+    if (command.clientPermissions) {
+      if (!interaction.guild.members.me!.permissions.has(command.clientPermissions))
+        return interaction.reply({ content: `I don\'t have the required permissions to complete this command.\nMissing: \`${command.clientPermissions.toArray().join('`, `').replaceAll(/[a-z][A-Z]/g, m => `${m[0]} ${m[1]}`)}\``, ephemeral: true })
+    }
 
     await this.confirmGuild(interaction);
     

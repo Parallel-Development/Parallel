@@ -16,7 +16,9 @@ class PunishLog extends Listener {
       }
     }))!;
 
-    const webhook = await this.client.fetchWebhook(guild.logWebhookId!);
+    if (!guild.logWebhookId) return false;
+
+    const webhook = await this.client.fetchWebhook(guild.logWebhookId!).catch(() => null);
     if (!webhook) {
       await this.client.db.guild.update({
         where: {
@@ -26,6 +28,8 @@ class PunishLog extends Listener {
           logWebhookId: null
         }
       });
+
+      return false
     }
 
     const embed = new EmbedBuilder()

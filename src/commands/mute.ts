@@ -23,7 +23,8 @@ class MuteCommand extends Command {
       .addStringOption(option =>
         option.setName('reason')
         .setDescription('The reason for the mute.'))
-    )
+    ),
+    [Permissions.ModerateMembers]
   }
 
   async run(interaction: ChatInputCommandInteraction<'cached'>) {

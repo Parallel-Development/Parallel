@@ -16,7 +16,8 @@ class MuteCommand extends Command {
         .setRequired(true))
       .addStringOption(option =>
         option.setName('reason')
-        .setDescription('The reason for the unmute.'))
+        .setDescription('The reason for the unmute.')),
+      [Permissions.ModerateMembers]
     )
   }
 

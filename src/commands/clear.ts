@@ -14,7 +14,8 @@ class ClearCommand extends Command {
         .addUserOption(option => option.setName('from').setDescription('Clear messages from a specific user.'))
         .addStringOption(option =>
           option.setName('before').setDescription('Clear the messages before a specific message.')
-        )
+        ),
+      [Permissions.ManageMessages]
     );
   }
 

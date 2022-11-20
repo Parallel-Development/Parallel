@@ -17,7 +17,8 @@ class KickCommand extends Command {
       .addStringOption(option =>
         option.setName('reason')
         .setDescription('The reason for kicking.'))
-    )
+    ),
+    [Permissions.KickMembers]
   }
 
   async run(interaction: ChatInputCommandInteraction<'cached'>) {

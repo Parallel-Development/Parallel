@@ -24,7 +24,8 @@ class FixnickCommand extends Command {
         )
         .addBooleanOption(option =>
           option.setName('from-username').setDescription('Fix from username rather than guild nickname')
-        )
+        ),
+      [Permissions.ManageNicknames]
     );
   }
 
