@@ -1,5 +1,5 @@
 import { InfractionType } from "@prisma/client";
-import { SlashCommandBuilder, PermissionFlagsBits as Permissions, ChatInputCommandInteraction, EmbedBuilder, Colors } from "discord.js";
+import { SlashCommandBuilder, PermissionFlagsBits as Permissions, type ChatInputCommandInteraction, EmbedBuilder, Colors } from "discord.js";
 import Command from "../lib/structs/Command";
 import { adequateHierarchy } from "../lib/util/functions";
 

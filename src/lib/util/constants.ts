@@ -15,3 +15,4 @@ export namespace Pagination {
 }
 
 export const mainColor = Colors.Fuchsia;
+export const commonChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789';

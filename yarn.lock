@@ -100,6 +100,56 @@
   dependencies:
     "@types/node" "*"
 
+"@vierofernando/decancer-darwin-arm64@1.4.1":
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/@vierofernando/decancer-darwin-arm64/-/decancer-darwin-arm64-1.4.1.tgz#153cc0894cfa3a7b2a02e93340a899f09c332903"
+  integrity sha512-zAfUs4kaHBlO4QlDyiyZjZ6KdCTvNX7XMYZNioy05RSwZuzk9SmnONCuhtwEDz8X5TcAqidxA4SV7UcIlFdThQ==
+
+"@vierofernando/decancer-darwin-x64@1.4.1":
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/@vierofernando/decancer-darwin-x64/-/decancer-darwin-x64-1.4.1.tgz#9aaaf061b9ec2c5930c21e6ecde9a25caeb1af80"
+  integrity sha512-sTTvXFWrX1BBwQu1w+h8Lk12Jg75kv+51BgSdZp6ANsi4SF/N6sNkZWU/iF3+JOKodd3YfMaoWrIDQVr/UnanQ==
+
+"@vierofernando/decancer-linux-arm-gnueabihf@1.4.1":
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/@vierofernando/decancer-linux-arm-gnueabihf/-/decancer-linux-arm-gnueabihf-1.4.1.tgz#987f6db43a1975a40a7d0f85fcb9edb40e15b28b"
+  integrity sha512-k3IyYwXauCWCrhp75Iz9YZh8qzQ6XtFshg2KkYmIcDoknNEeXyDcRRNbiPHaJHiTTquGBB+/z5V/x+0O4/2AEg==
+
+"@vierofernando/decancer-linux-arm64-gnu@1.4.1":
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/@vierofernando/decancer-linux-arm64-gnu/-/decancer-linux-arm64-gnu-1.4.1.tgz#0a586b2c5853777e874fa7018e31f6b4717b1279"
+  integrity sha512-yOpIGkRQ3vjpKMnS8JavabvulzHFqiae5jMm08cdl4mkfdsu6uhMDTSMn6vl1LNXRjBxNUSRaY9ISNKlbl0nkg==
+
+"@vierofernando/decancer-linux-arm64-musl@1.4.1":
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/@vierofernando/decancer-linux-arm64-musl/-/decancer-linux-arm64-musl-1.4.1.tgz#fbb5a1043b37950168e5e79bf28ced4a8e36f224"
+  integrity sha512-JhUK77YAPLmFofYMhfbzRMTAgzriKD66/H+PBsuYISM3u7UqxEk41o8dEUp9B0kpAa2o9Ej6seEJdQHbDBtObg==
+
+"@vierofernando/decancer-linux-x64-gnu@1.4.1":
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/@vierofernando/decancer-linux-x64-gnu/-/decancer-linux-x64-gnu-1.4.1.tgz#6f5be1767abfef4d22f35f590fc88dbe0dd2ebd6"
+  integrity sha512-ZggnxEfpYszt/F3xuQlrd2s2gbbZqOf0G1NjZvx6gGjNLr8ht0ko3RV7jgiBXKxicqspOF7Q6z2L7VfvEh33KA==
+
+"@vierofernando/decancer-linux-x64-musl@1.4.1":
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/@vierofernando/decancer-linux-x64-musl/-/decancer-linux-x64-musl-1.4.1.tgz#a8d34b0caeed6724c92fd2467817a5ee233af391"
+  integrity sha512-Up5Y6s0uvVWSHyny0zOlv6zh7n2y8/iq3FzAxgmTZERgpDVVtK7E2gEitJw3gJZjbH1BZ9YBJRhI+2D4sQnw7g==
+
+"@vierofernando/decancer-win32-arm64-msvc@1.4.1":
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/@vierofernando/decancer-win32-arm64-msvc/-/decancer-win32-arm64-msvc-1.4.1.tgz#ecab6e4ec8ad9588dd6ad21c659ccc8961cc3399"
+  integrity sha512-qwD+PIR5zkWG7OnN5/hFS2Kncq/ZGErRxTWQuEIfP1eYTBDQrxMnl6mW4Mmk/+90uJH7IeNDqFLmuPQBPw2+Lw==
+
+"@vierofernando/decancer-win32-ia32-msvc@1.4.1":
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/@vierofernando/decancer-win32-ia32-msvc/-/decancer-win32-ia32-msvc-1.4.1.tgz#807c768431b449432e275203aca8ee8a91e46ae5"
+  integrity sha512-MRV8rL6OCJN7PM3EcByZRKV62jITkAQqcQ4k6hZExW1mCpfgU/dD5xA9gANtDQaNxMtG7dtfS8sGXJEGAmFybQ==
+
+"@vierofernando/decancer-win32-x64-msvc@1.4.1":
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/@vierofernando/decancer-win32-x64-msvc/-/decancer-win32-x64-msvc-1.4.1.tgz#80c01c8f07c560982ec16bd3fd942e5e4c0e9928"
+  integrity sha512-hC5A4UK6+puavWbiBlKv9g5UeaavLEnCe/OKUdZmT21TJOuLQLILiTRSbB2QfroSPb7dakQ/jFbHUEMmIIJlSA==
+
 abstract-logging@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/abstract-logging/-/abstract-logging-2.0.1.tgz#6b0c371df212db7129b57d2e7fcf282b8bf1c839"
@@ -132,6 +182,22 @@ debug@^4.3.4:
   integrity sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==
   dependencies:
     ms "2.1.2"
+
+decancer@^1.4.1:
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/decancer/-/decancer-1.4.1.tgz#85e23463cca6d6e1e4c62a7e3467cdcd65ba17bf"
+  integrity sha512-mIlC0VgD4CuPjXX6JawFt/Oiw+ltJM9UpHguuG5Mna95SA2R5HfIMRaM/ITWppIpVt00hkG4gdlGeQp5D8jViA==
+  optionalDependencies:
+    "@vierofernando/decancer-darwin-arm64" "1.4.1"
+    "@vierofernando/decancer-darwin-x64" "1.4.1"
+    "@vierofernando/decancer-linux-arm-gnueabihf" "1.4.1"
+    "@vierofernando/decancer-linux-arm64-gnu" "1.4.1"
+    "@vierofernando/decancer-linux-arm64-musl" "1.4.1"
+    "@vierofernando/decancer-linux-x64-gnu" "1.4.1"
+    "@vierofernando/decancer-linux-x64-musl" "1.4.1"
+    "@vierofernando/decancer-win32-arm64-msvc" "1.4.1"
+    "@vierofernando/decancer-win32-ia32-msvc" "1.4.1"
+    "@vierofernando/decancer-win32-x64-msvc" "1.4.1"
 
 denque@^2.0.1:
   version "2.1.0"

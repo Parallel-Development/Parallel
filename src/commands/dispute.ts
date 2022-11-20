@@ -1,12 +1,11 @@
 import { DisputeMethod, InfractionType } from '@prisma/client';
 import {
-  ChatInputCommandInteraction,
+  type ChatInputCommandInteraction,
   ModalBuilder,
   SlashCommandBuilder,
   TextInputBuilder,
   ActionRowBuilder,
-  ActionRow,
-  ModalActionRowComponentBuilder,
+  type ModalActionRowComponentBuilder,
   TextInputStyle
 } from 'discord.js';
 import Command from '../lib/structs/Command';

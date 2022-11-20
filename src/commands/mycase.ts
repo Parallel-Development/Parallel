@@ -1,7 +1,6 @@
 import {
   type ChatInputCommandInteraction,
   SlashCommandBuilder,
-  PermissionFlagsBits as Permissions,
   EmbedBuilder,
   Colors
 } from 'discord.js';

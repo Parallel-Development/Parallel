@@ -2,7 +2,7 @@ import { InfractionType } from '@prisma/client';
 import {
   SlashCommandBuilder,
   PermissionFlagsBits as Permissions,
-  ChatInputCommandInteraction,
+  type ChatInputCommandInteraction,
   EmbedBuilder,
   Colors
 } from 'discord.js';
@@ -55,7 +55,7 @@ class BanCommand extends Command {
     const date = BigInt(Date.now());
     const expires = uExpiration ? BigInt(ms(uExpiration)) + date : null;
 
-    if (expires && expires < 1000) throw `Temporary ban duration must be at least 1 second.`;
+    if (expires && expires < 1000) throw 'Temporary ban duration must be at least 1 second.';
     const deleteMessageSeconds = Math.floor(ms(interaction.options.getString('delete-previous-messages') ?? '0s') / 1000);
 
     const expirationTimestamp = expires ? expires + date : undefined;

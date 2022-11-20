@@ -2,7 +2,7 @@ import { InfractionType } from '@prisma/client';
 import {
   SlashCommandBuilder,
   PermissionFlagsBits as Permissions,
-  ChatInputCommandInteraction
+  type ChatInputCommandInteraction
 } from 'discord.js';
 import Command from '../lib/structs/Command';
 
