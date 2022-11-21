@@ -1,24 +1,25 @@
-import { SlashCommandBuilder, PermissionFlagsBits as Permissions, type ChatInputCommandInteraction, Colors, EmbedBuilder } from "discord.js";
-import { adequateHierarchy } from "../lib/util/functions";
-import { InfractionType } from "@prisma/client";
-import Command from "../lib/structs/Command";
+import {
+  SlashCommandBuilder,
+  PermissionFlagsBits as Permissions,
+  type ChatInputCommandInteraction,
+  Colors,
+  EmbedBuilder
+} from 'discord.js';
+import { adequateHierarchy } from '../lib/util/functions';
+import { InfractionType } from '@prisma/client';
+import Command from '../lib/structs/Command';
 
 class KickCommand extends Command {
   constructor() {
     super(
       new SlashCommandBuilder()
-      .setName('kick')
-      .setDescription('Kick a member from the guild.')
-      .setDefaultMemberPermissions(Permissions.KickMembers)
-      .addUserOption(option =>
-        option.setName('member')
-        .setDescription('The member to kick.')
-        .setRequired(true))
-      .addStringOption(option =>
-        option.setName('reason')
-        .setDescription('The reason for kicking.'))
+        .setName('kick')
+        .setDescription('Kick a member from the guild.')
+        .setDefaultMemberPermissions(Permissions.KickMembers)
+        .addUserOption(option => option.setName('member').setDescription('The member to kick.').setRequired(true))
+        .addStringOption(option => option.setName('reason').setDescription('The reason for kicking.'))
     ),
-    [Permissions.KickMembers]
+      [Permissions.KickMembers];
   }
 
   async run(interaction: ChatInputCommandInteraction<'cached'>) {
@@ -34,7 +35,7 @@ class KickCommand extends Command {
       throw 'I cannot kick this member due to inadequete hierarchy';
 
     const reason = interaction.options.getString('reason') ?? 'None';
-    
+
     await interaction.deferReply();
 
     const infraction = await this.client.db.infraction.create({
@@ -46,7 +47,7 @@ class KickCommand extends Command {
         moderatorId: interaction.user.id,
         reason
       },
-      include: { guild: { select: { infractionModeratorPublic: true, infoKick: true }} }
+      include: { guild: { select: { infractionModeratorPublic: true, infoKick: true } } }
     });
 
     const { infractionModeratorPublic, infoKick } = infraction.guild;
@@ -56,16 +57,12 @@ class KickCommand extends Command {
       .setTitle(`You were kicked from ${interaction.guild.name}`)
       .setColor(Colors.Red)
       .setDescription(
-        `${reason}${
-          infractionModeratorPublic ? `\n***•** Kicked by ${interaction.member.toString()}*\n` : ''
-        }`
+        `${reason}${infractionModeratorPublic ? `\n***•** Kicked by ${interaction.member.toString()}*\n` : ''}`
       )
       .setFooter({ text: `Punishment ID: ${infraction.id}` })
       .setTimestamp();
 
-    if (infoKick) dm.addFields([
-      { name: 'Additional Information', value: infoKick }
-    ]);
+    if (infoKick) dm.addFields([{ name: 'Additional Information', value: infoKick }]);
 
     await member.send({ embeds: [dm] }).catch(() => {});
 

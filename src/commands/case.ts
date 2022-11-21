@@ -31,8 +31,7 @@ class CaseCommand extends Command {
       include: { dispute: true }
     });
 
-    if (infraction?.guildId !== interaction.guildId)
-      throw 'No infraction with that ID exists in this guild.';
+    if (infraction?.guildId !== interaction.guildId) throw 'No infraction with that ID exists in this guild.';
 
     const infractionEmbed = new EmbedBuilder()
       .setTitle(`Case ${id} | ${infraction.type.toString()}`)
@@ -58,7 +57,9 @@ class CaseCommand extends Command {
                 Number(infraction.expires) / 1000
               )}:R>)`
             : ''
-        }\n**Reason:** ${infraction.reason}${infraction.dispute ? '\n***•** There is a dispute for this infraction*' : ''}`
+        }\n**Reason:** ${infraction.reason}${
+          infraction.dispute ? '\n***•** There is a dispute for this infraction*' : ''
+        }`
       );
 
     return interaction.reply({ embeds: [infractionEmbed] });

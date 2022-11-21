@@ -1,5 +1,5 @@
-import Listener from "../lib/structs/Listener";
-import { type Interaction } from "discord.js";
+import Listener from '../lib/structs/Listener';
+import { type Interaction } from 'discord.js';
 
 class InteractionCreateListener extends Listener {
   constructor() {
@@ -7,10 +7,8 @@ class InteractionCreateListener extends Listener {
   }
 
   async run(interaction: Interaction) {
-    if (interaction.isChatInputCommand())
-      return this.client.emit('chatInputCommand', interaction);
-    else if (interaction.isModalSubmit())
-      return this.client.emit('modalSubmit', interaction);
+    if (interaction.isChatInputCommand()) return this.client.emit('chatInputCommand', interaction);
+    else if (interaction.isModalSubmit()) return this.client.emit('modalSubmit', interaction);
   }
 }
 

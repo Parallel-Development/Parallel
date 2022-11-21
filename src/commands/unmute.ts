@@ -1,24 +1,25 @@
-import { InfractionType } from "@prisma/client";
-import { SlashCommandBuilder, PermissionFlagsBits as Permissions, type ChatInputCommandInteraction, EmbedBuilder, Colors } from "discord.js";
-import Command from "../lib/structs/Command";
-import { adequateHierarchy } from "../lib/util/functions";
+import { InfractionType } from '@prisma/client';
+import {
+  SlashCommandBuilder,
+  PermissionFlagsBits as Permissions,
+  type ChatInputCommandInteraction,
+  EmbedBuilder,
+  Colors
+} from 'discord.js';
+import Command from '../lib/structs/Command';
+import { adequateHierarchy } from '../lib/util/functions';
 
 class MuteCommand extends Command {
   constructor() {
     super(
       new SlashCommandBuilder()
-      .setName('unmute')
-      .setDescription('Unmute a member.')
-      .setDefaultMemberPermissions(Permissions.ModerateMembers)
-      .addUserOption(option =>
-        option.setName('member')
-        .setDescription('The member to unmute.')
-        .setRequired(true))
-      .addStringOption(option =>
-        option.setName('reason')
-        .setDescription('The reason for the unmute.')),
+        .setName('unmute')
+        .setDescription('Unmute a member.')
+        .setDefaultMemberPermissions(Permissions.ModerateMembers)
+        .addUserOption(option => option.setName('member').setDescription('The member to unmute.').setRequired(true))
+        .addStringOption(option => option.setName('reason').setDescription('The reason for the unmute.')),
       [Permissions.ModerateMembers]
-    )
+    );
   }
 
   async run(interaction: ChatInputCommandInteraction<'cached'>) {
@@ -37,15 +38,17 @@ class MuteCommand extends Command {
 
     await member.timeout(null);
 
-    await this.client.db.task.delete({
-      where: {
-        userId_guildId_type: {
-          guildId: interaction.guildId,
-          userId: member.id,
-          type: InfractionType.Mute
+    await this.client.db.task
+      .delete({
+        where: {
+          userId_guildId_type: {
+            guildId: interaction.guildId,
+            userId: member.id,
+            type: InfractionType.Mute
+          }
         }
-      }
-    }).catch(() => {});
+      })
+      .catch(() => {});
 
     const infraction = (await this.client.db.infraction.create({
       data: {
@@ -56,7 +59,7 @@ class MuteCommand extends Command {
         date,
         reason
       },
-      include: { guild: { select: { infractionModeratorPublic: true }} }
+      include: { guild: { select: { infractionModeratorPublic: true } } }
     }))!;
 
     const { infractionModeratorPublic } = infraction.guild;

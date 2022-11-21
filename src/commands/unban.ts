@@ -1,9 +1,5 @@
 import { InfractionType } from '@prisma/client';
-import {
-  SlashCommandBuilder,
-  PermissionFlagsBits as Permissions,
-  type ChatInputCommandInteraction
-} from 'discord.js';
+import { SlashCommandBuilder, PermissionFlagsBits as Permissions, type ChatInputCommandInteraction } from 'discord.js';
 import Command from '../lib/structs/Command';
 
 class UnbanCommand extends Command {
@@ -37,7 +33,7 @@ class UnbanCommand extends Command {
       },
       include: { guild: { select: { infractionModeratorPublic: true } } }
     });
-    
+
     await interaction.guild.members.unban(user.id, reason);
 
     this.client.emit('punishLog', infraction);

@@ -51,7 +51,7 @@ class WarnCommand extends Command {
         expires: expires ?? null,
         reason
       },
-      include: { guild: { select: { infractionModeratorPublic: true, infoWarn: true, logWebhookId: true }} }
+      include: { guild: { select: { infractionModeratorPublic: true, infoWarn: true, logWebhookId: true } } }
     });
 
     const { infractionModeratorPublic, infoWarn, logWebhookId } = infraction.guild;
@@ -68,12 +68,10 @@ class WarnCommand extends Command {
       .setFooter({ text: `Infraction ID: ${infraction.id}` })
       .setTimestamp();
 
-    if (infoWarn) dm.addFields([
-      { name: 'Additional Information', value: infoWarn }
-    ]);
+    if (infoWarn) dm.addFields([{ name: 'Additional Information', value: infoWarn }]);
 
     await member.send({ embeds: [dm] }).catch(() => {});
-    this.client.emit('punishLog', infraction)
+    this.client.emit('punishLog', infraction);
 
     return interaction.editReply(`Warning issued for **${member.user.tag}** with ID \`${infraction.id}\``);
   }

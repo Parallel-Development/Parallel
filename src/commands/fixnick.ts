@@ -15,7 +15,7 @@ class FixnickCommand extends Command {
         .addStringOption(option =>
           option
             .setName('fix')
-            .setDescription('Select what to fix in the member\'s user/nickname.')
+            .setDescription("Select what to fix in the member's user/nickname.")
             .addChoices(
               { name: 'Font', value: 'font' },
               { name: 'Hoisted', value: 'hoisted' },
@@ -33,10 +33,8 @@ class FixnickCommand extends Command {
     const member = interaction.options.getMember('member');
     if (!member) throw 'The provided user is not in this guild.';
 
-    if (member.id === interaction.user.id)
-      throw 'You cannot fix your own nickname.';
-    if (member.id === this.client.user!.id)
-      throw 'You cannot fix my own nickname.';
+    if (member.id === interaction.user.id) throw 'You cannot fix your own nickname.';
+    if (member.id === this.client.user!.id) throw 'You cannot fix my own nickname.';
     if (!adequateHierarchy(interaction.member, member))
       throw "You cannot manage this member's nickname due to inadequate hierarchy.";
     if (!adequateHierarchy(interaction.guild.members.me!, member))

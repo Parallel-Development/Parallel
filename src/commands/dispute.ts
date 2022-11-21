@@ -35,21 +35,20 @@ class DisputeCommand extends Command {
     });
 
     if (infraction?.guildId !== interaction.guildId) throw 'No infraction with that ID exists.';
-    if (infraction.userId !== interaction.user.id) throw 'You cannot create a dispute for an infraction that is not on your record.';
-    if (infraction.type === InfractionType.Unmute || infraction.type === InfractionType.Unban) throw 'You cannot dispute that kind of infraction.';
+    if (infraction.userId !== interaction.user.id)
+      throw 'You cannot create a dispute for an infraction that is not on your record.';
+    if (infraction.type === InfractionType.Unmute || infraction.type === InfractionType.Unban)
+      throw 'You cannot dispute that kind of infraction.';
 
     const { guild } = infraction;
 
-    if (!guild.allowDispute)
-      throw 'This guild is not accepting infraction disputes.';
+    if (!guild.allowDispute) throw 'This guild is not accepting infraction disputes.';
 
     if (guild.disputeBlacklist.includes(interaction.user.id))
       throw 'You are blacklisted from creating new disputes in this guild.';
 
     if (guild.disputeMethod === DisputeMethod.Link)
-      return interaction.reply(
-        `Infraction disputes for this guild are set to be handled at ${guild.disputeLink}`
-      );
+      return interaction.reply(`Infraction disputes for this guild are set to be handled at ${guild.disputeLink}`);
 
     if (infraction.dispute) throw 'A dispute for that infraction has already been made.';
 
@@ -59,16 +58,16 @@ class DisputeCommand extends Command {
     const idQuestionRow = new ActionRowBuilder<ModalActionRowComponentBuilder>();
 
     const idQuestion = new TextInputBuilder()
-    .setLabel('Infraction ID')
-    .setStyle(TextInputStyle.Short)
-    .setValue(infraction.id.toString())
-    .setCustomId('id')
-    .setRequired(true);
-    
+      .setLabel('Infraction ID')
+      .setStyle(TextInputStyle.Short)
+      .setValue(infraction.id.toString())
+      .setCustomId('id')
+      .setRequired(true);
+
     idQuestionRow.setComponents(idQuestion);
     modal.components.push(idQuestionRow);
 
-    for (const question of guild.disputeModalQuestions) { // ya
+    for (const question of guild.disputeModalQuestions) {
       const row = new ActionRowBuilder<ModalActionRowComponentBuilder>();
       const questionText = new TextInputBuilder()
         .setLabel(question)
@@ -84,7 +83,7 @@ class DisputeCommand extends Command {
     interaction.showModal(modal);
 
     return;
-  }  
+  }
 }
 
 export default DisputeCommand;

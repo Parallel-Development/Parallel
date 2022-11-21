@@ -1,4 +1,4 @@
-import { ModalSubmitInteraction } from "discord.js";
+import { ModalSubmitInteraction } from 'discord.js';
 import client from '../../client';
 
 abstract class Modal {

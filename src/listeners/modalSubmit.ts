@@ -1,5 +1,5 @@
-import Listener from "../lib/structs/Listener";
-import { type ModalSubmitInteraction } from "discord.js";
+import Listener from '../lib/structs/Listener';
+import { type ModalSubmitInteraction } from 'discord.js';
 
 class ModalSubmitCommandListener extends Listener {
   constructor() {
@@ -7,7 +7,8 @@ class ModalSubmitCommandListener extends Listener {
   }
 
   async run(interaction: ModalSubmitInteraction) {
-    if (!interaction.inCachedGuild()) return interaction.reply({ content: 'Not sure how this happened...', ephemeral: true });
+    if (!interaction.inCachedGuild())
+      return interaction.reply({ content: 'Not sure how this happened...', ephemeral: true });
 
     const modal = this.client.modals.get(interaction.customId.split(':')?.[1]);
     if (!modal) return interaction.reply({ content: 'Unknown modal interaction.', ephemeral: true });
@@ -20,7 +21,7 @@ class ModalSubmitCommandListener extends Listener {
         return;
       }
 
-      if (!interaction.deferred && !interaction.replied) return interaction.reply({ content: e, ephemeral: true })
+      if (!interaction.deferred && !interaction.replied) return interaction.reply({ content: e, ephemeral: true });
       else return interaction.editReply({ content: e as string });
     }
   }

@@ -29,7 +29,7 @@ class PunishLog extends Listener {
         }
       });
 
-      return false
+      return false;
     }
 
     const embed = new EmbedBuilder()

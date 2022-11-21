@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder, PermissionsBitField } from "discord.js";
+import { ChatInputCommandInteraction, SlashCommandBuilder, PermissionsBitField } from 'discord.js';
 import client from '../../client';
 
 abstract class Command {
@@ -8,7 +8,7 @@ abstract class Command {
 
   constructor(data: Partial<SlashCommandBuilder>, clientPermissions: bigint[] = [0n]) {
     this.data = data;
-    this.clientPermissions = new PermissionsBitField(clientPermissions)
+    this.clientPermissions = new PermissionsBitField(clientPermissions);
   }
 
   abstract run(interaction: ChatInputCommandInteraction<'cached'>): unknown;

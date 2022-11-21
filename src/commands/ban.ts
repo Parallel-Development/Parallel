@@ -57,7 +57,9 @@ class BanCommand extends Command {
     const expires = uExpiration ? BigInt(ms(uExpiration)) + date : null;
 
     if (expires && expires < 1000) throw 'Temporary ban duration must be at least 1 second.';
-    const deleteMessageSeconds = Math.floor(ms(interaction.options.getString('delete-previous-messages') ?? '0s') / 1000);
+    const deleteMessageSeconds = Math.floor(
+      ms(interaction.options.getString('delete-previous-messages') ?? '0s') / 1000
+    );
 
     const expirationTimestamp = expires ? expires + date : undefined;
 
@@ -83,7 +85,7 @@ class BanCommand extends Command {
         type: InfractionType.Ban,
         expires: expirationTimestamp
       };
-  
+
       await this.client.db.task.upsert({
         where: {
           userId_guildId_type: { userId: user.id, guildId: interaction.guildId, type: InfractionType.Ban }

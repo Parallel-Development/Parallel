@@ -1,4 +1,4 @@
-import Listener from "../lib/structs/Listener";
+import Listener from '../lib/structs/Listener';
 
 class ReadyListener extends Listener {
   constructor() {

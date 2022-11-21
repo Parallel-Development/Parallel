@@ -38,7 +38,7 @@ class Client extends DJSClient {
       allowedMentions: {
         parse: []
       }
-    })
+    });
   }
 
   async _cacheModals() {
@@ -64,9 +64,9 @@ class Client extends DJSClient {
     for (const file of files) {
       const listenerClass = (await import(`../../listeners/${file.slice(0, -3)}`)).default;
       const listenerInstant: Listener = new listenerClass();
-      listenerInstant.once 
-      ? this.once(listenerInstant.name, (...args) => void listenerInstant.run(...args))
-      : this.on(listenerInstant.name, (...args) => void listenerInstant.run(...args));
+      listenerInstant.once
+        ? this.once(listenerInstant.name, (...args) => void listenerInstant.run(...args))
+        : this.on(listenerInstant.name, (...args) => void listenerInstant.run(...args));
     }
   }
 
@@ -75,16 +75,18 @@ class Client extends DJSClient {
     await this._cacheModals();
     await this._loadListeners();
 
-    this.db.$use(createPrismaRedisCache({
-      storage: {
-        type: 'memory',
-        options: {
-          invalidation: true
-        }
-      },
-      cacheTime: 600000
-    })); 
-    await this.db.$connect(); 
+    this.db.$use(
+      createPrismaRedisCache({
+        storage: {
+          type: 'memory',
+          options: {
+            invalidation: true
+          }
+        },
+        cacheTime: 600000
+      })
+    );
+    await this.db.$connect();
 
     return super.login(token);
   }

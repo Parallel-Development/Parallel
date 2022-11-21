@@ -48,7 +48,11 @@ class MyInfractionsCommand extends Command {
         name: `ID ${infraction.id}: ${infraction.type.toString()}`,
         value: `${infraction.reason.slice(0, 100)}${infraction.reason.length > 100 ? '...' : ''}${
           infraction.dispute ? `\n*- You made a dispute for this infraction.*` : ''
-        }\n*- <t:${infraction.date}>${infraction.guild.infractionModeratorPublic ? `, issued by <@${infraction.moderatorId}> (${infraction.moderatorId})` : ''}*`,
+        }\n*- <t:${infraction.date}>${
+          infraction.guild.infractionModeratorPublic
+            ? `, issued by <@${infraction.moderatorId}> (${infraction.moderatorId})`
+            : ''
+        }*`,
         inline: false
       };
 

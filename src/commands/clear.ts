@@ -9,7 +9,12 @@ class ClearCommand extends Command {
         .setDescription('Clear messages from a channel.')
         .setDefaultMemberPermissions(Permissions.ManageMessages)
         .addIntegerOption(option =>
-          option.setName('count').setDescription('Amount of messages to delete').setMinValue(1).setMaxValue(100).setRequired(true)
+          option
+            .setName('count')
+            .setDescription('Amount of messages to delete')
+            .setMinValue(1)
+            .setMaxValue(100)
+            .setRequired(true)
         )
         .addUserOption(option => option.setName('from').setDescription('Clear messages from a specific user.'))
         .addStringOption(option =>
@@ -35,8 +40,7 @@ class ClearCommand extends Command {
         if (!(await interaction.channel.messages.fetch(uBefore))) throw 'Invalid message link.';
 
         before = uBefore;
-      }
-      else if (uBefore.startsWith('https://discord.com/channels/')) {
+      } else if (uBefore.startsWith('https://discord.com/channels/')) {
         // constexpr api_link_len = 29
         const [guildId, channelId, messageId] = uBefore.slice(29).split('/');
         if (guildId !== interaction.guildId) throw 'The provided message link is not from this guild.';
@@ -58,11 +62,8 @@ class ClearCommand extends Command {
           if (msgs.size == 0) return false;
 
           before = msgs.last()!.id;
-          const userMsgs = [...msgs.values()].filter(msg => msg.author.id === user.id).slice(
-            0,
-            count - deletedTotal
-          );
-          
+          const userMsgs = [...msgs.values()].filter(msg => msg.author.id === user.id).slice(0, count - deletedTotal);
+
           if (userMsgs.length == 0) return false;
           return userMsgs;
         });

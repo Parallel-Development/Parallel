@@ -14,12 +14,12 @@ setInterval(async () => {
   });
 
   const guilds = await client.db.guild.findMany({
-    select: { id: true, tasks: { where: { expires: { lte: Date.now() }, missed: false }} }
+    select: { id: true, tasks: { where: { expires: { lte: Date.now() }, missed: false } } }
   });
 
   for (const guildTasks of guilds) {
     const guild = client.guilds.cache.get(guildTasks.id);
-    if (!guild) { 
+    if (!guild) {
       await client.db.task.updateMany({
         where: {
           guildId: guildTasks.id
@@ -59,13 +59,13 @@ setInterval(async () => {
         if (member) {
           // parallel listens for timeout changes, but in the event that it misses it, we still double check
           // if the user is timed out for more than `10` seconds then we'll update the expiration date accordingly
-          if (member.communicationDisabledUntil && (+member.communicationDisabledUntil) > Number(task.expires) + 10000) {
+          if (member.communicationDisabledUntil && +member.communicationDisabledUntil > Number(task.expires) + 10000) {
             await client.db.task.update({
               where: {
                 id: task.id
               },
               data: {
-                expires: +member.communicationDisabledUntil,
+                expires: +member.communicationDisabledUntil
               }
             });
 
@@ -73,15 +73,14 @@ setInterval(async () => {
           }
 
           const unDM = new EmbedBuilder()
-          .setAuthor( { name: 'Parallel Moderation', iconURL: client.user!.displayAvatarURL() })
-          .setTitle(`You were unmuted in ${guild.name}`)
-          .setColor(Colors.Green)
-          .setDescription(`Timeout Expired.`)
-          .setTimestamp()
+            .setAuthor({ name: 'Parallel Moderation', iconURL: client.user!.displayAvatarURL() })
+            .setTitle(`You were unmuted in ${guild.name}`)
+            .setColor(Colors.Green)
+            .setDescription(`Timeout Expired.`)
+            .setTimestamp();
 
           await member.send({ embeds: [unDM] }).catch(() => {});
         }
-
       }
 
       await client.db.task.delete({
@@ -97,7 +96,7 @@ setInterval(async () => {
         reason: `${task.type === InfractionType.Ban ? 'Ban' : 'Timeout'} Expired.`,
         type: task.type === InfractionType.Ban ? InfractionType.Unban : InfractionType.Unmute,
         date: BigInt(Date.now())
-      } as Infraction)
+      } as Infraction);
     }
   }
 }, 60000);

@@ -107,12 +107,10 @@ class DisputeManagerCommand extends Command {
                   option.setName('user').setDescription('The user to remove from the blacklist.').setRequired(true)
                 )
             )
-            .addSubcommand(command => 
-              command.setName('clear')
-              .setDescription('Remove all users from the blacklist.'))
+            .addSubcommand(command => command.setName('clear').setDescription('Remove all users from the blacklist.'))
             .addSubcommand(command => command.setName('view').setDescription('View the blacklist.'))
         )
-    ); 
+    );
   }
   async run(interaction: ChatInputCommandInteraction<'cached'>) {
     const id = interaction.options.getInteger('id')!;
@@ -128,8 +126,8 @@ class DisputeManagerCommand extends Command {
         where: {
           id: interaction.guildId
         },
-        select: { 
-          disputeBlacklist: true 
+        select: {
+          disputeBlacklist: true
         }
       }))!;
 
@@ -145,12 +143,12 @@ class DisputeManagerCommand extends Command {
               disputeBlacklist: {
                 push: user.id
               }
-            } 
+            }
           });
 
           return interaction.reply(`Blacklisted ${user} from creating disputes.`);
         case 'remove':
-          if (!disputeBlacklist.includes(user.id)) throw 'That user isn\'t blacklisted from creating disputes.';
+          if (!disputeBlacklist.includes(user.id)) throw "That user isn't blacklisted from creating disputes.";
 
           disputeBlacklist.splice(disputeBlacklist.indexOf(user.id), 1);
 
@@ -164,7 +162,11 @@ class DisputeManagerCommand extends Command {
           });
           return interaction.reply(`${user} has been removed from the blacklist.`);
         case 'view':
-          return interaction.reply(`View the blacklist here: ${await bin(`Total blacklists: ${disputeBlacklist.length}\n\n${disputeBlacklist.join('\n')}`)}`)
+          return interaction.reply(
+            `View the blacklist here: ${await bin(
+              `Total blacklists: ${disputeBlacklist.length}\n\n${disputeBlacklist.join('\n')}`
+            )}`
+          );
         case 'clear':
           await this.client.db.guild.update({
             where: {
@@ -228,7 +230,7 @@ class DisputeManagerCommand extends Command {
           include: { infraction: true }
         });
 
-        if (dontUndo && (infraction.type !== InfractionType.Ban && infraction.type !== InfractionType.Mute))
+        if (dontUndo && infraction.type !== InfractionType.Ban && infraction.type !== InfractionType.Mute)
           throw 'There is no punishment to avoid un-doing.';
 
         switch (infraction.type) {
