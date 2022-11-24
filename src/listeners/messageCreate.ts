@@ -2,6 +2,7 @@ import { InfractionType } from '@prisma/client';
 import { Colors, EmbedBuilder, Message, PermissionFlagsBits as Permissions } from 'discord.js';
 import Listener from '../lib/structs/Listener';
 import { domainReg, pastTenseInfractionTypes } from '../lib/util/constants';
+import { AutoModSpamTriggers } from '../types';
 
 class MessageCreate extends Listener {
   // userId.guildId
@@ -20,8 +21,7 @@ class MessageCreate extends Listener {
       },
       select: {
         autoModSpamToggle: true,
-        autoModSpamAmount: true,
-        autoModSpamIn: true,
+        autoModSpamTriggers: true,
         autoModSpamImmuneChannels: true,
         autoModSpamImmuneRoles: true,
         autoModSpamPunishment: true,
@@ -30,7 +30,12 @@ class MessageCreate extends Listener {
         autoModMaliciousImmuneChannels: true,
         autoModMaliciousImmuneRoles: true,
         autoModMaliciousPunishment: true,
-        autoModMaliciousDuration: true
+        autoModMaliciousDuration: true,
+
+        infoWarn: true,
+        infoMute: true,
+        infoKick: true,
+        infoBan: true
       }
     });
 
@@ -57,11 +62,14 @@ class MessageCreate extends Listener {
         const data = await req.json();
         if (data.match) {
           await message.delete();
+
+          const { infoWarn, infoMute, infoKick, infoBan } = automod;
           return this.automodPunish(
             message,
             'Malicious links.',
             automod.autoModMaliciousPunishment,
-            automod.autoModMaliciousDuration
+            automod.autoModMaliciousDuration,
+            { infoWarn, infoMute, infoKick, infoBan }
           );
         }
       }
@@ -76,25 +84,31 @@ class MessageCreate extends Listener {
       const userSpam = this.spamTrack.get(key)?.concat([Date.now()]) ?? [Date.now()];
       this.spamTrack.set(key, userSpam);
 
-      if (userSpam.length !== automod.autoModSpamAmount) return false;
-      const speed = userSpam[userSpam.length - 1] - userSpam[0];
+      for (const trigger of (automod.autoModSpamTriggers as AutoModSpamTriggers)) {
+        const { amount, within } = trigger;
+        if (userSpam.length < amount) continue;
 
-      if (speed <= automod.autoModSpamIn * 1000) {
+        const speed = userSpam[userSpam.length - 1] - userSpam[userSpam.length - amount];
+        if (speed > within * 1000) continue;
+
         this.spamTrack.set(key, []);
-        const messages = [...(await message.channel.messages.fetch({ limit: 20 })).values()]
+        const messages = [...(await message.channel.messages.fetch({ limit: 100 })).values()]
           .filter(msg => msg.author.id === message.author.id)
-          .slice(0, automod.autoModSpamAmount);
+          .slice(0, amount);
         await message.channel.bulkDelete(messages);
 
+        const { infoWarn, infoMute, infoKick, infoBan } = automod;
         return this.automodPunish(
           message,
           'Fast message spam.',
           automod.autoModSpamPunishment,
-          automod.autoModSpamDuration
+          automod.autoModSpamDuration,
+          { infoWarn, infoMute, infoKick, infoBan }
         );
       }
 
-      this.spamTrack.set(key, userSpam.slice(1));
+      const biggest = (automod.autoModSpamTriggers as AutoModSpamTriggers).reduce((prev, curr) => curr.amount > prev.amount ? curr : prev).amount;
+      if (userSpam.length > biggest) this.spamTrack.set(key, userSpam.slice(1));
       return false;
     }
   }
@@ -103,7 +117,8 @@ class MessageCreate extends Listener {
     message: Message<true>,
     reason: 'Malicious links.' | 'Fast message spam.',
     punishment: InfractionType | null,
-    duration: bigint
+    duration: bigint,
+    info: { infoWarn: string | null, infoMute: string | null, infoKick: string | null, infoBan: string | null }
   ) {
     if (!punishment) return;
 
@@ -160,7 +175,20 @@ class MessageCreate extends Listener {
       .setFooter({ text: `Punishment ID: ${infraction.id}` })
       .setTimestamp();
 
+    switch (punishment) {
+      case InfractionType.Ban:
+        if (info.infoBan) dm.addFields([{ name: 'Additional Information', value: info.infoBan }]);
+      case InfractionType.Kick:
+        if (info.infoKick) dm.addFields([{ name: 'Additional Information', value: info.infoKick }]);
+      case InfractionType.Mute:
+        if (info.infoMute) dm.addFields([{ name: 'Additional Information', value: info.infoMute }]);
+      case InfractionType.Warn:
+        if (info.infoWarn) dm.addFields([{ name: 'Additional Information', value: info.infoWarn }]);
+    }
+
     await message.member!.send({ embeds: [dm] });
+
+    this.client.emit('punishLog', infraction);
 
     switch (punishment) {
       case InfractionType.Ban:

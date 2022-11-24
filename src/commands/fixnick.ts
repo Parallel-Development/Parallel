@@ -44,6 +44,8 @@ class FixnickCommand extends Command {
     let fixed = '';
     const code = 'XXXX'.replaceAll('X', x => commonChars[Math.floor(Math.random() * commonChars.length)]);
 
+    await interaction.deferReply();
+
     switch (type) {
       case 'font':
         fixed = decancer(name);
@@ -62,7 +64,7 @@ class FixnickCommand extends Command {
     }
 
     await member.setNickname(fixed);
-    return interaction.reply('Nickname fixed.');
+    return interaction.editReply('Nickname fixed.');
   }
 }
 

@@ -38,8 +38,7 @@ model Guild {
   infoKick                       String?
   infoBan                        String?
   autoModSpamToggle              Boolean         @default(false)
-  autoModSpamAmount              Int             @default(5)
-  autoModSpamIn                  Int             @default(3)
+  autoModSpamTriggers            Json[]          @default(["{ \"amount\": 5, \"within\": 5 }", "{ \"amount\": 10, \"within\": 20 }"])
   autoModSpamImmuneChannels      String[]
   autoModSpamImmuneRoles         String[]
   autoModSpamPunishment          InfractionType?
