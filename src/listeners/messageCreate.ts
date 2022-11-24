@@ -59,8 +59,7 @@ class MessageCreate extends Listener {
           })
         });
 
-        const data = await req.json();
-        if (data.match) {
+        if (req.ok) {
           await message.delete();
 
           const { infoWarn, infoMute, infoKick, infoBan } = automod;
