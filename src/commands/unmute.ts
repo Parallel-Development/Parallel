@@ -6,22 +6,19 @@ import {
   EmbedBuilder,
   Colors
 } from 'discord.js';
-import Command from '../lib/structs/Command';
+import Command, { clientpermissions, data } from '../lib/structs/Command';
 import { adequateHierarchy } from '../lib/util/functions';
 
+@data(
+  new SlashCommandBuilder()
+    .setName('unmute')
+    .setDescription('Unmute a member.')
+    .setDefaultMemberPermissions(Permissions.ModerateMembers)
+    .addUserOption(option => option.setName('member').setDescription('The member to unmute.').setRequired(true))
+    .addStringOption(option => option.setName('reason').setDescription('The reason for the unmute.'))
+)
+@clientpermissions([Permissions.ModerateMembers])
 class MuteCommand extends Command {
-  constructor() {
-    super(
-      new SlashCommandBuilder()
-        .setName('unmute')
-        .setDescription('Unmute a member.')
-        .setDefaultMemberPermissions(Permissions.ModerateMembers)
-        .addUserOption(option => option.setName('member').setDescription('The member to unmute.').setRequired(true))
-        .addStringOption(option => option.setName('reason').setDescription('The reason for the unmute.')),
-      [Permissions.ModerateMembers]
-    );
-  }
-
   async run(interaction: ChatInputCommandInteraction<'cached'>) {
     const member = interaction.options.getMember('member');
     if (!member) throw 'The provided user is not in this guild.';

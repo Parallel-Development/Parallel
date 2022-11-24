@@ -5,25 +5,22 @@ import {
   EmbedBuilder,
   Colors
 } from 'discord.js';
-import Command from '../lib/structs/Command';
+import Command, { data } from '../lib/structs/Command';
 import { getMember } from '../lib/util/functions';
 
+@data(
+  new SlashCommandBuilder()
+    .setName('change-reason')
+    .setDescription('Change the reason for an infraction.')
+    .setDefaultMemberPermissions(Permissions.ModerateMembers)
+    .addIntegerOption(option =>
+      option.setName('id').setDescription('The infraction ID.').setMinValue(1).setRequired(true)
+    )
+    .addStringOption(option =>
+      option.setName('new_reason').setDescription('New reason for infraction.').setMaxLength(1000).setRequired(true)
+    )
+)
 class ChangeReason extends Command {
-  constructor() {
-    super(
-      new SlashCommandBuilder()
-        .setName('change-reason')
-        .setDescription('Change the reason for an infraction.')
-        .setDefaultMemberPermissions(Permissions.ModerateMembers)
-        .addIntegerOption(option =>
-          option.setName('id').setDescription('The infraction ID.').setMinValue(1).setRequired(true)
-        )
-        .addStringOption(option =>
-          option.setName('new_reason').setDescription('New reason for infraction.').setMaxLength(1000).setRequired(true)
-        )
-    );
-  }
-
   async run(interaction: ChatInputCommandInteraction<'cached'>) {
     const id = interaction.options.getInteger('id', true);
     const newReason = interaction.options.getString('new_reason', true);

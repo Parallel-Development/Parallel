@@ -5,23 +5,18 @@ import {
   EmbedBuilder,
   Colors
 } from 'discord.js';
-import Command from '../lib/structs/Command';
+import Command, { data } from '../lib/structs/Command';
 import { InfractionType } from '@prisma/client';
 import ms from 'ms';
 
+@data(
+  new SlashCommandBuilder()
+    .setName('case')
+    .setDescription('View detailed information on an infraction')
+    .setDefaultMemberPermissions(Permissions.ModerateMembers)
+    .addIntegerOption(option => option.setName('id').setDescription('Infraction ID').setMinValue(1).setRequired(true))
+)
 class CaseCommand extends Command {
-  constructor() {
-    super(
-      new SlashCommandBuilder()
-        .setName('case')
-        .setDescription('View detailed information on an infraction')
-        .setDefaultMemberPermissions(Permissions.ModerateMembers)
-        .addIntegerOption(option =>
-          option.setName('id').setDescription('Infraction ID').setMinValue(1).setRequired(true)
-        )
-    );
-  }
-
   async run(interaction: ChatInputCommandInteraction<'cached'>) {
     const id = interaction.options.getInteger('id', true);
     const infraction = await this.client.db.infraction.findUnique({

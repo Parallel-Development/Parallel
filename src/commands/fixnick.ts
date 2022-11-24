@@ -1,34 +1,31 @@
 import { SlashCommandBuilder, PermissionFlagsBits as Permissions, ChatInputCommandInteraction } from 'discord.js';
-import Command from '../lib/structs/Command';
+import Command, { clientpermissions, data } from '../lib/structs/Command';
 import decancer from 'decancer';
 import { commonChars } from '../lib/util/constants';
 import { adequateHierarchy } from '../lib/util/functions';
 
-class FixnickCommand extends Command {
-  constructor() {
-    super(
-      new SlashCommandBuilder()
-        .setName('fixnick')
-        .setDescription('Correct a fonted, hoisted, or any other unwanted user/nickname')
-        .setDefaultMemberPermissions(Permissions.ManageNicknames)
-        .addUserOption(option => option.setName('member').setDescription('The member to correct.').setRequired(true))
-        .addStringOption(option =>
-          option
-            .setName('fix')
-            .setDescription("Select what to fix in the member's user/nickname.")
-            .addChoices(
-              { name: 'Font', value: 'font' },
-              { name: 'Hoisted', value: 'hoisted' },
-              { name: 'Other', value: 'other' }
-            )
+@data(
+  new SlashCommandBuilder()
+    .setName('fixnick')
+    .setDescription('Correct a fonted, hoisted, or any other unwanted user/nickname')
+    .setDefaultMemberPermissions(Permissions.ManageNicknames)
+    .addUserOption(option => option.setName('member').setDescription('The member to correct.').setRequired(true))
+    .addStringOption(option =>
+      option
+        .setName('fix')
+        .setDescription("Select what to fix in the member's user/nickname.")
+        .addChoices(
+          { name: 'Font', value: 'font' },
+          { name: 'Hoisted', value: 'hoisted' },
+          { name: 'Other', value: 'other' }
         )
-        .addBooleanOption(option =>
-          option.setName('from-username').setDescription('Fix from username rather than guild nickname')
-        ),
-      [Permissions.ManageNicknames]
-    );
-  }
-
+    )
+    .addBooleanOption(option =>
+      option.setName('from-username').setDescription('Fix from username rather than guild nickname')
+    )
+)
+@clientpermissions([Permissions.ManageNicknames])
+class FixnickCommand extends Command {
   async run(interaction: ChatInputCommandInteraction<'cached'>) {
     const member = interaction.options.getMember('member');
     if (!member) throw 'The provided user is not in this guild.';

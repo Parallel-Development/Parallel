@@ -1,29 +1,24 @@
 import { type ChatInputCommandInteraction, PermissionFlagsBits as Permissions, SlashCommandBuilder } from 'discord.js';
-import Command from '../lib/structs/Command';
+import Command, { clientpermissions, data } from '../lib/structs/Command';
 
+@data(
+  new SlashCommandBuilder()
+    .setName('clear')
+    .setDescription('Clear messages from a channel.')
+    .setDefaultMemberPermissions(Permissions.ManageMessages)
+    .addIntegerOption(option =>
+      option
+        .setName('count')
+        .setDescription('Amount of messages to delete')
+        .setMinValue(1)
+        .setMaxValue(100)
+        .setRequired(true)
+    )
+    .addUserOption(option => option.setName('from').setDescription('Clear messages from a specific user.'))
+    .addStringOption(option => option.setName('before').setDescription('Clear the messages before a specific message.'))
+)
+@clientpermissions([Permissions.ManageMessages])
 class ClearCommand extends Command {
-  constructor() {
-    super(
-      new SlashCommandBuilder()
-        .setName('clear')
-        .setDescription('Clear messages from a channel.')
-        .setDefaultMemberPermissions(Permissions.ManageMessages)
-        .addIntegerOption(option =>
-          option
-            .setName('count')
-            .setDescription('Amount of messages to delete')
-            .setMinValue(1)
-            .setMaxValue(100)
-            .setRequired(true)
-        )
-        .addUserOption(option => option.setName('from').setDescription('Clear messages from a specific user.'))
-        .addStringOption(option =>
-          option.setName('before').setDescription('Clear the messages before a specific message.')
-        ),
-      [Permissions.ManageMessages]
-    );
-  }
-
   async run(interaction: ChatInputCommandInteraction<'cached'>) {
     if (!interaction.channel) throw 'Command cannot be ran here.';
     if (!interaction.channel.permissionsFor(interaction.member).has(Permissions.ManageMessages))

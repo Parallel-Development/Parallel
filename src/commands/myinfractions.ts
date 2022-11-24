@@ -1,17 +1,14 @@
 import { type ChatInputCommandInteraction, SlashCommandBuilder, EmbedBuilder, type EmbedField } from 'discord.js';
-import Command from '../lib/structs/Command';
+import Command, { data } from '../lib/structs/Command';
 import { infractionsPerPage, mainColor } from '../lib/util/constants';
 
+@data(
+  new SlashCommandBuilder()
+    .setName('myinfractions')
+    .setDescription('View your current infractions.')
+    .addNumberOption(option => option.setName('page').setDescription('The page to jump to.').setMinValue(1))
+)
 class MyInfractionsCommand extends Command {
-  constructor() {
-    super(
-      new SlashCommandBuilder()
-        .setName('myinfractions')
-        .setDescription('View your current infractions.')
-        .addNumberOption(option => option.setName('page').setDescription('The page to jump to.').setMinValue(1))
-    );
-  }
-
   async run(interaction: ChatInputCommandInteraction<'cached'>) {
     const user = interaction.user;
     let page = interaction.options.getNumber('page') ?? 1;

@@ -8,24 +8,21 @@ import {
   type ModalActionRowComponentBuilder,
   TextInputStyle
 } from 'discord.js';
-import Command from '../lib/structs/Command';
+import Command, { data } from '../lib/structs/Command';
 
+@data(
+  new SlashCommandBuilder()
+    .setName('dispute')
+    .setDescription('Create a new dispute for an infraction.')
+    .addIntegerOption(option =>
+      option
+        .setName('id')
+        .setDescription('The infraction ID for the infraction you are disputing (use /myinfractions to find.)')
+        .setMinValue(1)
+        .setRequired(true)
+    )
+)
 class DisputeCommand extends Command {
-  constructor() {
-    super(
-      new SlashCommandBuilder()
-        .setName('dispute')
-        .setDescription('Create a new dispute for an infraction.')
-        .addIntegerOption(option =>
-          option
-            .setName('id')
-            .setDescription('The infraction ID for the infraction you are disputing (use /myinfractions to find.)')
-            .setMinValue(1)
-            .setRequired(true)
-        )
-    );
-  }
-
   async run(interaction: ChatInputCommandInteraction<'cached'>) {
     const infraction = await this.client.db.infraction.findUnique({
       where: {
@@ -42,7 +39,7 @@ class DisputeCommand extends Command {
 
     const { guild } = infraction;
 
-    if (!guild.allowDispute) throw 'This guild is not accepting infraction disputes.';
+    if (!guild.disputeAllowed) throw 'This guild is not accepting infraction disputes.';
 
     if (guild.disputeBlacklist.includes(interaction.user.id))
       throw 'You are blacklisted from creating new disputes in this guild.';

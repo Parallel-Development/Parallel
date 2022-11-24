@@ -7,26 +7,21 @@ import {
   Colors
 } from 'discord.js';
 import ms from 'ms';
-import Command from '../lib/structs/Command';
+import Command, { clientpermissions, data } from '../lib/structs/Command';
 import { adequateHierarchy } from '../lib/util/functions';
 const d28 = ms('28d');
 
+@data(
+  new SlashCommandBuilder()
+    .setName('mute')
+    .setDescription('Mute a member.')
+    .setDefaultMemberPermissions(Permissions.ModerateMembers)
+    .addUserOption(option => option.setName('member').setDescription('The member to mute.').setRequired(true))
+    .addStringOption(option => option.setName('duration').setDescription('The duration of the mute.').setRequired(true))
+    .addStringOption(option => option.setName('reason').setDescription('The reason for the mute.'))
+)
+@clientpermissions([Permissions.ModerateMembers])
 class MuteCommand extends Command {
-  constructor() {
-    super(
-      new SlashCommandBuilder()
-        .setName('mute')
-        .setDescription('Mute a member.')
-        .setDefaultMemberPermissions(Permissions.ModerateMembers)
-        .addUserOption(option => option.setName('member').setDescription('The member to mute.').setRequired(true))
-        .addStringOption(option =>
-          option.setName('duration').setDescription('The duration of the mute.').setRequired(true)
-        )
-        .addStringOption(option => option.setName('reason').setDescription('The reason for the mute.'))
-    ),
-      [Permissions.ModerateMembers];
-  }
-
   async run(interaction: ChatInputCommandInteraction<'cached'>) {
     const member = interaction.options.getMember('member');
     if (!member) throw 'The provided user is not in this guild.';

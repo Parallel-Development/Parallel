@@ -8,6 +8,7 @@
     "alwaysStrict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "importHelpers": true
+    "importHelpers": true,
+    "experimentalDecorators": true
   }
 }

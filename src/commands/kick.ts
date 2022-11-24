@@ -7,21 +7,18 @@ import {
 } from 'discord.js';
 import { adequateHierarchy } from '../lib/util/functions';
 import { InfractionType } from '@prisma/client';
-import Command from '../lib/structs/Command';
+import Command, { clientpermissions, data } from '../lib/structs/Command';
 
+@data(
+  new SlashCommandBuilder()
+    .setName('kick')
+    .setDescription('Kick a member from the guild.')
+    .setDefaultMemberPermissions(Permissions.KickMembers)
+    .addUserOption(option => option.setName('member').setDescription('The member to kick.').setRequired(true))
+    .addStringOption(option => option.setName('reason').setDescription('The reason for kicking.'))
+)
+@clientpermissions([Permissions.KickMembers])
 class KickCommand extends Command {
-  constructor() {
-    super(
-      new SlashCommandBuilder()
-        .setName('kick')
-        .setDescription('Kick a member from the guild.')
-        .setDefaultMemberPermissions(Permissions.KickMembers)
-        .addUserOption(option => option.setName('member').setDescription('The member to kick.').setRequired(true))
-        .addStringOption(option => option.setName('reason').setDescription('The reason for kicking.'))
-    ),
-      [Permissions.KickMembers];
-  }
-
   async run(interaction: ChatInputCommandInteraction<'cached'>) {
     const member = interaction.options.getMember('member');
     if (!member) throw 'The provided user is not in this guild.';

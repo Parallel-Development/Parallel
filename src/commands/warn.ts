@@ -5,27 +5,24 @@ import {
   EmbedBuilder,
   Colors
 } from 'discord.js';
-import Command from '../lib/structs/Command';
+import Command, { data } from '../lib/structs/Command';
 import ms from 'ms';
 import { adequateHierarchy } from '../lib/util/functions';
 
+@data(
+  new SlashCommandBuilder()
+    .setName('warn')
+    .setDescription('Issue an infraction for a user.')
+    .setDefaultMemberPermissions(Permissions.ModerateMembers)
+    .addUserOption(option => option.setName('member').setDescription('The member to warn.').setRequired(true))
+    .addStringOption(option =>
+      option.setName('reason').setDescription('The reason for the infraction.').setMaxLength(1000)
+    )
+    .addStringOption(option =>
+      option.setName('erase-after').setDescription('Erase the warning after the specific duration')
+    )
+)
 class WarnCommand extends Command {
-  constructor() {
-    super(
-      new SlashCommandBuilder()
-        .setName('warn')
-        .setDescription('Issue an infraction for a user.')
-        .setDefaultMemberPermissions(Permissions.ModerateMembers)
-        .addUserOption(option => option.setName('member').setDescription('The member to warn.').setRequired(true))
-        .addStringOption(option =>
-          option.setName('reason').setDescription('The reason for the infraction.').setMaxLength(1000)
-        )
-        .addStringOption(option =>
-          option.setName('erase-after').setDescription('Erase the warning after the specific duration')
-        )
-    );
-  }
-
   async run(interaction: ChatInputCommandInteraction<'cached'>) {
     const member = interaction.options.getMember('member');
     if (!member) throw 'The provided user is not in this guild.';

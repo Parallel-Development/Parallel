@@ -34,7 +34,7 @@ class DisputeModal extends Modal {
 
     const { guild } = infraction;
 
-    if (!guild.allowDispute) throw 'This guild is not accepting infraction disputes.';
+    if (!guild.disputeAllowed) throw 'This guild is not accepting infraction disputes.';
 
     if (infraction.userId !== interaction.user.id)
       throw 'You cannot create a dispute for an infraction that is not on your record.';

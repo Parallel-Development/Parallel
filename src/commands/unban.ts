@@ -1,19 +1,15 @@
 import { InfractionType } from '@prisma/client';
 import { SlashCommandBuilder, PermissionFlagsBits as Permissions, type ChatInputCommandInteraction } from 'discord.js';
-import Command from '../lib/structs/Command';
+import Command, { clientpermissions, data } from '../lib/structs/Command';
 
+@data(new SlashCommandBuilder()
+.setName('unban')
+.setDescription('Unban a member from the guild.')
+.setDefaultMemberPermissions(Permissions.KickMembers)
+.addUserOption(option => option.setName('user').setDescription('The user to unban.').setRequired(true))
+.addStringOption(option => option.setName('reason').setDescription('The reason for unbanning.')))
+@clientpermissions([Permissions.BanMembers])
 class UnbanCommand extends Command {
-  constructor() {
-    super(
-      new SlashCommandBuilder()
-        .setName('unban')
-        .setDescription('Unban a member from the guild.')
-        .setDefaultMemberPermissions(Permissions.KickMembers)
-        .addUserOption(option => option.setName('user').setDescription('The user to unban.').setRequired(true))
-        .addStringOption(option => option.setName('reason').setDescription('The reason for unbanning.')),
-      [Permissions.BanMembers]
-    );
-  }
   async run(interaction: ChatInputCommandInteraction<'cached'>) {
     const user = interaction.options.getUser('user', true);
 

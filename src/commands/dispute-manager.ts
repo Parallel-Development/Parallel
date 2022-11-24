@@ -6,7 +6,7 @@ import {
   EmbedBuilder,
   Colors
 } from 'discord.js';
-import Command from '../lib/structs/Command';
+import Command, { data } from '../lib/structs/Command';
 import { mainColor } from '../lib/util/constants';
 import { bin } from '../lib/util/functions';
 import { DisputeResponse } from '../types';
@@ -21,97 +21,95 @@ import { DisputeResponse } from '../types';
  * /dispute blacklist clear
  * /dispute blacklist view
  */
+@data(
+  new SlashCommandBuilder()
+    .setName('dispute-manager')
+    .setDescription('Manage infraction disputes.')
+    .setDefaultMemberPermissions(Permissions.Administrator)
+    .addSubcommand(command =>
+      command
+        .setName('view')
+        .setDescription('View a dispute for an infraction.')
+        .addIntegerOption(option =>
+          option
+            .setName('id')
+            .setDescription(
+              'The infraction ID for the infraction dispute you are viewing (use /myinfractions to find.)'
+            )
+            .setMinValue(1)
+            .setRequired(true)
+        )
+    )
+    .addSubcommand(command =>
+      command
+        .setName('disregard')
+        .setDescription('Disregard a dispute for an infraction (not the same as denying.)')
+        .addIntegerOption(option =>
+          option
+            .setName('id')
+            .setDescription('The infraction ID for the infraction dispute you are disregarding.')
+            .setMinValue(1)
+            .setRequired(true)
+        )
+    )
+    .addSubcommand(command =>
+      command
+        .setName('accept')
+        .setDescription('Accept a dispute for an infraction.')
+        .addIntegerOption(option =>
+          option
+            .setName('id')
+            .setDescription('The infraction ID for the infraction dispute you are accepting.')
+            .setMinValue(1)
+            .setRequired(true)
+        )
+        .addStringOption(option =>
+          option.setName('reason').setDescription('The reason for acceptance.').setMaxLength(1000)
+        )
+        .addBooleanOption(option =>
+          option.setName('dont-undo').setDescription("Don't automatically undo the correlated punishment.")
+        )
+    )
+    .addSubcommand(command =>
+      command
+        .setName('deny')
+        .setDescription('Deny a dispute for an infraction.')
+        .addIntegerOption(option =>
+          option
+            .setName('id')
+            .setDescription('The infraction ID for the infraction dispute you are denying.')
+            .setMinValue(1)
+            .setRequired(true)
+        )
+        .addStringOption(option =>
+          option.setName('reason').setDescription('The reason for acceptance.').setMaxLength(1000)
+        )
+    )
+    .addSubcommandGroup(group =>
+      group
+        .setName('blacklist')
+        .setDescription('Manage the users blacklisted from creating new disputes.')
+        .addSubcommand(command =>
+          command
+            .setName('add')
+            .setDescription('Add a user to the blacklist.')
+            .addUserOption(option =>
+              option.setName('user').setDescription('The user to add to the blacklist.').setRequired(true)
+            )
+        )
+        .addSubcommand(command =>
+          command
+            .setName('remove')
+            .setDescription('Remove a user from the blacklist.')
+            .addUserOption(option =>
+              option.setName('user').setDescription('The user to remove from the blacklist.').setRequired(true)
+            )
+        )
+        .addSubcommand(command => command.setName('clear').setDescription('Remove all users from the blacklist.'))
+        .addSubcommand(command => command.setName('view').setDescription('View the blacklist.'))
+    )
+)
 class DisputeManagerCommand extends Command {
-  constructor() {
-    super(
-      new SlashCommandBuilder()
-        .setName('dispute-manager')
-        .setDescription('Manage infraction disputes.')
-        .setDefaultMemberPermissions(Permissions.Administrator)
-        .addSubcommand(command =>
-          command
-            .setName('view')
-            .setDescription('View a dispute for an infraction.')
-            .addIntegerOption(option =>
-              option
-                .setName('id')
-                .setDescription(
-                  'The infraction ID for the infraction dispute you are viewing (use /myinfractions to find.)'
-                )
-                .setMinValue(1)
-                .setRequired(true)
-            )
-        )
-        .addSubcommand(command =>
-          command
-            .setName('disregard')
-            .setDescription('Disregard a dispute for an infraction (not the same as denying.)')
-            .addIntegerOption(option =>
-              option
-                .setName('id')
-                .setDescription('The infraction ID for the infraction dispute you are disregarding.')
-                .setMinValue(1)
-                .setRequired(true)
-            )
-        )
-        .addSubcommand(command =>
-          command
-            .setName('accept')
-            .setDescription('Accept a dispute for an infraction.')
-            .addIntegerOption(option =>
-              option
-                .setName('id')
-                .setDescription('The infraction ID for the infraction dispute you are accepting.')
-                .setMinValue(1)
-                .setRequired(true)
-            )
-            .addStringOption(option =>
-              option.setName('reason').setDescription('The reason for acceptance.').setMaxLength(1000)
-            )
-            .addBooleanOption(option =>
-              option.setName('dont-undo').setDescription("Don't automatically undo the correlated punishment.")
-            )
-        )
-        .addSubcommand(command =>
-          command
-            .setName('deny')
-            .setDescription('Deny a dispute for an infraction.')
-            .addIntegerOption(option =>
-              option
-                .setName('id')
-                .setDescription('The infraction ID for the infraction dispute you are denying.')
-                .setMinValue(1)
-                .setRequired(true)
-            )
-            .addStringOption(option =>
-              option.setName('reason').setDescription('The reason for acceptance.').setMaxLength(1000)
-            )
-        )
-        .addSubcommandGroup(group =>
-          group
-            .setName('blacklist')
-            .setDescription('Manage the users blacklisted from creating new disputes.')
-            .addSubcommand(command =>
-              command
-                .setName('add')
-                .setDescription('Add a user to the blacklist.')
-                .addUserOption(option =>
-                  option.setName('user').setDescription('The user to add to the blacklist.').setRequired(true)
-                )
-            )
-            .addSubcommand(command =>
-              command
-                .setName('remove')
-                .setDescription('Remove a user from the blacklist.')
-                .addUserOption(option =>
-                  option.setName('user').setDescription('The user to remove from the blacklist.').setRequired(true)
-                )
-            )
-            .addSubcommand(command => command.setName('clear').setDescription('Remove all users from the blacklist.'))
-            .addSubcommand(command => command.setName('view').setDescription('View the blacklist.'))
-        )
-    );
-  }
   async run(interaction: ChatInputCommandInteraction<'cached'>) {
     const id = interaction.options.getInteger('id')!;
     const dontUndo = interaction.options.getBoolean('dont-undo') ?? false;

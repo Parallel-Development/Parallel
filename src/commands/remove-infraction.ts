@@ -5,31 +5,26 @@ import {
   EmbedBuilder,
   Colors
 } from 'discord.js';
-import Command from '../lib/structs/Command';
+import Command, { data } from '../lib/structs/Command';
 import { getMember } from '../lib/util/functions';
 import { Infraction, InfractionType } from '@prisma/client';
 
+@data(
+  new SlashCommandBuilder()
+    .setName('remove-infraction')
+    .setDescription('Remove an infraction.')
+    .setDefaultMemberPermissions(Permissions.ModerateMembers)
+    .addIntegerOption(option =>
+      option.setName('id').setDescription('The infraction ID.').setMinValue(1).setRequired(true)
+    )
+    .addStringOption(option => option.setName('reason').setDescription('The reason for removing the infraction.'))
+    .addBooleanOption(option =>
+      option
+        .setName('undo-punishment')
+        .setDescription('Undo the associated punishment with the infraction. For example, ban => unban, unban => ban')
+    )
+)
 class RemoveInfractionCommand extends Command {
-  constructor() {
-    super(
-      new SlashCommandBuilder()
-        .setName('remove-infraction')
-        .setDescription('Remove an infraction.')
-        .setDefaultMemberPermissions(Permissions.ModerateMembers)
-        .addIntegerOption(option =>
-          option.setName('id').setDescription('The infraction ID.').setMinValue(1).setRequired(true)
-        )
-        .addStringOption(option => option.setName('reason').setDescription('The reason for removing the infraction.'))
-        .addBooleanOption(option =>
-          option
-            .setName('undo-punishment')
-            .setDescription(
-              'Undo the associated punishment with the infraction. For example, ban => unban, unban => ban'
-            )
-        )
-    );
-  }
-
   async run(interaction: ChatInputCommandInteraction<'cached'>) {
     const id = interaction.options.getInteger('id', true);
     const undo = interaction.options.getBoolean('undo-punishment') ?? false;

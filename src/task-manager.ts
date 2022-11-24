@@ -7,6 +7,7 @@ import { getMember } from './lib/util/functions';
 setInterval(async () => {
   await client.db.infraction.deleteMany({
     where: {
+      type: InfractionType.Warn,
       expires: {
         lte: Date.now()
       }

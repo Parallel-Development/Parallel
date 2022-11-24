@@ -2,5 +2,6 @@ node_modules
 dist
 .DS_Store
 .env
+.vscode
 yarn-error.log
 whiteboard.md

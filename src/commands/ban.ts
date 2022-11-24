@@ -7,35 +7,33 @@ import {
   Colors
 } from 'discord.js';
 import ms from 'ms';
-import Command from '../lib/structs/Command';
+import Command, { clientpermissions, data } from '../lib/structs/Command';
 import { adequateHierarchy } from '../lib/util/functions';
 
+@data(
+  new SlashCommandBuilder()
+    .setName('ban')
+    .setDescription('Ban a member from the guild.')
+    .setDefaultMemberPermissions(Permissions.KickMembers)
+    .addUserOption(option => option.setName('user').setDescription('The user to ban.').setRequired(true))
+    .addStringOption(option => option.setName('duration').setDescription('The duration of the ban.'))
+    .addStringOption(option => option.setName('reason').setDescription('The reason for banning.'))
+    .addStringOption(option =>
+      option
+        .setName('delete-previous-messages')
+        .setDescription('Delete messages sent in the last x duration.')
+        .addChoices(
+          { name: 'Previous hour', value: '1h' },
+          { name: 'Previous 6 hours', value: '6h' },
+          { name: 'Previous 12 hours', value: '12h' },
+          { name: 'Previous 24 hours', value: '24h' },
+          { name: 'Previous 3 days', value: '3d' },
+          { name: 'Previous 7 days', value: '7d' }
+        )
+    )
+)
+@clientpermissions([Permissions.BanMembers])
 class BanCommand extends Command {
-  constructor() {
-    super(
-      new SlashCommandBuilder()
-        .setName('ban')
-        .setDescription('Ban a member from the guild.')
-        .setDefaultMemberPermissions(Permissions.KickMembers)
-        .addUserOption(option => option.setName('user').setDescription('The user to ban.').setRequired(true))
-        .addStringOption(option => option.setName('duration').setDescription('The duration of the ban.'))
-        .addStringOption(option => option.setName('reason').setDescription('The reason for banning.'))
-        .addStringOption(option =>
-          option
-            .setName('delete-previous-messages')
-            .setDescription('Delete messages sent in the last x duration.')
-            .addChoices(
-              { name: 'Previous hour', value: '1h' },
-              { name: 'Previous 6 hours', value: '6h' },
-              { name: 'Previous 12 hours', value: '12h' },
-              { name: 'Previous 24 hours', value: '24h' },
-              { name: 'Previous 3 days', value: '3d' },
-              { name: 'Previous 7 days', value: '7d' }
-            )
-        ),
-      [Permissions.BanMembers]
-    );
-  }
   async run(interaction: ChatInputCommandInteraction<'cached'>) {
     const user = interaction.options.getUser('user', true);
     const member = interaction.options.getMember('user');

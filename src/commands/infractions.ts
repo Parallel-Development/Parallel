@@ -5,23 +5,20 @@ import {
   EmbedBuilder,
   type EmbedField
 } from 'discord.js';
-import Command from '../lib/structs/Command';
+import Command, { data } from '../lib/structs/Command';
 import { infractionsPerPage, mainColor } from '../lib/util/constants';
 
+@data(
+  new SlashCommandBuilder()
+    .setName('infractions')
+    .setDescription("View a user's current infractions.")
+    .setDefaultMemberPermissions(Permissions.ModerateMembers)
+    .addUserOption(option =>
+      option.setName('user').setDescription('The user to get the infractions of.').setRequired(true)
+    )
+    .addNumberOption(option => option.setName('page').setDescription('The page to jump to.').setMinValue(1))
+)
 class InfractionsCommand extends Command {
-  constructor() {
-    super(
-      new SlashCommandBuilder()
-        .setName('infractions')
-        .setDescription("View a user's current infractions.")
-        .setDefaultMemberPermissions(Permissions.ModerateMembers)
-        .addUserOption(option =>
-          option.setName('user').setDescription('The user to get the infractions of.').setRequired(true)
-        )
-        .addNumberOption(option => option.setName('page').setDescription('The page to jump to.').setMinValue(1))
-    );
-  }
-
   async run(interaction: ChatInputCommandInteraction<'cached'>) {
     const user = interaction.options.getUser('user', true);
     let page = interaction.options.getNumber('page') ?? 1;

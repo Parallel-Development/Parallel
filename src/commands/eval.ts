@@ -8,24 +8,21 @@ import {
   TextInputStyle
 } from 'discord.js';
 import ms from 'ms';
-import Command from '../lib/structs/Command';
+import Command, { data } from '../lib/structs/Command';
 import util from 'util';
 import { bin } from '../lib/util/functions';
 
+@data(
+  new SlashCommandBuilder()
+    .setName('eval')
+    .setDescription('Execute a string of JavaScript code.')
+    .addStringOption(option =>
+      option.setName('code').setDescription('The code to execute. Leaving this empty will open a modal.')
+    )
+    .addBooleanOption(option => option.setName('async').setDescription('Evaluate the code in an async function.'))
+    .addIntegerOption(option => option.setName('depth').setDescription('Output depth.').setMinValue(0))
+)
 class EvalCommand extends Command {
-  constructor() {
-    super(
-      new SlashCommandBuilder()
-        .setName('eval')
-        .setDescription('Execute a string of JavaScript code.')
-        .addStringOption(option =>
-          option.setName('code').setDescription('The code to execute. Leaving this empty will open a modal.')
-        )
-        .addBooleanOption(option => option.setName('async').setDescription('Evaluate the code in an async function.'))
-        .addIntegerOption(option => option.setName('depth').setDescription('Output depth.').setMinValue(0))
-    );
-  }
-
   async run(interaction: ChatInputCommandInteraction<'cached'>) {
     if (interaction.user.id !== '633776442366361601') throw 'You cannot run this command.';
     const code = interaction.options.getString('code');
@@ -91,7 +88,7 @@ class EvalCommand extends Command {
     const type = typeof output;
     output = typeof output === 'string' ? output : util.inspect(output, { depth });
     if (output.length > 1000) {
-      return interaction.editReply(`Output: ${await bin(output)}`)
+      return interaction.editReply(`Output: ${await bin(output)}`);
     }
 
     const unit =

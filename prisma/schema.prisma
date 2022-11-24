@@ -22,21 +22,33 @@ enum InfractionType {
 }
 
 model Guild {
-  id                        String        @id
-  infractionModeratorPublic Boolean       @default(false)
-  notifyInfractionChange    Boolean       @default(false)
-  allowDispute              Boolean       @default(false)
-  disputeAlertWebhookId     String?
-  disputeMethod             DisputeMethod @default(Modal)
-  disputeLink               String?
-  disputeModalQuestions     String[]      @default(["Reason for dispute."])
-  disregardDisputeAfter     BigInt        @default(2592000000)
-  disputeBlacklist          String[]
-  logWebhookId              String?
-  infoWarn                  String?
-  infoMute                  String?
-  infoKick                  String?
-  infoBan                   String?
+  id                             String          @id
+  infractionModeratorPublic      Boolean         @default(false)
+  notifyInfractionChange         Boolean         @default(false)
+  disputeAllowed                 Boolean         @default(false)
+  disputeAlertWebhookId          String?
+  disputeMethod                  DisputeMethod   @default(Modal)
+  disputeLink                    String?
+  disputeModalQuestions          String[]        @default(["Reason for dispute."])
+  disregardDisputeAfter          BigInt          @default(2592000000)
+  disputeBlacklist               String[]
+  logWebhookId                   String?
+  infoWarn                       String?
+  infoMute                       String?
+  infoKick                       String?
+  infoBan                        String?
+  autoModSpamToggle              Boolean         @default(false)
+  autoModSpamAmount              Int             @default(5)
+  autoModSpamIn                  Int             @default(3)
+  autoModSpamImmuneChannels      String[]
+  autoModSpamImmuneRoles         String[]
+  autoModSpamPunishment          InfractionType?
+  autoModSpamDuration            BigInt          @default(0)
+  autoModMaliciousToggle         Boolean         @default(false)
+  autoModMaliciousImmuneChannels String[]
+  autoModMaliciousImmuneRoles    String[]
+  autoModMaliciousPunishment     InfractionType?
+  autoModMaliciousDuration       BigInt          @default(0)
 
   infractions Infraction[]
   disputes    Dispute[]

@@ -1,17 +1,27 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder, PermissionsBitField } from 'discord.js';
 import client from '../../client';
 
-abstract class Command {
-  public readonly data: Partial<SlashCommandBuilder>;
-  public clientPermissions: PermissionsBitField;
+export default abstract class Command {
+  public readonly data: Partial<SlashCommandBuilder> = null!;
+  public clientPermissions: PermissionsBitField | null = null;
   public client = client;
-
-  constructor(data: Partial<SlashCommandBuilder>, clientPermissions: bigint[] = [0n]) {
-    this.data = data;
-    this.clientPermissions = new PermissionsBitField(clientPermissions);
-  }
 
   abstract run(interaction: ChatInputCommandInteraction<'cached'>): unknown;
 }
 
-export default Command;
+export function data(data: Partial<SlashCommandBuilder>) {
+  return function<T extends { new(...args: any[]): {} }>(constructor: T) {
+    return class extends constructor {
+      data = data
+    }
+  }
+}
+
+export function clientpermissions(clientPermissions: bigint[]) {
+  return function<T extends { new(...args: any[]): {} }>(constructor: T) {
+    return class extends constructor {
+      clientPermissions = new PermissionsBitField(clientPermissions);
+    }
+  }
+}
+

@@ -27,3 +27,10 @@ export namespace Pagination {
 
 export const mainColor = Colors.Fuchsia;
 export const commonChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789';
+export const domainReg = /(?:[A-z0-9](?:[A-z0-9-]{0,61}[A-z0-9])?\.)+[A-z0-9][A-z0-9-]{0,61}[A-z0-9]/;
+export const pastTenseInfractionTypes = {
+  'ban': 'banned',
+  'kick': 'kicked',
+  'mute': 'muted',
+  'warn': 'warned'
+}
