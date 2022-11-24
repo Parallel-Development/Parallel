@@ -36,7 +36,7 @@ class EvalModal extends Modal {
     const type = typeof output;
     output = typeof output === 'string' ? output : util.inspect(output, { depth });
     if (output.length > 1000) {
-      return interaction.editReply(`Output: ${await bin(output)}`)
+      return interaction.editReply(`Output: ${await bin(output)}`);
     }
 
     const unit =

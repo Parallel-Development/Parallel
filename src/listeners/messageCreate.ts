@@ -81,7 +81,9 @@ class MessageCreate extends Listener {
 
       if (speed <= automod.autoModSpamIn * 1000) {
         this.spamTrack.set(key, []);
-        const messages = [...(await message.channel.messages.fetch({ limit: 20 })).values()].filter(msg => msg.author.id === message.author.id).slice(0, automod.autoModSpamAmount);
+        const messages = [...(await message.channel.messages.fetch({ limit: 20 })).values()]
+          .filter(msg => msg.author.id === message.author.id)
+          .slice(0, automod.autoModSpamAmount);
         await message.channel.bulkDelete(messages);
 
         return this.automodPunish(
