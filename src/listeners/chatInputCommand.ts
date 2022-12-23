@@ -1,5 +1,8 @@
 import Listener from '../lib/structs/Listener';
-import { type ChatInputCommandInteraction } from 'discord.js';
+import { type ChatInputCommandInteraction, PermissionFlagsBits as Permissions, PermissionsBitField, ApplicationCommandOptionType, ApplicationCommandDataResolvable } from 'discord.js';
+import { InfractionType } from '@prisma/client';
+const customCommandsConfirmed = new Set();
+const unresolvedGuilds = new Set<[string, string]>();
 
 class ChatInputCommandListener extends Listener {
   constructor() {
@@ -7,14 +10,14 @@ class ChatInputCommandListener extends Listener {
   }
 
   async run(interaction: ChatInputCommandInteraction) {
-    if (!interaction.inCachedGuild())
-      return interaction.reply({ content: 'Commands must be ran in a guild.', ephemeral: true });
-
     const command = this.client.commands.get(interaction.commandName);
-    if (!command) return interaction.reply({ content: 'Unknown Command.', ephemeral: true });
+    if (!command) return this.client.emit('customCommand', interaction);
+
+    if (!interaction.inCachedGuild() && !command.allowDM)
+      return interaction.reply({ content: 'That command must be ran in a guild.', ephemeral: true });
 
     if (command.clientPermissions) {
-      if (!interaction.guild.members.me!.permissions.has(command.clientPermissions))
+      if (!interaction.guild!.members.me!.permissions.has(command.clientPermissions))
         return interaction.reply({
           content: `I don\'t have the required permissions to complete this command.\nMissing: \`${command.clientPermissions
             .toArray()
@@ -24,11 +27,22 @@ class ChatInputCommandListener extends Listener {
         });
     }
 
-    await this.confirmGuild(interaction);
+    if (interaction.inCachedGuild()) await this.confirmGuild(interaction.guildId);
+
+    if (command.guildResolve) {
+      if (unresolvedGuilds.has([interaction.guildId!, interaction.commandName]))
+        return interaction.reply({ content: 'Another process of this command is currently running. Please wait for it to finish before running this command.', ephemeral: true });
+
+      unresolvedGuilds.add([interaction.guildId!, interaction.commandName]);
+    }
 
     try {
       await command.run(interaction);
+
+      if (command.guildResolve) unresolvedGuilds.delete([interaction.guildId!, interaction.commandName]);
     } catch (e) {
+      if (command.guildResolve) unresolvedGuilds.delete([interaction.guildId!, interaction.commandName]);
+
       if (typeof e !== 'string') {
         console.error(e);
         return;
@@ -39,10 +53,15 @@ class ChatInputCommandListener extends Listener {
     }
   }
 
-  private async confirmGuild(interaction: ChatInputCommandInteraction<'cached'>) {
+  private async confirmGuild(guildId: string) {
+    if (!customCommandsConfirmed.has(guildId)) {
+      this.checkShortcuts(guildId);
+      customCommandsConfirmed.add(guildId);
+    }
+
     const guild = await this.client.db.guild.findUnique({
       where: {
-        id: interaction.guildId
+        id: guildId
       }
     });
 
@@ -50,11 +69,55 @@ class ChatInputCommandListener extends Listener {
 
     await this.client.db.guild.create({
       data: {
-        id: interaction.guildId
+        id: guildId
       }
     });
 
     return true;
+  }
+
+  private async checkShortcuts(guildId: string) {
+    const customCommands = await this.client.db.shortcut.findMany({
+      where: {
+        guildId: guildId
+      }
+    });
+
+    const guild = this.client.guilds.cache.get(guildId)!;
+
+    const put: ApplicationCommandDataResolvable[] = [];
+    let changed = 0;
+    for (const command of customCommands) {
+      const sCommand = guild.commands.cache.find(cmd => cmd.name === command.name);
+      if (sCommand) {
+        put.push(sCommand as ApplicationCommandDataResolvable);
+        continue;
+      }
+      changed++;
+
+      put.push({
+        name: command.name,
+        description: command.description,
+        defaultMemberPermissions:
+          command.punishment in [InfractionType.Ban, InfractionType.Unban]
+            ? Permissions.BanMembers
+            : command.punishment in [InfractionType.Mute, InfractionType.Unmute]
+            ? Permissions.MuteMembers
+            : command.punishment === InfractionType.Kick
+            ? Permissions.KickMembers
+            : Permissions.ModerateMembers,
+        options: [
+          {
+            name: command.punishment in [InfractionType.Ban, InfractionType.Unban] ? 'user' : 'member',
+            description: `The ${command.punishment in [InfractionType.Ban, InfractionType.Unban] ? 'user' : 'member'} to ${command.punishment}.`,
+            type: ApplicationCommandOptionType.User
+          }
+        ]
+      });
+    }
+
+    if (changed === 0) return;
+    await guild.commands.set(put);
   }
 }
 

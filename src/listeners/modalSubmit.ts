@@ -7,10 +7,9 @@ class ModalSubmitCommandListener extends Listener {
   }
 
   async run(interaction: ModalSubmitInteraction) {
-    if (!interaction.inCachedGuild())
-      return interaction.reply({ content: 'Not sure how this happened...', ephemeral: true });
+    if (interaction.customId[0] === '?') return;
 
-    const modal = this.client.modals.get(interaction.customId.split(':')?.[1]);
+    const modal = this.client.modals.get(interaction.customId.split(':')[0]);
     if (!modal) return interaction.reply({ content: 'Unknown modal interaction.', ephemeral: true });
 
     try {

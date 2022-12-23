@@ -21,7 +21,7 @@ import { adequateHierarchy } from '../lib/util/functions';
     .addStringOption(option =>
       option
         .setName('delete-previous-messages')
-        .setDescription('Delete messages sent in the last x duration.')
+        .setDescription('Delete messages sent in past...')
         .addChoices(
           { name: 'Previous hour', value: '1h' },
           { name: 'Previous 6 hours', value: '6h' },
@@ -46,14 +46,15 @@ class BanCommand extends Command {
         throw 'You cannot ban this member due to inadequete hierarchy.';
 
       if (!adequateHierarchy(interaction.guild.members.me!, member))
-        throw 'I cannot ban this member due to inadequete hierarchy';
+        throw 'I cannot ban this member due to inadequete hierarchy.';
     }
 
-    const reason = interaction.options.getString('reason') ?? 'None';
+    const reason = interaction.options.getString('reason') ?? 'Unspecified reason.';
     const uExpiration = interaction.options.getString('erase-after');
     const date = BigInt(Date.now());
-    const expires = uExpiration ? BigInt(ms(uExpiration)) + date : null;
+    const expires = uExpiration ? BigInt(+uExpiration * 1000 || ms(uExpiration)) + date : null;
 
+    if (Number.isNaN(expires)) throw 'Invalid duration.';
     if (expires && expires < 1000) throw 'Temporary ban duration must be at least 1 second.';
     const deleteMessageSeconds = Math.floor(
       ms(interaction.options.getString('delete-previous-messages') ?? '0s') / 1000

@@ -1,9 +1,10 @@
 import { type ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
-import Command, { data } from '../lib/structs/Command';
+import Command, { allowDM, data } from '../lib/structs/Command';
 
 @data(new SlashCommandBuilder().setName('ping').setDescription("Get the bot's API latency and websocket heartbeat."))
+@allowDM
 class PingCommand extends Command {
-  async run(interaction: ChatInputCommandInteraction<'cached'>) {
+  async run(interaction: ChatInputCommandInteraction) {
     const start = performance.now();
     await interaction.deferReply();
     const end = performance.now();

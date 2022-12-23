@@ -29,9 +29,9 @@ class KickCommand extends Command {
       throw 'You cannot kick this member due to inadequete hierarchy.';
 
     if (!adequateHierarchy(interaction.guild.members.me!, member))
-      throw 'I cannot kick this member due to inadequete hierarchy';
+      throw 'I cannot kick this member due to inadequete hierarchy.';
 
-    const reason = interaction.options.getString('reason') ?? 'None';
+    const reason = interaction.options.getString('reason') ?? 'Unspecified reason.';
 
     await interaction.deferReply();
 

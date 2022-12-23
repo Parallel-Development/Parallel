@@ -16,16 +16,16 @@ class PunishLog extends Listener {
       }
     }))!;
 
-    if (!guild.logWebhookId) return false;
+    if (!guild.modLogWebhookId) return false;
 
-    const webhook = await this.client.fetchWebhook(guild.logWebhookId!).catch(() => null);
+    const webhook = await this.client.fetchWebhook(guild.modLogWebhookId!).catch(() => null);
     if (!webhook) {
       await this.client.db.guild.update({
         where: {
           id: guild.id
         },
         data: {
-          logWebhookId: null
+          modLogWebhookId: null
         }
       });
 

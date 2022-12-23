@@ -32,19 +32,19 @@ class MuteCommand extends Command {
       throw 'You cannot mute this member due to inadequete hierarchy.';
 
     if (!adequateHierarchy(interaction.guild.members.me!, member))
-      throw 'I cannot mute this member due to inadequete hierarchy';
+      throw 'I cannot mute this member due to inadequete hierarchy.';
 
-    const reason = interaction.options.getString('reason') ?? 'None';
+    const reason = interaction.options.getString('reason') ?? 'Unspecified reason.';
     const uExpiration = interaction.options.getString('duration')!;
     const date = BigInt(Date.now());
-    const expires = BigInt(ms(uExpiration));
+    const expires = BigInt(+uExpiration * 1000 || ms(uExpiration));
     if (!expires) throw 'Invalid duration.';
 
     if (expires > d28) throw 'You cannot mute a member for more than `28 days.`';
     if (expires < 1000)
-      throw `Mute duration must be at least 1 second. Consider using <t:/unmute:${
+      throw `Mute duration must be at least 1 second. Consider using /unmute:${
         this.client.user!.id
-      }> if you want to unmute the user.`;
+      } if you want to unmute the user.`;
     const expirationTimestamp = expires + date;
 
     await interaction.deferReply();

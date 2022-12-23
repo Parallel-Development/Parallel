@@ -55,7 +55,7 @@ class InfractionsCommand extends Command {
         name: `ID ${infraction.id}: ${infraction.type.toString()}`,
         value: `${infraction.reason.slice(0, 100)}${infraction.reason.length > 100 ? '...' : ''}${
           infraction.dispute ? `\n*- This infraction has a dispute.*` : ''
-        }\n*- <t:${infraction.date}>, issued by <@${infraction.moderatorId}> (${infraction.moderatorId})*`,
+        }\n*- <t:${Math.floor(Number(infraction.date / 1000n))}>, issued by <@${infraction.moderatorId}> (${infraction.moderatorId})*`,
         inline: false
       };
 

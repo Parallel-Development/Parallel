@@ -14,19 +14,26 @@ setInterval(async () => {
     }
   });
 
+  await client.db.$executeRaw`DELETE FROM "Dispute"
+  WHERE id IN (
+    SELECT D.id
+    FROM "Dispute" D
+    INNER JOIN "Infraction" I ON D.id = I.id
+    INNER JOIN "Guild" G ON D."guildId" = G.id
+    WHERE I."date" + G."disputeDisregardAfter" <= (extract(epoch from now()) * 1000)
+  )`;
+
   const guilds = await client.db.guild.findMany({
-    select: { id: true, tasks: { where: { expires: { lte: Date.now() }, missed: false } } }
+    select: { id: true, tasks: { where: { expires: { lte: Date.now() } } } }
   });
 
   for (const guildTasks of guilds) {
     const guild = client.guilds.cache.get(guildTasks.id);
     if (!guild) {
-      await client.db.task.updateMany({
+      await client.db.task.deleteMany({
         where: {
-          guildId: guildTasks.id
-        },
-        data: {
-          missed: true
+          guildId: guildTasks.id,
+          expires: { lte: Date.now() }
         }
       });
 
@@ -36,16 +43,12 @@ setInterval(async () => {
     const permissions = guild.members.me!.permissions;
     const banPerm = permissions.has(Permissions.BanMembers);
 
-    // essentially, we still save the data, but we ignore it for now
-    // We provide the ability to unmark these as missed so the users may be automatically unbanned again
     if (!banPerm) {
-      await client.db.task.updateMany({
+      await client.db.task.deleteMany({
         where: {
           guildId: guild.id,
-          type: InfractionType.Ban
-        },
-        data: {
-          missed: true
+          type: InfractionType.Ban,
+          expires: { lte: Date.now() }
         }
       });
 

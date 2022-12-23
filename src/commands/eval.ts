@@ -8,9 +8,10 @@ import {
   TextInputStyle
 } from 'discord.js';
 import ms from 'ms';
-import Command, { data } from '../lib/structs/Command';
+import Command, { allowDM, data } from '../lib/structs/Command';
 import util from 'util';
 import { bin } from '../lib/util/functions';
+let _; // used to reference the last returned expression
 
 @data(
   new SlashCommandBuilder()
@@ -22,13 +23,14 @@ import { bin } from '../lib/util/functions';
     .addBooleanOption(option => option.setName('async').setDescription('Evaluate the code in an async function.'))
     .addIntegerOption(option => option.setName('depth').setDescription('Output depth.').setMinValue(0))
 )
+@allowDM
 class EvalCommand extends Command {
-  async run(interaction: ChatInputCommandInteraction<'cached'>) {
+  async run(interaction: ChatInputCommandInteraction) {
     if (interaction.user.id !== '633776442366361601') throw 'You cannot run this command.';
     const code = interaction.options.getString('code');
 
     if (!code) {
-      const modal = new ModalBuilder().setTitle('Eval').setCustomId('modal:eval');
+      const modal = new ModalBuilder().setTitle('Eval').setCustomId('eval');
 
       const codeRow = new ActionRowBuilder<ModalActionRowComponentBuilder>();
       const codeText = new TextInputBuilder()
@@ -85,6 +87,7 @@ class EvalCommand extends Command {
       error = true;
     }
 
+    _ = output;
     const type = typeof output;
     output = typeof output === 'string' ? output : util.inspect(output, { depth });
     if (output.length > 1000) {

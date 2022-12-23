@@ -30,3 +30,7 @@ export async function bin(data: any, ext: string = 'js') {
   const bin = await binReq.json();
   return `https://hst.sh/${bin.key}.${ext}`;
 }
+
+export async function sleep(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}

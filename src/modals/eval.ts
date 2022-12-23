@@ -9,7 +9,7 @@ class EvalModal extends Modal {
     super('eval');
   }
 
-  async run(interaction: ModalSubmitInteraction<'cached'>) {
+  async run(interaction: ModalSubmitInteraction) {
     if (interaction.user.id !== '633776442366361601') throw 'You cannot run this command.';
 
     const code = interaction.fields.getTextInputValue('code');

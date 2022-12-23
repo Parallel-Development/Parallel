@@ -41,7 +41,7 @@ class MyCaseCommand extends Command {
           : Colors.Red
       )
       .setDescription(
-        `**User:** <@${infraction.userId}> (${infraction.userId}))${
+        `${
           infractionModeratorPublic ? `\n**Moderator:** <@${infraction.moderatorId}> (${infraction.moderatorId})` : ''
         }\n**Date:** <t:${Math.floor(Number(infraction.date) / 1000)}> (<t:${Math.floor(
           Number(infraction.date) / 1000

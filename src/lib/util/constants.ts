@@ -2,32 +2,22 @@ import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Colors, MessageActionRowC
 
 export const infractionsPerPage = 7;
 
-export namespace Pagination {
-  export const backX = new ButtonBuilder()
-    .setLabel('<<')
-    .setStyle(ButtonStyle.Secondary)
-    .setCustomId('pagination:backX');
-  export const back = new ButtonBuilder().setLabel('<').setStyle(ButtonStyle.Secondary).setCustomId('pagination:back');
-  export const forward = new ButtonBuilder()
-    .setLabel('>')
-    .setStyle(ButtonStyle.Secondary)
-    .setCustomId('pagination:forward');
-  export const forwardX = new ButtonBuilder()
-    .setLabel('>>')
-    .setStyle(ButtonStyle.Secondary)
-    .setCustomId('pagination:forwardX');
+export const yesButton = new ButtonBuilder()
+.setLabel('Yes')
+.setStyle(ButtonStyle.Success)
+.setCustomId('yes')
 
-  export const row = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
-    backX,
-    back,
-    forward,
-    forwardX
-  );
-}
+export const noButton = new ButtonBuilder()
+.setLabel('No')
+.setStyle(ButtonStyle.Danger)
+.setCustomId('no');
 
-export const mainColor = Colors.Fuchsia;
+export const yesNoRow = new ActionRowBuilder<ButtonBuilder>().addComponents(yesButton, noButton);
+
+export const mainColor = Colors.Blurple;
 export const commonChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789';
 export const domainReg = /(?:[A-z0-9](?:[A-z0-9-]{0,61}[A-z0-9])?\.)+[A-z0-9][A-z0-9-]{0,61}[A-z0-9]/;
+export const urlReg = /http(s):\/\/(?:[A-z0-9](?:[A-z0-9-]{0,61}[A-z0-9])?\.)+[A-z0-9][A-z0-9-]{0,61}[A-z0-9]/;
 export const pastTenseInfractionTypes = {
   'ban': 'banned',
   'kick': 'kicked',

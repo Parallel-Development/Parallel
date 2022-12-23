@@ -5,11 +5,11 @@ const fs = require('node:fs');
 
 const commands = [];
 // Grab all the command files from the commands directory you created earlier
-const commandFiles = fs.readdirSync('dist/commands').filter(file => file.endsWith('.js'));
+const commandFiles = fs.readdirSync('src/commands').filter(file => file.endsWith('.ts'));
 
 // Grab the SlashCommandBuilder#toJSON() output of each command's data for deployment
 for (const file of commandFiles) {
-  const commandClass = require(`./dist/commands/${file}`).default;
+  const commandClass = require(`./dist/commands/${file.slice(0, -3)}`).default;
   const commandInstant = new commandClass();
   commands.push(commandInstant.data.toJSON());
 }
@@ -23,8 +23,7 @@ const rest = new REST({ version: '10' }).setToken(TOKEN);
     console.log(`Started refreshing ${commands.length} application (/) commands.`);
 
     // The put method is used to fully refresh all commands in the guild with the current set
-    const data = await rest.put(Routes.applicationGuildCommands(CLIENT_ID, DEV_GUILD_ID), { body: commands });
-    await rest.put(Routes.applicationGuildCommands(CLIENT_ID, '980593281257852999'), { body: commands });
+    const data = await rest.put(Routes.applicationCommands(CLIENT_ID), { body: commands });
 
     console.log(`Successfully reloaded ${data.length} application (/) commands.`);
   } catch (error) {

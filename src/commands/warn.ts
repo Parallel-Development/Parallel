@@ -32,10 +32,13 @@ class WarnCommand extends Command {
     if (!adequateHierarchy(interaction.member, member))
       throw 'You cannot warn this member due to inadequete hierarchy.';
 
-    const reason = interaction.options.getString('reason') ?? 'None';
+    const reason = interaction.options.getString('reason') ?? 'Unspecified reason.';
     const uExpiration = interaction.options.getString('erase-after');
     const date = BigInt(Date.now());
-    const expires = uExpiration ? BigInt(ms(uExpiration)) + date : null;
+    const expires = uExpiration ? BigInt(+uExpiration * 1000 || ms(uExpiration)) + date : null;
+
+    if (Number.isNaN(expires)) throw 'Invalid duration.';
+    if (expires && expires < 1000) throw 'Temporary warn duration must be at least 1 second.';
 
     await interaction.deferReply();
 
@@ -48,10 +51,10 @@ class WarnCommand extends Command {
         expires: expires ?? null,
         reason
       },
-      include: { guild: { select: { infractionModeratorPublic: true, infoWarn: true, logWebhookId: true } } }
+      include: { guild: { select: { infractionModeratorPublic: true, infoWarn: true, modLogWebhookId: true } } }
     });
 
-    const { infractionModeratorPublic, infoWarn, logWebhookId } = infraction.guild;
+    const { infractionModeratorPublic, infoWarn, modLogWebhookId } = infraction.guild;
 
     const dm = new EmbedBuilder()
       .setAuthor({ name: 'Parallel Moderation', iconURL: this.client.user!.displayAvatarURL() })

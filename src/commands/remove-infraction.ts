@@ -30,8 +30,6 @@ class RemoveInfractionCommand extends Command {
     const undo = interaction.options.getBoolean('undo-punishment') ?? false;
     const reason = interaction.options.getString('reason') ?? undefined;
 
-    await interaction.deferReply();
-
     const infraction = await this.client.db.infraction.findUnique({
       where: {
         id
@@ -77,6 +75,8 @@ class RemoveInfractionCommand extends Command {
         date: BigInt(Date.now())
       } as Infraction);
     }
+
+    await interaction.deferReply();
 
     await this.client.db.infraction.delete({
       where: {

@@ -10,9 +10,6 @@ class DisputeModal extends Modal {
   }
 
   async run(interaction: ModalSubmitInteraction) {
-    if (!interaction.inCachedGuild()) return;
-    await interaction.deferReply();
-
     const infractionId = +interaction.fields.getTextInputValue('id');
     if ((!infractionId && infractionId !== 0) || infractionId < 1) throw 'Invalid infraction ID.';
 
@@ -26,7 +23,7 @@ class DisputeModal extends Modal {
       }
     });
 
-    if (infraction?.guildId !== interaction.guildId) throw 'No infraction with that ID exists in this guild.';
+    if (infraction?.guildId !== interaction.guildId && !(!interaction.inCachedGuild() && infraction)) throw 'No infraction with that ID exists in this guild.';
     if (infraction.userId !== interaction.user.id)
       throw 'You cannot create a dispute for an infraction that is not on your record.';
     if (infraction.type === InfractionType.Unmute || infraction.type === InfractionType.Unban)
@@ -51,10 +48,12 @@ class DisputeModal extends Modal {
     });
     response.shift();
 
+    await interaction.deferReply();
+
     await this.client.db.dispute.create({
       data: {
         id: infraction.id,
-        guildId: interaction.guildId,
+        guildId: guild.id,
         userId: interaction.user.id,
         response
       }
@@ -65,7 +64,7 @@ class DisputeModal extends Modal {
       if (!webhook) {
         await this.client.db.guild.update({
           where: {
-            id: interaction.guildId
+            id: guild.id
           },
           data: {
             disputeAlertWebhookId: null

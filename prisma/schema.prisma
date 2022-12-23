@@ -30,9 +30,9 @@ model Guild {
   disputeMethod                  DisputeMethod   @default(Modal)
   disputeLink                    String?
   disputeModalQuestions          String[]        @default(["Reason for dispute."])
-  disregardDisputeAfter          BigInt          @default(2592000000)
+  disputeDisregardAfter          BigInt          @default(2592000000)
   disputeBlacklist               String[]
-  logWebhookId                   String?
+  modLogWebhookId                String?
   infoWarn                       String?
   infoMute                       String?
   infoKick                       String?
@@ -48,10 +48,16 @@ model Guild {
   autoModMaliciousImmuneRoles    String[]
   autoModMaliciousPunishment     InfractionType?
   autoModMaliciousDuration       BigInt          @default(0)
+  escalations                    Json[]
+  lockChannels                   String[]
+  lockOverrides                  BigInt          @default(377957124160) // SendMessages + CreatePublicThreads + CreatePrivateThreads + SendMessagesInThreads + AddReactions
 
   infractions Infraction[]
   disputes    Dispute[]
   tasks       Task[]
+  locks       Lock[]
+  tags        Tag[]
+  shortcuts   Shortcut[]
 }
 
 model Infraction {
@@ -74,7 +80,6 @@ model Task {
   guildId String
   type    InfractionType
   expires BigInt
-  missed  Boolean        @default(false)
   guild   Guild          @relation(fields: [guildId], references: [id], onDelete: Cascade)
 
   @@unique([userId, guildId, type])
@@ -88,4 +93,34 @@ model Dispute {
 
   infraction Infraction? @relation(fields: [id], references: [id], onDelete: Cascade)
   guild      Guild       @relation(fields: [guildId], references: [id], onDelete: Cascade)
+}
+
+model Lock {
+  channelId String @id
+  guildId   String
+  allow     BigInt
+
+  guild Guild @relation(fields: [guildId], references: [id], onDelete: Cascade)
+}
+
+model Tag {
+  guildId String
+  name    String
+  content String
+  guild   Guild  @relation(fields: [guildId], references: [id], onDelete: Cascade)
+
+  @@unique([guildId, name])
+}
+
+model Shortcut {
+  guildId     String
+  name        String
+  description String
+  punishment  InfractionType
+  reason      String
+  duration    BigInt?
+  deleteTime  Int?
+  guild       Guild   @relation(fields: [guildId], references: [id], onDelete: Cascade)
+
+  @@unique([guildId, name])
 }

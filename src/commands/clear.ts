@@ -17,13 +17,15 @@ import Command, { clientpermissions, data } from '../lib/structs/Command';
     .addUserOption(option => option.setName('from').setDescription('Clear messages from a specific user.'))
     .addStringOption(option => option.setName('before').setDescription('Clear the messages before a specific message.'))
 )
-@clientpermissions([Permissions.ManageMessages])
 class ClearCommand extends Command {
   async run(interaction: ChatInputCommandInteraction<'cached'>) {
     if (!interaction.channel) throw 'Command cannot be ran here.';
     if (!interaction.channel.permissionsFor(interaction.member).has(Permissions.ManageMessages))
       throw 'You need the `Manage Messages` permission in this channel to run this command here.';
 
+    if (!interaction.channel.permissionsFor(interaction.member).has(Permissions.ManageMessages))
+      throw 'I need the `Manage Messages` permission in this channel to run this command here.';
+  
     const count = interaction.options.getInteger('count', true);
     const user = interaction.options.getUser('from');
 

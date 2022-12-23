@@ -221,11 +221,18 @@ class DisputeManagerCommand extends Command {
 
         return interaction.reply(`Dispute disregarded.`);
       case 'accept':
+        await interaction.deferReply();
+
         await this.client.db.dispute.delete({
           where: {
             id
-          },
-          include: { infraction: true }
+          }
+        });
+
+        await this.client.db.infraction.delete({
+          where: {
+            id
+          }
         });
 
         if (dontUndo && infraction.type !== InfractionType.Ban && infraction.type !== InfractionType.Mute)
@@ -267,7 +274,7 @@ class DisputeManagerCommand extends Command {
             .then(user => user.send({ embeds: [acceptEmbed] }))
             .catch(() => {});
 
-        return interaction.reply('Dispute accepted.');
+        return interaction.editReply('Dispute accepted.');
       case 'deny':
         await this.client.db.dispute.delete({
           where: {

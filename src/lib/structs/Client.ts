@@ -1,4 +1,4 @@
-import { Client as DJSClient, IntentsBitField as Intents, Options, Sweepers } from 'discord.js';
+import { Client as DJSClient, IntentsBitField as Intents, Options, Partials, Sweepers } from 'discord.js';
 import { PrismaClient } from '@prisma/client';
 import { createPrismaRedisCache } from 'prisma-redis-middleware';
 import fs from 'fs';
@@ -24,6 +24,7 @@ class Client extends DJSClient {
         GuildInviteManager: 0,
         GuildScheduledEventManager: 0
       }),
+      partials: [Partials.Channel, Partials.Message],
       sweepers: {
         ...Options.DefaultSweeperSettings,
         guildMembers: {
