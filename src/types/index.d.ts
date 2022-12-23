@@ -16,6 +16,6 @@ export type Escalations = {
   duration: `${number}`;
 }[];
 
-declare module 'decancer' {
-  export default decancer = (name: string) => string;
-}
+// declare module 'decancer' {
+//   export default decancer = (name: string) => string;
+// }

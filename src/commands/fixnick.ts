@@ -1,6 +1,6 @@
 import { SlashCommandBuilder, PermissionFlagsBits as Permissions, ChatInputCommandInteraction } from 'discord.js';
 import Command, { clientpermissions, data } from '../lib/structs/Command';
-import decancer from 'decancer';
+const decancer = require('decancer');
 import { commonChars } from '../lib/util/constants';
 import { adequateHierarchy } from '../lib/util/functions';
 
