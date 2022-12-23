@@ -196,7 +196,7 @@ import { Escalations } from '../types';
                 .setName('channel')
                 .setDescription('The channel to add.')
                 .setRequired(true)
-                .addChannelTypes(ChannelType.GuildText, ChannelType.GuildVoice)
+                .addChannelTypes(ChannelType.GuildText, ChannelType.GuildVoice, ChannelType.GuildForum)
             )
         )
         .addSubcommand(cmd =>
@@ -208,7 +208,7 @@ import { Escalations } from '../types';
                 .setName('channel')
                 .setDescription('The channel to remove.')
                 .setRequired(true)
-                .addChannelTypes(ChannelType.GuildText, ChannelType.GuildVoice)
+                .addChannelTypes(ChannelType.GuildText, ChannelType.GuildVoice, ChannelType.GuildForum)
             )
         )
         .addSubcommand(cmd =>

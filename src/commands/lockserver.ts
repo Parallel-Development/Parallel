@@ -29,6 +29,9 @@ class LockserverCommand extends Command {
       }
     }))!;
 
+    if (lockChannels.length === 0)
+      throw 'This guild has no channels to lock. To add some, please use `/config lock add-channel <channel>`';
+
     const reason = interaction.options.getString('reason') ?? 'Unspecified reason.';
 
     await interaction.reply(
