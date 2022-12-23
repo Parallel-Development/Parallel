@@ -181,7 +181,7 @@ class ShortcutsCommand extends Command {
         }
       });
 
-      if (shortcuts.length === 0) return interaction.editReply('This guild has no shortcuts.');
+      if (shortcuts.length === 0) return interaction.reply('This guild has no shortcuts.');
 
       await interaction.deferReply();
 
