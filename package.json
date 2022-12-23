@@ -4,7 +4,9 @@
   "main": "dist/index.js",
   "license": "MIT",
   "type": "commonjs",
-  "engines.node": "18.2.0",
+  "engines": {
+    "node": "18.x"
+  },
   "scripts": {
     "start": "node .",
     "build": "tsc",
