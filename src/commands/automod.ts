@@ -75,7 +75,7 @@ import { AutoModSpamTriggers } from '../types';
         .addSubcommand(cmd => cmd.setName('triggers-view').setDescription('View all spam triggers.'))
         .addSubcommand(cmd =>
           cmd
-            .setName('immnue-channels-add')
+            .setName('immune-channels-add')
             .setDescription('Add a channel to the list of immune channels from the spam automod.')
             .addChannelOption(opt =>
               opt
@@ -92,7 +92,7 @@ import { AutoModSpamTriggers } from '../types';
         )
         .addSubcommand(cmd =>
           cmd
-            .setName('immnue-channels-remove')
+            .setName('immune-channels-remove')
             .setDescription('Remove a channel from the list of immune channels from the spam automod.')
             .addChannelOption(opt =>
               opt
@@ -103,22 +103,22 @@ import { AutoModSpamTriggers } from '../types';
             )
         )
         .addSubcommand(cmd =>
-          cmd.setName('immnue-channels-view').setDescription('View all immune channels from the spam automod.')
+          cmd.setName('immune-channels-view').setDescription('View all immune channels from the spam automod.')
         )
         .addSubcommand(cmd =>
           cmd
-            .setName('immnue-roles-add')
+            .setName('immune-roles-add')
             .setDescription('Add a role to the list of immune roles from the spam automod.')
             .addRoleOption(opt => opt.setName('role').setDescription('The role to add.').setRequired(true))
         )
         .addSubcommand(cmd =>
           cmd
-            .setName('immnue-roles-remove')
+            .setName('immune-roles-remove')
             .setDescription('Remove a role from the list of immune roles from the spam automod.')
             .addRoleOption(opt => opt.setName('role').setDescription('The role to remove.').setRequired(true))
         )
         .addSubcommand(cmd =>
-          cmd.setName('immnue-roles-view').setDescription('View all immune roles from the spam automod.')
+          cmd.setName('immune-roles-view').setDescription('View all immune roles from the spam automod.')
         )
         .addSubcommand(cmd =>
           cmd
@@ -157,7 +157,7 @@ import { AutoModSpamTriggers } from '../types';
         )
         .addSubcommand(cmd =>
           cmd
-            .setName('immnue-channels-add')
+            .setName('immune-channels-add')
             .setDescription('Add a channel to the list of immune channels from the malicious link automod.')
             .addChannelOption(opt =>
               opt
@@ -174,7 +174,7 @@ import { AutoModSpamTriggers } from '../types';
         )
         .addSubcommand(cmd =>
           cmd
-            .setName('immnue-channels-remove')
+            .setName('immune-channels-remove')
             .setDescription('Remove a channel from the list of immune channels from the malicious automod.')
             .addChannelOption(opt =>
               opt
@@ -191,23 +191,23 @@ import { AutoModSpamTriggers } from '../types';
         )
         .addSubcommand(cmd =>
           cmd
-            .setName('immnue-channels-view')
+            .setName('immune-channels-view')
             .setDescription('View all immune channels from the malicious links automod.')
         )
         .addSubcommand(cmd =>
           cmd
-            .setName('immnue-roles-add')
+            .setName('immune-roles-add')
             .setDescription('Add a role to the list of immune roles from the malicious automod.')
             .addRoleOption(opt => opt.setName('role').setDescription('The role to add.').setRequired(true))
         )
         .addSubcommand(cmd =>
           cmd
-            .setName('immnue-roles-remove')
+            .setName('immune-roles-remove')
             .setDescription('Remove a role from the list of immune roles from the malicious automod.')
             .addRoleOption(opt => opt.setName('role').setDescription('The role to remove.').setRequired(true))
         )
         .addSubcommand(cmd =>
-          cmd.setName('immnue-roles-view').setDescription('View all immune roles from the malicious links automod.')
+          cmd.setName('immune-roles-view').setDescription('View all immune roles from the malicious links automod.')
         )
         .addSubcommand(cmd =>
           cmd
