@@ -264,6 +264,9 @@ class ConfigCommand extends Command {
             );
           }
           case 'alert-channel': {
+            if (!interaction.guild.members.me!.permissions.has(Permissions.ManageWebhooks))
+              throw 'I need permission to manage webhooks.';
+
             const channel = interaction.options.getChannel('channel', true) as TextChannel;
             await interaction.deferReply();
             const { disputeAlertWebhookId } = (await this.client.db.guild.findUnique({
@@ -278,7 +281,7 @@ class ConfigCommand extends Command {
 
               await webhook.edit({
                 channel: channel.id
-              });
+              }).catch(() => { throw 'Failed to change alert channel likely due to permissions.' })
 
               return interaction.editReply(`Alert channel set to ${channel.toString()}.`);
             } else {
@@ -294,7 +297,7 @@ class ConfigCommand extends Command {
                 data: {
                   disputeAlertWebhookId: newWebhook.id
                 }
-              });
+              }).catch(() => { throw 'Failed to set an alert channel likely due to permissions.' });
 
               return interaction.editReply(`Alert channel set to ${channel.toString()}.`);
             }
@@ -662,6 +665,9 @@ class ConfigCommand extends Command {
         );
       }
       case 'mod-log-channel': {
+        if (!interaction.guild.members.me!.permissions.has(Permissions.ManageWebhooks))
+          throw 'I need permission to manage webhooks.';
+
         const channel = interaction.options.getChannel('channel', true) as TextChannel;
         await interaction.deferReply();
         const { modLogWebhookId } = (await this.client.db.guild.findUnique({
@@ -676,7 +682,7 @@ class ConfigCommand extends Command {
 
           await webhook.edit({
             channel: channel.id
-          });
+          }).catch(() => { throw 'Failed to change alert channel likely due to permissions.' })
 
           return interaction.editReply(`Mod log channel set to ${channel.toString()}.`);
         } else {
@@ -692,7 +698,7 @@ class ConfigCommand extends Command {
             data: {
               modLogWebhookId: newWebhook.id
             }
-          });
+          }).catch(() => { throw 'Failed to set alert channel likely due to permissions.' })
 
           return interaction.editReply(`Mod log channel set to ${channel.toString()}.`);
         }
