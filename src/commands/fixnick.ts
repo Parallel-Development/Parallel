@@ -48,7 +48,7 @@ class FixnickCommand extends Command {
 
     switch (type) {
       case 'font':
-        fixed = decancer(name);
+        fixed = decancer(name).toString();
         if (fixed === name) throw 'Nothing changed.';
         break;
       case 'hoisted':
