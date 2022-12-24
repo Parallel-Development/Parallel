@@ -124,3 +124,8 @@ model Shortcut {
 
   @@unique([guildId, name])
 }
+
+model Blacklist {
+  id String @id
+  reason String
+}

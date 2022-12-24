@@ -10,6 +10,10 @@ class ChatInputCommandListener extends Listener {
   }
 
   async run(interaction: ChatInputCommandInteraction) {
+    const blacklist = await this.checkBlacklisted(interaction.user.id);
+    if (blacklist)
+      return interaction.reply({ content: `You may not run any commands because you are banned from Parallel.\nReason: ${blacklist.reason}`, ephemeral: true });
+
     const command = this.client.commands.get(interaction.commandName);
     if (!command) return this.client.emit('customCommand', interaction);
 
@@ -118,6 +122,12 @@ class ChatInputCommandListener extends Listener {
 
     if (changed === 0) return;
     await guild.commands.set(put);
+  }
+
+  private async checkBlacklisted(userId: string) {
+    return await this.client.db.blacklist.findUnique({
+      where: { id: userId }
+    })
   }
 }
 
