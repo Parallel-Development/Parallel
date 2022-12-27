@@ -35,13 +35,13 @@ import { bin } from '../lib/util/functions';
           option.setName('name').setDescription('The name of the tag you are renaming.').setRequired(true)
         )
         .addStringOption(option =>
-          option.setName('new-name').setDescription('The new name of the tag').setMaxLength(1000).setRequired(true)
+          option.setName('new-name').setDescription('The new name of the tag.').setMaxLength(1000).setRequired(true)
         )
     )
     .addSubcommand(command =>
       command
         .setName('edit')
-        .setDescription('Change the content of a tag')
+        .setDescription('Change the content of a tag.')
         .addStringOption(option => option.setName('name').setDescription('The name of the tag.').setRequired(true))
     )
     .addSubcommand(command => command.setName('view').setDescription('View all tags.'))

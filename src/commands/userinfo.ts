@@ -23,7 +23,7 @@ class UserinfoCommand extends Command {
     .setAuthor({ name: user.tag, iconURL: user.displayAvatarURL() })
     .setColor(mainColor)
     .setThumbnail(user.displayAvatarURL())
-    .setDescription(`**User ID:** ${user.id}\n**Created:** <t:${createdStr}> (<t:${createdStr}:R>)${joinedStr ? `\n**Joined:** <t:${joinedStr}> (<t:${joinedStr}:R>)` : ''}\n**Bot:** ${user.bot}`);
+    .setDescription(`**User ID:** ${user.id}\n**Created:** <t:${createdStr}> (<t:${createdStr}:R>)${joinedStr ? `\n**Joined:** <t:${joinedStr}> (<t:${joinedStr}:R>)` : ''}\n**Bot:** ${user.bot ? 'Yes' : 'No'}`);
 
     return interaction.reply({ embeds: [embed] });
   }

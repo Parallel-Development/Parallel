@@ -4,7 +4,7 @@ import Command, { data } from "../lib/structs/Command";
 @data(
   new SlashCommandBuilder()
   .setName('membercount')
-  .setDescription('Get the member count in the guild.')
+  .setDescription('Get the member count of the guild.')
 )
 class MembercountCommand extends Command {
   async run(interaction: ChatInputCommandInteraction<'cached'>) {

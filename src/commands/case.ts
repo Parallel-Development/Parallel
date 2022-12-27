@@ -12,9 +12,9 @@ import ms from 'ms';
 @data(
   new SlashCommandBuilder()
     .setName('case')
-    .setDescription('View detailed information on an infraction')
+    .setDescription('View detailed information on an infraction.')
     .setDefaultMemberPermissions(Permissions.ModerateMembers)
-    .addIntegerOption(option => option.setName('id').setDescription('Infraction ID').setMinValue(1).setRequired(true))
+    .addIntegerOption(option => option.setName('id').setDescription('The infraction ID.').setMinValue(1).setRequired(true))
 )
 class CaseCommand extends Command {
   async run(interaction: ChatInputCommandInteraction<'cached'>) {
