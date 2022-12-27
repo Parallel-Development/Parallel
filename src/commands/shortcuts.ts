@@ -89,7 +89,7 @@ class ShortcutsCommand extends Command {
       for (const key in this.client.commands.keys())
         if (key === name) throw 'You cannot create a shortcut with the name of a command.';
 
-      if (uDuration && punishment in [IT.Unmute, IT.Unban, IT.Kick])
+      if (uDuration && (punishment === IT.Unmute || punishment === IT.Unban || punishment === IT.Kick))
         throw 'You cannot provide a duration for this kind of punishment.';
       if (uDeleteTime && punishment !== IT.Ban)
         throw 'You cannot provide a value for the `delete-previous-messages` option for this kind of punishment.';
@@ -124,17 +124,17 @@ class ShortcutsCommand extends Command {
           name,
           description,
           defaultMemberPermissions:
-            punishment in [IT.Ban, IT.Unban]
+            punishment === IT.Ban || punishment === IT.Unban
               ? Permissions.BanMembers
-              : punishment in [IT.Mute, IT.Unmute]
+              : punishment === IT.Mute || punishment === IT.Unmute
               ? Permissions.MuteMembers
               : punishment === IT.Kick
               ? Permissions.KickMembers
               : Permissions.ModerateMembers,
           options: [
             {
-              name: punishment in [IT.Ban, IT.Unban] ? 'user' : 'member',
-              description: `The ${punishment in [IT.Ban, IT.Unban] ? 'user' : 'member'} to ${punishment}.`,
+              name: punishment === IT.Ban || punishment === IT.Unban ? 'user' : 'member',
+              description: `The ${punishment === IT.Ban || punishment === IT.Unban ? 'user' : 'member'} to ${punishment}.`,
               type: OptionType.User
             }
           ]

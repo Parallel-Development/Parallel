@@ -137,12 +137,7 @@ import { AutoModSpamTriggers } from '../types';
                 )
                 .setRequired(true)
             )
-        )
-        .addSubcommand(cmd =>
-          cmd
-            .setName('duration')
-            .setDescription('The duration of the `punishment`.')
-            .addStringOption(opt => opt.setName('duration').setDescription('The duration.').setRequired(true))
+            .addStringOption(opt => opt.setName('duration').setDescription('The duration of the punishment.'))
         )
     )
     .addSubcommandGroup(group =>
@@ -226,12 +221,7 @@ import { AutoModSpamTriggers } from '../types';
                 )
                 .setRequired(true)
             )
-        )
-        .addSubcommand(cmd =>
-          cmd
-            .setName('duration')
-            .setDescription('The duration of the `punishment`.')
-            .addStringOption(opt => opt.setName('duration').setDescription('The duration.').setRequired(true))
+            .addStringOption(opt => opt.setName('duration').setDescription('The duration of the punishment.'))
         )
     )
 )
@@ -280,6 +270,20 @@ class AutomodCommand extends Command {
           }
           case 'punishment': {
             const punishment = interaction.options.getString('punishment', true) as InfractionType | 'delete';
+            const uDuration = interaction.options.getString('duration');
+            if (punishment === InfractionType.Mute && !uDuration)
+              throw 'A duration is required for punishment `Mute`.';
+            if (uDuration && ['delete', InfractionType.Kick].includes(punishment))
+              throw 'A duration cannot be provided for this punishment.';
+
+            const duration = uDuration ? ms(uDuration) : null;
+            if (Number.isNaN(duration))
+              throw 'Invalid duration.';
+            if (duration === 0 && punishment === InfractionType.Mute)
+              throw 'The duration must be at least 1 second.';
+
+            if (duration && duration < 1000 && duration !== 0)
+              throw 'The duration must be at least 1 second or 0.';
 
             await this.client.db.guild.update({
               where: {
@@ -287,33 +291,11 @@ class AutomodCommand extends Command {
               },
               data: {
                 autoModSpamPunishment: punishment === 'delete' ? null : punishment,
-                autoModSpamDuration: punishment === 'delete' ? 0n : undefined
+                autoModSpamDuration: punishment === 'delete' ? 0n : duration ? BigInt(duration) : 0n
               }
             });
 
             return interaction.reply(`Spam punishment set to \`${punishment.toLowerCase()}\`.`);
-          }
-          case 'duration': {
-            const uDuration = interaction.options.getString('duration', true);
-            const duration = ms(uDuration);
-            if (Number.isNaN(duration)) throw 'Invalid duration.';
-
-            if (duration < 1000 && duration !== 0) throw 'Duration must be at least 1 second.';
-
-            await this.client.db.guild.update({
-              where: {
-                id: interaction.guildId
-              },
-              data: {
-                autoModSpamDuration: BigInt(duration)
-              }
-            });
-
-            return interaction.reply(
-              duration === 0
-                ? 'Spam punishment duration set to permanent.'
-                : `Spam punishment duration set to \`${ms(duration, { long: true })}\`.`
-            );
           }
           case 'triggers-add': {
             const amount = interaction.options.getInteger('amount', true);
@@ -445,6 +427,20 @@ class AutomodCommand extends Command {
           }
           case 'punishment': {
             const punishment = interaction.options.getString('punishment', true) as InfractionType | 'delete';
+            const uDuration = interaction.options.getString('duration');
+            if (punishment === InfractionType.Mute && !uDuration)
+              throw 'A duration is required for punishment `Mute`.';
+            if (uDuration && ['delete', InfractionType.Kick].includes(punishment))
+              throw 'A duration cannot be provided for this punishment.';
+
+            const duration = uDuration ? ms(uDuration) : null;
+            if (Number.isNaN(duration))
+              throw 'Invalid duration.';
+            if (duration === 0 && punishment === InfractionType.Mute)
+              throw 'The duration must be at least 1 second.';
+
+            if (duration && duration < 1000 && duration !== 0)
+              throw 'The duration must be at least 1 second or 0.';
 
             await this.client.db.guild.update({
               where: {
@@ -452,33 +448,11 @@ class AutomodCommand extends Command {
               },
               data: {
                 autoModMaliciousPunishment: punishment === 'delete' ? null : punishment,
-                autoModMaliciousDuration: punishment === 'delete' ? 0n : undefined
+                autoModMaliciousDuration: punishment === 'delete' ? 0n : duration ? BigInt(duration) : 0n
               }
             });
 
             return interaction.reply(`Malicious links punishment set to \`${punishment.toLowerCase()}\`.`);
-          }
-          case 'duration': {
-            const uDuration = interaction.options.getString('duration', true);
-            const duration = ms(uDuration);
-            if (Number.isNaN(duration)) throw 'Invalid duration.';
-
-            if (duration < 1000 && duration !== 0) throw 'Duration must be at least 1 second.';
-
-            await this.client.db.guild.update({
-              where: {
-                id: interaction.guildId
-              },
-              data: {
-                autoModMaliciousDuration: BigInt(duration)
-              }
-            });
-
-            return interaction.reply(
-              duration === 0
-                ? 'Malicious links duration set to permanent.'
-                : `Malicious links punishment duration set to \`${ms(duration, { long: true })}\`.`
-            );
           }
           case 'immune-channels-remove': {
             const channel = interaction.options.getChannel('channel', true) as TextChannel;

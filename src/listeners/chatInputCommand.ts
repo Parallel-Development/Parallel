@@ -103,17 +103,17 @@ class ChatInputCommandListener extends Listener {
         name: command.name,
         description: command.description,
         defaultMemberPermissions:
-          command.punishment in [InfractionType.Ban, InfractionType.Unban]
+          command.punishment === InfractionType.Ban || command.punishment === InfractionType.Unban
             ? Permissions.BanMembers
-            : command.punishment in [InfractionType.Mute, InfractionType.Unmute]
+            : command.punishment === InfractionType.Mute || command.punishment === InfractionType.Unmute
             ? Permissions.MuteMembers
             : command.punishment === InfractionType.Kick
             ? Permissions.KickMembers
             : Permissions.ModerateMembers,
         options: [
           {
-            name: command.punishment in [InfractionType.Ban, InfractionType.Unban] ? 'user' : 'member',
-            description: `The ${command.punishment in [InfractionType.Ban, InfractionType.Unban] ? 'user' : 'member'} to ${command.punishment}.`,
+            name: command.punishment === InfractionType.Ban || command.punishment === InfractionType.Unban ? 'user' : 'member',
+            description: `The ${command.punishment === InfractionType.Ban || command.punishment === InfractionType.Unban ? 'user' : 'member'} to ${command.punishment}.`,
             type: ApplicationCommandOptionType.User
           }
         ]

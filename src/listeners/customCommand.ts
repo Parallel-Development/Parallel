@@ -19,7 +19,7 @@ class CustomCommandListener extends Listener {
     if (!command) return interaction.reply({ content: 'Unknown Command.', ephemeral: true });
 
     const target =
-      command.punishment in [IT.Ban, IT.Unban]
+      command.punishment === IT.Ban || command.punishment === IT.Unban
         ? interaction.options.getUser('user')
         : interaction.options.getMember('member');
 
