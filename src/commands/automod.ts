@@ -295,7 +295,7 @@ class AutomodCommand extends Command {
               }
             });
 
-            return interaction.reply(`Spam punishment set to \`${punishment.toLowerCase()}\`.`);
+            return interaction.reply(`Spam punishment set to \`${punishment.toLowerCase()}${duration ? ` for ${ms(duration, { long: true })}` : ''}\`.`);
           }
           case 'triggers-add': {
             const amount = interaction.options.getInteger('amount', true);
@@ -452,7 +452,7 @@ class AutomodCommand extends Command {
               }
             });
 
-            return interaction.reply(`Malicious links punishment set to \`${punishment.toLowerCase()}\`.`);
+            return interaction.reply(`Malicious links punishment set to \`${punishment.toLowerCase()}${duration ? ` for ${ms(duration, { long: true })}` : ''}\`.`);
           }
           case 'immune-channels-remove': {
             const channel = interaction.options.getChannel('channel', true) as TextChannel;
