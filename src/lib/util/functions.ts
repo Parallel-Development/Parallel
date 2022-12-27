@@ -4,7 +4,7 @@ import client from '../../client';
 export function adequateHierarchy(member1: GuildMember, member2: GuildMember) {
   if (member1.guild.ownerId === member1.id) return true;
   if (member2.guild.ownerId === member2.id) return false;
-  return member1.roles.highest.comparePositionTo(member2.roles.highest) >= 0;
+  return member1.roles.highest.comparePositionTo(member2.roles.highest) > 0;
 }
 
 export async function getUser(userId: string) {
