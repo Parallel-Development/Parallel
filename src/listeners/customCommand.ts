@@ -112,7 +112,7 @@ class CustomCommandListener extends Listener {
         if (infoWarn) dm.addFields([{ name: 'Additional Information', value: infoWarn }]);
     }
 
-    await target!.send({ embeds: [dm] });
+    if (target instanceof GuildMember) await target!.send({ embeds: [dm] }).catch(() => {});
 
     this.client.emit('punishLog', infraction);
 
