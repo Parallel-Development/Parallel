@@ -75,31 +75,31 @@ class DisputeCommand extends Command {
       let modalI: ModalMessageModalSubmitInteraction | undefined;
       if (q2.customId === 'yes') {
         const nameQ = new TextInputBuilder()
-        .setLabel('Guild name')
-        .setCustomId('guild_name')
-        .setStyle(TextInputStyle.Short)
-        .setRequired(true)
+          .setLabel('Guild name')
+          .setCustomId('guild_name')
+          .setStyle(TextInputStyle.Short)
+          .setRequired(true);
 
         const row = new ActionRowBuilder<TextInputBuilder>().addComponents(nameQ);
 
-        const modal = new ModalBuilder()
-        .setTitle('Guild Name')
-        .setCustomId('?guild_name')
-        .setComponents(row)
+        const modal = new ModalBuilder().setTitle('Guild Name').setCustomId('?guild_name').setComponents(row);
 
         q2.showModal(modal);
-        const guildNameI = await interaction.awaitModalSubmit({ time: 60000 })
-        .catch(async() => {
+        const guildNameI = await interaction.awaitModalSubmit({ time: 60000 }).catch(async () => {
           await interaction.editReply({ content: 'Timed out', components: [] });
           return null;
-        })
+        });
 
         if (!guildNameI) return;
 
         const guildName = guildNameI.fields.getTextInputValue('guild_name').toLowerCase();
 
         const guilds = this.client.guilds.cache.filter(g => g.name.toLowerCase() === guildName);
-        if (guilds.size === 0) return (guildNameI as ModalMessageModalSubmitInteraction).update({ content: 'I could not find any guilds with that name.', components: [] });
+        if (guilds.size === 0)
+          return (guildNameI as ModalMessageModalSubmitInteraction).update({
+            content: 'I could not find any guilds with that name.',
+            components: []
+          });
         if (guilds.size === 1) guild = guilds.first();
 
         modalI = guildNameI as ModalMessageModalSubmitInteraction;
@@ -112,14 +112,16 @@ class DisputeCommand extends Command {
 
       const row = new ActionRowBuilder<ButtonBuilder>().addComponents(warnBtn, muteBtn, kickBtn, banBtn);
 
-      if (modalI) await modalI.update({
-        content: 'What kind of infraction are you disputing?',
-        components: [row]
-      });
-      else await q2.update({
-        content: 'What kind of infraction are you disputing?',
-        components: [row]
-      });
+      if (modalI)
+        await modalI.update({
+          content: 'What kind of infraction are you disputing?',
+          components: [row]
+        });
+      else
+        await q2.update({
+          content: 'What kind of infraction are you disputing?',
+          components: [row]
+        });
 
       const q3 = await message
         .awaitMessageComponent({ componentType: ComponentType.Button, time: 10000 })
@@ -146,7 +148,11 @@ class DisputeCommand extends Command {
       });
 
       if (possibleInfractions.length === 0)
-        return q3.update({ content: 'I could not find any infractions. Note that infractions that you have already created a dispute on or guilds that don\'t have disputes enabled are not shown.', components: [] });
+        return q3.update({
+          content:
+            "I could not find any infractions. Note that infractions that you have already created a dispute on or guilds that don't have disputes enabled are not shown.",
+          components: []
+        });
 
       if (possibleInfractions.length > 1) {
         const infractionsEmbed = new EmbedBuilder().setColor(mainColor);
@@ -157,9 +163,9 @@ class DisputeCommand extends Command {
             name: `ID ${infraction.id}: ${infraction.type.toString()} | ${
               this.client.guilds.cache.get(infraction.guildId)?.name
             }`,
-            value: `${infraction.reason.slice(0, 100)}${infraction.reason.length > 100 ? '...' : ''}\n*- <t:${
-              Math.floor(Number(infraction.date / 1000n))
-            }>${
+            value: `${infraction.reason.slice(0, 100)}${
+              infraction.reason.length > 100 ? '...' : ''
+            }\n*- <t:${Math.floor(Number(infraction.date / 1000n))}>${
               infraction.guild.infractionModeratorPublic
                 ? `, issued by <@${infraction.moderatorId}> (${infraction.moderatorId})`
                 : ''
@@ -230,7 +236,8 @@ class DisputeCommand extends Command {
       include: { dispute: true, guild: true }
     });
 
-    if (infraction?.guildId !== interaction.guildId && !(!interaction.inCachedGuild() && infraction)) throw 'No infraction with that ID exists.';
+    if (infraction?.guildId !== interaction.guildId && !(!interaction.inCachedGuild() && infraction))
+      throw 'No infraction with that ID exists.';
     if (infraction.userId !== interaction.user.id)
       throw 'You cannot create a dispute for an infraction that is not on your record.';
     if (infraction.type === InfractionType.Unmute || infraction.type === InfractionType.Unban)

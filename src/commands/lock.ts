@@ -16,7 +16,10 @@ import Command, { data } from '../lib/structs/Command';
     .setDescription('Restrict members from sending messages in the target channel.')
     .setDefaultMemberPermissions(Permissions.ManageChannels)
     .addChannelOption(option =>
-      option.setName('channel').setDescription('The channel to lock.').addChannelTypes(ChannelType.GuildText, ChannelType.GuildVoice)
+      option
+        .setName('channel')
+        .setDescription('The channel to lock.')
+        .addChannelTypes(ChannelType.GuildText, ChannelType.GuildVoice)
     )
     .addStringOption(option => option.setName('reason').setDescription('The reason for locking the channel.'))
 )

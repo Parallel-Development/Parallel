@@ -271,19 +271,15 @@ class AutomodCommand extends Command {
           case 'punishment': {
             const punishment = interaction.options.getString('punishment', true) as InfractionType | 'delete';
             const uDuration = interaction.options.getString('duration');
-            if (punishment === InfractionType.Mute && !uDuration)
-              throw 'A duration is required for punishment `Mute`.';
+            if (punishment === InfractionType.Mute && !uDuration) throw 'A duration is required for punishment `Mute`.';
             if (uDuration && ['delete', InfractionType.Kick].includes(punishment))
               throw 'A duration cannot be provided for this punishment.';
 
             const duration = uDuration ? ms(uDuration) : null;
-            if (Number.isNaN(duration))
-              throw 'Invalid duration.';
-            if (duration === 0 && punishment === InfractionType.Mute)
-              throw 'The duration must be at least 1 second.';
+            if (Number.isNaN(duration)) throw 'Invalid duration.';
+            if (duration === 0 && punishment === InfractionType.Mute) throw 'The duration must be at least 1 second.';
 
-            if (duration && duration < 1000 && duration !== 0)
-              throw 'The duration must be at least 1 second or 0.';
+            if (duration && duration < 1000 && duration !== 0) throw 'The duration must be at least 1 second or 0.';
 
             await this.client.db.guild.update({
               where: {
@@ -295,7 +291,11 @@ class AutomodCommand extends Command {
               }
             });
 
-            return interaction.reply(`Spam punishment set to \`${punishment.toLowerCase()}${duration ? ` for ${ms(duration, { long: true })}` : ''}\`.`);
+            return interaction.reply(
+              `Spam punishment set to \`${punishment.toLowerCase()}${
+                duration ? ` for ${ms(duration, { long: true })}` : ''
+              }\`.`
+            );
           }
           case 'triggers-add': {
             const amount = interaction.options.getInteger('amount', true);
@@ -428,19 +428,15 @@ class AutomodCommand extends Command {
           case 'punishment': {
             const punishment = interaction.options.getString('punishment', true) as InfractionType | 'delete';
             const uDuration = interaction.options.getString('duration');
-            if (punishment === InfractionType.Mute && !uDuration)
-              throw 'A duration is required for punishment `Mute`.';
+            if (punishment === InfractionType.Mute && !uDuration) throw 'A duration is required for punishment `Mute`.';
             if (uDuration && ['delete', InfractionType.Kick].includes(punishment))
               throw 'A duration cannot be provided for this punishment.';
 
             const duration = uDuration ? ms(uDuration) : null;
-            if (Number.isNaN(duration))
-              throw 'Invalid duration.';
-            if (duration === 0 && punishment === InfractionType.Mute)
-              throw 'The duration must be at least 1 second.';
+            if (Number.isNaN(duration)) throw 'Invalid duration.';
+            if (duration === 0 && punishment === InfractionType.Mute) throw 'The duration must be at least 1 second.';
 
-            if (duration && duration < 1000 && duration !== 0)
-              throw 'The duration must be at least 1 second or 0.';
+            if (duration && duration < 1000 && duration !== 0) throw 'The duration must be at least 1 second or 0.';
 
             await this.client.db.guild.update({
               where: {
@@ -452,7 +448,11 @@ class AutomodCommand extends Command {
               }
             });
 
-            return interaction.reply(`Malicious links punishment set to \`${punishment.toLowerCase()}${duration ? ` for ${ms(duration, { long: true })}` : ''}\`.`);
+            return interaction.reply(
+              `Malicious links punishment set to \`${punishment.toLowerCase()}${
+                duration ? ` for ${ms(duration, { long: true })}` : ''
+              }\`.`
+            );
           }
           case 'immune-channels-remove': {
             const channel = interaction.options.getChannel('channel', true) as TextChannel;
@@ -466,7 +466,7 @@ class AutomodCommand extends Command {
             if (!autoModMaliciousImmuneChannels.includes(channel.id))
               throw 'This channel is not on the list of immune channels.';
 
-              autoModMaliciousImmuneChannels.splice(autoModMaliciousImmuneChannels.indexOf(channel.id), 1);
+            autoModMaliciousImmuneChannels.splice(autoModMaliciousImmuneChannels.indexOf(channel.id), 1);
 
             await this.client.db.guild.update({
               where: { id: interaction.guildId },

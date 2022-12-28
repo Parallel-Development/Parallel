@@ -35,9 +35,12 @@ class WarnCommand extends Command {
     const reason = interaction.options.getString('reason') ?? 'Unspecified reason.';
     const uExpiration = interaction.options.getString('erase-after');
     const date = BigInt(Date.now());
-    const expires = uExpiration ? BigInt(+uExpiration * 1000 || ms(uExpiration)) + date : null;
 
-    if (Number.isNaN(expires)) throw 'Invalid duration.';
+    const method = uExpiration ? +uExpiration * 1000 || ms(uExpiration) : null;
+    if (uExpiration && !method) throw 'Invalid duration.';
+
+    const expires = method ? BigInt(method) : null;
+
     if (expires && expires < 1000) throw 'Temporary warn duration must be at least 1 second.';
 
     await interaction.deferReply();

@@ -22,7 +22,9 @@ class TagManagerModal extends Modal {
             content
           }
         })
-        .catch(() => { throw 'A tag with that name already exists.'; });
+        .catch(() => {
+          throw 'A tag with that name already exists.';
+        });
 
       return interaction.reply(`Created tag \`${name}\`.`);
     } else {
@@ -35,7 +37,9 @@ class TagManagerModal extends Modal {
             guildId_name: { guildId: interaction.guildId, name }
           }
         })
-        .catch(() => { throw 'Tag does not exist.'; });
+        .catch(() => {
+          throw 'Tag does not exist.';
+        });
 
       return interaction.reply(`Edited tag \`${name}\`.`);
     }

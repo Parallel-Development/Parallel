@@ -15,7 +15,10 @@ import Command, { data } from '../lib/structs/Command';
     .setDescription('Allow members to speak in the target channel.')
     .setDefaultMemberPermissions(Permissions.ManageChannels)
     .addChannelOption(option =>
-      option.setName('channel').setDescription('The channel to unlock.').addChannelTypes(ChannelType.GuildText, ChannelType.GuildVoice)
+      option
+        .setName('channel')
+        .setDescription('The channel to unlock.')
+        .addChannelTypes(ChannelType.GuildText, ChannelType.GuildVoice)
     )
     .addStringOption(option => option.setName('reason').setDescription('The reason for unlocking the channel.'))
 )

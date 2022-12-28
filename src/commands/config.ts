@@ -74,10 +74,7 @@ import { Escalations } from '../types';
               'The link to redirect users to dispute an infraction if `dispute-method` is set to `External Link`.'
             )
             .addStringOption(opt =>
-              opt
-                .setName('link')
-                .setDescription('The link to redirect users to.')
-                .setRequired(true)
+              opt.setName('link').setDescription('The link to redirect users to.').setRequired(true)
             )
         )
         .addSubcommand(cmd =>
@@ -279,9 +276,13 @@ class ConfigCommand extends Command {
             if (webhook) {
               if (webhook.channel!.id === channel.id) throw 'Alert channel is already set to that channel.';
 
-              await webhook.edit({
-                channel: channel.id
-              }).catch(() => { throw 'Failed to change alert channel likely due to permissions.' })
+              await webhook
+                .edit({
+                  channel: channel.id
+                })
+                .catch(() => {
+                  throw 'Failed to change alert channel likely due to permissions.';
+                });
 
               return interaction.editReply(`Alert channel set to ${channel.toString()}.`);
             } else {
@@ -290,14 +291,18 @@ class ConfigCommand extends Command {
                 avatar: this.client.user!.displayAvatarURL()
               });
 
-              await this.client.db.guild.update({
-                where: {
-                  id: interaction.guildId
-                },
-                data: {
-                  disputeAlertWebhookId: newWebhook.id
-                }
-              }).catch(() => { throw 'Failed to set an alert channel likely due to permissions.' });
+              await this.client.db.guild
+                .update({
+                  where: {
+                    id: interaction.guildId
+                  },
+                  data: {
+                    disputeAlertWebhookId: newWebhook.id
+                  }
+                })
+                .catch(() => {
+                  throw 'Failed to set an alert channel likely due to permissions.';
+                });
 
               return interaction.editReply(`Alert channel set to ${channel.toString()}.`);
             }
@@ -680,9 +685,13 @@ class ConfigCommand extends Command {
         if (webhook) {
           if (webhook.channel!.id === channel.id) throw 'Mod log channel is already set to that channel.';
 
-          await webhook.edit({
-            channel: channel.id
-          }).catch(() => { throw 'Failed to change alert channel likely due to permissions.' })
+          await webhook
+            .edit({
+              channel: channel.id
+            })
+            .catch(() => {
+              throw 'Failed to change alert channel likely due to permissions.';
+            });
 
           return interaction.editReply(`Mod log channel set to ${channel.toString()}.`);
         } else {
@@ -691,14 +700,18 @@ class ConfigCommand extends Command {
             avatar: this.client.user!.displayAvatarURL()
           });
 
-          await this.client.db.guild.update({
-            where: {
-              id: interaction.guildId
-            },
-            data: {
-              modLogWebhookId: newWebhook.id
-            }
-          }).catch(() => { throw 'Failed to set alert channel likely due to permissions.' })
+          await this.client.db.guild
+            .update({
+              where: {
+                id: interaction.guildId
+              },
+              data: {
+                modLogWebhookId: newWebhook.id
+              }
+            })
+            .catch(() => {
+              throw 'Failed to set alert channel likely due to permissions.';
+            });
 
           return interaction.editReply(`Mod log channel set to ${channel.toString()}.`);
         }

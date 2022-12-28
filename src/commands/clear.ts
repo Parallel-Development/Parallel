@@ -25,7 +25,7 @@ class ClearCommand extends Command {
 
     if (!interaction.channel.permissionsFor(interaction.member).has(Permissions.ManageMessages))
       throw 'I need the `Manage Messages` permission in this channel to run this command here.';
-  
+
     const count = interaction.options.getInteger('count', true);
     const user = interaction.options.getUser('from');
 
@@ -76,7 +76,7 @@ class ClearCommand extends Command {
     }
 
     const messages = await interaction.channel.messages.fetch({ limit: count, before });
-    const deletedTotal = (await interaction.channel.bulkDelete(messages)).size;
+    const deletedTotal = (await interaction.channel.bulkDelete(messages, true)).size;
 
     return interaction.editReply(`Deleted \`${deletedTotal}\` messages.`);
   }

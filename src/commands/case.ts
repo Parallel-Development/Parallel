@@ -14,7 +14,9 @@ import ms from 'ms';
     .setName('case')
     .setDescription('View detailed information on an infraction.')
     .setDefaultMemberPermissions(Permissions.ModerateMembers)
-    .addIntegerOption(option => option.setName('id').setDescription('The infraction ID.').setMinValue(1).setRequired(true))
+    .addIntegerOption(option =>
+      option.setName('id').setDescription('The infraction ID.').setMinValue(1).setRequired(true)
+    )
 )
 class CaseCommand extends Command {
   async run(interaction: ChatInputCommandInteraction<'cached'>) {

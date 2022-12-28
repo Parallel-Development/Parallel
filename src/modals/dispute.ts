@@ -23,7 +23,8 @@ class DisputeModal extends Modal {
       }
     });
 
-    if (infraction?.guildId !== interaction.guildId && !(!interaction.inCachedGuild() && infraction)) throw 'No infraction with that ID exists in this guild.';
+    if (infraction?.guildId !== interaction.guildId && !(!interaction.inCachedGuild() && infraction))
+      throw 'No infraction with that ID exists in this guild.';
     if (infraction.userId !== interaction.user.id)
       throw 'You cannot create a dispute for an infraction that is not on your record.';
     if (infraction.type === InfractionType.Unmute || infraction.type === InfractionType.Unban)

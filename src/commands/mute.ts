@@ -35,10 +35,12 @@ class MuteCommand extends Command {
       throw 'I cannot mute this member due to inadequete hierarchy.';
 
     const reason = interaction.options.getString('reason') ?? 'Unspecified reason.';
-    const uExpiration = interaction.options.getString('duration')!;
+    const uExpiration = interaction.options.getString('duration', true);
     const date = BigInt(Date.now());
-    const expires = BigInt(+uExpiration * 1000 || ms(uExpiration));
-    if (!expires) throw 'Invalid duration.';
+    const method = +uExpiration * 1000 || ms(uExpiration);
+    if (!method) throw 'Invalid duration.';
+
+    const expires = BigInt(method);
 
     if (expires > d28) throw 'You cannot mute a member for more than `28 days.`';
     if (expires < 1000)

@@ -1,5 +1,11 @@
 import Listener from '../lib/structs/Listener';
-import { type ChatInputCommandInteraction, PermissionFlagsBits as Permissions, PermissionsBitField, ApplicationCommandOptionType, ApplicationCommandDataResolvable } from 'discord.js';
+import {
+  type ChatInputCommandInteraction,
+  PermissionFlagsBits as Permissions,
+  PermissionsBitField,
+  ApplicationCommandOptionType,
+  ApplicationCommandDataResolvable
+} from 'discord.js';
 import { InfractionType } from '@prisma/client';
 const customCommandsConfirmed = new Set();
 const unresolvedGuilds = new Set<[string, string]>();
@@ -12,7 +18,10 @@ class ChatInputCommandListener extends Listener {
   async run(interaction: ChatInputCommandInteraction) {
     const blacklist = await this.checkBlacklisted(interaction.user.id);
     if (blacklist)
-      return interaction.reply({ content: `You may not run any commands because you are banned from Parallel.\nReason: ${blacklist.reason}`, ephemeral: true });
+      return interaction.reply({
+        content: `You may not run any commands because you are banned from Parallel.\nReason: ${blacklist.reason}`,
+        ephemeral: true
+      });
 
     const command = this.client.commands.get(interaction.commandName);
     if (!command) return this.client.emit('customCommand', interaction);
@@ -35,7 +44,11 @@ class ChatInputCommandListener extends Listener {
 
     if (command.guildResolve) {
       if (unresolvedGuilds.has([interaction.guildId!, interaction.commandName]))
-        return interaction.reply({ content: 'Another process of this command is currently running. Please wait for it to finish before running this command.', ephemeral: true });
+        return interaction.reply({
+          content:
+            'Another process of this command is currently running. Please wait for it to finish before running this command.',
+          ephemeral: true
+        });
 
       unresolvedGuilds.add([interaction.guildId!, interaction.commandName]);
     }
@@ -112,8 +125,15 @@ class ChatInputCommandListener extends Listener {
             : Permissions.ModerateMembers,
         options: [
           {
-            name: command.punishment === InfractionType.Ban || command.punishment === InfractionType.Unban ? 'user' : 'member',
-            description: `The ${command.punishment === InfractionType.Ban || command.punishment === InfractionType.Unban ? 'user' : 'member'} to ${command.punishment}.`,
+            name:
+              command.punishment === InfractionType.Ban || command.punishment === InfractionType.Unban
+                ? 'user'
+                : 'member',
+            description: `The ${
+              command.punishment === InfractionType.Ban || command.punishment === InfractionType.Unban
+                ? 'user'
+                : 'member'
+            } to ${command.punishment}.`,
             type: ApplicationCommandOptionType.User
           }
         ]
@@ -127,7 +147,7 @@ class ChatInputCommandListener extends Listener {
   private async checkBlacklisted(userId: string) {
     return await this.client.db.blacklist.findUnique({
       where: { id: userId }
-    })
+    });
   }
 }
 

@@ -114,7 +114,9 @@ class TagManagerCommand extends Command {
               name: newName
             }
           })
-          .catch(() => { throw 'Tag does not exist.' });
+          .catch(() => {
+            throw 'Tag does not exist.';
+          });
 
         return interaction.reply(`Tag renamed to \`${newName}\``);
       }

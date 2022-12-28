@@ -134,7 +134,9 @@ class ShortcutsCommand extends Command {
           options: [
             {
               name: punishment === IT.Ban || punishment === IT.Unban ? 'user' : 'member',
-              description: `The ${punishment === IT.Ban || punishment === IT.Unban ? 'user' : 'member'} to ${punishment}.`,
+              description: `The ${
+                punishment === IT.Ban || punishment === IT.Unban ? 'user' : 'member'
+              } to ${punishment}.`,
               type: OptionType.User
             }
           ]
@@ -188,15 +190,12 @@ class ShortcutsCommand extends Command {
       const shortcutMap = shortcuts.map(cut => cut.name).join(', ');
 
       if (shortcutMap.length < 1000) {
-        const embed = new EmbedBuilder()
-        .setTitle('Guild Shortcuts')
-        .setDescription(shortcutMap)
-        .setColor(mainColor)
+        const embed = new EmbedBuilder().setTitle('Guild Shortcuts').setDescription(shortcutMap).setColor(mainColor);
 
         return interaction.editReply({ embeds: [embed] });
       } else {
         const url = await bin(shortcuts.join('\n'));
-        return interaction.editReply(`Here are the shortcuts: ${url}`)
+        return interaction.editReply(`Here are the shortcuts: ${url}`);
       }
     }
   }

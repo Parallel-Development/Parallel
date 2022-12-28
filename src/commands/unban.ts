@@ -14,8 +14,7 @@ import Command, { clientpermissions, data } from '../lib/structs/Command';
 class UnbanCommand extends Command {
   async run(interaction: ChatInputCommandInteraction<'cached'>) {
     const user = interaction.options.getUser('user', true);
-    if (!(await interaction.guild.bans.fetch(user.id).catch(() => null)))
-      throw 'That user is not banned.';
+    if (!(await interaction.guild.bans.fetch(user.id).catch(() => null))) throw 'That user is not banned.';
 
     const reason = interaction.options.getString('reason') ?? 'Unspecified reason.';
     const date = BigInt(Date.now());

@@ -34,14 +34,22 @@ class CustomCommandListener extends Listener {
     if (punishment === IT.Unban && !(await interaction.guild.bans.fetch(target.id).catch(() => null)))
       return interaction.reply({ content: 'That user is not banned.', ephemeral: true });
 
-    if (target.id === interaction.user.id) return interaction.reply({ content: `You cannot ${lpunishment} yourself.`, ephemeral: true });
-    if (target.id === this.client.user!.id) return interaction.reply({ content: `You cannot ${lpunishment} me.`, ephemeral: true });
+    if (target.id === interaction.user.id)
+      return interaction.reply({ content: `You cannot ${lpunishment} yourself.`, ephemeral: true });
+    if (target.id === this.client.user!.id)
+      return interaction.reply({ content: `You cannot ${lpunishment} me.`, ephemeral: true });
 
     if (target instanceof GuildMember && !adequateHierarchy(interaction.member, target))
-      return interaction.reply({ content: `You cannot ${lpunishment} this member due to inadequete hierarchy.`, ephemeral: true });
+      return interaction.reply({
+        content: `You cannot ${lpunishment} this member due to inadequete hierarchy.`,
+        ephemeral: true
+      });
 
     if (target instanceof GuildMember && !adequateHierarchy(interaction.guild.members.me!, target))
-      return interaction.reply({ content: `I cannot ${lpunishment} this member due to inadequete hierarchy.`, ephemeral: true });
+      return interaction.reply({
+        content: `I cannot ${lpunishment} this member due to inadequete hierarchy.`,
+        ephemeral: true
+      });
 
     await interaction.deferReply();
 
@@ -118,9 +126,9 @@ class CustomCommandListener extends Listener {
 
     switch (punishment) {
       case IT.Ban:
-        await interaction.guild.members.ban(target.id, { reason, deleteMessageSeconds: deleteTime ?? undefined })
+        await interaction.guild.members.ban(target.id, { reason, deleteMessageSeconds: deleteTime ?? undefined });
       case IT.Kick:
-        await interaction.guild.members.kick(target.id, reason)
+        await interaction.guild.members.kick(target.id, reason);
       case IT.Mute:
         await (target as GuildMember).timeout(Number(duration), reason);
     }
@@ -128,7 +136,9 @@ class CustomCommandListener extends Listener {
     const tense = pastTenseInfractionTypes[lpunishment as keyof typeof pastTenseInfractionTypes];
     const upperTense = tense[0].toUpperCase() + tense.slice(1);
 
-    return interaction.editReply(`${upperTense} **${target instanceof GuildMember ? target.user.tag : target.tag }** with ID \`${infraction.id}\``)
+    return interaction.editReply(
+      `${upperTense} **${target instanceof GuildMember ? target.user.tag : target.tag}** with ID \`${infraction.id}\``
+    );
   }
 }
 
