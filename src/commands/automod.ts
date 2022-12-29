@@ -408,6 +408,58 @@ class AutomodCommand extends Command {
             const immuneChannelsStr = autoModSpamImmuneChannels.map(c => `<#${c}>`).join(', ');
             return interaction.reply(immuneChannelsStr);
           }
+          case 'immune-roles-add': {
+            const role = interaction.options.getRole('role', true);
+
+            const { autoModSpamImmuneRoles } = (await this.client.db.guild.findUnique({
+              where: {
+                id: interaction.guildId
+              }
+            }))!;
+
+            if (autoModSpamImmuneRoles.includes(role.id))
+              throw 'This role is already on the list of immune roles.';
+
+            await interaction.deferReply();
+
+            await this.client.db.guild.update({
+              where: { id: interaction.guildId },
+              data: { autoModSpamImmuneRoles: { push: role.id } }
+            });
+
+            return interaction.editReply(`${role.toString()} added to immune roles.`);
+          }
+          case 'immune-roles-remove': {
+            const role = interaction.options.getRole('role', true);
+
+            const { autoModSpamImmuneRoles } = (await this.client.db.guild.findUnique({
+              where: {
+                id: interaction.guildId
+              }
+            }))!;
+
+            if (!autoModSpamImmuneRoles.includes(role.id))
+              throw 'This role is not on the list on the list of immune roles.';
+
+              autoModSpamImmuneRoles.splice(autoModSpamImmuneRoles.indexOf(role.id), 1);
+
+            await this.client.db.guild.update({
+              where: { id: interaction.guildId },
+              data: { autoModSpamImmuneRoles }
+            });
+
+            return interaction.reply(`${role.toString()} removed from immune roles.`);
+          }
+          case 'immune-roles-view': {
+            const { autoModSpamImmuneRoles } = (await this.client.db.guild.findUnique({
+              where: { id: interaction.guildId }
+            }))!;
+
+            if (autoModSpamImmuneRoles.length === 0) return interaction.reply('No immune roles set.');
+
+            const immuneRolesStr = autoModSpamImmuneRoles.map(c => `<@&${c}>`).join(', ');
+            return interaction.reply(immuneRolesStr);
+          }
         }
       case 'malicious-links':
         switch (subCmd) {
