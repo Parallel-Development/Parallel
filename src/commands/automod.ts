@@ -417,8 +417,7 @@ class AutomodCommand extends Command {
               }
             }))!;
 
-            if (autoModSpamImmuneRoles.includes(role.id))
-              throw 'This role is already on the list of immune roles.';
+            if (autoModSpamImmuneRoles.includes(role.id)) throw 'This role is already on the list of immune roles.';
 
             await interaction.deferReply();
 
@@ -441,7 +440,7 @@ class AutomodCommand extends Command {
             if (!autoModSpamImmuneRoles.includes(role.id))
               throw 'This role is not on the list on the list of immune roles.';
 
-              autoModSpamImmuneRoles.splice(autoModSpamImmuneRoles.indexOf(role.id), 1);
+            autoModSpamImmuneRoles.splice(autoModSpamImmuneRoles.indexOf(role.id), 1);
 
             await this.client.db.guild.update({
               where: { id: interaction.guildId },
@@ -538,6 +537,57 @@ class AutomodCommand extends Command {
             return interaction.reply(immuneChannelsStr);
           }
         }
+      case 'immune-roles-add': {
+        const role = interaction.options.getRole('role', true);
+
+        const { autoModMaliciousImmuneRoles } = (await this.client.db.guild.findUnique({
+          where: {
+            id: interaction.guildId
+          }
+        }))!;
+
+        if (autoModMaliciousImmuneRoles.includes(role.id)) throw 'This role is already on the list of immune roles.';
+
+        await interaction.deferReply();
+
+        await this.client.db.guild.update({
+          where: { id: interaction.guildId },
+          data: { autoModMaliciousImmuneRoles: { push: role.id } }
+        });
+
+        return interaction.editReply(`${role.toString()} added to immune roles.`);
+      }
+      case 'immune-roles-remove': {
+        const role = interaction.options.getRole('role', true);
+
+        const { autoModMaliciousImmuneRoles } = (await this.client.db.guild.findUnique({
+          where: {
+            id: interaction.guildId
+          }
+        }))!;
+
+        if (!autoModMaliciousImmuneRoles.includes(role.id))
+          throw 'This role is not on the list on the list of immune roles.';
+
+          autoModMaliciousImmuneRoles.splice(autoModMaliciousImmuneRoles.indexOf(role.id), 1);
+
+        await this.client.db.guild.update({
+          where: { id: interaction.guildId },
+          data: { autoModMaliciousImmuneRoles }
+        });
+
+        return interaction.reply(`${role.toString()} removed from immune roles.`);
+      }
+      case 'immune-roles-view': {
+        const { autoModMaliciousImmuneRoles } = (await this.client.db.guild.findUnique({
+          where: { id: interaction.guildId }
+        }))!;
+
+        if (autoModMaliciousImmuneRoles.length === 0) return interaction.reply('No immune roles set.');
+
+        const immuneRolesStr = autoModMaliciousImmuneRoles.map(c => `<@&${c}>`).join(', ');
+        return interaction.reply(immuneRolesStr);
+      }
     }
   }
 }
