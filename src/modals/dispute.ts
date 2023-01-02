@@ -10,7 +10,7 @@ class DisputeModal extends Modal {
   }
 
   async run(interaction: ModalSubmitInteraction) {
-    const infractionId = +interaction.fields.getTextInputValue('id');
+    const infractionId = +interaction.customId.split(':')[1];
     if ((!infractionId && infractionId !== 0) || infractionId < 1) throw 'Invalid infraction ID.';
 
     const infraction = await this.client.db.infraction.findUnique({
@@ -47,7 +47,6 @@ class DisputeModal extends Modal {
     const response: DisputeResponse = interaction.fields.fields.map(field => {
       return { question: field.customId, response: field.value };
     });
-    response.shift();
 
     await interaction.deferReply();
 

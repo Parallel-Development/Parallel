@@ -256,19 +256,7 @@ class DisputeCommand extends Command {
     if (infraction.dispute) throw 'A dispute for that infraction has already been made.';
 
     const modal = new ModalBuilder();
-    modal.setTitle('Dispute').setCustomId('dispute');
-
-    const idQuestionRow = new ActionRowBuilder<ModalActionRowComponentBuilder>();
-
-    const idQuestion = new TextInputBuilder()
-      .setLabel('Infraction ID')
-      .setStyle(TextInputStyle.Short)
-      .setValue(infraction.id.toString())
-      .setCustomId('id')
-      .setRequired(true);
-
-    idQuestionRow.setComponents(idQuestion);
-    modal.components.push(idQuestionRow);
+    modal.setTitle('Dispute').setCustomId(`dispute:${id}`);
 
     for (const question of guild.disputeModalQuestions) {
       const row = new ActionRowBuilder<ModalActionRowComponentBuilder>();

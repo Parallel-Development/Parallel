@@ -345,7 +345,7 @@ class ConfigCommand extends Command {
               where: { id: interaction.guildId }
             }))!;
 
-            if (disputeModalQuestions.length >= 4) throw 'You cannot have more than four questions.';
+            if (disputeModalQuestions.length >= 5) throw 'You cannot have more than four questions.';
             const question = interaction.options.getString('question', true);
 
             await interaction.deferReply();
