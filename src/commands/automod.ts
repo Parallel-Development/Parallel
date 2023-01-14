@@ -569,7 +569,7 @@ class AutomodCommand extends Command {
         if (!autoModMaliciousImmuneRoles.includes(role.id))
           throw 'This role is not on the list on the list of immune roles.';
 
-          autoModMaliciousImmuneRoles.splice(autoModMaliciousImmuneRoles.indexOf(role.id), 1);
+        autoModMaliciousImmuneRoles.splice(autoModMaliciousImmuneRoles.indexOf(role.id), 1);
 
         await this.client.db.guild.update({
           where: { id: interaction.guildId },
