@@ -4,7 +4,7 @@ import { Colors } from 'discord.js';
 import ms from 'ms';
 import Listener from '../lib/structs/Listener';
 
-class PunishLog extends Listener {
+class PunishLogListener extends Listener {
   constructor() {
     super('punishLog');
   }
@@ -62,4 +62,4 @@ class PunishLog extends Listener {
   }
 }
 
-export default PunishLog;
+export default PunishLogListener;

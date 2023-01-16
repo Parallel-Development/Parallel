@@ -33,6 +33,8 @@ model Guild {
   disputeDisregardAfter          BigInt          @default(2592000000)
   disputeBlacklist               String[]
   modLogWebhookId                String?
+  messageLogWebhookId            String?
+  messageLogIgnoredChannels      String[]
   infoWarn                       String?
   infoMute                       String?
   infoKick                       String?

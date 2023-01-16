@@ -233,6 +233,38 @@ import { Escalations } from '../types';
           cmd.setName('view-overrides').setDescription('View all overrides set to be updated when a channel is locked.')
         )
     )
+    .addSubcommandGroup(group =>
+      group
+        .setName('message-logging')
+        .setDescription('Manage the message logging settings.')
+        .addSubcommand(cmd =>
+          cmd
+            .setName('channel')
+            .setDescription('Set the channel to send message logs.')
+            .addChannelOption(opt =>
+              opt
+                .setName('channel')
+                .setDescription('The channel to log message changes.')
+                .setRequired(true)
+                .addChannelTypes(ChannelType.GuildText)
+            )
+        )
+        .addSubcommand(cmd =>
+          cmd
+            .setName('ignored-channels-add')
+            .setDescription('Add a channel to the list of ignored channels from the message logger')
+            .addChannelOption(opt => opt.setName('channel').setDescription('The channel to add.').setRequired(true))
+        )
+        .addSubcommand(cmd =>
+          cmd
+            .setName('ignored-channels-remove')
+            .setDescription('Remove a channel from the list of ignored channels from the message logger')
+            .addChannelOption(opt => opt.setName('channel').setDescription('The channel to remove.').setRequired(true))
+        )
+        .addSubcommand(cmd =>
+          cmd.setName('ignored-channels-view').setDescription('View all ignored channels from the message logger.')
+        )
+    )
 )
 class ConfigCommand extends Command {
   async run(interaction: ChatInputCommandInteraction<'cached'>) {
@@ -631,6 +663,129 @@ class ConfigCommand extends Command {
             return interaction.reply(`\`\`\`\n${lockOverridesArray}\`\`\``);
           }
         }
+      case 'message-logging': {
+        switch (subCmd) {
+          case 'channel': {
+            if (!interaction.guild.members.me!.permissions.has(Permissions.ManageWebhooks))
+              throw 'I need permission to manage webhooks.';
+
+            const channel = interaction.options.getChannel('channel', true) as TextChannel;
+            await interaction.deferReply();
+            const { messageLogWebhookId } = (await this.client.db.guild.findUnique({
+              where: { id: interaction.guildId }
+            }))!;
+
+            const webhooks = await interaction.guild.fetchWebhooks();
+            const webhook = webhooks.find(wh => wh.id === messageLogWebhookId);
+
+            if (webhook) {
+              if (webhook.channel!.id === channel.id) throw 'Message log channel is already set to that channel.';
+
+              await webhook
+                .edit({
+                  channel: channel.id
+                })
+                .catch(() => {
+                  throw 'Failed to change alert channel likely due to permissions.';
+                });
+            } else {
+              const newWebhook = await channel.createWebhook({
+                name: 'Message Logger',
+                avatar: this.client.user!.displayAvatarURL()
+              });
+    
+              await this.client.db.guild
+                .update({
+                  where: {
+                    id: interaction.guildId
+                  },
+                  data: {
+                    messageLogWebhookId: newWebhook.id
+                  }
+                })
+                .catch(() => {
+                  throw 'Failed to set alert channel likely due to permissions.';
+                });
+  
+            }
+
+            return interaction.editReply(`Message log channel set to ${channel.toString()}.`);
+          }
+          case 'ignored-channels-add': {
+            const channel = interaction.options.getChannel('channel', true);
+
+            const { messageLogIgnoredChannels } = (await this.client.db.guild.findUnique({
+              where: {
+                id: interaction.guildId
+              }
+            }))!;
+
+            if (messageLogIgnoredChannels.includes(channel.id))
+              throw 'That channel is already on the list of ignored channels.';
+
+            await interaction.deferReply();
+
+            await this.client.db.guild.update({
+              where: {
+                id: interaction.guild.id
+              },
+              data: {
+                messageLogIgnoredChannels: { push: channel.id }
+              }
+            });
+
+            return interaction.editReply('Channel added to the list of ignored channels.');
+          }
+          case 'ignored-channels-remove': {
+            const channel = interaction.options.getChannel('channel', true);
+
+            const { messageLogIgnoredChannels } = (await this.client.db.guild.findUnique({
+              where: {
+                id: interaction.guildId
+              }
+            }))!;
+
+            if (!messageLogIgnoredChannels.includes(channel.id))
+              throw 'That channel is not on the list of ignored channels.';
+
+            await interaction.deferReply();
+
+            messageLogIgnoredChannels.splice(messageLogIgnoredChannels.indexOf(channel.id), 1);
+
+            await this.client.db.guild.update({
+              where: {
+                id: interaction.guild.id
+              },
+              data: {
+                messageLogIgnoredChannels
+              }
+            });
+
+            return interaction.editReply('Channel removed from the list of ignored channels.');
+          }
+          case 'ignored-channels-view': {
+            const { messageLogIgnoredChannels } = (await this.client.db.guild.findUnique({
+              where: {
+                id: interaction.guildId
+              }
+            }))!;
+
+            const fixedChannels = messageLogIgnoredChannels.filter(c => interaction.guild.channels.cache.get(c));
+
+            if (fixedChannels.length === 0)
+              return interaction.reply('There are no channels on the ignored list.');
+
+            const channelsStr = fixedChannels.map(c => `<#${c}>`);
+
+            if (channelsStr.length > 1000)
+              return interaction.reply(
+                `Too long to upload as a Discord message, view here: ${await bin(channelsStr.join('\n'))}`
+              );
+
+            return interaction.reply(channelsStr.join(', '));
+          }
+        }
+      }
     }
     // simple as that
 
@@ -692,8 +847,6 @@ class ConfigCommand extends Command {
             .catch(() => {
               throw 'Failed to change alert channel likely due to permissions.';
             });
-
-          return interaction.editReply(`Mod log channel set to ${channel.toString()}.`);
         } else {
           const newWebhook = await channel.createWebhook({
             name: 'Mod Logger',
@@ -712,9 +865,9 @@ class ConfigCommand extends Command {
             .catch(() => {
               throw 'Failed to set alert channel likely due to permissions.';
             });
-
-          return interaction.editReply(`Mod log channel set to ${channel.toString()}.`);
         }
+
+        return interaction.editReply(`Mod log channel set to ${channel.toString()}.`);
       }
     }
   }

@@ -17,7 +17,6 @@ class Client extends DJSClient {
       makeCache: Options.cacheWithLimits({
         ...Options.DefaultMakeCacheSettings,
         ReactionManager: 0,
-        MessageManager: 0,
         GuildEmojiManager: 0,
         GuildStickerManager: 0,
         VoiceStateManager: 0,
