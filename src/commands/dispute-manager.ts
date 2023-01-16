@@ -11,16 +11,6 @@ import { mainColor } from '../lib/util/constants';
 import { bin } from '../lib/util/functions';
 import { DisputeResponse } from '../types';
 
-/*
- * /dispute view [id]
- * /dispute disregard [id]
- * /dispute accept [id] [reason]? [dont-undo]?
- * /dispute deny [id] [reason]?
- * /dispute blacklist add [user-id] [reason]?
- * /dispute blacklist remove [user-id]
- * /dispute blacklist clear
- * /dispute blacklist view
- */
 @data(
   new SlashCommandBuilder()
     .setName('dispute-manager')
@@ -181,15 +171,17 @@ class DisputeManagerCommand extends Command {
       return;
     }
 
-    const dispute = await this.client.db.dispute.findUnique({
+    const infraction = await this.client.db.infraction.findUnique({
       where: {
         id
       },
-      include: { infraction: true, guild: { select: { notifyInfractionChange: true } } }
+      include: { dispute: true, guild: { select: { notifyInfractionChange: true } } }
     });
 
-    if (!dispute) throw 'That infraction does not have dispute.';
-    const infraction = dispute.infraction!;
+    if (infraction?.guildId !== interaction.guildId) throw 'No infraction with that ID exists in this guild.';
+    if (!infraction.dispute) throw 'That infraction does not have a dispute.';
+
+    const { dispute } = infraction;
 
     switch (command) {
       case 'view':
@@ -221,23 +213,6 @@ class DisputeManagerCommand extends Command {
 
         return interaction.reply(`Dispute disregarded.`);
       case 'accept':
-        await interaction.deferReply();
-
-        await this.client.db.dispute.delete({
-          where: {
-            id
-          }
-        });
-
-        await this.client.db.infraction.delete({
-          where: {
-            id
-          }
-        });
-
-        if (dontUndo && infraction.type !== InfractionType.Ban && infraction.type !== InfractionType.Mute)
-          throw 'There is no punishment to avoid un-doing.';
-
         switch (infraction.type) {
           case InfractionType.Ban:
             if (!interaction.guild.members.me!.permissions.has(Permissions.BanMembers))
@@ -258,6 +233,23 @@ class DisputeManagerCommand extends Command {
             break;
         }
 
+        await interaction.deferReply();
+
+        await this.client.db.dispute.delete({
+          where: {
+            id
+          }
+        });
+
+        await this.client.db.infraction.delete({
+          where: {
+            id
+          }
+        });
+
+        if (dontUndo && infraction.type !== InfractionType.Ban && infraction.type !== InfractionType.Mute)
+          throw 'There is no punishment to avoid un-doing.';
+
         const acceptEmbed = new EmbedBuilder()
           .setAuthor({ name: 'Parallel Moderation', iconURL: this.client.user!.displayAvatarURL() })
           .setTitle('Dispute Accepted')
@@ -268,7 +260,7 @@ class DisputeManagerCommand extends Command {
             }${dontUndo ? '\n\n***•** The correlated punishment to this dispute was not automatically removed.*' : ''}`
           );
 
-        if (dispute.guild.notifyInfractionChange)
+        if (infraction.guild.notifyInfractionChange)
           await this.client.users
             .fetch(dispute.userId)
             .then(user => user.send({ embeds: [acceptEmbed] }))
@@ -292,7 +284,7 @@ class DisputeManagerCommand extends Command {
             }`
           );
 
-        if (dispute.guild.notifyInfractionChange)
+        if (infraction.guild.notifyInfractionChange)
           await this.client.users
             .fetch(dispute.userId)
             .then(user => user.send({ embeds: [denyEmbed] }))

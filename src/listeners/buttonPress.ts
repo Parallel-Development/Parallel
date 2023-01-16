@@ -1,19 +1,19 @@
 import Listener from '../lib/structs/Listener';
-import { type ModalSubmitInteraction } from 'discord.js';
+import { ButtonInteraction } from 'discord.js';
 
-class ModalSubmitListener extends Listener {
+class ButtonPressListener extends Listener {
   constructor() {
-    super('modalSubmit');
+    super('buttonPress');
   }
 
-  async run(interaction: ModalSubmitInteraction) {
+  async run(interaction: ButtonInteraction) {
     if (interaction.customId[0] === '?') return;
 
-    const modal = this.client.modals.get(interaction.customId.split(':')[0]);
-    if (!modal) return interaction.reply({ content: 'Unknown modal interaction.', ephemeral: true });
+    const button = this.client.buttons.get(interaction.customId.split(':')[0]);
+    if (!button) return interaction.reply({ content: 'Unknown modal interaction.', ephemeral: true });
 
     try {
-      await modal.run(interaction);
+      await button.run(interaction);
     } catch (e) {
       if (typeof e !== 'string') {
         console.error(e);
@@ -26,4 +26,4 @@ class ModalSubmitListener extends Listener {
   }
 }
 
-export default ModalSubmitListener;
+export default ButtonPressListener;

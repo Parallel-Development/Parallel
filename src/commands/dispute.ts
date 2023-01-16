@@ -55,7 +55,7 @@ class DisputeCommand extends Command {
 
       if (!q1) return;
 
-      if (q1.customId === 'yes')
+      if (q1.customId === '?yes')
         return q1.update({
           content: 'Great! Run the command again but this time provide the infraction ID.',
           components: []

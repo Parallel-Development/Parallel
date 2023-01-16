@@ -1,4 +1,4 @@
-import { EmbedBuilder, ModalSubmitInteraction } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, ModalSubmitInteraction } from 'discord.js';
 import Modal from '../lib/structs/Modal';
 import { mainColor } from '../lib/util/constants';
 import { InfractionType } from '@prisma/client';
@@ -9,7 +9,7 @@ class DisputeModal extends Modal {
     super('dispute');
   }
 
-  async run(interaction: ModalSubmitInteraction) {
+  async run(interaction: ModalSubmitInteraction<'cached'>) {
     const infractionId = +interaction.customId.split(':')[1];
     if ((!infractionId && infractionId !== 0) || infractionId < 1) throw 'Invalid infraction ID.';
 
@@ -85,10 +85,32 @@ class DisputeModal extends Modal {
           iconURL: interaction.user.displayAvatarURL()
         })
         .setDescription(embedDescription)
-        .setFooter({ text: `Use /case id:${infraction.id} to get context.` })
         .setTimestamp();
 
-      await webhook.send({ embeds: [embed] });
+      const acceptButton = new ButtonBuilder()
+        .setCustomId(`dispute-manager:accept.${infraction.id}`)
+        .setLabel('Accept')
+        .setStyle(ButtonStyle.Success);
+
+      const denyButton = new ButtonBuilder()
+        .setCustomId(`dispute-manager:deny.${infraction.id}`)
+        .setLabel('Deny')
+        .setStyle(ButtonStyle.Danger);
+
+      const disregardButton = new ButtonBuilder()
+        .setCustomId(`dispute-manager:disregard.${infraction.id}`)
+        .setLabel('Disregard')
+        .setStyle(ButtonStyle.Secondary);
+
+      const contextButton = new ButtonBuilder()
+      .setCustomId(`dispute-manager:context.${infraction.id}`)
+      .setLabel('Context')
+      .setStyle(ButtonStyle.Primary);
+
+      const row = new ActionRowBuilder<ButtonBuilder>();
+      row.addComponents(acceptButton, denyButton, disregardButton, contextButton);
+
+      await webhook.send({ embeds: [embed], components: [row] });
     }
 
     await interaction.editReply('Dispute successfully submitted!');

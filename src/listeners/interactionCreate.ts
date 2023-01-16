@@ -9,6 +9,7 @@ class InteractionCreateListener extends Listener {
   async run(interaction: Interaction) {
     if (interaction.isChatInputCommand()) return this.client.emit('chatInputCommand', interaction);
     else if (interaction.isModalSubmit()) return this.client.emit('modalSubmit', interaction);
+    else if (interaction.isButton()) return this.client.emit('buttonPress', interaction);
   }
 }
 

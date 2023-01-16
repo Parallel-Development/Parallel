@@ -5,12 +5,12 @@ export const infractionsPerPage = 7;
 export const yesButton = new ButtonBuilder()
 .setLabel('Yes')
 .setStyle(ButtonStyle.Success)
-.setCustomId('yes')
+.setCustomId('?yes')
 
 export const noButton = new ButtonBuilder()
 .setLabel('No')
 .setStyle(ButtonStyle.Danger)
-.setCustomId('no');
+.setCustomId('?no');
 
 export const yesNoRow = new ActionRowBuilder<ButtonBuilder>().addComponents(yesButton, noButton);
 

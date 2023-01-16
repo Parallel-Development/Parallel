@@ -7,6 +7,7 @@ class ReadyListener extends Listener {
 
   async run() {
     console.log(`Logged in as ${this.client.user!.tag}`);
+    this.client.application!.commands.fetch();
   }
 }
 

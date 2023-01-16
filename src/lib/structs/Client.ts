@@ -5,11 +5,13 @@ import fs from 'fs';
 import type Command from './Command';
 import type Listener from './Listener';
 import type Modal from './Modal';
+import Button from './Button';
 
 class Client extends DJSClient {
   public db = new PrismaClient();
   public commands: Map<string, Command> = new Map();
   public modals: Map<string, Modal> = new Map();
+  public buttons: Map<string, Button> = new Map();
 
   constructor() {
     super({
@@ -23,7 +25,6 @@ class Client extends DJSClient {
         GuildInviteManager: 0,
         GuildScheduledEventManager: 0
       }),
-      partials: [Partials.Channel, Partials.Message],
       sweepers: {
         ...Options.DefaultSweeperSettings,
         guildMembers: {
@@ -50,6 +51,15 @@ class Client extends DJSClient {
     }
   }
 
+  async _cacheButtons() {
+    const files = fs.readdirSync('src/buttons');
+    for (const file of files) {
+      const buttonClass = (await import(`../../buttons/${file.slice(0, -3)}`)).default;
+      const buttonInstant: Button = new buttonClass();
+      this.buttons.set(buttonInstant.name, buttonInstant);
+    }
+  }
+
   async _cacheCommands() {
     const files = fs.readdirSync('src/commands');
     for (const file of files) {
@@ -73,6 +83,7 @@ class Client extends DJSClient {
   override async login(token: string) {
     await this._cacheCommands();
     await this._cacheModals();
+    await this._cacheButtons();
     await this._loadListeners();
 
     this.db.$use(
