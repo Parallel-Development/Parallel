@@ -337,9 +337,13 @@ class AutomodCommand extends Command {
 
             await interaction.deferReply();
 
+            const object = (autoModSpamTriggers as AutoModSpamTriggers).find(trig => trig.amount == amount && trig.within == within)!;
+            const index = autoModSpamTriggers.indexOf(object);
+            autoModSpamTriggers.splice(index, 1);
+
             await this.client.db.guild.update({
               where: { id: interaction.guildId },
-              data: { autoModSpamTriggers: { pull: trigger } }
+              data: { autoModSpamTriggers }
             });
 
             return interaction.editReply('Trigger removed.');
