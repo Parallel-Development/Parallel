@@ -25,7 +25,7 @@
   "devDependencies": {
     "typescript": "^4.9.4"
   },
-  "resolutions": {
+  "overrides": {
     "discord-api-types": "0.37.20"
   }
 }
