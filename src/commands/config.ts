@@ -571,6 +571,7 @@ class ConfigCommand extends Command {
             const fixedLockChannels = lockChannels.filter(c => interaction.guild.channels.cache.get(c));
 
             const lockChannelsStr = fixedLockChannels.map(c => `<#${c}>`).join(', ');
+            if (lockChannelsStr.length == 0) return interaction.reply("You have no channels on the list.");
 
             if (lockChannelsStr.length <= 2000) return interaction.reply(lockChannelsStr);
             else {
