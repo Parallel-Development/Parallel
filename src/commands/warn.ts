@@ -40,6 +40,7 @@ class WarnCommand extends Command {
     if (uExpiration && !method) throw 'Invalid duration.';
 
     const expires = method ? BigInt(method) : null;
+    const expirationTimestamp = expires ? expires + date : null;
 
     if (expires && expires < 1000) throw 'Temporary warn duration must be at least 1 second.';
 
@@ -51,13 +52,13 @@ class WarnCommand extends Command {
         guildId: interaction.guildId,
         date,
         moderatorId: interaction.user.id,
-        expires: expires ?? null,
+        expires: expirationTimestamp ?? null,
         reason
       },
-      include: { guild: { select: { infractionModeratorPublic: true, infoWarn: true, modLogWebhookId: true } } }
+      include: { guild: { select: { infractionModeratorPublic: true, infoWarn: true } } }
     });
 
-    const { infractionModeratorPublic, infoWarn, modLogWebhookId } = infraction.guild;
+    const { infractionModeratorPublic, infoWarn } = infraction.guild;
 
     const dm = new EmbedBuilder()
       .setAuthor({ name: 'Parallel Moderation', iconURL: this.client.user!.displayAvatarURL() })
