@@ -7,8 +7,8 @@ class MessageUpdateListener extends Listener {
   }
 
   async run(oldMsg: Message<true>, newMsg: Message<true>) {
-    this.client.emit('messageLog', oldMsg, newMsg, 'edit')
-    return this.client.emit('automod', newMsg.content)
+    this.client.emit('messageLog', oldMsg, newMsg, 'edit');
+    return this.client.emit('automod', newMsg.content);
   }
 }
 

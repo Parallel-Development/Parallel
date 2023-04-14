@@ -12,6 +12,7 @@ import Command, { data } from '../lib/structs/Command';
 import { urlReg } from '../lib/util/constants';
 import { bin } from '../lib/util/functions';
 import { Escalations } from '../types';
+import yaml from 'js-yaml';
 
 @data(
   new SlashCommandBuilder()
@@ -121,7 +122,9 @@ import { Escalations } from '../types';
     .addSubcommand(cmd =>
       cmd
         .setName('additional-punishment-info')
-        .setDescription('Add additional information to punishment DM sent to users upon getting an infraction.')
+        .setDescription(
+          'Add information to punishment DM sent to users upon getting an infraction. Use `none` to disable.'
+        )
         .addStringOption(opt =>
           opt
             .setName('punishment')
@@ -138,6 +141,26 @@ import { Escalations } from '../types';
           opt.setName('info').setDescription('The additional information.').setMaxLength(500).setRequired(true)
         )
     )
+    .addSubcommand(cmd =>
+      cmd
+        .setName('default-punishment-duration')
+        .setDescription('Set a default duration for punishments if one is not provided.')
+        .addStringOption(opt =>
+          opt
+            .setName('punishment')
+            .setDescription('The punishment to set a default duration for.')
+            .addChoices(
+              { name: 'Warn', value: InfractionType.Warn },
+              { name: 'Mute', value: InfractionType.Mute },
+              { name: 'Ban', value: InfractionType.Ban }
+            )
+            .setRequired(true)
+        )
+        .addStringOption(opt =>
+          opt.setName('duration').setDescription('The default duration. Use `0` to disable.').setRequired(true)
+        )
+    )
+    .addSubcommand(cmd => cmd.setName('view').setDescription('View all configurations.'))
     .addSubcommandGroup(group =>
       group
         .setName('escalations')
@@ -571,7 +594,7 @@ class ConfigCommand extends Command {
             const fixedLockChannels = lockChannels.filter(c => interaction.guild.channels.cache.get(c));
 
             const lockChannelsStr = fixedLockChannels.map(c => `<#${c}>`).join(', ');
-            if (lockChannelsStr.length == 0) return interaction.reply("You have no channels on the list.");
+            if (lockChannelsStr.length == 0) return interaction.reply('You have no channels on the list.');
 
             if (lockChannelsStr.length <= 2000) return interaction.reply(lockChannelsStr);
             else {
@@ -694,7 +717,7 @@ class ConfigCommand extends Command {
                 name: 'Message Logger',
                 avatar: this.client.user!.displayAvatarURL()
               });
-    
+
               await this.client.db.guild
                 .update({
                   where: {
@@ -707,7 +730,6 @@ class ConfigCommand extends Command {
                 .catch(() => {
                   throw 'Failed to set alert channel likely due to permissions.';
                 });
-  
             }
 
             return interaction.editReply(`Message log channel set to ${channel.toString()}.`);
@@ -773,8 +795,7 @@ class ConfigCommand extends Command {
 
             const fixedChannels = messageLogIgnoredChannels.filter(c => interaction.guild.channels.cache.get(c));
 
-            if (fixedChannels.length === 0)
-              return interaction.reply('There are no channels on the ignored list.');
+            if (fixedChannels.length === 0) return interaction.reply('There are no channels on the ignored list.');
 
             const channelsStr = fixedChannels.map(c => `<#${c}>`);
 
@@ -869,6 +890,89 @@ class ConfigCommand extends Command {
         }
 
         return interaction.editReply(`Mod log channel set to ${channel.toString()}.`);
+      }
+      case 'additional-punishment-info': {
+        let type = interaction.options.getString('punishment', true);
+        switch (type) {
+          case InfractionType.Ban:
+            type = 'infoBan';
+            break;
+          case InfractionType.Warn:
+            type = 'infoWarn';
+            break;
+          case InfractionType.Mute:
+            type = 'infoMute';
+            break;
+          case InfractionType.Ban:
+            type = 'infoBan';
+            break;
+        }
+
+        let info: string | null = interaction.options.getString('info', true);
+        if (info === 'none') info = null;
+
+        let data: { [key: string]: any } = {};
+        data[type] = info;
+
+        await this.client.db.guild.update({
+          where: { id: interaction.guildId },
+          data
+        });
+
+        if (info === null)
+          return interaction.reply('No additional information will be added to this punishment anymore.');
+        else
+          return interaction.reply(
+            "Users will now see this message in their DM's upon receiving an infraction of this punishment type."
+          );
+      }
+      case 'default-punishment-duration': {
+        let type = interaction.options.getString('punishment', true);
+
+        switch (type) {
+          case InfractionType.Ban:
+            type = 'defaultBanDuration';
+            break;
+          case InfractionType.Warn:
+            type = 'defaultWarnDuration';
+            break;
+          case InfractionType.Mute:
+            type = 'defaultMuteDuration';
+            break;
+        }
+
+        const uDuration = interaction.options.getString('duration', true);
+        const duration = ms(uDuration);
+
+        let data: { [key: string]: any } = {};
+        data[type] = duration;
+
+        if (!duration && duration !== 0) throw 'Invalid duration.';
+        if (duration < 1 && duration !== 0) throw 'Duration must be at least 1 seconds or 0.';
+
+        await this.client.db.guild.update({
+          where: { id: interaction.guildId },
+          data
+        });
+
+        if (duration === 0) return interaction.reply('There is now no longer a default duration for this punishment.');
+        else
+          return interaction.reply(
+            `Set the default duration of this punishment to \`${ms(duration, { long: true })}\`.`
+          );
+      }
+      case 'view': {
+        await interaction.deferReply();
+        const guild = (await this.client.db.guild.findUnique({
+          where: { id: interaction.guildId }
+        }))!;
+
+        const yamlString = yaml.dump(
+          JSON.parse(JSON.stringify(guild, (k, v) => (typeof v === 'bigint' ? v.toString() : v)))
+        );
+
+        const url = await bin(yamlString, 'yaml');
+        return interaction.editReply(`View your settings here: ${url}`);
       }
     }
   }

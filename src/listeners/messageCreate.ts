@@ -7,7 +7,7 @@ class MessageCreateListener extends Listener {
   }
 
   async run(message: Message<true>) {
-    return this.client.emit('automod', message)
+    return this.client.emit('automod', message);
   }
 }
 

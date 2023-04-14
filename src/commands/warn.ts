@@ -37,14 +37,22 @@ class WarnCommand extends Command {
     const date = BigInt(Date.now());
 
     const method = uExpiration ? +uExpiration * 1000 || ms(uExpiration) : null;
-    if (uExpiration && !method) throw 'Invalid duration.';
+    if (uExpiration && !method && uExpiration !== 'never') throw 'Invalid duration.';
 
     const expires = method ? BigInt(method) : null;
-    const expirationTimestamp = expires ? expires + date : null;
+    let expirationTimestamp = expires ? expires + date : null;
 
     if (expires && expires < 1000) throw 'Temporary warn duration must be at least 1 second.';
 
     await interaction.deferReply();
+
+    const guild = (await this.client.db.guild.findUnique({
+      where: { id: interaction.guildId },
+      select: { infractionModeratorPublic: true, infoWarn: true, defaultWarnDuration: true }
+    }))!;
+
+    if (!expirationTimestamp && uExpiration !== 'never' && guild.defaultWarnDuration !== 0n)
+      expirationTimestamp = guild.defaultWarnDuration + date;
 
     const infraction = await this.client.db.infraction.create({
       data: {
@@ -54,11 +62,10 @@ class WarnCommand extends Command {
         moderatorId: interaction.user.id,
         expires: expirationTimestamp ?? null,
         reason
-      },
-      include: { guild: { select: { infractionModeratorPublic: true, infoWarn: true } } }
+      }
     });
 
-    const { infractionModeratorPublic, infoWarn } = infraction.guild;
+    const { infractionModeratorPublic, infoWarn } = guild;
 
     const dm = new EmbedBuilder()
       .setAuthor({ name: 'Parallel Moderation', iconURL: this.client.user!.displayAvatarURL() })

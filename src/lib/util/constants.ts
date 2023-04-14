@@ -2,15 +2,9 @@ import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Colors, MessageActionRowC
 
 export const infractionsPerPage = 7;
 
-export const yesButton = new ButtonBuilder()
-.setLabel('Yes')
-.setStyle(ButtonStyle.Success)
-.setCustomId('?yes')
+export const yesButton = new ButtonBuilder().setLabel('Yes').setStyle(ButtonStyle.Success).setCustomId('?yes');
 
-export const noButton = new ButtonBuilder()
-.setLabel('No')
-.setStyle(ButtonStyle.Danger)
-.setCustomId('?no');
+export const noButton = new ButtonBuilder().setLabel('No').setStyle(ButtonStyle.Danger).setCustomId('?no');
 
 export const yesNoRow = new ActionRowBuilder<ButtonBuilder>().addComponents(yesButton, noButton);
 
@@ -19,8 +13,8 @@ export const commonChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
 export const domainReg = /(?:[A-z0-9](?:[A-z0-9-]{0,61}[A-z0-9])?\.)+[A-z0-9][A-z0-9-]{0,61}[A-z0-9]/;
 export const urlReg = /http(s):\/\/(?:[A-z0-9](?:[A-z0-9-]{0,61}[A-z0-9])?\.)+[A-z0-9][A-z0-9-]{0,61}[A-z0-9]/;
 export const pastTenseInfractionTypes = {
-  'ban': 'banned',
-  'kick': 'kicked',
-  'mute': 'muted',
-  'warn': 'warned'
-}
+  ban: 'banned',
+  kick: 'kicked',
+  mute: 'muted',
+  warn: 'warned'
+};

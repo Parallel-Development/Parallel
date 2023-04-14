@@ -12,30 +12,29 @@ export default abstract class Command {
 }
 
 export function data(data: Partial<SlashCommandBuilder>) {
-  return function<T extends { new(...args: any[]): {} }>(constructor: T) {
+  return function <T extends { new (...args: any[]): {} }>(constructor: T) {
     return class extends constructor {
-      data = data
-    }
-  }
+      data = data;
+    };
+  };
 }
 
 export function clientpermissions(clientPermissions: bigint[]) {
-  return function<T extends { new(...args: any[]): {} }>(constructor: T) {
+  return function <T extends { new (...args: any[]): {} }>(constructor: T) {
     return class extends constructor {
       clientPermissions = new PermissionsBitField(clientPermissions);
-    }
-  }
+    };
+  };
 }
 
-export function allowDM<T extends { new(...args: any[]): {} }>(constructor: T) {
+export function allowDM<T extends { new (...args: any[]): {} }>(constructor: T) {
   return class extends constructor {
     allowDM = true;
-  }
+  };
 }
 
-export function guildResolve<T extends { new(...args: any[]): {} }>(constructor: T) {
+export function guildResolve<T extends { new (...args: any[]): {} }>(constructor: T) {
   return class extends constructor {
     guildResolve = true;
-  }
+  };
 }
-

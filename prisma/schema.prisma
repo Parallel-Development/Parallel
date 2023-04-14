@@ -39,6 +39,9 @@ model Guild {
   infoMute                       String?
   infoKick                       String?
   infoBan                        String?
+  defaultWarnDuration            BigInt          @default(0)
+  defaultMuteDuration            BigInt          @default(0)
+  defaultBanDuration             BigInt          @default(0)
   autoModSpamToggle              Boolean         @default(false)
   autoModSpamTriggers            Json[]          @default(["{ \"amount\": 5, \"within\": 5 }", "{ \"amount\": 10, \"within\": 20 }"])
   autoModSpamImmuneChannels      String[]

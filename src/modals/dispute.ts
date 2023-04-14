@@ -103,9 +103,9 @@ class DisputeModal extends Modal {
         .setStyle(ButtonStyle.Secondary);
 
       const contextButton = new ButtonBuilder()
-      .setCustomId(`dispute-manager:context.${infraction.id}`)
-      .setLabel('Context')
-      .setStyle(ButtonStyle.Primary);
+        .setCustomId(`dispute-manager:context.${infraction.id}`)
+        .setLabel('Context')
+        .setStyle(ButtonStyle.Primary);
 
       const row = new ActionRowBuilder<ButtonBuilder>();
       row.addComponents(acceptButton, denyButton, disregardButton, contextButton);

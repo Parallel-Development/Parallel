@@ -17,7 +17,11 @@ const d28 = ms('28d');
     .setDescription('Mute a member.')
     .setDefaultMemberPermissions(Permissions.ModerateMembers)
     .addUserOption(option => option.setName('member').setDescription('The member to mute.').setRequired(true))
-    .addStringOption(option => option.setName('duration').setDescription('The duration of the mute.').setRequired(true))
+    .addStringOption(option =>
+      option
+        .setName('duration')
+        .setDescription('The duration of the mute. Required unless a default mute duration is set!')
+    )
     .addStringOption(option => option.setName('reason').setDescription('The reason for the mute.'))
 )
 @clientpermissions([Permissions.ModerateMembers])
@@ -37,19 +41,30 @@ class MuteCommand extends Command {
     if (member.permissions.has(Permissions.Administrator)) throw 'You cannot mute an administrator.';
 
     const reason = interaction.options.getString('reason') ?? 'Unspecified reason.';
-    const uExpiration = interaction.options.getString('duration', true);
+    const uExpiration = interaction.options.getString('duration');
     const date = BigInt(Date.now());
-    const method = +uExpiration * 1000 || ms(uExpiration);
-    if (!method) throw 'Invalid duration.';
+    const method = uExpiration ? +uExpiration * 1000 || ms(uExpiration) : null;
+    if (uExpiration && !method) throw 'Invalid duration.';
 
-    const expires = BigInt(method);
+    let expires = method ? BigInt(method) : null;
 
-    if (expires > d28) throw 'You cannot mute a member for more than `28 days.`';
-    if (expires < 1000)
+    if (expires && expires > d28) throw 'You cannot mute a member for more than `28 days.`';
+    if (expires && expires < 1000)
       throw `Mute duration must be at least 1 second. Consider using \`/unmute\` if you want to unmute the user.`;
-    const expirationTimestamp = expires + date;
+    let expirationTimestamp = expires ? expires + date : undefined;
+
+    const guild = (await this.client.db.guild.findUnique({
+      where: { id: interaction.guildId },
+      select: { infractionModeratorPublic: true, infoMute: true, defaultMuteDuration: true }
+    }))!;
+
+    if (!expirationTimestamp && guild.defaultMuteDuration === 0n)
+      throw 'A mute duration is required since a default is not set.';
 
     await interaction.deferReply();
+
+    expires = guild.defaultMuteDuration;
+    expirationTimestamp = expires + date;
 
     await member.timeout(Number(expires), reason);
 
@@ -62,8 +77,7 @@ class MuteCommand extends Command {
         moderatorId: interaction.user.id,
         expires: expirationTimestamp,
         reason
-      },
-      include: { guild: { select: { infractionModeratorPublic: true, infoMute: true } } }
+      }
     });
 
     const data = {
@@ -79,7 +93,7 @@ class MuteCommand extends Command {
       create: data
     });
 
-    const { infractionModeratorPublic, infoMute } = infraction.guild;
+    const { infractionModeratorPublic, infoMute } = guild;
     const expiresStr = Math.floor(Number(infraction.expires) / 1000);
 
     const dm = new EmbedBuilder()

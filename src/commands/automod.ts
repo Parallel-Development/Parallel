@@ -337,7 +337,9 @@ class AutomodCommand extends Command {
 
             await interaction.deferReply();
 
-            const object = (autoModSpamTriggers as AutoModSpamTriggers).find(trig => trig.amount == amount && trig.within == within)!;
+            const object = (autoModSpamTriggers as AutoModSpamTriggers).find(
+              trig => trig.amount == amount && trig.within == within
+            )!;
             const index = autoModSpamTriggers.indexOf(object);
             autoModSpamTriggers.splice(index, 1);
 

@@ -15,7 +15,12 @@ class Client extends DJSClient {
 
   constructor() {
     super({
-      intents: [Intents.Flags.Guilds, Intents.Flags.GuildMembers, Intents.Flags.GuildMessages, Intents.Flags.MessageContent],
+      intents: [
+        Intents.Flags.Guilds,
+        Intents.Flags.GuildMembers,
+        Intents.Flags.GuildMessages,
+        Intents.Flags.MessageContent
+      ],
       makeCache: Options.cacheWithLimits({
         ...Options.DefaultMakeCacheSettings,
         ReactionManager: 0,

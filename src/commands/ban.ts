@@ -54,7 +54,7 @@ class BanCommand extends Command {
     const date = BigInt(Date.now());
 
     const method = uExpiration ? +uExpiration * 1000 || ms(uExpiration) : null;
-    if (uExpiration && !method) throw 'Invalid duration.';
+    if (uExpiration && !method && uExpiration !== 'never') throw 'Invalid duration.';
 
     const expires = method ? BigInt(method) : null;
 
@@ -63,9 +63,17 @@ class BanCommand extends Command {
       ms(interaction.options.getString('delete-previous-messages') ?? '0s') / 1000
     );
 
-    const expirationTimestamp = expires ? expires + date : undefined;
+    let expirationTimestamp = expires ? expires + date : undefined;
 
     await interaction.deferReply();
+
+    const guild = (await this.client.db.guild.findUnique({
+      where: { id: interaction.guildId },
+      select: { infractionModeratorPublic: true, infoBan: true, defaultBanDuration: true }
+    }))!;
+
+    if (!expirationTimestamp && uExpiration !== 'never' && guild.defaultBanDuration !== 0n)
+      expirationTimestamp = guild.defaultBanDuration + date;
 
     const infraction = await this.client.db.infraction.create({
       data: {
@@ -76,8 +84,7 @@ class BanCommand extends Command {
         moderatorId: interaction.user.id,
         expires: expirationTimestamp,
         reason
-      },
-      include: { guild: { select: { infractionModeratorPublic: true, infoBan: true } } }
+      }
     });
 
     if (expirationTimestamp) {
@@ -97,7 +104,7 @@ class BanCommand extends Command {
       });
     }
 
-    const { infractionModeratorPublic, infoBan } = infraction.guild;
+    const { infractionModeratorPublic, infoBan } = guild;
     const expiresStr = Math.floor(Number(infraction.expires) / 1000);
 
     const dm = new EmbedBuilder()
