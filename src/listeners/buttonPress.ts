@@ -13,14 +13,13 @@ class ButtonPressListener extends Listener {
     if (!button) return interaction.reply({ content: 'Unknown modal interaction.', ephemeral: true });
 
     await button.run(interaction)
-      .catch((e) => {
+      .catch(e => {
         if (typeof e !== 'string')
           return console.error(e);
 
         if (interaction.deferred || interaction.replied)
           return interaction.editReply({ content: e as string });
-        else
-          return interaction.reply({ content: e, ephemeral: true });
+        else return interaction.reply({ content: e, ephemeral: true });
       });
 }
 
