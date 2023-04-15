@@ -13,7 +13,7 @@ Create a `.env` file and paste below into it. Replace the placeholders with some
 - `CLIENT_ID`={Discord client ID}
 - `DATABASE_URL`={Postgresql connect url}
 
-## Starting the Bot (For the First Time)]
+## Starting the Bot (For the First Time)
 Not required for starting, but recommended for personalization, replace all instances of `Parallel` in the `src` files with your bot's name.
 
 1. Ensure all environment variables (listed above) are defined in a `.env` file
