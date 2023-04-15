@@ -2,7 +2,7 @@
   "name": "parallel",
   "version": "3.0.0",
   "main": "dist/index.js",
-  "license": "MIT",
+  "license": "CC-BY-NC-4.0",
   "type": "commonjs",
   "engines": {
     "node": "18.x"
