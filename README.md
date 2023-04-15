@@ -41,7 +41,7 @@ Please do not make a pull request for the following:
 - Typos. Bringing attention to typos is appreciated, but rather just create a new issue or directly contact a developer about a typo.
 - Micro performance optimizations.
 
-Please ensure your code is well commented, formatted with prettier using the prettier settings in the `.prettierrc.yaml` file, and thoroughly tested.
+Please ensure your code is well commented, formatted with prettier using the prettier settings in the `.prettierrc.yml` file, and thoroughly tested.
 <br /><br />
 Upon getting a pull request approved, you can request the contributor role in the [official Discord server](https://discord.gg/v2AV3XtnBM)
 
