@@ -46,11 +46,6 @@ Please ensure your code is well commented, formatted with prettier using the pre
 Upon getting a pull request approved, you can request the contributor role in the [official Discord server](https://discord.gg/v2AV3XtnBM)
 
 ## License
-
-<hr />
-
 This work is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License. To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/.
-
-<hr />
 
 The license is also listed in the `LICENSE` file. You may not impersonate the original Parallel bot as that goes against Discord's [community guidelines](https://discord.com/guidelines).
