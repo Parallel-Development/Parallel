@@ -53,7 +53,7 @@ class AutomodListener extends Listener {
         const req = await fetch('https://anti-fish.bitflow.dev/check', {
           method: 'POST',
           headers: {
-            'User-Agent': 'Parallel Discord Bot (https://parallel.wtf)',
+            'User-Agent': 'Parallel Discord Bot (https://discord.gg/v2AV3XtnBM)',
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({

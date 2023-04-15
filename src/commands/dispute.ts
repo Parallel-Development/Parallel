@@ -73,7 +73,7 @@ class DisputeCommand extends Command {
 
       let guild: Guild | undefined;
       let modalI: ModalMessageModalSubmitInteraction | undefined;
-      if (q2.customId === 'yes') {
+      if (q2.customId === '?yes') {
         const nameQ = new TextInputBuilder()
           .setLabel('Guild name')
           .setCustomId('guild_name')
@@ -105,10 +105,10 @@ class DisputeCommand extends Command {
         modalI = guildNameI as ModalMessageModalSubmitInteraction;
       }
 
-      const warnBtn = new ButtonBuilder().setLabel('Warn').setStyle(ButtonStyle.Secondary).setCustomId('Warn');
-      const muteBtn = new ButtonBuilder().setLabel('Mute').setStyle(ButtonStyle.Secondary).setCustomId('Mute');
-      const kickBtn = new ButtonBuilder().setLabel('Kick').setStyle(ButtonStyle.Secondary).setCustomId('Kick');
-      const banBtn = new ButtonBuilder().setLabel('Ban').setStyle(ButtonStyle.Secondary).setCustomId('Ban');
+      const warnBtn = new ButtonBuilder().setLabel('Warn').setStyle(ButtonStyle.Secondary).setCustomId('?Warn');
+      const muteBtn = new ButtonBuilder().setLabel('Mute').setStyle(ButtonStyle.Secondary).setCustomId('?Mute');
+      const kickBtn = new ButtonBuilder().setLabel('Kick').setStyle(ButtonStyle.Secondary).setCustomId('?Kick');
+      const banBtn = new ButtonBuilder().setLabel('Ban').setStyle(ButtonStyle.Secondary).setCustomId('?Ban');
 
       const row = new ActionRowBuilder<ButtonBuilder>().addComponents(warnBtn, muteBtn, kickBtn, banBtn);
 
@@ -134,7 +134,7 @@ class DisputeCommand extends Command {
 
       const possibleInfractions = await this.client.db.infraction.findMany({
         where: {
-          type: q3.customId as InfractionType,
+          type: q3.customId.slice(1) as InfractionType,
           guildId: guild?.id,
           userId: interaction.user.id,
           dispute: null,
