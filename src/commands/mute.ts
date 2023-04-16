@@ -63,7 +63,7 @@ class MuteCommand extends Command {
 
     await interaction.deferReply();
 
-    expires = guild.defaultMuteDuration;
+    if (!expires) expires = guild.defaultMuteDuration;
     expirationTimestamp = expires + date;
 
     await member.timeout(Number(expires), reason);
