@@ -1,5 +1,5 @@
 import { InfractionType as IT } from '@prisma/client';
-import { ChatInputCommandInteraction, Colors, EmbedBuilder, GuildMember } from 'discord.js';
+import { ChatInputCommandInteraction, Colors, EmbedBuilder, GuildMember, PermissionFlagsBits as Permissions } from 'discord.js';
 import Listener from '../lib/structs/Listener';
 import { pastTenseInfractionTypes } from '../lib/util/constants';
 import { adequateHierarchy } from '../lib/util/functions';
@@ -39,17 +39,25 @@ class CustomCommandListener extends Listener {
     if (target.id === this.client.user!.id)
       return interaction.reply({ content: `You cannot ${lpunishment} me.`, ephemeral: true });
 
-    if (target instanceof GuildMember && !adequateHierarchy(interaction.member, target))
-      return interaction.reply({
-        content: `You cannot ${lpunishment} this member due to inadequete hierarchy.`,
-        ephemeral: true
-      });
+    if (target instanceof GuildMember) {
+      if (punishment === IT.Mute && target.permissions.has(Permissions.Administrator))
+        return interaction.reply({
+          content: 'You cannot mute an administrator.',
+          ephemeral: true
+        });
+        
+      if (!adequateHierarchy(interaction.member, target))
+        return interaction.reply({
+          content: `You cannot ${lpunishment} this member due to inadequete hierarchy.`,
+          ephemeral: true
+        });
 
-    if (target instanceof GuildMember && !adequateHierarchy(interaction.guild.members.me!, target))
-      return interaction.reply({
-        content: `I cannot ${lpunishment} this member due to inadequete hierarchy.`,
-        ephemeral: true
-      });
+      if (adequateHierarchy(interaction.guild.members.me!, target))
+        return interaction.reply({
+          content: `I cannot ${lpunishment} this member due to inadequete hierarchy.`,
+          ephemeral: true
+        });
+    }
 
     await interaction.deferReply();
 

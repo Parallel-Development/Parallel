@@ -14,6 +14,8 @@ class RemoveAllInfractions extends Command {
   async run(interaction: ChatInputCommandInteraction<'cached'>) {
     const user = interaction.options.getUser('user', true);
 
+    await interaction.deferReply();
+
     const count = (
       await this.client.db.infraction.deleteMany({
         where: {
