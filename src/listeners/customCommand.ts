@@ -52,7 +52,7 @@ class CustomCommandListener extends Listener {
           ephemeral: true
         });
 
-      if (adequateHierarchy(interaction.guild.members.me!, target))
+      if (punishment !== IT.Warn && !adequateHierarchy(interaction.guild.members.me!, target))
         return interaction.reply({
           content: `I cannot ${lpunishment} this member due to inadequete hierarchy.`,
           ephemeral: true
