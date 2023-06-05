@@ -192,7 +192,7 @@ class AutomodListener extends Listener {
         if (info.infoWarn) dm.addFields([{ name: 'Additional Information', value: info.infoWarn }]);
     }
 
-    await message.member!.send({ embeds: [dm] });
+    await message.member!.send({ embeds: [dm] }).catch(() => {});
 
     this.client.emit('punishLog', infraction);
 
