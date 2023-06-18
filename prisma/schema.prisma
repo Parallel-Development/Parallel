@@ -7,7 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum DisputeMethod {
+enum AppealMethod {
   Modal
   Link
 }
@@ -25,13 +25,13 @@ model Guild {
   id                             String          @id
   infractionModeratorPublic      Boolean         @default(false)
   notifyInfractionChange         Boolean         @default(false)
-  disputeAllowed                 Boolean         @default(false)
-  disputeAlertWebhookId          String?
-  disputeMethod                  DisputeMethod   @default(Modal)
-  disputeLink                    String?
-  disputeModalQuestions          String[]        @default(["Reason for dispute."])
-  disputeDisregardAfter          BigInt          @default(2592000000)
-  disputeBlacklist               String[]
+  appealAllowed                 Boolean         @default(false)
+  appealAlertWebhookId          String?
+  appealMethod                  AppealMethod   @default(Modal)
+  appealLink                    String?
+  appealModalQuestions          String[]        @default(["Reason for appeal."])
+  appealDisregardAfter          BigInt          @default(2592000000)
+  appealBlacklist               String[]
   modLogWebhookId                String?
   messageLogWebhookId            String?
   messageLogIgnoredChannels      String[]
@@ -58,7 +58,7 @@ model Guild {
   lockOverrides                  BigInt          @default(377957124160) // SendMessages + CreatePublicThreads + CreatePrivateThreads + SendMessagesInThreads + AddReactions
 
   infractions Infraction[]
-  disputes    Dispute[]
+  appeals    Appeal[]
   tasks       Task[]
   locks       Lock[]
   tags        Tag[]
@@ -75,7 +75,7 @@ model Infraction {
   reason      String         @default("Unspecified reason.")
   moderatorId String         @default("833792285120528394")
 
-  dispute Dispute?
+  appeal Appeal?
   guild   Guild    @relation(fields: [guildId], references: [id], onDelete: Cascade)
 }
 
@@ -90,7 +90,7 @@ model Task {
   @@unique([userId, guildId, type])
 }
 
-model Dispute {
+model Appeal {
   id       Int    @id
   userId   String
   guildId  String

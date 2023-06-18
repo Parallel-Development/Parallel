@@ -25,7 +25,7 @@ class CaseCommand extends Command {
       where: {
         id
       },
-      include: { dispute: true }
+      include: { appeal: true }
     });
 
     if (infraction?.guildId !== interaction.guildId) throw 'No infraction with that ID exists in this guild.';
@@ -55,7 +55,7 @@ class CaseCommand extends Command {
               )}:R>)`
             : ''
         }\n**Reason:** ${infraction.reason}${
-          infraction.dispute ? '\n***•** There is a dispute for this infraction*' : ''
+          infraction.appeal ? '\n***•** There is an appeal for this infraction*' : ''
         }`
       );
 

@@ -13,12 +13,12 @@ import {
 import ms from 'ms';
 import Button from '../lib/structs/Button';
 const reason = 'Unspecified reason.';
-const tiedCommand = 'dispute-manager';
+const tiedCommand = 'appeal-manager';
 const error = "You don't have permission to use this button.";
 
-class DisputeManagerButton extends Button {
+class AppealManagerButton extends Button {
   constructor() {
-    super('dispute-manager');
+    super('appeal-manager');
   }
 
   async run(interaction: ButtonInteraction<'cached'>) {
@@ -60,39 +60,39 @@ class DisputeManagerButton extends Button {
       where: {
         id: infractionId
       },
-      include: { dispute: true, guild: { select: { notifyInfractionChange: true } } }
+      include: { appeal: true, guild: { select: { notifyInfractionChange: true } } }
     });
 
     if (infraction?.guildId !== interaction.guildId) throw 'No infraction with that ID exists in this guild.';
-    if (!infraction.dispute) throw 'That infraction does not have a dispute.';
+    if (!infraction.appeal) throw 'That infraction does not have an appeal.';
 
-    const { dispute } = infraction;
+    const { appeal } = infraction;
 
     switch (method) {
       case 'accept': {
         switch (infraction.type) {
           case InfractionType.Ban:
             if (!interaction.guild.members.me!.permissions.has(Permissions.BanMembers))
-              throw "I cannot undo the punishment because I do not have the Ban Members permission. If you don't want to undo the punishment, use the command `/dispute-manager accept` and set the `dont-undo` option to `True`";
+              throw "I cannot undo the punishment because I do not have the Ban Members permission. If you don't want to undo the punishment, use the command `/appeal-manager accept` and set the `dont-undo` option to `True`";
             await interaction.guild.members.unban(infraction.userId, reason).catch(() => {
-              throw 'That member is not banned. Use the command `/dispute-manager accept` and set the `dont-undo` option to `True` to accept.';
+              throw 'That member is not banned. Use the command `/appeal-manager accept` and set the `dont-undo` option to `True` to accept.';
             });
             break;
           case InfractionType.Mute:
             if (!interaction.guild.members.me!.permissions.has(Permissions.ModerateMembers))
-              throw "I cannot undo the punishment because I do not have the Moderate Members permission. If you don't want to undo the punishment, use the command `/dispute-manager accept` and set the `dont-undo` option to `True`";
+              throw "I cannot undo the punishment because I do not have the Moderate Members permission. If you don't want to undo the punishment, use the command `/appeal-manager accept` and set the `dont-undo` option to `True`";
             await interaction.guild.members
               .fetch(infraction.userId)
               .then(member => member.timeout(null, reason))
               .catch(() => {
-                throw 'I could not undo the punishment because the member is not in the guild. Use the command `/dispute-manager accept` and set the `dont-undo` option to `True` to accept.';
+                throw 'I could not undo the punishment because the member is not in the guild. Use the command `/appeal-manager accept` and set the `dont-undo` option to `True` to accept.';
               });
             break;
         }
 
         await interaction.deferUpdate();
 
-        await this.client.db.dispute.delete({
+        await this.client.db.appeal.delete({
           where: {
             id: infractionId
           }
@@ -119,7 +119,7 @@ class DisputeManagerButton extends Button {
 
         const acceptEmbed = new EmbedBuilder()
           .setAuthor({ name: 'Parallel Moderation', iconURL: this.client.user!.displayAvatarURL() })
-          .setTitle('Dispute Accepted')
+          .setTitle('Appeal Accepted')
           .setColor(Colors.Green)
           .setDescription(
             `**Infraction ID:** \`${infraction.id}\`\n**Infraction punishment:** \`${infraction.type.toString()}\`${
@@ -129,7 +129,7 @@ class DisputeManagerButton extends Button {
 
         if (infraction.guild.notifyInfractionChange)
           await this.client.users
-            .fetch(dispute.userId)
+            .fetch(appeal.userId)
             .then(user => user.send({ embeds: [acceptEmbed] }))
             .catch(() => {});
 
@@ -138,7 +138,7 @@ class DisputeManagerButton extends Button {
       case 'deny': {
         await interaction.deferUpdate();
 
-        await this.client.db.dispute.delete({
+        await this.client.db.appeal.delete({
           where: {
             id: infractionId
           }
@@ -159,7 +159,7 @@ class DisputeManagerButton extends Button {
 
         const denyEmbed = new EmbedBuilder()
           .setAuthor({ name: 'Parallel Moderation', iconURL: this.client.user!.displayAvatarURL() })
-          .setTitle('Dispute Denied')
+          .setTitle('Appeal Denied')
           .setColor(Colors.Red)
           .setDescription(
             `**Infraction ID:** \`${infraction.id}\`\n**Infraction punishment:** \`${infraction.type.toString()}\`${
@@ -169,7 +169,7 @@ class DisputeManagerButton extends Button {
 
         if (infraction.guild.notifyInfractionChange)
           await this.client.users
-            .fetch(dispute.userId)
+            .fetch(appeal.userId)
             .then(user => user.send({ embeds: [denyEmbed] }))
             .catch(() => {});
 
@@ -178,7 +178,7 @@ class DisputeManagerButton extends Button {
       case 'disregard': {
         await interaction.deferUpdate();
 
-        await this.client.db.dispute.delete({
+        await this.client.db.appeal.delete({
           where: {
             id: infractionId
           }
@@ -225,7 +225,7 @@ class DisputeManagerButton extends Button {
                   )}:R>)`
                 : ''
             }\n**Reason:** ${infraction.reason}${
-              infraction.dispute ? '\n***•** There is a dispute for this infraction*' : ''
+              infraction.appeal ? '\n***•** There is an appeal for this infraction*' : ''
             }`
           );
 
@@ -235,4 +235,4 @@ class DisputeManagerButton extends Button {
   }
 }
 
-export default DisputeManagerButton;
+export default AppealManagerButton;

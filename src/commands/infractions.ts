@@ -39,7 +39,7 @@ class InfractionsCommand extends Command {
         guildId: interaction.guildId,
         userId: user.id
       },
-      include: { dispute: true },
+      include: { appeal: true },
       take: infractionsPerPage,
       skip: infractionsPerPage * (page - 1)
     });
@@ -54,7 +54,7 @@ class InfractionsCommand extends Command {
       const field: EmbedField = {
         name: `ID ${infraction.id}: ${infraction.type.toString()}`,
         value: `${infraction.reason.slice(0, 100)}${infraction.reason.length > 100 ? '...' : ''}${
-          infraction.dispute ? `\n*- This infraction has a dispute.*` : ''
+          infraction.appeal ? `\n*- This infraction has an appeal.*` : ''
         }\n*- <t:${Math.floor(Number(infraction.date / 1000n))}>, issued by <@${infraction.moderatorId}> (${
           infraction.moderatorId
         })*`,

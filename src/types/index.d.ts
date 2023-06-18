@@ -1,6 +1,6 @@
 import { InfractionType } from '@prisma/client';
 
-export type DisputeResponse = {
+export type AppealResponse = {
   question: string;
   response: string;
 }[];

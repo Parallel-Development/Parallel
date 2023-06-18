@@ -9,22 +9,22 @@ import {
 import Command, { data } from '../lib/structs/Command';
 import { mainColor } from '../lib/util/constants';
 import { bin } from '../lib/util/functions';
-import { DisputeResponse } from '../types';
+import { AppealResponse } from '../types';
 
 @data(
   new SlashCommandBuilder()
-    .setName('dispute-manager')
-    .setDescription('Manage infraction disputes.')
+    .setName('appeal-manager')
+    .setDescription('Manage infraction appeals.')
     .setDefaultMemberPermissions(Permissions.Administrator)
     .addSubcommand(command =>
       command
         .setName('view')
-        .setDescription('View a dispute for an infraction.')
+        .setDescription('View an appeal for an infraction.')
         .addIntegerOption(option =>
           option
             .setName('id')
             .setDescription(
-              'The infraction ID for the infraction dispute you are viewing (use /myinfractions to find.)'
+              'The infraction ID for the infraction appeal you are viewing (use /myinfractions to find.)'
             )
             .setMinValue(1)
             .setRequired(true)
@@ -33,11 +33,11 @@ import { DisputeResponse } from '../types';
     .addSubcommand(command =>
       command
         .setName('disregard')
-        .setDescription('Disregard a dispute for an infraction (not the same as denying.)')
+        .setDescription('Disregard an appeal for an infraction (not the same as denying.)')
         .addIntegerOption(option =>
           option
             .setName('id')
-            .setDescription('The infraction ID for the infraction dispute you are disregarding.')
+            .setDescription('The infraction ID for the infraction appeal you are disregarding.')
             .setMinValue(1)
             .setRequired(true)
         )
@@ -45,11 +45,11 @@ import { DisputeResponse } from '../types';
     .addSubcommand(command =>
       command
         .setName('accept')
-        .setDescription('Accept a dispute for an infraction.')
+        .setDescription('Accept an appeal for an infraction.')
         .addIntegerOption(option =>
           option
             .setName('id')
-            .setDescription('The infraction ID for the infraction dispute you are accepting.')
+            .setDescription('The infraction ID for the infraction appeal you are accepting.')
             .setMinValue(1)
             .setRequired(true)
         )
@@ -63,11 +63,11 @@ import { DisputeResponse } from '../types';
     .addSubcommand(command =>
       command
         .setName('deny')
-        .setDescription('Deny a dispute for an infraction.')
+        .setDescription('Deny an appeal for an infraction.')
         .addIntegerOption(option =>
           option
             .setName('id')
-            .setDescription('The infraction ID for the infraction dispute you are denying.')
+            .setDescription('The infraction ID for the infraction appeal you are denying.')
             .setMinValue(1)
             .setRequired(true)
         )
@@ -78,7 +78,7 @@ import { DisputeResponse } from '../types';
     .addSubcommandGroup(group =>
       group
         .setName('blacklist')
-        .setDescription('Manage the users blacklisted from creating new disputes.')
+        .setDescription('Manage the users blacklisted from creating new appeals.')
         .addSubcommand(command =>
           command
             .setName('add')
@@ -99,7 +99,7 @@ import { DisputeResponse } from '../types';
         .addSubcommand(command => command.setName('view').setDescription('View the blacklist.'))
     )
 )
-class DisputeManagerCommand extends Command {
+class AppealManagerCommand extends Command {
   async run(interaction: ChatInputCommandInteraction<'cached'>) {
     const id = interaction.options.getInteger('id')!;
     const dontUndo = interaction.options.getBoolean('dont-undo') ?? false;
@@ -110,49 +110,49 @@ class DisputeManagerCommand extends Command {
     if (group === 'blacklist') {
       const user = interaction.options.getUser('user')!;
 
-      const { disputeBlacklist } = (await this.client.db.guild.findUnique({
+      const { appealBlacklist } = (await this.client.db.guild.findUnique({
         where: {
           id: interaction.guildId
         },
         select: {
-          disputeBlacklist: true
+          appealBlacklist: true
         }
       }))!;
 
       switch (command) {
         case 'add':
-          if (disputeBlacklist.includes(user.id)) throw 'That user is already blacklisted from creating disputes.';
+          if (appealBlacklist.includes(user.id)) throw 'That user is already blacklisted from creating appeals.';
 
           await this.client.db.guild.update({
             where: {
               id: interaction.guildId
             },
             data: {
-              disputeBlacklist: {
+              appealBlacklist: {
                 push: user.id
               }
             }
           });
 
-          return interaction.reply(`Blacklisted ${user} from creating disputes.`);
+          return interaction.reply(`Blacklisted ${user} from creating appeals.`);
         case 'remove':
-          if (!disputeBlacklist.includes(user.id)) throw "That user isn't blacklisted from creating disputes.";
+          if (!appealBlacklist.includes(user.id)) throw "That user isn't blacklisted from creating appeals.";
 
-          disputeBlacklist.splice(disputeBlacklist.indexOf(user.id), 1);
+          appealBlacklist.splice(appealBlacklist.indexOf(user.id), 1);
 
           await this.client.db.guild.update({
             where: {
               id: interaction.guildId
             },
             data: {
-              disputeBlacklist
+              appealBlacklist
             }
           });
           return interaction.reply(`${user} has been removed from the blacklist.`);
         case 'view':
           return interaction.reply(
             `View the blacklist here: ${await bin(
-              `Total blacklists: ${disputeBlacklist.length}\n\n${disputeBlacklist.join('\n')}`
+              `Total blacklists: ${appealBlacklist.length}\n\n${appealBlacklist.join('\n')}`
             )}`
           );
         case 'clear':
@@ -161,11 +161,11 @@ class DisputeManagerCommand extends Command {
               id: interaction.guildId
             },
             data: {
-              disputeBlacklist: []
+              appealBlacklist: []
             }
           });
 
-          return interaction.reply('Dispute blacklist has been cleared.');
+          return interaction.reply('Appeal blacklist has been cleared.');
       }
 
       return;
@@ -175,28 +175,28 @@ class DisputeManagerCommand extends Command {
       where: {
         id
       },
-      include: { dispute: true, guild: { select: { notifyInfractionChange: true } } }
+      include: { appeal: true, guild: { select: { notifyInfractionChange: true } } }
     });
 
     if (infraction?.guildId !== interaction.guildId) throw 'No infraction with that ID exists in this guild.';
-    if (!infraction.dispute) throw 'That infraction does not have a dispute.';
+    if (!infraction.appeal) throw 'That infraction does not have an appeal.';
 
-    const { dispute } = infraction;
+    const { appeal } = infraction;
 
     switch (command) {
       case 'view':
         let embedDescription = '';
-        embedDescription += `**Infraction ID:** ${dispute.id}\n**Infraction Type:** ${infraction.type.toString()}\n\n`;
-        embedDescription += (dispute.response as DisputeResponse)
+        embedDescription += `**Infraction ID:** ${appeal.id}\n**Infraction Type:** ${infraction.type.toString()}\n\n`;
+        embedDescription += (appeal.response as AppealResponse)
           .map((field: any) => `Question: ${field.question}\nResponse: ${field.response}`)
           .join('\n\n');
 
-        const user = (await this.client.users.fetch(dispute.userId))!;
+        const user = (await this.client.users.fetch(appeal.userId))!;
 
         const viewEmbed = new EmbedBuilder()
           .setColor(mainColor)
           .setAuthor({
-            name: `Infraction dispute from ${user.tag} (${user.id})`,
+            name: `Infraction appeal from ${user.tag} (${user.id})`,
             iconURL: user.displayAvatarURL()
           })
           .setDescription(embedDescription)
@@ -205,13 +205,13 @@ class DisputeManagerCommand extends Command {
 
         return interaction.reply({ embeds: [viewEmbed] });
       case 'disregard':
-        await this.client.db.dispute.delete({
+        await this.client.db.appeal.delete({
           where: {
             id
           }
         });
 
-        return interaction.reply(`Dispute disregarded.`);
+        return interaction.reply(`Appeal disregarded.`);
       case 'accept':
         switch (infraction.type) {
           case InfractionType.Ban:
@@ -235,7 +235,7 @@ class DisputeManagerCommand extends Command {
 
         await interaction.deferReply();
 
-        await this.client.db.dispute.delete({
+        await this.client.db.appeal.delete({
           where: {
             id
           }
@@ -252,23 +252,23 @@ class DisputeManagerCommand extends Command {
 
         const acceptEmbed = new EmbedBuilder()
           .setAuthor({ name: 'Parallel Moderation', iconURL: this.client.user!.displayAvatarURL() })
-          .setTitle('Dispute Accepted')
+          .setTitle('Appeal Accepted')
           .setColor(Colors.Green)
           .setDescription(
             `**Infraction ID:** \`${infraction.id}\`\n**Infraction punishment:** \`${infraction.type.toString()}\`${
               reason ? `\n${reason}` : ''
-            }${dontUndo ? '\n\n***•** The correlated punishment to this dispute was not automatically removed.*' : ''}`
+            }${dontUndo ? '\n\n***•** The correlated punishment to this appeal was not automatically removed.*' : ''}`
           );
 
         if (infraction.guild.notifyInfractionChange)
           await this.client.users
-            .fetch(dispute.userId)
+            .fetch(appeal.userId)
             .then(user => user.send({ embeds: [acceptEmbed] }))
             .catch(() => {});
 
-        return interaction.editReply('Dispute accepted.');
+        return interaction.editReply('Appeal accepted.');
       case 'deny':
-        await this.client.db.dispute.delete({
+        await this.client.db.appeal.delete({
           where: {
             id
           }
@@ -276,7 +276,7 @@ class DisputeManagerCommand extends Command {
 
         const denyEmbed = new EmbedBuilder()
           .setAuthor({ name: 'Parallel Moderation', iconURL: this.client.user!.displayAvatarURL() })
-          .setTitle('Dispute Denied')
+          .setTitle('Appeal Denied')
           .setColor(Colors.Red)
           .setDescription(
             `**Infraction ID:** \`${infraction.id}\`\n**Infraction punishment:** \`${infraction.type.toString()}\`${
@@ -286,13 +286,13 @@ class DisputeManagerCommand extends Command {
 
         if (infraction.guild.notifyInfractionChange)
           await this.client.users
-            .fetch(dispute.userId)
+            .fetch(appeal.userId)
             .then(user => user.send({ embeds: [denyEmbed] }))
             .catch(() => {});
 
-        return interaction.reply('Dispute denied.');
+        return interaction.reply('Appeal denied.');
     }
   }
 }
 
-export default DisputeManagerCommand;
+export default AppealManagerCommand;

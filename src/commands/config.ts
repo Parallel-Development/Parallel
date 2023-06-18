@@ -1,4 +1,4 @@
-import { DisputeMethod, InfractionType } from '@prisma/client';
+import { AppealMethod, InfractionType } from '@prisma/client';
 import {
   ChatInputCommandInteraction,
   SlashCommandBuilder,
@@ -33,18 +33,18 @@ import yaml from 'js-yaml';
     )
     .addSubcommandGroup(group =>
       group
-        .setName('disputes')
-        .setDescription('Manage dispute settings.')
+        .setName('appeals')
+        .setDescription('Manage appeal settings.')
         .addSubcommand(cmd =>
           cmd
             .setName('allow')
-            .setDescription('Allow users to dispute infractions.')
+            .setDescription('Allow users to appeal infractions.')
             .addBooleanOption(opt => opt.setName('value').setDescription('Toggle for this setting.').setRequired(true))
         )
         .addSubcommand(cmd =>
           cmd
             .setName('alert-channel')
-            .setDescription('New disputes will be logged in this channel.')
+            .setDescription('New appeals will be logged in this channel.')
             .addChannelOption(opt =>
               opt
                 .setName('channel')
@@ -56,14 +56,14 @@ import yaml from 'js-yaml';
         .addSubcommand(cmd =>
           cmd
             .setName('method')
-            .setDescription('Choose how users may dispute infractions.')
+            .setDescription('Choose how users may appeal infractions.')
             .addStringOption(opt =>
               opt
                 .setName('method')
-                .setDescription('How users can dispute infractions.')
+                .setDescription('How users can appeal infractions.')
                 .addChoices(
-                  { name: 'Bot', value: DisputeMethod.Modal },
-                  { name: 'External Link', value: DisputeMethod.Link }
+                  { name: 'Bot', value: AppealMethod.Modal },
+                  { name: 'External Link', value: AppealMethod.Link }
                 )
                 .setRequired(true)
             )
@@ -72,7 +72,7 @@ import yaml from 'js-yaml';
           cmd
             .setName('link')
             .setDescription(
-              'The link to redirect users to dispute an infraction if `dispute-method` is set to `External Link`.'
+              'The link to redirect users to appeal an infraction if `appeal-method` is set to `External Link`.'
             )
             .addStringOption(opt =>
               opt.setName('link').setDescription('The link to redirect users to.').setRequired(true)
@@ -81,7 +81,7 @@ import yaml from 'js-yaml';
         .addSubcommand(cmd =>
           cmd
             .setName('add-question')
-            .setDescription('Add a question to the list of dispute questions.')
+            .setDescription('Add a question to the list of appeal questions.')
             .addStringOption(opt =>
               opt.setName('question').setDescription('The question to add.').setMaxLength(45).setRequired(true)
             )
@@ -89,21 +89,21 @@ import yaml from 'js-yaml';
         .addSubcommand(cmd =>
           cmd
             .setName('remove-question')
-            .setDescription('Remove a question from the list of dispute questions')
+            .setDescription('Remove a question from the list of appeal questions')
             .addIntegerOption(option =>
               option
                 .setName('question-index')
-                .setDescription('The index of the question. To get it, use `/config dispute-questions view`.')
+                .setDescription('The index of the question. To get it, use `/config appeal-questions view`.')
                 .setMinValue(1)
                 .setMaxValue(4)
                 .setRequired(true)
             )
         )
-        .addSubcommand(cmd => cmd.setName('view-questions').setDescription('View all current dispute questions.'))
+        .addSubcommand(cmd => cmd.setName('view-questions').setDescription('View all current appeal questions.'))
         .addSubcommand(cmd =>
           cmd
             .setName('disregard-after')
-            .setDescription('Manage how long a dispute has to go unanswered before being automatically disregarded.')
+            .setDescription('Manage how long an appeal has to go unanswered before being automatically disregarded.')
             .addStringOption(opt => opt.setName('duration').setDescription('The duration to wait.').setRequired(true))
         )
     )
@@ -295,24 +295,24 @@ class ConfigCommand extends Command {
     const subCmd = interaction.options.getSubcommand();
 
     switch (group) {
-      case 'disputes':
+      case 'appeals':
         switch (subCmd) {
           case 'allow': {
-            // allow dispute logic
+            // allow appeal logic
             const value = interaction.options.getBoolean('value', true);
             await this.client.db.guild.update({
               where: {
                 id: interaction.guildId
               },
               data: {
-                disputeAllowed: value
+                appealAllowed: value
               }
             });
 
             return interaction.reply(
               value
-                ? 'Users may now create disputes for infractions.'
-                : 'Users may no longer create disputes for infractions.'
+                ? 'Users may now create appeals for infractions.'
+                : 'Users may no longer create appeals for infractions.'
             );
           }
           case 'alert-channel': {
@@ -321,12 +321,12 @@ class ConfigCommand extends Command {
 
             const channel = interaction.options.getChannel('channel', true) as TextChannel;
             await interaction.deferReply();
-            const { disputeAlertWebhookId } = (await this.client.db.guild.findUnique({
+            const { appealAlertWebhookId } = (await this.client.db.guild.findUnique({
               where: { id: interaction.guildId }
             }))!;
 
             const webhooks = await interaction.guild.fetchWebhooks();
-            const webhook = webhooks.find(wh => wh.id === disputeAlertWebhookId);
+            const webhook = webhooks.find(wh => wh.id === appealAlertWebhookId);
 
             if (webhook) {
               if (webhook.channel!.id === channel.id) throw 'Alert channel is already set to that channel.';
@@ -342,7 +342,7 @@ class ConfigCommand extends Command {
               return interaction.editReply(`Alert channel set to ${channel.toString()}.`);
             } else {
               const newWebhook = await channel.createWebhook({
-                name: 'Dispute Alerts',
+                name: 'Appeal Alerts',
                 avatar: this.client.user!.displayAvatarURL()
               });
 
@@ -352,7 +352,7 @@ class ConfigCommand extends Command {
                     id: interaction.guildId
                   },
                   data: {
-                    disputeAlertWebhookId: newWebhook.id
+                    appealAlertWebhookId: newWebhook.id
                   }
                 })
                 .catch(() => {
@@ -363,82 +363,82 @@ class ConfigCommand extends Command {
             }
           }
           case 'method': {
-            const disputeMethod = interaction.options.getString('method', true) as DisputeMethod;
+            const appealMethod = interaction.options.getString('method', true) as AppealMethod;
 
             await this.client.db.guild.update({
               where: {
                 id: interaction.guildId
               },
               data: {
-                disputeMethod
+                appealMethod
               }
             });
 
             return interaction.reply(
-              `The dispute method has been set to: \`${
-                disputeMethod === DisputeMethod.Modal ? 'Bot' : 'External Link'
+              `The appeal method has been set to: \`${
+                appealMethod === AppealMethod.Modal ? 'Bot' : 'External Link'
               }\`.`
             );
           }
           case 'link': {
-            const disputeLink = interaction.options.getString('link', true);
-            if (!urlReg.test(disputeLink)) throw 'Invalid link.';
+            const appealLink = interaction.options.getString('link', true);
+            if (!urlReg.test(appealLink)) throw 'Invalid link.';
 
             await this.client.db.guild.update({
               where: {
                 id: interaction.guildId
               },
               data: {
-                disputeLink
+                appealLink
               }
             });
 
-            return interaction.reply(`The dispute link has been set to <${disputeLink}>`);
+            return interaction.reply(`The appeal link has been set to <${appealLink}>`);
           }
           case 'add-question': {
-            const { disputeModalQuestions } = (await this.client.db.guild.findUnique({
+            const { appealModalQuestions } = (await this.client.db.guild.findUnique({
               where: { id: interaction.guildId }
             }))!;
 
-            if (disputeModalQuestions.length >= 5) throw 'You cannot have more than four questions.';
+            if (appealModalQuestions.length >= 5) throw 'You cannot have more than four questions.';
             const question = interaction.options.getString('question', true);
 
             await interaction.deferReply();
 
             await this.client.db.guild.update({
               where: { id: interaction.guildId },
-              data: { disputeModalQuestions: { push: question } }
+              data: { appealModalQuestions: { push: question } }
             });
 
             return interaction.editReply('Question added.');
           }
           case 'remove-question': {
-            const { disputeModalQuestions } = (await this.client.db.guild.findUnique({
+            const { appealModalQuestions } = (await this.client.db.guild.findUnique({
               where: { id: interaction.guildId }
             }))!;
 
             const index = interaction.options.getInteger('question-index', true);
-            if (index > disputeModalQuestions.length) throw `There is no index \`${index}\`.`;
+            if (index > appealModalQuestions.length) throw `There is no index \`${index}\`.`;
 
             await interaction.deferReply();
 
-            disputeModalQuestions.splice(index - 1, 1);
+            appealModalQuestions.splice(index - 1, 1);
 
             await this.client.db.guild.update({
               where: { id: interaction.guildId },
-              data: { disputeModalQuestions }
+              data: { appealModalQuestions }
             });
 
             return interaction.editReply('Question removed.');
           }
           case 'view-questions': {
-            const { disputeModalQuestions } = (await this.client.db.guild.findUnique({
+            const { appealModalQuestions } = (await this.client.db.guild.findUnique({
               where: { id: interaction.guildId }
             }))!;
 
-            if (disputeModalQuestions.length === 0) throw 'There are no dispute questions.';
+            if (appealModalQuestions.length === 0) throw 'There are no appeal questions.';
 
-            const stringQuestions = disputeModalQuestions.map((value, index) => `${index + 1}. ${value}`).join('\n\n');
+            const stringQuestions = appealModalQuestions.map((value, index) => `${index + 1}. ${value}`).join('\n\n');
 
             return interaction.reply(`\`\`\`\n${stringQuestions}\`\`\``);
           }
@@ -453,13 +453,13 @@ class ConfigCommand extends Command {
 
             await this.client.db.guild.update({
               where: { id: interaction.guildId },
-              data: { disputeDisregardAfter: duration }
+              data: { appealDisregardAfter: duration }
             });
 
             return interaction.reply(
               duration === 0
-                ? 'Disputes will now no longer automatically disregard.'
-                : `Disputes will now be automatically disregarded if they are not acknowledged before \`${strDuration}\`.`
+                ? 'Appeals will now no longer automatically disregard.'
+                : `Appeals will now be automatically disregarded if they are not acknowledged before \`${strDuration}\`.`
             );
           }
         }

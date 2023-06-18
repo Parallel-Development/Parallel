@@ -1,4 +1,4 @@
-import { DisputeMethod, InfractionType } from '@prisma/client';
+import { AppealMethod, InfractionType } from '@prisma/client';
 import {
   type ChatInputCommandInteraction,
   ModalBuilder,
@@ -24,24 +24,24 @@ import { getUser } from '../lib/util/functions';
 
 @data(
   new SlashCommandBuilder()
-    .setName('dispute')
-    .setDescription('Create a new dispute for an infraction.')
+    .setName('appeal')
+    .setDescription('Create a new appeal for an infraction.')
     .addIntegerOption(option =>
       option
         .setName('id')
-        .setDescription('The infraction ID for the infraction you are disputing (use /myinfractions to find.)')
+        .setDescription('The infraction ID for the infraction you are appealing (use /myinfractions to find.)')
         .setMinValue(1)
     )
 )
 @allowDM
-class DisputeCommand extends Command {
+class AppealCommand extends Command {
   async run(interaction: ChatInputCommandInteraction) {
     const id = interaction.options.getInteger('id');
     if (interaction.inCachedGuild() && !id) throw 'An infraction ID is required. To retreive it, use /mywarnings.';
 
     if (!id) {
       const message = await interaction.reply({
-        content: 'Do you know the ID of the infraction you are disputing?',
+        content: 'Do you know the ID of the infraction you are appealing?',
         components: [yesNoRow],
         fetchReply: true
       });
@@ -114,12 +114,12 @@ class DisputeCommand extends Command {
 
       if (modalI)
         await modalI.update({
-          content: 'What kind of infraction are you disputing?',
+          content: 'What kind of infraction are you appealing?',
           components: [row]
         });
       else
         await q2.update({
-          content: 'What kind of infraction are you disputing?',
+          content: 'What kind of infraction are you appealing?',
           components: [row]
         });
 
@@ -137,8 +137,8 @@ class DisputeCommand extends Command {
           type: q3.customId.slice(1) as InfractionType,
           guildId: guild?.id,
           userId: interaction.user.id,
-          dispute: null,
-          guild: { disputeAllowed: true }
+          appeal: null,
+          guild: { appealAllowed: true }
         },
         include: { guild: { select: { infractionModeratorPublic: true } } },
         take: infractionsPerPage,
@@ -150,7 +150,7 @@ class DisputeCommand extends Command {
       if (possibleInfractions.length === 0)
         return q3.update({
           content:
-            "I could not find any infractions. Note that infractions that you have already created a dispute on or guilds that don't have disputes enabled are not shown.",
+            "I could not find any infractions. Note that infractions that you have already created an appeal on or guilds that don't have appeals enabled are not shown.",
           components: []
         });
 
@@ -179,7 +179,7 @@ class DisputeCommand extends Command {
         infractionsEmbed.setFields(fields);
 
         return q3.update({
-          content: 'These are my best guesses for the infraction you are trying to dispute:',
+          content: 'These are my best guesses for the infraction you are trying to appeal:',
           embeds: [infractionsEmbed],
           components: []
         });
@@ -220,7 +220,7 @@ class DisputeCommand extends Command {
           );
 
         return message.edit({
-          content: 'This is my best guess for the infraction you are trying to dispute:',
+          content: 'This is my best guess for the infraction you are trying to appeal:',
           embeds: [infractionEmbed],
           components: []
         });
@@ -233,32 +233,32 @@ class DisputeCommand extends Command {
       where: {
         id
       },
-      include: { dispute: true, guild: true }
+      include: { appeal: true, guild: true }
     });
 
     if (infraction?.guildId !== interaction.guildId && !(!interaction.inCachedGuild() && infraction))
       throw 'No infraction with that ID exists.';
     if (infraction.userId !== interaction.user.id)
-      throw 'You cannot create a dispute for an infraction that is not on your record.';
+      throw 'You cannot create an appeal for an infraction that is not on your record.';
     if (infraction.type === InfractionType.Unmute || infraction.type === InfractionType.Unban)
-      throw 'You cannot dispute that kind of infraction.';
+      throw 'You cannot appeal that kind of infraction.';
 
     const { guild } = infraction;
 
-    if (!guild.disputeAllowed) throw 'This guild is not accepting infraction disputes.';
+    if (!guild.appealAllowed) throw 'This guild is not accepting infraction appeals.';
 
-    if (guild.disputeBlacklist.includes(interaction.user.id))
-      throw 'You are blacklisted from creating new disputes in this guild.';
+    if (guild.appealBlacklist.includes(interaction.user.id))
+      throw 'You are blacklisted from creating new appeals in this guild.';
 
-    if (guild.disputeMethod === DisputeMethod.Link)
-      return interaction.reply(`Infraction disputes for this guild are set to be handled at ${guild.disputeLink}`);
+    if (guild.appealMethod === AppealMethod.Link)
+      return interaction.reply(`Infraction appeals for this guild are set to be handled at ${guild.appealLink}`);
 
-    if (infraction.dispute) throw 'A dispute for that infraction has already been made.';
+    if (infraction.appeal) throw 'A appeal for that infraction has already been made.';
 
     const modal = new ModalBuilder();
-    modal.setTitle('Dispute').setCustomId(`dispute:${id}`);
+    modal.setTitle('Appeal').setCustomId(`appeal:${id}`);
 
-    for (const question of guild.disputeModalQuestions) {
+    for (const question of guild.appealModalQuestions) {
       const row = new ActionRowBuilder<ModalActionRowComponentBuilder>();
       const questionText = new TextInputBuilder()
         .setLabel(question)
@@ -277,4 +277,4 @@ class DisputeCommand extends Command {
   }
 }
 
-export default DisputeCommand;
+export default AppealCommand;

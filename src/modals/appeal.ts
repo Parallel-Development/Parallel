@@ -2,11 +2,11 @@ import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, ModalSubmit
 import Modal from '../lib/structs/Modal';
 import { mainColor } from '../lib/util/constants';
 import { InfractionType } from '@prisma/client';
-import type { DisputeResponse } from '../types';
+import type { AppealResponse } from '../types';
 
-class DisputeModal extends Modal {
+class AppealModal extends Modal {
   constructor() {
-    super('dispute');
+    super('appeal');
   }
 
   async run(interaction: ModalSubmitInteraction<'cached'>) {
@@ -19,38 +19,38 @@ class DisputeModal extends Modal {
       },
       include: {
         guild: true,
-        dispute: true
+        appeal: true
       }
     });
 
     if (infraction?.guildId !== interaction.guildId && !(!interaction.inCachedGuild() && infraction))
       throw 'No infraction with that ID exists in this guild.';
     if (infraction.userId !== interaction.user.id)
-      throw 'You cannot create a dispute for an infraction that is not on your record.';
+      throw 'You cannot create an appeal for an infraction that is not on your record.';
     if (infraction.type === InfractionType.Unmute || infraction.type === InfractionType.Unban)
-      throw 'You cannot dispute that kind of infraction.';
+      throw 'You cannot appeal that kind of infraction.';
 
     const { guild } = infraction;
 
-    if (!guild.disputeAllowed) throw 'This guild is not accepting infraction disputes.';
+    if (!guild.appealAllowed) throw 'This guild is not accepting infraction appeals.';
 
     if (infraction.userId !== interaction.user.id)
-      throw 'You cannot create a dispute for an infraction that is not on your record.';
-    if (guild.disputeBlacklist.includes(interaction.user.id))
-      throw 'You are blacklisted from creating new disputes in this guild.';
+      throw 'You cannot create an appeal for an infraction that is not on your record.';
+    if (guild.appealBlacklist.includes(interaction.user.id))
+      throw 'You are blacklisted from creating new appeals in this guild.';
 
-    if (infraction.dispute) throw 'A dispute for that infraction has already been made.';
+    if (infraction.appeal) throw 'A appeal for that infraction has already been made.';
 
     if ([...interaction.fields.fields.values()].slice(1).join('').length > 1000)
       throw 'Length of answers combined totals to a length greater than 1000.';
 
-    const response: DisputeResponse = interaction.fields.fields.map(field => {
+    const response: AppealResponse = interaction.fields.fields.map(field => {
       return { question: field.customId, response: field.value };
     });
 
     await interaction.deferReply();
 
-    await this.client.db.dispute.create({
+    await this.client.db.appeal.create({
       data: {
         id: infraction.id,
         guildId: guild.id,
@@ -59,15 +59,15 @@ class DisputeModal extends Modal {
       }
     });
 
-    if (guild.disputeAlertWebhookId) {
-      const webhook = await this.client.fetchWebhook(guild.disputeAlertWebhookId).catch(() => null);
+    if (guild.appealAlertWebhookId) {
+      const webhook = await this.client.fetchWebhook(guild.appealAlertWebhookId).catch(() => null);
       if (!webhook) {
         await this.client.db.guild.update({
           where: {
             id: guild.id
           },
           data: {
-            disputeAlertWebhookId: null
+            appealAlertWebhookId: null
           }
         });
 
@@ -81,29 +81,29 @@ class DisputeModal extends Modal {
       const embed = new EmbedBuilder()
         .setColor(mainColor)
         .setAuthor({
-          name: `Infraction dispute from ${interaction.user.tag} (${interaction.user.id})`,
+          name: `Infraction appeal from ${interaction.user.tag} (${interaction.user.id})`,
           iconURL: interaction.user.displayAvatarURL()
         })
         .setDescription(embedDescription)
         .setTimestamp();
 
       const acceptButton = new ButtonBuilder()
-        .setCustomId(`dispute-manager:accept.${infraction.id}`)
+        .setCustomId(`appeal-manager:accept.${infraction.id}`)
         .setLabel('Accept')
         .setStyle(ButtonStyle.Success);
 
       const denyButton = new ButtonBuilder()
-        .setCustomId(`dispute-manager:deny.${infraction.id}`)
+        .setCustomId(`appeal-manager:deny.${infraction.id}`)
         .setLabel('Deny')
         .setStyle(ButtonStyle.Danger);
 
       const disregardButton = new ButtonBuilder()
-        .setCustomId(`dispute-manager:disregard.${infraction.id}`)
+        .setCustomId(`appeal-manager:disregard.${infraction.id}`)
         .setLabel('Disregard')
         .setStyle(ButtonStyle.Secondary);
 
       const contextButton = new ButtonBuilder()
-        .setCustomId(`dispute-manager:context.${infraction.id}`)
+        .setCustomId(`appeal-manager:context.${infraction.id}`)
         .setLabel('Context')
         .setStyle(ButtonStyle.Primary);
 
@@ -113,8 +113,8 @@ class DisputeModal extends Modal {
       await webhook.send({ embeds: [embed], components: [row] });
     }
 
-    await interaction.editReply('Dispute successfully submitted!');
+    await interaction.editReply('Appeal successfully submitted!');
   }
 }
 
-export default DisputeModal;
+export default AppealModal;
