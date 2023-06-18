@@ -37,7 +37,7 @@ class UnbanCommand extends Command {
 
     this.client.emit('punishLog', infraction);
 
-    return interaction.editReply(`Unbanned **${user.tag}** with ID \`${infraction.id}\``);
+    return interaction.editReply(`Unbanned **${user.username}** with ID \`${infraction.id}\``);
   }
 }
 

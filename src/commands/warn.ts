@@ -84,7 +84,7 @@ class WarnCommand extends Command {
     await member.send({ embeds: [dm] }).catch(() => {});
     this.client.emit('punishLog', infraction);
 
-    return interaction.editReply(`Warning issued for **${member.user.tag}** with ID \`${infraction.id}\``);
+    return interaction.editReply(`Warning issued for **${member.user.username}** with ID \`${infraction.id}\``);
   }
 }
 

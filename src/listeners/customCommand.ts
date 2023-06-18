@@ -145,7 +145,7 @@ class CustomCommandListener extends Listener {
     const upperTense = tense[0].toUpperCase() + tense.slice(1);
 
     return interaction.editReply(
-      `${upperTense} **${target instanceof GuildMember ? target.user.tag : target.tag}** with ID \`${infraction.id}\``
+      `${upperTense} **${target instanceof GuildMember ? target.user.username : target.username}** with ID \`${infraction.id}\``
     );
   }
 }

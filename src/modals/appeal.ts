@@ -81,7 +81,7 @@ class AppealModal extends Modal {
       const embed = new EmbedBuilder()
         .setColor(mainColor)
         .setAuthor({
-          name: `Infraction appeal from ${interaction.user.tag} (${interaction.user.id})`,
+          name: `Infraction appeal from ${interaction.user.username} (${interaction.user.id})`,
           iconURL: interaction.user.displayAvatarURL()
         })
         .setDescription(embedDescription)

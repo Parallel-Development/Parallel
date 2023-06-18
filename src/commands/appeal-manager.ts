@@ -196,7 +196,7 @@ class AppealManagerCommand extends Command {
         const viewEmbed = new EmbedBuilder()
           .setColor(mainColor)
           .setAuthor({
-            name: `Infraction appeal from ${user.tag} (${user.id})`,
+            name: `Infraction appeal from ${user.username} (${user.id})`,
             iconURL: user.displayAvatarURL()
           })
           .setDescription(embedDescription)

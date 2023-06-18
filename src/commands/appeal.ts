@@ -204,7 +204,7 @@ class AppealCommand extends Command {
           .setDescription(
             `${
               infractionModeratorPublic
-                ? `\n**Moderator:** ${(await getUser(infraction.moderatorId))!.tag} (${infraction.moderatorId})`
+                ? `\n**Moderator:** ${(await getUser(infraction.moderatorId))!.username} (${infraction.moderatorId})`
                 : ''
             }\n**Date:** <t:${Math.floor(Number(infraction.date) / 1000)}> (<t:${Math.floor(
               Number(infraction.date) / 1000

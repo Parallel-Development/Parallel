@@ -67,7 +67,7 @@ class KickCommand extends Command {
 
     this.client.emit('punishLog', infraction);
 
-    return interaction.editReply(`Kicked **${member.user.tag}** with ID \`${infraction.id}\``);
+    return interaction.editReply(`Kicked **${member.user.username}** with ID \`${infraction.id}\``);
   }
 }
 

@@ -45,7 +45,7 @@ class InfractionsCommand extends Command {
     });
 
     const infractionsEmbed = new EmbedBuilder()
-      .setAuthor({ name: `Infractions for ${user.tag} (${user.id})`, iconURL: user.displayAvatarURL() })
+      .setAuthor({ name: `Infractions for ${user.username} (${user.id})`, iconURL: user.displayAvatarURL() })
       .setDescription(`Total infractions: \`${infractionCount}\`\nPage: \`${page}\`/\`${pages}\``)
       .setColor(mainColor);
 

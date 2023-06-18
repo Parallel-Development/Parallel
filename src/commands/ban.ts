@@ -127,7 +127,7 @@ class BanCommand extends Command {
 
     this.client.emit('punishLog', infraction);
 
-    return interaction.editReply(`Banned **${user.tag}** with ID \`${infraction.id}\``);
+    return interaction.editReply(`Banned **${user.username}** with ID \`${infraction.id}\``);
   }
 }
 

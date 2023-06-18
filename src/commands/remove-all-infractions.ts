@@ -25,9 +25,9 @@ class RemoveAllInfractions extends Command {
       })
     ).count;
 
-    if (count === 0) throw `**${user.tag}** has no infractions in this guild.`;
+    if (count === 0) throw `**${user.username}** has no infractions in this guild.`;
 
-    return interaction.editReply(`Removed all infractions from **${user.tag}**`);
+    return interaction.editReply(`Removed all infractions from **${user.username}**`);
   }
 }
 

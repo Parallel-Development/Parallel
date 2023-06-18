@@ -20,7 +20,7 @@ class UserinfoCommand extends Command {
     const joinedStr = member ? Math.floor(member.joinedTimestamp! / 1000) : null;
 
     const embed = new EmbedBuilder()
-      .setAuthor({ name: user.tag, iconURL: user.displayAvatarURL() })
+      .setAuthor({ name: user.username, iconURL: user.displayAvatarURL() })
       .setColor(mainColor)
       .setThumbnail(user.displayAvatarURL())
       .setDescription(

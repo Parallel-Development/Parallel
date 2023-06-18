@@ -74,7 +74,7 @@ class MuteCommand extends Command {
 
     this.client.emit('punishLog', infraction);
 
-    return interaction.editReply(`Unmuted **${member.user.tag}**.`);
+    return interaction.editReply(`Unmuted **${member.user.username}**.`);
   }
 }
 
