@@ -93,7 +93,7 @@ class UnlockCommand extends Command {
 
     await interaction.editReply('Channel unlocked.');
 
-    const embed = new EmbedBuilder().setColor(Colors.Green).setTitle('Channel Locked').setDescription(reason);
+    const embed = new EmbedBuilder().setColor(Colors.Green).setTitle('Channel Unlocked').setDescription(reason);
 
     return channel.send({ embeds: [embed] });
   }
