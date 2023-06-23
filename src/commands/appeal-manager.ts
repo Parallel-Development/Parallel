@@ -23,9 +23,7 @@ import { AppealResponse } from '../types';
         .addIntegerOption(option =>
           option
             .setName('id')
-            .setDescription(
-              'The infraction ID for the infraction appeal you are viewing (use /myinfractions to find.)'
-            )
+            .setDescription('The infraction ID for the infraction appeal you are viewing (use /myinfractions to find.)')
             .setMinValue(1)
             .setRequired(true)
         )
@@ -74,6 +72,9 @@ import { AppealResponse } from '../types';
         .addStringOption(option =>
           option.setName('reason').setDescription('The reason for acceptance.').setMaxLength(1000)
         )
+    )
+    .addSubcommand(command =>
+      command.setName('view-pending').setDescription('Get the ID of all infractions with a pending appeal.')
     )
     .addSubcommandGroup(group =>
       group
@@ -169,6 +170,27 @@ class AppealManagerCommand extends Command {
       }
 
       return;
+    }
+
+    if (command === 'view-pending') {
+      const ids = await this.client.db.appeal.findMany({
+        where: {
+          guildId: interaction.guildId
+        }
+      });
+
+      if (ids.length == 0) return interaction.reply('There are no pending appeals.');
+
+      if (ids.length > 50) {
+        const url = await bin(ids.map(id => `${id.id} - ${id.userId}`).join('\n'));
+        return interaction.reply(`View all infraction ID\'s with a pending appeal: ${url}`);
+      }
+
+      return interaction.reply(
+        `Below displays the ID's of all infractions with a pending appeal.\n\`\`\`\n${ids
+          .map(id => `${id.id} - ${id.userId}`)
+          .join('\n')}\`\`\``
+      );
     }
 
     const infraction = await this.client.db.infraction.findUnique({

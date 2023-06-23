@@ -1,5 +1,11 @@
 import { InfractionType as IT } from '@prisma/client';
-import { ChatInputCommandInteraction, Colors, EmbedBuilder, GuildMember, PermissionFlagsBits as Permissions } from 'discord.js';
+import {
+  ChatInputCommandInteraction,
+  Colors,
+  EmbedBuilder,
+  GuildMember,
+  PermissionFlagsBits as Permissions
+} from 'discord.js';
 import Listener from '../lib/structs/Listener';
 import { pastTenseInfractionTypes } from '../lib/util/constants';
 import { adequateHierarchy } from '../lib/util/functions';
@@ -45,7 +51,7 @@ class CustomCommandListener extends Listener {
           content: 'You cannot mute an administrator.',
           ephemeral: true
         });
-        
+
       if (!adequateHierarchy(interaction.member, target))
         return interaction.reply({
           content: `You cannot ${lpunishment} this member due to inadequete hierarchy.`,
@@ -145,7 +151,9 @@ class CustomCommandListener extends Listener {
     const upperTense = tense[0].toUpperCase() + tense.slice(1);
 
     return interaction.editReply(
-      `${upperTense} **${target instanceof GuildMember ? target.user.username : target.username}** with ID \`${infraction.id}\``
+      `${upperTense} **${target instanceof GuildMember ? target.user.username : target.username}** with ID \`${
+        infraction.id
+      }\``
     );
   }
 }

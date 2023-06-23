@@ -375,9 +375,7 @@ class ConfigCommand extends Command {
             });
 
             return interaction.reply(
-              `The appeal method has been set to: \`${
-                appealMethod === AppealMethod.Modal ? 'Bot' : 'External Link'
-              }\`.`
+              `The appeal method has been set to: \`${appealMethod === AppealMethod.Modal ? 'Bot' : 'External Link'}\`.`
             );
           }
           case 'link': {

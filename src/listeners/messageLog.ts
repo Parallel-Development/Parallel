@@ -37,7 +37,9 @@ class MessageLogListener extends Listener {
     const embed = new EmbedBuilder()
       .setColor(Colors.Orange)
       .setAuthor({
-        name: `Message from ${message.author.username} (${message.author.id}) ${type === 'edit' ? 'edited' : 'deleted'}`,
+        name: `Message from ${message.author.username} (${message.author.id}) ${
+          type === 'edit' ? 'edited' : 'deleted'
+        }`,
         iconURL: message.author.displayAvatarURL()
       })
       .setTimestamp();
