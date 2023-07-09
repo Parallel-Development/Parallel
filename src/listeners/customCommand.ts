@@ -141,10 +141,13 @@ class CustomCommandListener extends Listener {
     switch (punishment) {
       case IT.Ban:
         await interaction.guild.members.ban(target.id, { reason, deleteMessageSeconds: deleteTime ?? undefined });
+        break;
       case IT.Kick:
         await interaction.guild.members.kick(target.id, reason);
+        break;
       case IT.Mute:
         await (target as GuildMember).timeout(Number(duration), reason);
+        break;
     }
 
     const tense = pastTenseInfractionTypes[lpunishment as keyof typeof pastTenseInfractionTypes];
