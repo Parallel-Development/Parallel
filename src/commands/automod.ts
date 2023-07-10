@@ -276,7 +276,7 @@ class AutomodCommand extends Command {
               throw 'A duration cannot be provided for this punishment.';
 
             const duration = uDuration ? ms(uDuration) : null;
-            if (Number.isNaN(duration)) throw 'Invalid duration.';
+            if (duration === undefined) throw 'Invalid duration.';
             if (duration === 0 && punishment === InfractionType.Mute) throw 'The duration must be at least 1 second.';
 
             if (duration && duration < 1000 && duration !== 0) throw 'The duration must be at least 1 second or 0.';
@@ -491,7 +491,7 @@ class AutomodCommand extends Command {
               throw 'A duration cannot be provided for this punishment.';
 
             const duration = uDuration ? ms(uDuration) : null;
-            if (Number.isNaN(duration)) throw 'Invalid duration.';
+            if (duration === undefined) throw 'Invalid duration.';
             if (duration === 0 && punishment === InfractionType.Mute) throw 'The duration must be at least 1 second.';
 
             if (duration && duration < 1000 && duration !== 0) throw 'The duration must be at least 1 second or 0.';

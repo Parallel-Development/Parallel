@@ -25,13 +25,13 @@ model Guild {
   id                             String          @id
   infractionModeratorPublic      Boolean         @default(false)
   notifyInfractionChange         Boolean         @default(false)
-  appealAllowed                 Boolean         @default(false)
-  appealAlertWebhookId          String?
-  appealMethod                  AppealMethod   @default(Modal)
-  appealLink                    String?
-  appealModalQuestions          String[]        @default(["Reason for appeal."])
-  appealDisregardAfter          BigInt          @default(2592000000)
-  appealBlacklist               String[]
+  appealAllowed                  Boolean         @default(false)
+  appealAlertWebhookId           String?
+  appealMethod                   AppealMethod    @default(Modal)
+  appealLink                     String?
+  appealModalQuestions           String[]        @default(["Reason for appeal."])
+  appealDisregardAfter           BigInt          @default(2592000000)
+  appealBlacklist                String[]
   modLogWebhookId                String?
   messageLogWebhookId            String?
   messageLogIgnoredChannels      String[]
@@ -58,7 +58,7 @@ model Guild {
   lockOverrides                  BigInt          @default(377957124160) // SendMessages + CreatePublicThreads + CreatePrivateThreads + SendMessagesInThreads + AddReactions
 
   infractions Infraction[]
-  appeals    Appeal[]
+  appeals     Appeal[]
   tasks       Task[]
   locks       Lock[]
   tags        Tag[]
@@ -76,7 +76,7 @@ model Infraction {
   moderatorId String         @default("833792285120528394")
 
   appeal Appeal?
-  guild   Guild    @relation(fields: [guildId], references: [id], onDelete: Cascade)
+  guild  Guild   @relation(fields: [guildId], references: [id], onDelete: Cascade)
 }
 
 model Task {
@@ -125,12 +125,12 @@ model Shortcut {
   reason      String
   duration    BigInt?
   deleteTime  Int?
-  guild       Guild   @relation(fields: [guildId], references: [id], onDelete: Cascade)
+  guild       Guild          @relation(fields: [guildId], references: [id], onDelete: Cascade)
 
   @@unique([guildId, name])
 }
 
 model Blacklist {
-  id String @id
+  id     String @id
   reason String
 }

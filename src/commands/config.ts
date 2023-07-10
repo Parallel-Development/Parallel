@@ -444,7 +444,7 @@ class ConfigCommand extends Command {
             const uDuration = interaction.options.getString('duration', true);
             const duration = ms(uDuration);
 
-            if (Number.isNaN(duration)) throw 'Invalid duration.';
+            if (duration === undefined) throw 'Invalid duration.';
             if (duration < 60000 && duration !== 0) throw 'Duration must be at least 1 hour.';
 
             const strDuration = ms(duration, { long: true });
@@ -468,7 +468,7 @@ class ConfigCommand extends Command {
             const punishment = interaction.options.getString('punishment', true) as InfractionType;
             const uDuration = interaction.options.getString('duration');
             const duration = uDuration ? ms(uDuration) : null;
-            if (Number.isNaN(duration)) throw 'Invalid duration.';
+            if (duration === undefined) throw 'Invalid duration.';
 
             const { escalations } = (await this.client.db.guild.findUnique({
               where: {
