@@ -112,17 +112,17 @@ class Client extends DJSClient {
     await this._cacheButtons();
     await this._loadListeners();
 
-    // this.db.$use(
-    //   createPrismaRedisCache({
-    //     storage: {
-    //       type: 'memory',
-    //       options: {
-    //         invalidation: true
-    //       }
-    //     },
-    //     cacheTime: 600000
-    //   })
-    // );
+    this.db.$use(
+      createPrismaRedisCache({
+        storage: {
+          type: 'memory',
+          options: {
+            invalidation: true
+          }
+        },
+        cacheTime: 600000
+      })
+    );
     await this.db.$connect();
 
     return super.login(token);
