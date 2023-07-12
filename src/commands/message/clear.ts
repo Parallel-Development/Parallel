@@ -5,7 +5,8 @@ import { getUser } from '../../lib/util/functions';
 @properties<true>({
   name: 'clear',
   description: 'Clear messages from a channel.',
-  args: ['<from> [count] <before>']
+  args: ['<from> [count] <before>'],
+  aliases: ['purge']
 })
 class ClearCommand extends Command {
   async run(message: Message<true>, args: string[]) {
