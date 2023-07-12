@@ -120,7 +120,7 @@ class CustomMessageCommandListener extends Listener {
         expires
       };
 
-      await this.client.db.task.upsert({
+      if (punishment === IT.Mute) await this.client.db.task.upsert({
         where: {
           userId_guildId_type: { userId: target.id, guildId: message.guildId, type: punishment }
         },
