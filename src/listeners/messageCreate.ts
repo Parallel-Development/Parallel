@@ -6,8 +6,9 @@ class MessageCreateListener extends Listener {
     super('messageCreate');
   }
 
-  async run(message: Message<true>) {
-    return this.client.emit('automod', message);
+  async run(message: Message) {
+    if (message.inGuild()) this.client.emit('automod', message);
+    this.client.emit('messageCommand', message);
   }
 }
 

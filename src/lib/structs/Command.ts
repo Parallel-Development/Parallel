@@ -1,14 +1,24 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder, PermissionsBitField } from 'discord.js';
+import { ChatInputCommandInteraction, SlashCommandBuilder, PermissionsBitField, Message, If } from 'discord.js';
 import client from '../../client';
+import { CommandProperties, MessageCommandProperties } from '../../types';
 
-export default abstract class Command {
-  public readonly data: Partial<SlashCommandBuilder> = null!;
+export default abstract class Command<IsMsg extends boolean = false> {
+  public readonly data: IsMsg extends false ? Partial<SlashCommandBuilder> : null = null!;
   public clientPermissions: PermissionsBitField | null = null;
+
+  // not present in slash commands
+  public name: If<IsMsg, string> = null!;
+  public description: If<IsMsg, string> = null!;
+  public aliases: If<IsMsg, string[]> = null!;
+  public args: If<IsMsg, string[] | null> = null!;
+  // Not Available - Redirect to slash command
+  public NA: If<IsMsg, boolean> = null!;
+
   public allowDM = false;
   public guildResolve = false;
   public client = client;
 
-  abstract run(interaction: ChatInputCommandInteraction): unknown;
+  abstract run(interaction: ChatInputCommandInteraction | Message, args?: string[]): unknown;
 }
 
 export function data(data: Partial<SlashCommandBuilder>) {
@@ -19,22 +29,19 @@ export function data(data: Partial<SlashCommandBuilder>) {
   };
 }
 
-export function clientpermissions(clientPermissions: bigint[]) {
+export function properties<M extends boolean = false>(properties: CommandProperties<M>) {
   return function <T extends { new (...args: any[]): {} }>(constructor: T) {
     return class extends constructor {
-      clientPermissions = new PermissionsBitField(clientPermissions);
+      clientPermissions = properties.clientPermissions;
+
+      name = (properties as MessageCommandProperties).name ?? null;
+      description = (properties as MessageCommandProperties).description ?? null;
+      args = (properties as MessageCommandProperties).args ?? null;
+      aliases = (properties as MessageCommandProperties).aliases ?? [];
+      NA = (properties as MessageCommandProperties).NA ?? false;
+
+      allowDM = properties.allowDM;
+      guildResolve = properties.guildResolve;
     };
-  };
-}
-
-export function allowDM<T extends { new (...args: any[]): {} }>(constructor: T) {
-  return class extends constructor {
-    allowDM = true;
-  };
-}
-
-export function guildResolve<T extends { new (...args: any[]): {} }>(constructor: T) {
-  return class extends constructor {
-    guildResolve = true;
   };
 }

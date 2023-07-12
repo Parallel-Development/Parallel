@@ -7,17 +7,38 @@ export function adequateHierarchy(member1: GuildMember, member2: GuildMember) {
   return member1.roles.highest.comparePositionTo(member2.roles.highest) > 0;
 }
 
-export async function getUser(userId: string) {
-  return client.users.fetch(userId).catch(() => null);
+const snowflakeReg = /^\d{17,19}$/;
+export async function getUser(user: string) {
+  if (user.startsWith('<@')) {
+    user = user.slice(2, -1);
+    if (user.startsWith('!')) user = user.slice(1);
+  }
+
+  if (!snowflakeReg.test(user)) return null;
+  return client.users.fetch(user).catch(() => null);
 }
 
-export async function getMember(guild: Guild | string, userId: string) {
+export async function getMember(guild: Guild | string, user: string) {
+  if (user.startsWith('<@')) {
+    user = user.slice(2, -1);
+    if (user.startsWith('!')) user = user.slice(1);
+  }
+
+  if (!snowflakeReg.test(user)) return null;
+
   if (typeof guild === 'string')
     return client.guilds.cache
       .get(guild)!
-      .members.fetch(userId)
+      .members.fetch(user)
       .catch(() => null);
-  else return guild.members.fetch(userId).catch(() => null);
+  else return guild.members.fetch(user).catch(() => null);
+}
+
+export function getChannel(guild: Guild | string, channel: string) {
+  if (channel.startsWith('<#')) channel = channel.slice(2, -1);
+
+  if (typeof guild === 'string') return client.guilds.cache.get(guild)!.channels.cache.get(channel) ?? null;
+  else return guild.channels.cache.get(channel) ?? null;
 }
 
 export async function bin(data: any, ext: string = 'js') {

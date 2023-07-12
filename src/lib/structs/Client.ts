@@ -9,7 +9,15 @@ import Button from './Button';
 
 class Client extends DJSClient {
   public db = new PrismaClient();
-  public commands: Map<string, Command> = new Map();
+  public commands: {
+    slash: Map<string, Command>;
+    message: Map<string, Command<true>>;
+  } = {
+    slash: new Map(),
+    message: new Map()
+  };
+  public aliases: Map<string, string> = new Map();
+
   public modals: Map<string, Modal> = new Map();
   public buttons: Map<string, Button> = new Map();
 
@@ -19,8 +27,10 @@ class Client extends DJSClient {
         Intents.Flags.Guilds,
         Intents.Flags.GuildMembers,
         Intents.Flags.GuildMessages,
-        Intents.Flags.MessageContent
+        Intents.Flags.MessageContent,
+        Intents.Flags.DirectMessages
       ],
+      partials: [Partials.Message, Partials.Channel],
       makeCache: Options.cacheWithLimits({
         ...Options.DefaultMakeCacheSettings,
         ReactionManager: 0,
@@ -40,7 +50,6 @@ class Client extends DJSClient {
           })
         }
       },
-      shards: 'auto',
       allowedMentions: {
         parse: []
       }
@@ -65,12 +74,23 @@ class Client extends DJSClient {
     }
   }
 
-  async _cacheCommands() {
-    const files = fs.readdirSync('src/commands');
+  async _cacheSlashCommands() {
+    const files = fs.readdirSync(`src/commands/slash`);
     for (const file of files) {
-      const cmdClass = (await import(`../../commands/${file.slice(0, -3)}`)).default;
-      const cmdInsant: Command = new cmdClass();
-      this.commands.set(cmdInsant.data.name!, cmdInsant);
+      const cmdClass = (await import(`../../commands/slash/${file.slice(0, -3)}`)).default;
+      const cmdInstant: Command = new cmdClass();
+      this.commands.slash.set(cmdInstant.data.name!, cmdInstant);
+    }
+  }
+
+  async _cacheMessageCommands() {
+    const files = fs.readdirSync(`src/commands/message`);
+    for (const file of files) {
+      const cmdClass = (await import(`../../commands/message/${file.slice(0, -3)}`)).default;
+      const cmdInstant: Command<true> = new cmdClass();
+      this.commands.message.set(cmdInstant.name!, cmdInstant);
+
+      cmdInstant.aliases.forEach(alias => this.aliases.set(alias, cmdInstant.name!));
     }
   }
 
@@ -86,22 +106,23 @@ class Client extends DJSClient {
   }
 
   override async login(token: string) {
-    await this._cacheCommands();
+    await this._cacheSlashCommands();
+    await this._cacheMessageCommands();
     await this._cacheModals();
     await this._cacheButtons();
     await this._loadListeners();
 
-    this.db.$use(
-      createPrismaRedisCache({
-        storage: {
-          type: 'memory',
-          options: {
-            invalidation: true
-          }
-        },
-        cacheTime: 600000
-      })
-    );
+    // this.db.$use(
+    //   createPrismaRedisCache({
+    //     storage: {
+    //       type: 'memory',
+    //       options: {
+    //         invalidation: true
+    //       }
+    //     },
+    //     cacheTime: 600000
+    //   })
+    // );
     await this.db.$connect();
 
     return super.login(token);

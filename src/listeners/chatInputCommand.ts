@@ -2,13 +2,12 @@ import Listener from '../lib/structs/Listener';
 import {
   type ChatInputCommandInteraction,
   PermissionFlagsBits as Permissions,
-  PermissionsBitField,
   ApplicationCommandOptionType,
   ApplicationCommandDataResolvable
 } from 'discord.js';
 import { InfractionType } from '@prisma/client';
 const customCommandsConfirmed = new Set();
-const unresolvedGuilds = new Set<[string, string]>();
+const unresolvedGuilds = new Set<string>();
 
 class ChatInputCommandListener extends Listener {
   constructor() {
@@ -23,8 +22,8 @@ class ChatInputCommandListener extends Listener {
         ephemeral: true
       });
 
-    const command = this.client.commands.get(interaction.commandName);
-    if (!command) return this.client.emit('customCommand', interaction);
+    const command = this.client.commands.slash.get(interaction.commandName);
+    if (!command) return this.client.emit('customSlashCommand', interaction);
 
     if (!interaction.inCachedGuild() && !command.allowDM)
       return interaction.reply({ content: 'That command must be ran in a guild.', ephemeral: true });
@@ -43,22 +42,22 @@ class ChatInputCommandListener extends Listener {
     if (interaction.inCachedGuild()) await this.confirmGuild(interaction.guildId);
 
     if (command.guildResolve) {
-      if (unresolvedGuilds.has([interaction.guildId!, interaction.commandName]))
+      if (unresolvedGuilds.has(`${interaction.guildId!} ${interaction.commandName}`))
         return interaction.reply({
           content:
             'Another process of this command is currently running. Please wait for it to finish before running this command.',
           ephemeral: true
         });
 
-      unresolvedGuilds.add([interaction.guildId!, interaction.commandName]);
+      unresolvedGuilds.add(`${interaction.guildId!} ${interaction.commandName}`);
     }
 
     try {
       await command.run(interaction);
 
-      if (command.guildResolve) unresolvedGuilds.delete([interaction.guildId!, interaction.commandName]);
+      if (command.guildResolve) unresolvedGuilds.delete(`${interaction.guildId!} ${interaction.commandName}`);
     } catch (e) {
-      if (command.guildResolve) unresolvedGuilds.delete([interaction.guildId!, interaction.commandName]);
+      if (command.guildResolve) unresolvedGuilds.delete(`${interaction.guildId!} ${interaction.commandName}`);
 
       if (typeof e !== 'string') {
         console.error(e);

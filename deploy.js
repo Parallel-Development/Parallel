@@ -5,11 +5,11 @@ const fs = require('node:fs');
 
 const commands = [];
 // Grab all the command files from the commands directory you created earlier
-const commandFiles = fs.readdirSync('src/commands').filter(file => file.endsWith('.ts'));
+const commandFiles = fs.readdirSync('src/commands/slash').filter(file => file.endsWith('.ts'));
 
 // Grab the SlashCommandBuilder#toJSON() output of each command's data for deployment
 for (const file of commandFiles) {
-  const commandClass = require(`./dist/commands/${file.slice(0, -3)}`).default;
+  const commandClass = require(`./dist/commands/slash/${file.slice(0, -3)}`).default;
   const commandInstant = new commandClass();
   commands.push(commandInstant.data.toJSON());
 }

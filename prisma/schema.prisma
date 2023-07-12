@@ -56,6 +56,9 @@ model Guild {
   escalations                    Json[]
   lockChannels                   String[]
   lockOverrides                  BigInt          @default(377957124160) // SendMessages + CreatePublicThreads + CreatePrivateThreads + SendMessagesInThreads + AddReactions
+  prefix                         String          @default("-")
+  messageCommandsEnabled         Boolean         @default(true)
+  respondNoPermission            Boolean         @default(true)
 
   infractions Infraction[]
   appeals     Appeal[]
@@ -95,6 +98,7 @@ model Appeal {
   userId   String
   guildId  String
   response Json[]
+  date     BigInt
 
   infraction Infraction? @relation(fields: [id], references: [id], onDelete: Cascade)
   guild      Guild       @relation(fields: [guildId], references: [id], onDelete: Cascade)

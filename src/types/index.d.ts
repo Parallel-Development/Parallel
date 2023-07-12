@@ -16,6 +16,23 @@ export type Escalations = {
   duration: `${number}`;
 }[];
 
-// declare module 'decancer' {
-//   export default decancer = (name: string) => string;
-// }
+export type SlashCommandProperties = {
+  clientPermissions?: bigint[];
+  allowDM?: boolean;
+  guildResolve?: boolean;
+};
+
+export type MessageCommandProperties = {
+  name: string;
+  description: string;
+  args?: string[];
+  clientPermissions?: bigint[];
+  allowDM?: boolean;
+  guildResolve?: boolean;
+  aliases?: string[];
+  NA?: boolean;
+};
+
+export type CommandProperties<M extends boolean = false> = M extends true
+  ? MessageCommandProperties
+  : SlashCommandProperties;

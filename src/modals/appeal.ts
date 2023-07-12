@@ -55,7 +55,8 @@ class AppealModal extends Modal {
         id: infraction.id,
         guildId: guild.id,
         userId: interaction.user.id,
-        response
+        response,
+        date: BigInt(Date.now())
       }
     });
 

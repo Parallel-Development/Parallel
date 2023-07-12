@@ -18,6 +18,8 @@ Create a `.env` file and paste below into it. Replace the placeholders with some
 - `TOKEN`={Discord bot token}
 - `CLIENT_ID`={Discord client ID}
 - `DATABASE_URL`={Postgresql connect url}
+- `DEV`={Developer ID} # User permitted to run eval
+- `PREFIX`=${Prefix in DM's / default prefix}
 
 ## Starting the Bot (For the First Time)
 Not required for starting, but recommended for personalization, replace all instances of `Parallel` in the `src` files with your bot's name.

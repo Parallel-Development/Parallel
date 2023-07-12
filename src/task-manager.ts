@@ -16,11 +16,10 @@ setInterval(async () => {
 
   await client.db.$executeRaw`DELETE FROM "Appeal"
   WHERE id IN (
-    SELECT D.id
-    FROM "Appeal" D
-    INNER JOIN "Infraction" I ON D.id = I.id
-    INNER JOIN "Guild" G ON D."guildId" = G.id
-    WHERE I."date" + G."appealDisregardAfter" <= (extract(epoch from now()) * 1000)
+    SELECT A.id
+    FROM "Appeal" A
+    INNER JOIN "Guild" G ON A."guildId" = G.id
+    WHERE A."date" + G."appealDisregardAfter" <= (extract(epoch from now()) * 1000)
   )`;
 
   const guilds = await client.db.guild.findMany({

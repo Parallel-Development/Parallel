@@ -14,7 +14,7 @@ class TagManagerModal extends Modal {
     const method = interaction.customId.split(':')[1] as 'create' | 'edit';
 
     if (method === 'create') {
-      const worked = await this.client.db.tag
+      await this.client.db.tag
         .create({
           data: {
             guildId: interaction.guildId,
@@ -28,7 +28,7 @@ class TagManagerModal extends Modal {
 
       return interaction.reply(`Created tag \`${name}\`.`);
     } else {
-      const worked = await this.client.db.tag
+      await this.client.db.tag
         .update({
           data: {
             content
