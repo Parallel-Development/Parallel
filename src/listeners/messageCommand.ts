@@ -72,7 +72,7 @@ class MessageCommandListener extends Listener {
     }
 
     // Permission check
-    if (message.inGuild()) {
+    if (message.inGuild() && message.author.id !== message.guild.ownerId) {
       const slashCommand =
         this.client.application?.commands.cache.find(cmd => cmd.name === commandName) ||
         (await this.client.application!.commands.fetch().then(cmds => cmds.find(cmd => cmd.name === commandName)))!;

@@ -13,7 +13,7 @@ class AutomodListener extends Listener {
   }
 
   async run(message: Message<true>) {
-    if (!message.member) return;
+    if (!message?.member) return;
 
     const automod = await this.client.db.guild.findUnique({
       where: {

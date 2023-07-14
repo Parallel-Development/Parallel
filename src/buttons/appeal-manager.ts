@@ -22,35 +22,37 @@ class AppealManagerButton extends Button {
   }
 
   async run(interaction: ButtonInteraction<'cached'>) {
-    const command =
-      this.client.application!.commands.cache.find(cmd => cmd.name === tiedCommand) ||
-      (await this.client.application!.commands.fetch().then(cmds => cmds.find(cmd => cmd.name === tiedCommand)))!;
-
-    const permissions = await this.client
-      .application!.commands.permissions.fetch({ command: command.id, guild: interaction.guildId })
-      .catch(() => null);
-
-    const hasDefault = interaction.member.permissions?.has(command.defaultMemberPermissions!);
-    const allowed = permissions?.filter(
-      permission =>
-        permission.permission === true &&
-        (permission.id === interaction.user.id || interaction.member.roles.cache.some(r => permission.id === r.id))
-    );
-    const denied = permissions?.filter(
-      permission =>
-        permission.permission === false &&
-        (permission.id === interaction.user.id || interaction.member.roles.cache.some(r => permission.id === r.id))
-    );
-
-    if (denied?.some(deny => deny.type === ApplicationCommandPermissionType.User)) throw error;
-
-    if (!allowed?.length && !(denied?.length && hasDefault)) {
-      if (
-        !interaction.member.roles.cache.some(
-          r => r.permissions.has(command.defaultMemberPermissions!) && !denied?.some(role => role.id === r.id)
+    if (interaction.user.id !== interaction.guild.ownerId) {
+      const command =
+        this.client.application!.commands.cache.find(cmd => cmd.name === tiedCommand) ||
+        (await this.client.application!.commands.fetch().then(cmds => cmds.find(cmd => cmd.name === tiedCommand)))!;
+      
+      const permissions = await this.client
+        .application!.commands.permissions.fetch({ command: command.id, guild: interaction.guildId })
+        .catch(() => null);
+      
+      const hasDefault = interaction.member.permissions?.has(command.defaultMemberPermissions!);
+      const allowed = permissions?.filter(
+        permission =>
+          permission.permission === true &&
+          (permission.id === interaction.user.id || interaction.member.roles.cache.some(r => permission.id === r.id))
+      );
+      const denied = permissions?.filter(
+        permission =>
+          permission.permission === false &&
+          (permission.id === interaction.user.id || interaction.member.roles.cache.some(r => permission.id === r.id))
+      );
+      
+      if (denied?.some(deny => deny.type === ApplicationCommandPermissionType.User)) throw error;
+      
+      if (!allowed?.length && !(denied?.length && hasDefault)) {
+        if (
+          !interaction.member.roles.cache.some(
+            r => r.permissions.has(command.defaultMemberPermissions!) && !denied?.some(role => role.id === r.id)
+          )
         )
-      )
-        throw error;
+          throw error;
+      }
     }
 
     const method = interaction.customId.split(':')[1].split('.')[0] as 'accept' | 'deny' | 'disregard' | 'context';
@@ -63,8 +65,34 @@ class AppealManagerButton extends Button {
       include: { appeal: true, guild: { select: { notifyInfractionChange: true } } }
     });
 
-    if (infraction?.guildId !== interaction.guildId) throw 'No infraction with that ID exists in this guild.';
-    if (!infraction.appeal) throw 'That infraction does not have an appeal.';
+    if (infraction?.guildId !== interaction.guildId) {
+      const acceptedButton = new ButtonBuilder()
+      .setCustomId('?')
+      .setLabel('Accepted')
+      .setStyle(ButtonStyle.Success)
+      .setDisabled(true);
+
+      const row = new ActionRowBuilder<ButtonBuilder>();
+      row.addComponents(acceptedButton);
+
+      const embed = new EmbedBuilder(interaction.message.embeds[0] as EmbedData).setColor(Colors.Green);
+
+      return interaction.update({ components: [row], embeds: [embed] });
+    }
+    if (!infraction.appeal) {
+      const notAcceptedButton = new ButtonBuilder()
+      .setCustomId('?')
+      .setLabel('Not accepted')
+      .setStyle(ButtonStyle.Secondary)
+      .setDisabled(true);
+
+      const row = new ActionRowBuilder<ButtonBuilder>();
+      row.addComponents(notAcceptedButton);
+
+      const embed = new EmbedBuilder(interaction.message.embeds[0] as EmbedData).setColor(Colors.Grey);
+
+      return interaction.update({ components: [row], embeds: [embed] });
+    }
 
     const { appeal } = infraction;
 
