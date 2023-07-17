@@ -95,7 +95,7 @@ class ShortcutsCommand extends Command {
         throw 'You cannot provide a value for the `delete-previous-messages` option for this kind of punishment.';
 
       const duration = uDuration ? +uDuration * 1000 || ms(uDuration) : null;
-      const deleteTime = uDeleteTime ? ms(uDeleteTime) : null;
+      const deleteTime = uDeleteTime ? ms(uDeleteTime) / 1000 : null;
 
       if (uDuration && !duration && duration !== 0) throw 'Invalid duration.';
       if (duration && duration < 1000) throw 'Duration must be at least 1 second.';

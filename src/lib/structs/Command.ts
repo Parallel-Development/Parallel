@@ -32,7 +32,7 @@ export function data(data: Partial<SlashCommandBuilder>) {
 export function properties<M extends boolean = false>(properties: CommandProperties<M>) {
   return function <T extends { new (...args: any[]): {} }>(constructor: T) {
     return class extends constructor {
-      clientPermissions = properties.clientPermissions;
+      clientPermissions = new PermissionsBitField(properties.clientPermissions);
 
       name = (properties as MessageCommandProperties).name ?? null;
       description = (properties as MessageCommandProperties).description ?? null;
