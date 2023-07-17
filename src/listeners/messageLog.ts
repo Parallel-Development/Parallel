@@ -27,7 +27,7 @@ class MessageLogListener extends Listener {
           id: guild.id
         },
         data: {
-          modLogWebhookId: null
+          messageLogWebhookId: null
         }
       });
 
