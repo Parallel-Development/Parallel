@@ -67,7 +67,7 @@ class CustomMessageCommandListener extends Listener {
 
     if (args.length == 0) return message.reply('Missing required argument `user`.');
 
-    const target = await getMember(message.guildId, args[0]) ?? await getUser(args[0]);
+    const target = (await getMember(message.guildId, args[0])) ?? (await getUser(args[0]));
 
     if (!target) return message.reply('The provided user is not in this guild.');
 
@@ -119,13 +119,14 @@ class CustomMessageCommandListener extends Listener {
         expires
       };
 
-      if (punishment === IT.Mute) await this.client.db.task.upsert({
-        where: {
-          userId_guildId_type: { userId: target.id, guildId: message.guildId, type: punishment }
-        },
-        update: data,
-        create: data
-      });
+      if (punishment === IT.Mute)
+        await this.client.db.task.upsert({
+          where: {
+            userId_guildId_type: { userId: target.id, guildId: message.guildId, type: punishment }
+          },
+          update: data,
+          create: data
+        });
     }
 
     const { infoBan, infoKick, infoMute, infoWarn } = infraction.guild;

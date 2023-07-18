@@ -70,6 +70,12 @@ const nameReg = /^[\p{Ll}\p{Lm}\p{Lo}\p{N}\p{sc=Devanagari}\p{sc=Thai}_-]+$/u;
         .addStringOption(option => option.setName('name').setDescription('Name of the shortcut.').setRequired(true))
     )
     .addSubcommand(command => command.setName('view').setDescription('View all shortcuts.'))
+    .addSubcommand(command =>
+      command
+        .setName('get')
+        .setDescription('Get information on a shortcut.')
+        .addStringOption(option => option.setName('name').setDescription('The name of the shortcut').setRequired(true))
+    )
 )
 class ShortcutsCommand extends Command {
   async run(interaction: ChatInputCommandInteraction<'cached'>) {
@@ -197,6 +203,35 @@ class ShortcutsCommand extends Command {
         const url = await bin(shortcuts.join('\n'));
         return interaction.editReply(`Here are the shortcuts: ${url}`);
       }
+    } else if (sc === 'get') {
+      const name = interaction.options.getString('name', true);
+
+      const shortcut = await this.client.db.shortcut.findUnique({
+        where: {
+          guildId_name: {
+            guildId: interaction.guildId,
+            name
+          }
+        }
+      });
+
+      if (!shortcut) throw 'No shortcut with that name exists.';
+
+      const embed = new EmbedBuilder()
+        .setAuthor({ name: 'Parallel', iconURL: this.client.user!.displayAvatarURL() })
+        .setTitle(shortcut.name)
+        .setColor(mainColor)
+        .setDescription(
+          `${shortcut.description}\n\nThis command will \`${shortcut.punishment.toLowerCase()}\` the provided user${
+            shortcut.duration ? ` for \`${ms(Number(shortcut.duration), { long: true })}\`` : ''
+          }${
+            shortcut.deleteTime
+              ? ` and purge messages by them up to \`${ms(shortcut.deleteTime * 1000, { long: true })}\` old`
+              : ''
+          }.`
+        );
+
+      return interaction.reply({ embeds: [embed] });
     }
   }
 }

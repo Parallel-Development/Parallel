@@ -26,11 +26,11 @@ class AppealManagerButton extends Button {
       const command =
         this.client.application!.commands.cache.find(cmd => cmd.name === tiedCommand) ||
         (await this.client.application!.commands.fetch().then(cmds => cmds.find(cmd => cmd.name === tiedCommand)))!;
-      
+
       const permissions = await this.client
         .application!.commands.permissions.fetch({ command: command.id, guild: interaction.guildId })
         .catch(() => null);
-      
+
       const hasDefault = interaction.member.permissions?.has(command.defaultMemberPermissions!);
       const allowed = permissions?.filter(
         permission =>
@@ -42,9 +42,9 @@ class AppealManagerButton extends Button {
           permission.permission === false &&
           (permission.id === interaction.user.id || interaction.member.roles.cache.some(r => permission.id === r.id))
       );
-      
+
       if (denied?.some(deny => deny.type === ApplicationCommandPermissionType.User)) throw error;
-      
+
       if (!allowed?.length && !(denied?.length && hasDefault)) {
         if (
           !interaction.member.roles.cache.some(
@@ -67,10 +67,10 @@ class AppealManagerButton extends Button {
 
     if (infraction?.guildId !== interaction.guildId) {
       const acceptedButton = new ButtonBuilder()
-      .setCustomId('?')
-      .setLabel('Accepted')
-      .setStyle(ButtonStyle.Success)
-      .setDisabled(true);
+        .setCustomId('?')
+        .setLabel('Accepted')
+        .setStyle(ButtonStyle.Success)
+        .setDisabled(true);
 
       const row = new ActionRowBuilder<ButtonBuilder>();
       row.addComponents(acceptedButton);
@@ -81,10 +81,10 @@ class AppealManagerButton extends Button {
     }
     if (!infraction.appeal) {
       const notAcceptedButton = new ButtonBuilder()
-      .setCustomId('?')
-      .setLabel('Not accepted')
-      .setStyle(ButtonStyle.Secondary)
-      .setDisabled(true);
+        .setCustomId('?')
+        .setLabel('Not accepted')
+        .setStyle(ButtonStyle.Secondary)
+        .setDisabled(true);
 
       const row = new ActionRowBuilder<ButtonBuilder>();
       row.addComponents(notAcceptedButton);

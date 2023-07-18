@@ -1,10 +1,4 @@
-import {
-  SlashCommandBuilder,
-  PermissionFlagsBits as Permissions,
-  Colors,
-  EmbedBuilder,
-  Message
-} from 'discord.js';
+import { SlashCommandBuilder, PermissionFlagsBits as Permissions, Colors, EmbedBuilder, Message } from 'discord.js';
 import { adequateHierarchy, getMember } from '../../lib/util/functions';
 import { InfractionType } from '@prisma/client';
 import Command, { properties, data } from '../../lib/structs/Command';
@@ -33,8 +27,7 @@ class KickCommand extends Command {
     if (member.id === message.author.id) throw 'You cannot kick yourself.';
     if (member.id === this.client.user!.id) throw 'You cannot kick me.';
 
-    if (!adequateHierarchy(message.member!, member))
-      throw 'You cannot kick this member due to inadequete hierarchy.';
+    if (!adequateHierarchy(message.member!, member)) throw 'You cannot kick this member due to inadequete hierarchy.';
 
     if (!adequateHierarchy(message.guild.members.me!, member))
       throw 'I cannot kick this member due to inadequete hierarchy.';
@@ -78,4 +71,3 @@ class KickCommand extends Command {
 }
 
 export default KickCommand;
-  

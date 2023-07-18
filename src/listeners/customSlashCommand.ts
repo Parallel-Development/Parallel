@@ -89,13 +89,14 @@ class CustomSlashCommandListener extends Listener {
         expires
       };
 
-      if (punishment === IT.Mute) await this.client.db.task.upsert({
-        where: {
-          userId_guildId_type: { userId: target.id, guildId: interaction.guildId, type: punishment }
-        },
-        update: data,
-        create: data
-      });
+      if (punishment === IT.Mute)
+        await this.client.db.task.upsert({
+          where: {
+            userId_guildId_type: { userId: target.id, guildId: interaction.guildId, type: punishment }
+          },
+          update: data,
+          create: data
+        });
     }
 
     const { infoBan, infoKick, infoMute, infoWarn } = infraction.guild;
