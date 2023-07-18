@@ -24,10 +24,7 @@ class CustomSlashCommandListener extends Listener {
 
     if (!command) return interaction.reply({ content: 'Unknown Command.', ephemeral: true });
 
-    const target =
-      command.punishment === IT.Ban || command.punishment === IT.Unban
-        ? interaction.options.getUser('user')
-        : interaction.options.getMember('member');
+    const target = interaction.options.getMember('member') ?? interaction.options.getUser('member');
 
     if (!target) return interaction.reply({ content: 'The provided user is not in this guild.', ephemeral: true });
 

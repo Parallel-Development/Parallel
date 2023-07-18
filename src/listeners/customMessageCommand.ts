@@ -27,48 +27,47 @@ class CustomMessageCommandListener extends Listener {
 
     if (!command) return;
 
-    const slashCommand =
-      (await message.guild.commands.cache.find(c => c.name === commandName)) ||
-      (await message.guild!.commands.fetch().then(cmds => cmds.find(cmd => cmd.name === commandName)))!;
+    if (message.author.id !== message.guildId) {
+      const slashCommand =
+        (await message.guild.commands.cache.find(c => c.name === commandName)) ||
+        (await message.guild!.commands.fetch().then(cmds => cmds.find(cmd => cmd.name === commandName)))!;
 
-    const permissions = await this.client
-      .application!.commands.permissions.fetch({ command: slashCommand.id, guild: message.guildId! })
-      .catch(() => null);
+      const permissions = await this.client
+        .application!.commands.permissions.fetch({ command: slashCommand.id, guild: message.guildId! })
+        .catch(() => null);
 
-    const hasDefault = message.member!.permissions?.has(slashCommand.defaultMemberPermissions!);
-    const allowed = permissions?.filter(
-      permission =>
-        permission.permission === true &&
-        (permission.id === message.author.id || message.member!.roles.cache.some(r => permission.id === r.id))
-    );
-    const denied = permissions?.filter(
-      permission =>
-        permission.permission === false &&
-        (permission.id === message.author.id || message.member!.roles.cache.some(r => permission.id === r.id))
-    );
+      const hasDefault = message.member!.permissions?.has(slashCommand.defaultMemberPermissions!);
+      const allowed = permissions?.filter(
+        permission =>
+          permission.permission === true &&
+          (permission.id === message.author.id || message.member!.roles.cache.some(r => permission.id === r.id))
+      );
+      const denied = permissions?.filter(
+        permission =>
+          permission.permission === false &&
+          (permission.id === message.author.id || message.member!.roles.cache.some(r => permission.id === r.id))
+      );
 
-    if (denied?.some(deny => deny.type === ApplicationCommandPermissionType.User)) {
-      if (respondIfNoPermission) message.reply("You don't have permission to use that command.");
-      return false;
-    }
-
-    if (!allowed?.length && !(denied?.length && hasDefault)) {
-      if (
-        !message.member!.roles.cache.some(
-          r => r.permissions.has(slashCommand.defaultMemberPermissions!) && !denied?.some(role => role.id === r.id)
-        )
-      ) {
+      if (denied?.some(deny => deny.type === ApplicationCommandPermissionType.User)) {
         if (respondIfNoPermission) message.reply("You don't have permission to use that command.");
         return false;
+      }
+
+      if (!allowed?.length && !(denied?.length && hasDefault)) {
+        if (
+          !message.member!.roles.cache.some(
+            r => r.permissions.has(slashCommand.defaultMemberPermissions!) && !denied?.some(role => role.id === r.id)
+          )
+        ) {
+          if (respondIfNoPermission) message.reply("You don't have permission to use that command.");
+          return false;
+        }
       }
     }
 
     if (args.length == 0) return message.reply('Missing required argument `user`.');
 
-    const target =
-      command.punishment === IT.Ban || command.punishment === IT.Unban
-        ? await getUser(args[0])
-        : await getMember(message.guildId, args[0]);
+    const target = await getMember(message.guildId, args[0]) ?? await getUser(args[0]);
 
     if (!target) return message.reply('The provided user is not in this guild.');
 
