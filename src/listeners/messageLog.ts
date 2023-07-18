@@ -39,7 +39,7 @@ class MessageLogListener extends Listener {
       .setAuthor({
         name: `Message from ${message.author.username} (${message.author.id}) ${
           type === 'edit' ? 'edited' : 'deleted'
-        }`,
+        } in #${message.channel.name}`,
         iconURL: message.author.displayAvatarURL()
       })
       .setTimestamp();

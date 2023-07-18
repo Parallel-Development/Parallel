@@ -431,17 +431,20 @@ class ConfigCommand extends Command {
               data: { appealModalQuestions: { push: question } }
             });
 
-            return interaction.editReply('Question added.');
+            return interaction.editReply(`Question added: ${question}`);
           }
           case 'remove-question': {
             const { appealModalQuestions } = (await this.client.db.guild.findUnique({
               where: { id: interaction.guildId }
             }))!;
 
+            if (appealModalQuestions.length === 1) throw 'You cannot remove another question because you need at least one.';
+
             const index = interaction.options.getInteger('question-index', true);
             if (index > appealModalQuestions.length) throw `There is no index \`${index}\`.`;
 
             await interaction.deferReply();
+            const question = appealModalQuestions[index - 1];
 
             appealModalQuestions.splice(index - 1, 1);
 
@@ -450,7 +453,7 @@ class ConfigCommand extends Command {
               data: { appealModalQuestions }
             });
 
-            return interaction.editReply('Question removed.');
+            return interaction.editReply(`Removed question #${index}: ${question}`);
           }
           case 'view-questions': {
             const { appealModalQuestions } = (await this.client.db.guild.findUnique({
@@ -511,7 +514,7 @@ class ConfigCommand extends Command {
               }
             });
 
-            return interaction.editReply(`Escalation added.`);
+            return interaction.editReply(`Escalation added: ${punishment.toLowerCase()} a member${duration ? ` for ${ms(duration, { long: true })}`: ''} for having or exceeding ${amount} automod infractions.`);
           }
           case 'remove': {
             const amount = interaction.options.getInteger('amount', true);
@@ -536,7 +539,7 @@ class ConfigCommand extends Command {
               }
             });
 
-            return interaction.editReply(`Escalation removed.`);
+            return interaction.editReply(`Escalation removed: ${escalation.punishment.toLowerCase()} a member${escalation.duration !== '0' ? ` for ${ms(+escalation.duration, { long: true })}`: ''} for having or exceeding ${amount} automod infractions.`);
           }
           case 'view': {
             const { escalations } = (await this.client.db.guild.findUnique({
@@ -581,7 +584,7 @@ class ConfigCommand extends Command {
               }
             });
 
-            return interaction.editReply('Channel added.');
+            return interaction.editReply(`Added ${channel.toString()} to the list of channels to lock.`);
           }
           case 'remove-channel': {
             const channel = interaction.options.getChannel('channel', true);
@@ -605,7 +608,7 @@ class ConfigCommand extends Command {
               }
             });
 
-            return interaction.editReply('Channel removed.');
+            return interaction.editReply(`Removed ${channel.toString()} from the list of channels to lock.`);
           }
           case 'view-channels': {
             const { lockChannels } = (await this.client.db.guild.findUnique({
@@ -656,7 +659,7 @@ class ConfigCommand extends Command {
               }
             });
 
-            return interaction.editReply('That override will now be set to deny when a channel is locked.');
+            return interaction.editReply(`The override \`${resolvable.replaceAll(/[a-z][A-Z]/g, m => `${m[0]} ${m[1]}`)}\` will now be set to deny when a channel is locked.`);
           }
           case 'remove-override': {
             const override = interaction.options.getString('override', true);
@@ -691,7 +694,7 @@ class ConfigCommand extends Command {
               }
             });
 
-            return interaction.editReply('Override removed.');
+            return interaction.editReply(`The override \`${resolvable.replaceAll(/[a-z][A-Z]/g, m => `${m[0]} ${m[1]}`)}\` will no longer be de set to deny when a channel is locked.`);
           }
           case 'view-overrides': {
             const { lockOverrides } = (await this.client.db.guild.findUnique({
@@ -778,7 +781,7 @@ class ConfigCommand extends Command {
               }
             });
 
-            return interaction.editReply('Channel added to the list of ignored channels.');
+            return interaction.editReply(`Added ${channel.toString()} the list of ignored channels.`);
           }
           case 'ignored-channels-remove': {
             const channel = interaction.options.getChannel('channel', true);
@@ -805,7 +808,7 @@ class ConfigCommand extends Command {
               }
             });
 
-            return interaction.editReply('Channel removed from the list of ignored channels.');
+            return interaction.editReply(`Removed ${channel.toString()} from the list of ignored channels.`);
           }
           case 'ignored-channels-view': {
             const { messageLogIgnoredChannels } = (await this.client.db.guild.findUnique({
