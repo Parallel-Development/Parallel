@@ -10,6 +10,8 @@ export type AutoModSpamTriggers = {
   within: number;
 }[];
 
+export type EscalationType = 'Manual' | 'AutoMod';
+
 export type Escalations = {
   amount: number;
   punishment: InfractionType;

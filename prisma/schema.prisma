@@ -24,7 +24,7 @@ enum InfractionType {
 model Guild {
   id                             String          @id
   infractionModeratorPublic      Boolean         @default(false)
-  notifyInfractionChange         Boolean         @default(false)
+  notifyInfractionChange         Boolean         @default(true)
   appealAllowed                  Boolean         @default(false)
   appealAlertWebhookId           String?
   appealMethod                   AppealMethod    @default(Modal)
@@ -53,7 +53,8 @@ model Guild {
   autoModMaliciousImmuneRoles    String[]
   autoModMaliciousPunishment     InfractionType?
   autoModMaliciousDuration       BigInt          @default(0)
-  escalations                    Json[]
+  escalationsAutoMod             Json[]
+  escalationsManual              Json[]
   lockChannels                   String[]
   lockOverrides                  BigInt          @default(377957124160) // SendMessages + CreatePublicThreads + CreatePrivateThreads + SendMessagesInThreads + AddReactions
   prefix                         String          @default("-")

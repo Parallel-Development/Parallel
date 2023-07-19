@@ -163,48 +163,6 @@ import yaml from 'js-yaml';
     .addSubcommand(cmd => cmd.setName('view').setDescription('View all configurations.'))
     .addSubcommandGroup(group =>
       group
-        .setName('escalations')
-        .setDescription('Escalations allow you to punish members for reaching an amount of infractions.')
-        .addSubcommand(cmd =>
-          cmd
-            .setName('add')
-            .setDescription('Add an escalation to the list of escalations.')
-            .addIntegerOption(opt =>
-              opt
-                .setName('amount')
-                .setDescription('How many infractions the member has to accumulate before being punished.')
-                .setMinValue(2)
-                .setRequired(true)
-            )
-            .addStringOption(opt =>
-              opt
-                .setName('punishment')
-                .setDescription('The punishment to give for reaching `amount` infractions.')
-                .addChoices(
-                  { name: 'Mute', value: InfractionType.Mute },
-                  { name: 'Kick', value: InfractionType.Kick },
-                  { name: 'Ban', value: InfractionType.Ban }
-                )
-                .setRequired(true)
-            )
-            .addStringOption(opt => opt.setName('duration').setDescription('The duration of the punishment'))
-        )
-        .addSubcommand(cmd =>
-          cmd
-            .setName('remove')
-            .setDescription('Remove an escalation from the list of escalations.')
-            .addIntegerOption(opt =>
-              opt
-                .setName('amount')
-                .setDescription('How many infractions the member has to accumulate before being punished.')
-                .setMinValue(2)
-                .setRequired(true)
-            )
-        )
-        .addSubcommand(cmd => cmd.setName('view').setDescription('View all escalations.'))
-    )
-    .addSubcommandGroup(group =>
-      group
         .setName('lock')
         .setDescription('Manage the behavior of the lock commands.')
         .addSubcommand(cmd =>
@@ -438,7 +396,8 @@ class ConfigCommand extends Command {
               where: { id: interaction.guildId }
             }))!;
 
-            if (appealModalQuestions.length === 1) throw 'You cannot remove another question because you need at least one.';
+            if (appealModalQuestions.length === 1)
+              throw 'You cannot remove another question because you need at least one.';
 
             const index = interaction.options.getInteger('question-index', true);
             if (index > appealModalQuestions.length) throw `There is no index \`${index}\`.`;
@@ -487,82 +446,6 @@ class ConfigCommand extends Command {
             );
           }
         }
-      case 'escalations':
-        switch (subCmd) {
-          case 'add': {
-            const amount = interaction.options.getInteger('amount', true);
-            const punishment = interaction.options.getString('punishment', true) as InfractionType;
-            const uDuration = interaction.options.getString('duration');
-            const duration = uDuration ? ms(uDuration) : null;
-            if (duration === undefined) throw 'Invalid duration.';
-
-            const { escalations } = (await this.client.db.guild.findUnique({
-              where: {
-                id: interaction.guildId
-              }
-            }))!;
-
-            if ((escalations as Escalations).some(e => e.amount === amount))
-              throw 'There is already an escalation for this amount.';
-
-            await interaction.deferReply();
-
-            await this.client.db.guild.update({
-              where: { id: interaction.guildId },
-              data: {
-                escalations: { push: { amount, duration: duration ?? '0', punishment } }
-              }
-            });
-
-            return interaction.editReply(`Escalation added: ${punishment.toLowerCase()} a member${duration ? ` for ${ms(duration, { long: true })}`: ''} for having or exceeding ${amount} automod infractions.`);
-          }
-          case 'remove': {
-            const amount = interaction.options.getInteger('amount', true);
-
-            const { escalations } = (await this.client.db.guild.findUnique({
-              where: {
-                id: interaction.guildId
-              }
-            }))!;
-
-            const escalation = (escalations as Escalations).find(e => e.amount === amount);
-            if (!escalation) throw 'There is no escalation for this amount.';
-
-            await interaction.deferReply();
-
-            escalations.splice(escalations.indexOf(escalation), 1);
-
-            await this.client.db.guild.update({
-              where: { id: interaction.guildId },
-              data: {
-                escalations
-              }
-            });
-
-            return interaction.editReply(`Escalation removed: ${escalation.punishment.toLowerCase()} a member${escalation.duration !== '0' ? ` for ${ms(+escalation.duration, { long: true })}`: ''} for having or exceeding ${amount} automod infractions.`);
-          }
-          case 'view': {
-            const { escalations } = (await this.client.db.guild.findUnique({
-              where: {
-                id: interaction.guildId
-              }
-            }))!;
-
-            if (escalations.length === 0) return interaction.reply('This guild has no escalations set up.');
-
-            const escalationsStr = (escalations as Escalations)
-              .sort((a, b) => a.amount - b.amount)
-              .map(
-                e =>
-                  `${e.amount} = ${e.punishment} ${
-                    e.duration !== '0' ? `for ${ms(Number(e.duration), { long: true })}` : ''
-                  }`
-              )
-              .join('\n');
-            return interaction.reply(`\`\`\`\n${escalationsStr}\`\`\``);
-          }
-        }
-
       case 'lock':
         switch (subCmd) {
           case 'add-channel': {
@@ -659,7 +542,12 @@ class ConfigCommand extends Command {
               }
             });
 
-            return interaction.editReply(`The override \`${resolvable.replaceAll(/[a-z][A-Z]/g, m => `${m[0]} ${m[1]}`)}\` will now be set to deny when a channel is locked.`);
+            return interaction.editReply(
+              `The override \`${resolvable.replaceAll(
+                /[a-z][A-Z]/g,
+                m => `${m[0]} ${m[1]}`
+              )}\` will now be set to deny when a channel is locked.`
+            );
           }
           case 'remove-override': {
             const override = interaction.options.getString('override', true);
@@ -694,7 +582,12 @@ class ConfigCommand extends Command {
               }
             });
 
-            return interaction.editReply(`The override \`${resolvable.replaceAll(/[a-z][A-Z]/g, m => `${m[0]} ${m[1]}`)}\` will no longer be de set to deny when a channel is locked.`);
+            return interaction.editReply(
+              `The override \`${resolvable.replaceAll(
+                /[a-z][A-Z]/g,
+                m => `${m[0]} ${m[1]}`
+              )}\` will no longer be de set to deny when a channel is locked.`
+            );
           }
           case 'view-overrides': {
             const { lockOverrides } = (await this.client.db.guild.findUnique({

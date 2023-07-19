@@ -22,7 +22,7 @@ class RemoveInfractionCommand extends Command {
       undo = true;
       args.splice(undoFlag, 1);
     }
-    const reason = args.slice(1).join(' ') || undefined;
+    const reason = args.slice(1).join(' ') || 'Unspecified reason.';
 
     const infraction = await this.client.db.infraction.findUnique({
       where: {

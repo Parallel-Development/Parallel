@@ -28,7 +28,7 @@ class RemoveInfractionCommand extends Command {
   async run(interaction: ChatInputCommandInteraction<'cached'>) {
     const id = interaction.options.getInteger('id', true);
     const undo = interaction.options.getBoolean('undo-punishment') ?? false;
-    const reason = interaction.options.getString('reason') ?? undefined;
+    const reason = interaction.options.getString('reason') ?? 'Unspecified reason.';
 
     const infraction = await this.client.db.infraction.findUnique({
       where: {

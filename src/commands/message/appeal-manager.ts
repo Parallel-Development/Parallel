@@ -2,7 +2,7 @@ import { InfractionType } from '@prisma/client';
 import { PermissionFlagsBits as Permissions, EmbedBuilder, Colors, Message } from 'discord.js';
 import Command, { properties } from '../../lib/structs/Command';
 import { mainColor } from '../../lib/util/constants';
-import { bin, getUser } from '../../lib/util/functions';
+import { bin, getMember, getUser } from '../../lib/util/functions';
 import { AppealResponse } from '../../types';
 
 @properties<true>({
@@ -178,23 +178,55 @@ class AppealManagerCommand extends Command {
       case 'accept':
         if (!dontUndo) {
           switch (infraction.type) {
-            case InfractionType.Ban:
+            case InfractionType.Ban: {
               if (!message.guild.members.me!.permissions.has(Permissions.BanMembers))
-                throw "I cannot undo the punishment because I do not have the Ban Members permission. If you don't want to undo the punishment, append `--dont-undo` to the reason to accept.";
+                throw "I cannot undo the punishment because I do not have the Ban Members permission. If you don't want to undo the punishment, use the command `/appeal-manager accept` and set the `dont-undo` option to `True`";
+
+              const member = await getMember(message.guild, infraction.userId);
+              if (!member)
+                throw 'I could not undo the punishment because the member is not in the guild. Use the command `/appeal-manager accept` and set the `dont-undo` option to `True` to accept.';
+
               await message.guild.members.unban(infraction.userId, reason).catch(() => {
-                throw 'That member is not banned. Append `--dont-undo` to the reason to accept.';
+                throw 'That member is not banned. Use the command `/appeal-manager accept` and set the `dont-undo` option to `True` to accept.';
               });
+
+              await this.client.db.task
+                .delete({
+                  where: {
+                    userId_guildId_type: {
+                      guildId: message.guildId,
+                      userId: member.id,
+                      type: InfractionType.Ban
+                    }
+                  }
+                })
+                .catch(() => {});
+
               break;
-            case InfractionType.Mute:
+            }
+            case InfractionType.Mute: {
               if (!message.guild.members.me!.permissions.has(Permissions.ModerateMembers))
-                throw "I cannot undo the punishment because I do not have the Moderate Members permission. If you don't want to undo the punishment, append `--dont-undo` to the reason to accept.";
-              await message.guild.members
-                .fetch(infraction.userId)
-                .then(member => member.timeout(null, reason))
-                .catch(() => {
-                  throw 'I could not undo the punishment because the member is not in the guild. Append `--dont-undo` to the reason to accept.';
-                });
+                throw "I cannot undo the punishment because I do not have the Moderate Members permission. If you don't want to undo the punishment, use the command `/appeal-manager accept` and set the `dont-undo` option to `True`";
+
+              const member = await getMember(message.guild, infraction.userId);
+              if (!member)
+                throw 'I could not undo the punishment because the member is not in the guild. Use the command `/appeal-manager accept` and set the `dont-undo` option to `True` to accept.';
+
+              await member.timeout(null, reason);
+
+              await this.client.db.task
+                .delete({
+                  where: {
+                    userId_guildId_type: {
+                      guildId: message.guildId,
+                      userId: member.id,
+                      type: InfractionType.Mute
+                    }
+                  }
+                })
+                .catch(() => {});
               break;
+            }
           }
         }
 

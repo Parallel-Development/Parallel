@@ -37,7 +37,7 @@ class AutomodListener extends Listener {
         infoKick: true,
         infoBan: true,
 
-        escalations: true
+        escalationsAutoMod: true
       }
     });
 
@@ -71,7 +71,7 @@ class AutomodListener extends Listener {
             automod.autoModMaliciousPunishment,
             automod.autoModMaliciousDuration,
             { infoWarn, infoMute, infoKick, infoBan },
-            automod.escalations as Escalations
+            automod.escalationsAutoMod as Escalations
           );
         }
       }
@@ -106,7 +106,7 @@ class AutomodListener extends Listener {
           automod.autoModSpamPunishment,
           automod.autoModSpamDuration,
           { infoWarn, infoMute, infoKick, infoBan },
-          automod.escalations as Escalations
+          automod.escalationsAutoMod as Escalations
         );
       }
 
@@ -212,6 +212,7 @@ class AutomodListener extends Listener {
       where: {
         guildId: message.guild.id,
         userId: message.member!.id,
+        type: InfractionType.Warn,
         moderatorId: this.client.user!.id
       }
     });
@@ -231,9 +232,10 @@ class AutomodListener extends Listener {
 
     if (escalation.amount === 0) return false;
 
-    const eDuration = BigInt(escalation.duration.slice(0, -1));
+    const eDuration = BigInt(escalation.duration);
     const eExpires = eDuration ? date + eDuration : null;
-    const eExpiresStr = Math.floor(Number(expires) / 1000);
+    const eExpiresStr = Math.floor(Number(eExpires) / 1000);
+    const eReason = `Reaching or exceeding ${escalation.amount} automod infractions.`;
 
     const eInfraction = await this.client.db.infraction.create({
       data: {
@@ -243,7 +245,7 @@ class AutomodListener extends Listener {
         date,
         moderatorId: this.client.user!.id,
         expires: eExpires,
-        reason: `${escalation.amount} infractions.`
+        reason: eReason
       }
     });
 
@@ -283,7 +285,7 @@ class AutomodListener extends Listener {
       .setDescription(
         `${eInfraction.reason}${eExpires ? `\n\n***•** Expires: <t:${eExpiresStr}> (<t:${eExpiresStr}:R>)*` : ''}`
       )
-      .setFooter({ text: `Punishment ID: ${infraction.id}` })
+      .setFooter({ text: `Punishment ID: ${eInfraction.id}` })
       .setTimestamp();
 
     switch (escalation.punishment) {
@@ -303,11 +305,11 @@ class AutomodListener extends Listener {
 
     switch (escalation.punishment) {
       case InfractionType.Ban:
-        await message.member!.ban({ reason });
+        await message.member!.ban({ reason: eReason });
       case InfractionType.Kick:
-        await message.member!.kick(reason);
+        await message.member!.kick(eReason);
       case InfractionType.Mute:
-        await message.member!.timeout(Number(eDuration), reason);
+        await message.member!.timeout(Number(eDuration), eReason);
     }
 
     return true;
