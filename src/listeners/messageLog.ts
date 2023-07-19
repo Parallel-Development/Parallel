@@ -10,6 +10,7 @@ class MessageLogListener extends Listener {
   async run(oldMessage: Message<true> | null, message: Message<true>, type: 'edit' | 'delete') {
     if (!message.author) return;
     if (message.author.bot) return;
+    if (!message.guild) return;
 
     const guild = await this.client.db.guild.findUnique({
       where: {

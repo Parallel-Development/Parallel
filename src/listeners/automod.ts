@@ -299,7 +299,7 @@ class AutomodListener extends Listener {
         if (info.infoWarn) eDm.addFields([{ name: 'Additional Information', value: info.infoWarn }]);
     }
 
-    await message.member!.send({ embeds: [eDm] });
+    await message.member!.send({ embeds: [eDm] }).catch(() => {});
 
     this.client.emit('punishLog', eInfraction);
 
