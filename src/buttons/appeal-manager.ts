@@ -104,10 +104,6 @@ class AppealManagerButton extends Button {
             if (!interaction.guild.members.me!.permissions.has(Permissions.BanMembers))
               throw "I cannot undo the punishment because I do not have the Ban Members permission. If you don't want to undo the punishment, use the command `/appeal-manager accept` and set the `dont-undo` option to `True`";
 
-            const member = await getMember(interaction.guild, infraction.userId);
-            if (!member)
-              throw 'I could not undo the punishment because the member is not in the guild. Use the command `/appeal-manager accept` and set the `dont-undo` option to `True` to accept.';
-
             await interaction.guild.members.unban(infraction.userId, reason).catch(() => {
               throw 'That member is not banned. Use the command `/appeal-manager accept` and set the `dont-undo` option to `True` to accept.';
             });
@@ -117,7 +113,7 @@ class AppealManagerButton extends Button {
                 where: {
                   userId_guildId_type: {
                     guildId: interaction.guildId,
-                    userId: member.id,
+                    userId: infraction.userId,
                     type: InfractionType.Ban
                   }
                 }

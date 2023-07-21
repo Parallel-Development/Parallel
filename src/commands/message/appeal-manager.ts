@@ -182,10 +182,6 @@ class AppealManagerCommand extends Command {
               if (!message.guild.members.me!.permissions.has(Permissions.BanMembers))
                 throw "I cannot undo the punishment because I do not have the Ban Members permission. If you don't want to undo the punishment, use the command `/appeal-manager accept` and set the `dont-undo` option to `True`";
 
-              const member = await getMember(message.guild, infraction.userId);
-              if (!member)
-                throw 'I could not undo the punishment because the member is not in the guild. Use the command `/appeal-manager accept` and set the `dont-undo` option to `True` to accept.';
-
               await message.guild.members.unban(infraction.userId, reason).catch(() => {
                 throw 'That member is not banned. Use the command `/appeal-manager accept` and set the `dont-undo` option to `True` to accept.';
               });
@@ -195,7 +191,7 @@ class AppealManagerCommand extends Command {
                   where: {
                     userId_guildId_type: {
                       guildId: message.guildId,
-                      userId: member.id,
+                      userId: infraction.userId,
                       type: InfractionType.Ban
                     }
                   }
