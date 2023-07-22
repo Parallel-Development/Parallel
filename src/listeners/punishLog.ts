@@ -44,7 +44,7 @@ class PunishLogListener extends Listener {
           : Colors.Red
       )
       .setDescription(
-        `**User:** ${(await this.client.users.fetch(infraction.userId))!.username} (${infraction.userId})\n**Moderator:** <@${infraction.moderatorId}> (${
+        `**User:** ${(await this.client.users.fetch(infraction.userId))!.username} (${infraction.userId})\n**Moderator:** ${(await this.client.users.fetch(infraction.moderatorId))!.username} (${
           infraction.moderatorId
         })${
           infraction.expires
