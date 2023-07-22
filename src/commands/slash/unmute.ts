@@ -15,7 +15,7 @@ import { adequateHierarchy } from '../../lib/util/functions';
     .setDescription('Unmute a member.')
     .setDefaultMemberPermissions(Permissions.ModerateMembers)
     .addUserOption(option => option.setName('member').setDescription('The member to unmute.').setRequired(true))
-    .addStringOption(option => option.setName('reason').setDescription('The reason for the unmute.'))
+    .addStringOption(option => option.setName('reason').setDescription('The reason for the unmute.').setMaxLength(3500))
 )
 @properties({
   clientPermissions: [Permissions.ModerateMembers]

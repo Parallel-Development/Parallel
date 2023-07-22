@@ -20,6 +20,8 @@ class UnbanCommand extends Command {
     if (!(await message.guild.bans.fetch(user.id).catch(() => null))) throw 'That user is not banned.';
 
     const reason = args.slice(1).join(' ') || 'Unspecified reason.';
+    if (reason.length > 3500) throw `The reason may only be a maximum of 3500 characters (${reason.length} provided.)`;
+
     const date = BigInt(Date.now());
 
     const infraction = await this.client.db.infraction.create({

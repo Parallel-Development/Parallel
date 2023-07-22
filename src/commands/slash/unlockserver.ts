@@ -15,7 +15,7 @@ import { sleep } from '../../lib/util/functions';
     .setName('unlockserver')
     .setDescription('Unlock all locked channels.')
     .setDefaultMemberPermissions(Permissions.ManageChannels)
-    .addStringOption(option => option.setName('reason').setDescription('The reason for unlocking the server.'))
+    .addStringOption(option => option.setName('reason').setDescription('The reason for unlocking the server.').setMaxLength(3500))
 )
 @properties({
   guildResolve: true

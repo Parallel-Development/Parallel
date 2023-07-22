@@ -8,7 +8,7 @@ import Command, { properties, data } from '../../lib/structs/Command';
     .setDescription('Unban a member from the guild.')
     .setDefaultMemberPermissions(Permissions.KickMembers)
     .addUserOption(option => option.setName('user').setDescription('The user to unban.').setRequired(true))
-    .addStringOption(option => option.setName('reason').setDescription('The reason for unbanning.'))
+    .addStringOption(option => option.setName('reason').setDescription('The reason for unbanning.').setMaxLength(3500))
 )
 @properties({
   clientPermissions: [Permissions.BanMembers]

@@ -7,7 +7,7 @@ class MessageLogListener extends Listener {
     super('messageLog');
   }
 
-  async run(oldMessage: Message<true> | null, message: Message<true>, type: 'edit' | 'delete') {
+  async run(oldMessage: Message<true> | null, message: Message<true>) {
     if (!message.author) return;
     if (message.author.bot) return;
     if (!message.guild) return;
@@ -39,13 +39,13 @@ class MessageLogListener extends Listener {
       .setColor(Colors.Orange)
       .setAuthor({
         name: `Message from ${message.author.username} (${message.author.id}) ${
-          type === 'edit' ? 'edited' : 'deleted'
+          oldMessage ? 'edited' : 'deleted'
         } in #${message.channel.name}`,
         iconURL: message.author.displayAvatarURL()
       })
       .setTimestamp();
 
-    if (type === 'edit' && message.content.length > 0) {
+    if (oldMessage && message.content.length > 0) {
       embed.setDescription(`[Jump to message](${message.url})`).addFields(
         {
           name: 'Old',

@@ -5,7 +5,11 @@ import {
   ModalBuilder,
   SlashCommandBuilder,
   TextInputBuilder,
-  TextInputStyle
+  TextInputStyle,
+  EmbedBuilder,
+  Colors,
+  ButtonBuilder,
+  ButtonStyle
 } from 'discord.js';
 import ms from 'ms';
 import Command, { properties, data } from '../../lib/structs/Command';
@@ -30,9 +34,11 @@ class EvalCommand extends Command {
   async run(interaction: ChatInputCommandInteraction) {
     if (interaction.user.id !== process.env.DEV!) throw 'You cannot run this command.';
     const code = interaction.options.getString('code');
+    const asyncronous = interaction.options.getBoolean('async') ?? false;
+    const depth = interaction.options.getInteger('depth') ?? 0;
 
     if (!code) {
-      const modal = new ModalBuilder().setTitle('Eval').setCustomId('eval');
+      const modal = new ModalBuilder().setTitle('Eval').setCustomId(`eval:${asyncronous} ${depth}`);
 
       const codeRow = new ActionRowBuilder<ModalActionRowComponentBuilder>();
       const codeText = new TextInputBuilder()
@@ -42,35 +48,11 @@ class EvalCommand extends Command {
         .setRequired(true);
 
       codeRow.setComponents(codeText);
-
-      const asyncRow = new ActionRowBuilder<ModalActionRowComponentBuilder>();
-      const asyncText = new TextInputBuilder()
-        .setLabel('Async')
-        .setCustomId('async')
-        .setMinLength(4)
-        .setMaxLength(5)
-        .setStyle(TextInputStyle.Short)
-        .setValue('false');
-
-      asyncRow.setComponents(asyncText);
-
-      const depthRow = new ActionRowBuilder<ModalActionRowComponentBuilder>();
-      const depthText = new TextInputBuilder()
-        .setLabel('Depth')
-        .setCustomId('depth')
-        .setStyle(TextInputStyle.Short)
-        .setValue('0');
-
-      depthRow.setComponents(depthText);
-
-      modal.setComponents(codeRow, asyncRow, depthRow);
+      modal.setComponents(codeRow);
 
       interaction.showModal(modal);
       return;
     }
-
-    const asyncronous = interaction.options.getBoolean('async') ?? false;
-    const depth = interaction.options.getInteger('depth') ?? 0;
 
     await interaction.deferReply();
     let output;
@@ -95,15 +77,27 @@ class EvalCommand extends Command {
     const unit =
       timeTaken < 1 ? `${Math.round(timeTaken / 1e-2)} microseconds` : ms(Math.round(timeTaken), { long: true });
 
-    if (output.length > 1000) {
-      return interaction.editReply(`**Time taken:** ${unit}\n**Return type:** ${type}\n\nOutput: ${await bin(output)}`);
+    const embed = new EmbedBuilder()
+    .setColor(error ? Colors.Red : Colors.Green)
+    .setTitle(`Evaluation ${error ? 'Error' : 'Success'}`)
+
+    if (output.length > 3500) {
+      embed.setDescription(`*\\- Time taken: \`${unit}\`*\n*\\- Return type: \`${type}\`*\n\\- *Output was too long to be sent via Discord.`);
+
+      const outBin = await bin(output);
+
+      const button = new ButtonBuilder()
+      .setStyle(ButtonStyle.Link)
+      .setLabel('Output')
+      .setURL(outBin)
+
+      const row = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
+
+      return interaction.editReply({ embeds: [embed], components: [row] });
     }
 
-    return interaction.editReply(
-      `**Status:** ${
-        error ? 'Error' : 'Success'
-      }\n**Time taken:** ${unit}\n**Return type:** ${type}\n**Output:** \`\`\`js\n${output}\`\`\``
-    );
+    embed.setDescription(`*\\- Time taken: \`${unit}\`*\n*\\- Return type: \`${type}\`*\n\`\`\`js\n${output}\`\`\``);
+    return interaction.editReply({ embeds: [embed] });
   }
 }
 

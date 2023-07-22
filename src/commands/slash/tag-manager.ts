@@ -35,7 +35,7 @@ import { bin } from '../../lib/util/functions';
           option.setName('name').setDescription('The name of the tag you are renaming.').setRequired(true)
         )
         .addStringOption(option =>
-          option.setName('new_name').setDescription('The new name of the tag.').setMaxLength(1000).setRequired(true)
+          option.setName('new_name').setDescription('The new name of the tag.').setMaxLength(30).setRequired(true)
         )
     )
     .addSubcommand(command =>

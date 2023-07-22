@@ -26,6 +26,7 @@ class UnlockserverCommand extends Command {
       throw 'This guild has no channels to unlock. To add some, please use `/config lock add-channel <channel>`';
 
     const reason = args.join(' ') || 'Unspecified reason.';
+    if (reason.length > 3500) throw `The reason may only be a maximum of 3500 characters (${reason.length} provided.)`;
 
     const msg = await message.reply(
       `Server is now being unlocked. When the process is complete, a follow up message will be sent.\nEstimated to complete <t:${Math.floor(

@@ -1,4 +1,4 @@
-import { ModalSubmitInteraction } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Colors, EmbedBuilder, ModalSubmitInteraction } from 'discord.js';
 import Modal from '../lib/structs/Modal';
 import util from 'util';
 import ms from 'ms';
@@ -10,11 +10,12 @@ class EvalModal extends Modal {
   }
 
   async run(interaction: ModalSubmitInteraction) {
-    if (interaction.user.id !== '633776442366361601') throw 'You cannot run this command.';
+    if (interaction.user.id !== process.env.DEV!) throw 'You cannot run this command.';
 
     const code = interaction.fields.getTextInputValue('code');
-    const asyncronous = interaction.fields.getTextInputValue('async').toLowerCase() === 'true';
-    const depth = +interaction.fields.getTextInputValue('depth') || 0;
+    const props = interaction.customId.split(':')[1].split(' ');
+    const asyncronous = props[0] === 'true';
+    const depth = +props[1];
 
     await interaction.deferReply();
     let output;
@@ -35,17 +36,32 @@ class EvalModal extends Modal {
 
     const type = typeof output;
     output = typeof output === 'string' ? output : util.inspect(output, { depth });
-    if (output.length > 1000) {
-      return interaction.editReply(`Output: ${await bin(output)}`);
-    }
 
     const unit =
       timeTaken < 1 ? `${Math.round(timeTaken / 1e-2)} microseconds` : ms(Math.round(timeTaken), { long: true });
-    return interaction.editReply(
-      `**Status:** ${
-        error ? 'Error' : 'Success'
-      }\n**Time taken:** ${unit}\n**Return type:** ${type}\n**Output:** \`\`\`js\n${output}\`\`\``
-    );
+
+
+    const embed = new EmbedBuilder()
+    .setColor(error ? Colors.Red : Colors.Green)
+    .setTitle(`Evaluation ${error ? 'Error' : 'Success'}`)
+
+    if (output.length > 3500) {
+      embed.setDescription(`*\\- Time taken: \`${unit}\`*\n*\\- Return type: \`${type}\`*\n\\- *Output was too long to be sent via Discord.`);
+
+      const outBin = await bin(output);
+
+      const button = new ButtonBuilder()
+      .setStyle(ButtonStyle.Link)
+      .setLabel('Output')
+      .setURL(outBin)
+
+      const row = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
+
+      return interaction.editReply({ embeds: [embed], components: [row] });
+    }
+
+    embed.setDescription(`*\\- Time taken: \`${unit}\`*\n*\\- Return type: \`${type}\`*\n\`\`\`js\n${output}\`\`\``);
+    return interaction.editReply({ embeds: [embed] });
   }
 }
 

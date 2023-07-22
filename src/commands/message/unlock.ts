@@ -51,6 +51,7 @@ class UnlockCommand extends Command {
     }
 
     const reason = args.join(' ') || 'Unspecified reason.';
+    if (reason.length > 3500) throw `The reason may only be a maximum of 3500 characters (${reason.length} provided.)`;
 
     const everyoneOverride = channel.permissionOverwrites.cache.get(message.guildId);
     const everyoneOverrideDeny = everyoneOverride?.deny.bitfield ?? 0n;

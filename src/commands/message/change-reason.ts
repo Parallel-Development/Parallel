@@ -16,6 +16,7 @@ class ChangeReason extends Command {
     if (Number.isNaN(id) || !Number.isInteger(id)) throw 'Invalid ID.';
 
     const newReason = args.slice(1).join(' ');
+    if (newReason.length > 3500) throw `The new eason may only be a maximum of 3500 characters (${newReason.length} provided.)`;
 
     const infraction = await this.client.db.infraction.findUnique({
       where: {

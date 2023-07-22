@@ -3,8 +3,8 @@ import Command, { data } from '../../lib/structs/Command';
 
 @data(
   new SlashCommandBuilder()
-    .setName('clear')
-    .setDescription('Clear messages from a channel.')
+    .setName('purge')
+    .setDescription('Purge messages from a channel.')
     .setDefaultMemberPermissions(Permissions.ManageMessages)
     .addIntegerOption(option =>
       option
@@ -14,10 +14,10 @@ import Command, { data } from '../../lib/structs/Command';
         .setMaxValue(100)
         .setRequired(true)
     )
-    .addUserOption(option => option.setName('from').setDescription('Clear messages from a specific user.'))
-    .addStringOption(option => option.setName('before').setDescription('Clear the messages before a specific message.'))
+    .addUserOption(option => option.setName('from').setDescription('Purge messages from a specific user.'))
+    .addStringOption(option => option.setName('before').setDescription('Purge the messages before a specific message.'))
 )
-class ClearCommand extends Command {
+class PurgeCommand extends Command {
   async run(interaction: ChatInputCommandInteraction<'cached'>) {
     if (!interaction.channel) throw 'Command cannot be ran here.';
     if (!interaction.channel.permissionsFor(interaction.member).has(Permissions.ManageMessages))
@@ -82,4 +82,4 @@ class ClearCommand extends Command {
   }
 }
 
-export default ClearCommand;
+export default PurgeCommand;

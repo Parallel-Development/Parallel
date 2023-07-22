@@ -15,7 +15,7 @@ import Command, { properties, data } from '../../lib/structs/Command';
     .setDescription('Kick a member from the guild.')
     .setDefaultMemberPermissions(Permissions.KickMembers)
     .addUserOption(option => option.setName('member').setDescription('The member to kick.').setRequired(true))
-    .addStringOption(option => option.setName('reason').setDescription('The reason for kicking.'))
+    .addStringOption(option => option.setName('reason').setDescription('The reason for kicking.').setMaxLength(3500))
 )
 @properties({
   clientPermissions: [Permissions.KickMembers]

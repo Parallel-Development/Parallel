@@ -19,7 +19,7 @@ import { Escalations } from '../../types';
     .setDefaultMemberPermissions(Permissions.ModerateMembers)
     .addUserOption(option => option.setName('member').setDescription('The member to warn.').setRequired(true))
     .addStringOption(option =>
-      option.setName('reason').setDescription('The reason for the infraction.').setMaxLength(1000)
+      option.setName('reason').setDescription('The reason for the infraction.').setMaxLength(3500)
     )
     .addStringOption(option =>
       option.setName('erase-after').setDescription('Erase the warning after the specific duration')

@@ -17,7 +17,7 @@ import { getMember } from '../../lib/util/functions';
       option.setName('id').setDescription('The infraction ID.').setMinValue(1).setRequired(true)
     )
     .addStringOption(option =>
-      option.setName('new_reason').setDescription('New reason for infraction.').setMaxLength(1000).setRequired(true)
+      option.setName('new_reason').setDescription('New reason for infraction.').setMaxLength(3500).setRequired(true)
     )
 )
 class ChangeReason extends Command {

@@ -33,6 +33,7 @@ class KickCommand extends Command {
       throw 'I cannot kick this member due to inadequete hierarchy.';
 
     const reason = args.slice(1).join(' ') || 'Unspecified reason.';
+    if (reason.length > 3500) throw `The reason may only be a maximum of 3500 characters (${reason.length} provided.)`;
 
     const infraction = await this.client.db.infraction.create({
       data: {

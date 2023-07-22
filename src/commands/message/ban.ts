@@ -44,6 +44,7 @@ class BanCommand extends Command {
 
     if (duration) args.shift();
     const reason = args.slice(1).join(' ') || 'Unspecified reason.';
+    if (reason.length > 3500) throw `The reason may only be a maximum of 3500 characters (${reason.length} provided.)`;
 
     const guild = (await this.client.db.guild.findUnique({
       where: { id: message.guildId },

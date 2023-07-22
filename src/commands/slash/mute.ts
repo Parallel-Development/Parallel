@@ -22,7 +22,7 @@ const d28 = ms('28d');
         .setName('duration')
         .setDescription('The duration of the mute. Required unless a default mute duration is set!')
     )
-    .addStringOption(option => option.setName('reason').setDescription('The reason for the mute.'))
+    .addStringOption(option => option.setName('reason').setDescription('The reason for the mute.').setMaxLength(3500))
 )
 @properties({
   clientPermissions: [Permissions.ModerateMembers]

@@ -1,4 +1,4 @@
-import { Message } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Colors, EmbedBuilder, Message } from 'discord.js';
 import ms from 'ms';
 import Command, { properties } from '../../lib/structs/Command';
 import util from 'util';
@@ -56,15 +56,27 @@ class EvalCommand extends Command {
     const unit =
       timeTaken < 1 ? `${Math.round(timeTaken / 1e-2)} microseconds` : ms(Math.round(timeTaken), { long: true });
 
-    if (output.length > 1000) {
-      return message.reply(`**Time taken:** ${unit}\n**Return type:** ${type}\n\nOutput: ${await bin(output)}`);
+    const embed = new EmbedBuilder()
+    .setColor(error ? Colors.Red : Colors.Green)
+    .setTitle(`Evaluation ${error ? 'Error' : 'Success'}`)
+
+    if (output.length > 3500) {
+      embed.setDescription(`*\\- Time taken: \`${unit}\`*\n*\\- Return type: \`${type}\`*\n*\\- Output was too long to be sent via Discord.*`);
+
+      const outBin = await bin(output);
+
+      const button = new ButtonBuilder()
+      .setStyle(ButtonStyle.Link)
+      .setLabel('Output')
+      .setURL(outBin)
+
+      const row = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
+
+      return message.reply({ embeds: [embed], components: [row] });
     }
 
-    return message.reply(
-      `**Status:** ${
-        error ? 'Error' : 'Success'
-      }\n**Time taken:** ${unit}\n**Return type:** ${type}\n**Output:** \`\`\`js\n${output}\`\`\``
-    );
+    embed.setDescription(`*\\- Time taken: \`${unit}\`*\n*\\- Return type: \`${type}\`*\n\`\`\`js\n${output}\`\`\``);
+    return message.reply({ embeds: [embed] });
   }
 }
 

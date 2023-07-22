@@ -3,12 +3,12 @@ import Command, { properties } from '../../lib/structs/Command';
 import { getUser } from '../../lib/util/functions';
 
 @properties<true>({
-  name: 'clear',
-  description: 'Clear messages from a channel.',
+  name: 'purge',
+  description: 'Purge messages from a channel.',
   args: ['<from> [count] <before>'],
-  aliases: ['purge']
+  aliases: ['clear']
 })
-class ClearCommand extends Command {
+class PurgeCommand extends Command {
   async run(message: Message<true>, args: string[]) {
     if (args.length === 0) throw 'Missing required argument `count`.';
 
@@ -81,4 +81,4 @@ class ClearCommand extends Command {
   }
 }
 
-export default ClearCommand;
+export default PurgeCommand;

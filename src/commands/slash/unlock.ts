@@ -20,7 +20,7 @@ import Command, { data } from '../../lib/structs/Command';
         .setDescription('The channel to unlock.')
         .addChannelTypes(ChannelType.GuildText, ChannelType.GuildVoice)
     )
-    .addStringOption(option => option.setName('reason').setDescription('The reason for unlocking the channel.'))
+    .addStringOption(option => option.setName('reason').setDescription('The reason for unlocking the channel.').setMaxLength(3500))
 )
 class UnlockCommand extends Command {
   async run(interaction: ChatInputCommandInteraction<'cached'>) {

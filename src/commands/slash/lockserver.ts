@@ -14,7 +14,7 @@ import { sleep } from '../../lib/util/functions';
     .setName('lockserver')
     .setDescription('Restrict members from sending messages in all desingated channels.')
     .setDefaultMemberPermissions(Permissions.ManageChannels)
-    .addStringOption(option => option.setName('reason').setDescription('The reason for locking the server.'))
+    .addStringOption(option => option.setName('reason').setDescription('The reason for locking the server.').setMaxLength(3500))
 )
 @properties({
   guildResolve: true
