@@ -9,7 +9,7 @@ class MessageDeleteBulkListener extends Listener {
 
   async run(messages: Collection<string, Message<true>>) {
     if (messages.size === 0) return false;
-    messages = messages.filter(msg => msg instanceof Message);
+    messages = messages.filter(msg => msg instanceof Message && msg.content.length > 0);
     const refMsg = messages.first()!;
 
     const guild = await this.client.db.guild.findUnique({
@@ -44,14 +44,18 @@ class MessageDeleteBulkListener extends Listener {
     .setTimestamp();
 
     const messagesArr = [...messages.values()];
-    let prev = messagesArr.at(-1)!;
-    let description = `${prev.member!.displayName} (${prev.author.username} | ${prev.author.id}):\n> ${prev.content}`;
+    const firstMsg = messagesArr.at(-1)!;
+    let prevUser = firstMsg.author.id;
+
+    let description = `${firstMsg.member!.displayName} (${firstMsg.author.username} | ${firstMsg.author.id}):\n> ${firstMsg.content}`;
 
     for (let i = messagesArr.length - 2; i >= 0; i--) {
       const message = messagesArr[i];
 
-      if (prev.author.id === message.author.id) description += `\n> ${message.content}`;
-      else description += `${message.member!.displayName} (${message.author.username} | ${message.author.id}):\n> ${message.content}`;
+      if (prevUser === message.author.id) description += `\n> ${message.content}`;
+      else description += `\n${message.member!.displayName} (${message.author.username} | ${message.author.id}):\n> ${message.content}`;
+      
+      prevUser = message.author.id;
     }
 
     if (description.length > 3500) description = await bin(description);
