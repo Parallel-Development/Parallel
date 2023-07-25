@@ -238,7 +238,7 @@ class AppealCommand extends Command {
     });
 
     if (infraction?.guildId !== interaction.guildId && !(!interaction.inCachedGuild() && infraction))
-      throw 'No infraction with that ID exists.';
+      throw 'No infraction with that ID exists. If you are trying to appeal an infraction in another server, you will have to run this command in my DM\'s.';
     if (infraction.userId !== interaction.user.id)
       throw 'You cannot create an appeal for an infraction that is not on your record.';
     if (infraction.type === InfractionType.Unmute || infraction.type === InfractionType.Unban)
