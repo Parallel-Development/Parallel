@@ -4,4 +4,3 @@ dist
 .env
 .vscode
 yarn-error.log
-yarn.lock
