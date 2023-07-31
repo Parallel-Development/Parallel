@@ -3,4 +3,5 @@ dist
 .DS_Store
 .env
 .vscode
+yarn.lock
 yarn-error.log
