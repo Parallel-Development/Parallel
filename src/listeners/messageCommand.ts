@@ -11,7 +11,7 @@ import {
 import { InfractionType } from '@prisma/client';
 const customCommandsConfirmed = new Set();
 const unresolvedGuilds = new Set<string>();
-export const commandsPermissionCache: Map<string, Collection<string, ApplicationCommandPermissions[]>> = new Map();
+export const commandsPermissionCache: Map<string, Collection<string, readonly ApplicationCommandPermissions[]>> = new Map();
 
 class MessageCommandListener extends Listener {
   constructor() {
