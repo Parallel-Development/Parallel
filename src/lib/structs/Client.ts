@@ -48,9 +48,9 @@ class Client extends DJSClient {
         },
         // messages cached for logging.
         messages: {
-          interval: 360000,
+          interval: 3600,
           filter: Sweepers.filterByLifetime({
-            lifetime: 360000
+            lifetime: 3600
           })
         }
       },
