@@ -4,7 +4,7 @@ import { getUser } from '../../lib/util/functions';
 
 @properties<true>({
   name: 'purge',
-  description: 'Purge messages from a channel.',
+  description: 'Purge messages from a channel. Use the slash command version of this command if you want to utilize the `after` option.',
   args: ['<from> [count] <before>'],
   aliases: ['clear']
 })
