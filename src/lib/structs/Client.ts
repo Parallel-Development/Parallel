@@ -13,10 +13,10 @@ class Client extends DJSClient {
     slash: new Map<string, Command>(),
     message: new Map<string, Command<true>>()
   };
-  public aliases: Map<string, string> = new Map();
+  public aliases = new Map<string, string>();
 
-  public modals: Map<string, Modal> = new Map();
-  public buttons: Map<string, Button> = new Map();
+  public modals = new Map<string, Modal>();
+  public buttons = new Map<string, Button>();
 
   constructor() {
     super({
