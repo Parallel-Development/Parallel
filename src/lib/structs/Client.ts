@@ -1,4 +1,4 @@
-import { Client as DJSClient, IntentsBitField as Intents, Options, Partials, Sweepers } from 'discord.js';
+import { Client as DJSClient, GatewayIntentBits as Intents, Options, Partials, Sweepers } from 'discord.js';
 import { PrismaClient } from '@prisma/client';
 import { createPrismaRedisCache } from 'prisma-redis-middleware';
 import fs from 'fs';
@@ -9,12 +9,9 @@ import Button from './Button';
 
 class Client extends DJSClient {
   public db = new PrismaClient();
-  public commands: {
-    slash: Map<string, Command>;
-    message: Map<string, Command<true>>;
-  } = {
-    slash: new Map(),
-    message: new Map()
+  public commands = {
+    slash: new Map<string, Command>(),
+    message: new Map<string, Command<true>>()
   };
   public aliases: Map<string, string> = new Map();
 
@@ -24,11 +21,11 @@ class Client extends DJSClient {
   constructor() {
     super({
       intents: [
-        Intents.Flags.Guilds,
-        Intents.Flags.GuildMembers,
-        Intents.Flags.GuildMessages,
-        Intents.Flags.MessageContent,
-        Intents.Flags.DirectMessages
+        Intents.Guilds,
+        Intents.GuildMembers,
+        Intents.GuildMessages,
+        Intents.MessageContent,
+        Intents.DirectMessages
       ],
       partials: [Partials.Message, Partials.Channel],
       makeCache: Options.cacheWithLimits({
@@ -45,8 +42,15 @@ class Client extends DJSClient {
         guildMembers: {
           interval: 300,
           filter: Sweepers.filterByLifetime({
-            lifetime: 900,
+            lifetime: 300,
             excludeFromSweep: member => member.id !== process.env.CLIENT_ID
+          })
+        },
+        // messages cached for logging.
+        messages: {
+          interval: 360000,
+          filter: Sweepers.filterByLifetime({
+            lifetime: 360000
           })
         }
       },
