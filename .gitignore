@@ -3,7 +3,6 @@ dist
 .DS_Store
 .env
 .vscode
-.prettierrc.yml
 yarn.lock
 yarn-error.log
 tsconfig.tsbuildinfo
