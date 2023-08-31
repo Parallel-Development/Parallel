@@ -40,20 +40,18 @@ class EvalModal extends Modal {
     const unit =
       timeTaken < 1 ? `${Math.round(timeTaken / 1e-2)} microseconds` : ms(Math.round(timeTaken), { long: true });
 
-
     const embed = new EmbedBuilder()
-    .setColor(error ? Colors.Red : Colors.Green)
-    .setTitle(`Evaluation ${error ? 'Error' : 'Success'}`)
+      .setColor(error ? Colors.Red : Colors.Green)
+      .setTitle(`Evaluation ${error ? 'Error' : 'Success'}`);
 
     if (output.length > 3500) {
-      embed.setDescription(`*\\- Time taken: \`${unit}\`*\n*\\- Return type: \`${type}\`*\n\\- *Output was too long to be sent via Discord.`);
+      embed.setDescription(
+        `*\\- Time taken: \`${unit}\`*\n*\\- Return type: \`${type}\`*\n\\- *Output was too long to be sent via Discord.`
+      );
 
       const outBin = await bin(output);
 
-      const button = new ButtonBuilder()
-      .setStyle(ButtonStyle.Link)
-      .setLabel('Output')
-      .setURL(outBin)
+      const button = new ButtonBuilder().setStyle(ButtonStyle.Link).setLabel('Output').setURL(outBin);
 
       const row = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
 

@@ -21,7 +21,9 @@ import Command, { data } from '../../lib/structs/Command';
         .setDescription('The channel to lock.')
         .addChannelTypes(ChannelType.GuildText, ChannelType.GuildVoice)
     )
-    .addStringOption(option => option.setName('reason').setDescription('The reason for locking the channel.').setMaxLength(3500))
+    .addStringOption(option =>
+      option.setName('reason').setDescription('The reason for locking the channel.').setMaxLength(3500)
+    )
 )
 class LockCommand extends Command {
   async run(interaction: ChatInputCommandInteraction<'cached'>) {

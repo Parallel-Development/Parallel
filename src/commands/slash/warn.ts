@@ -103,7 +103,7 @@ class WarnCommand extends Command {
         moderatorId: { not: this.client.user!.id }
       }
     });
-    
+
     const escalation = (guild.escalationsManual as Escalations).reduce(
       (prev, curr) =>
         infractionCount >= curr.amount

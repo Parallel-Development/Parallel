@@ -10,6 +10,7 @@
   "scripts": {
     "start": "node .",
     "build": "tsc",
+    "deploy": "node deploy",
     "fmt": "prettier --write src/**/*.ts"
   },
   "dependencies": {

@@ -7,11 +7,7 @@ import Command, { data } from '../../lib/structs/Command';
     .setDescription('Purge messages from a channel.')
     .setDefaultMemberPermissions(Permissions.ManageMessages)
     .addIntegerOption(option =>
-      option
-        .setName('count')
-        .setDescription('Amount of messages to delete')
-        .setMinValue(1)
-        .setMaxValue(100)
+      option.setName('count').setDescription('Amount of messages to delete').setMinValue(1).setMaxValue(100)
     )
     .addUserOption(option => option.setName('from').setDescription('Purge messages from a specific user.'))
     .addStringOption(option => option.setName('before').setDescription('Purge the messages before a specific message.'))
@@ -48,10 +44,11 @@ class PurgeCommand extends Command {
 
         return messageId;
       } else throw 'Invalid message ID or link.';
-    }
+    };
 
     if (beforeStr && afterStr) {
-      if (count) throw "Option `count` may not be used when both options `before` and `after` are used; the count is automatically determined.";
+      if (count)
+        throw 'Option `count` may not be used when both options `before` and `after` are used; the count is automatically determined.';
 
       // since both can't be used, use `before` and just modify the `count` to be at most enough to stop before `after`
       const before = await extractMessageId(beforeStr);
@@ -61,10 +58,11 @@ class PurgeCommand extends Command {
 
       // find after
       const afterMessageIndex = messages.findIndex(msg => msg.id === after);
-      if (afterMessageIndex === -1) throw 'Invalid message ID or link for option `after` or option `after` comes before option `before`.';
+      if (afterMessageIndex === -1)
+        throw 'Invalid message ID or link for option `after` or option `after` comes before option `before`.';
 
       count = afterMessageIndex;
-      
+
       if (user)
         for (const message of messages) {
           if (message.id === after) break;
@@ -74,11 +72,10 @@ class PurgeCommand extends Command {
       if (count > 100) count = 100;
 
       afterStr = null;
-    } 
-    else if (afterStr && !count) count = 100;
+    } else if (afterStr && !count) count = 100;
     else if (!count) throw 'Option `count` may only be left empty if option `after` is used.';
 
-    if (count === 0) throw "No messages to delete.";
+    if (count === 0) throw 'No messages to delete.';
 
     let before = beforeStr ? await extractMessageId(beforeStr) : undefined;
     let after = afterStr ? await extractMessageId(afterStr) : undefined;

@@ -253,7 +253,7 @@ import yaml from 'js-yaml';
         .addSubcommand(cmd =>
           cmd
             .setName('enable')
-            .setDescription('Enable slash commands on the guild.')
+            .setDescription('Enable message commands on the guild.')
             .addBooleanOption(opt => opt.setName('value').setDescription('Toggle for this setting.'))
         )
         .addSubcommand(cmd =>

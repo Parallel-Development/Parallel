@@ -37,12 +37,12 @@ class MessageDeleteBulkListener extends Listener {
     }
 
     const embed = new EmbedBuilder()
-    .setColor(Colors.Orange)
-    .setAuthor({
-      name: `Messages bulk deleted in #${refMsg.channel.name}`,
-      iconURL: this.client.user!.displayAvatarURL()
-    })
-    .setTimestamp();
+      .setColor(Colors.Orange)
+      .setAuthor({
+        name: `Messages bulk deleted in #${refMsg.channel.name}`,
+        iconURL: this.client.user!.displayAvatarURL()
+      })
+      .setTimestamp();
 
     const messagesArr = [...messages.values()];
     const firstMsg = messagesArr.at(-1)!;
@@ -55,7 +55,7 @@ class MessageDeleteBulkListener extends Listener {
 
       if (prevUser === message.author.id) description += `\n> ${message.content}`;
       else description += `\n${message.author.username} (${message.author.id}):\n> ${message.content}`;
-      
+
       prevUser = message.author.id;
     }
 

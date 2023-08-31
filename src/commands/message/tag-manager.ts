@@ -21,7 +21,8 @@ class TagManagerCommand extends Command {
         const content = args.slice(2).join(' ');
 
         if (name.length > 30) throw `The name may only be a maximum of 30 characters (${name.length} provided.)`;
-        if (content.length > 1000) throw `The content may only be a maximum of 1000 characters (${content.length} provided.)`;
+        if (content.length > 1000)
+          throw `The content may only be a maximum of 1000 characters (${content.length} provided.)`;
 
         await this.client.db.tag
           .create({
