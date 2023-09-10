@@ -42,17 +42,21 @@ model Guild {
   defaultWarnDuration            BigInt          @default(0)
   defaultMuteDuration            BigInt          @default(0)
   defaultBanDuration             BigInt          @default(0)
+
   autoModSpamToggle              Boolean         @default(false)
+  autoModSpamPunishment          InfractionType?
+  autoModSpamDuration            BigInt          @default(0)
   autoModSpamTriggers            Json[]          @default(["{ \"amount\": 5, \"within\": 5 }", "{ \"amount\": 10, \"within\": 20 }"])
   autoModSpamImmuneChannels      String[]
   autoModSpamImmuneRoles         String[]
-  autoModSpamPunishment          InfractionType?
-  autoModSpamDuration            BigInt          @default(0)
+  
   autoModMaliciousToggle         Boolean         @default(false)
-  autoModMaliciousImmuneChannels String[]
-  autoModMaliciousImmuneRoles    String[]
   autoModMaliciousPunishment     InfractionType?
   autoModMaliciousDuration       BigInt          @default(0)
+  autoModMaliciousImmuneChannels String[]
+  autoModMaliciousImmuneRoles    String[]
+
+
   escalationsAutoMod             Json[]
   escalationsManual              Json[]
   lockChannels                   String[]
@@ -67,6 +71,7 @@ model Guild {
   locks       Lock[]
   tags        Tag[]
   shortcuts   Shortcut[]
+  chatlogs    Chatlog[]
 }
 
 model Infraction {
@@ -138,4 +143,12 @@ model Shortcut {
 model Blacklist {
   id     String @id
   reason String
+}
+
+model Chatlog {
+  id        String @id
+  guildId   String
+  html      String
+  expires   BigInt
+  guild     Guild  @relation(fields: [guildId], references: [id], onDelete: Cascade)
 }

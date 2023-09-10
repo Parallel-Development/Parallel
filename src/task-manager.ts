@@ -4,6 +4,7 @@ import { Infraction, InfractionType } from '@prisma/client';
 import client from './client';
 import { getMember } from './lib/util/functions';
 
+// for infractions
 setInterval(async () => {
   await client.db.infraction.deleteMany({
     where: {
@@ -13,14 +14,6 @@ setInterval(async () => {
       }
     }
   });
-
-  await client.db.$executeRaw`DELETE FROM "Appeal"
-  WHERE id IN (
-    SELECT A.id
-    FROM "Appeal" A
-    INNER JOIN "Guild" G ON A."guildId" = G.id
-    WHERE A."date" + G."appealDisregardAfter" <= (extract(epoch from now()) * 1000)
-  )`;
 
   const guilds = await client.db.guild.findMany({
     select: { id: true, tasks: { where: { expires: { lte: Date.now() } } } }
@@ -103,3 +96,28 @@ setInterval(async () => {
     }
   }
 }, 60000);
+
+// for less important objects that can expire, like appeals or chatlogs
+// Its not an interval so that it can be called immediately
+async function sweeper() {
+  await client.db.$executeRaw`DELETE FROM "Appeal"
+  WHERE id IN (
+    SELECT A.id
+    FROM "Appeal" A
+    INNER JOIN "Guild" G ON A."guildId" = G.id
+    WHERE A."date" + G."appealDisregardAfter" <= (extract(epoch from now()) * 1000)
+  )`;
+
+  await client.db.chatlog.deleteMany({
+    where: {
+      expires: {
+        lte: Date.now()
+      }
+    }
+  });
+
+  // call the function in 24 hours
+  setTimeout(sweeper, 86400000);
+}
+
+sweeper();

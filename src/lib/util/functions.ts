@@ -1,4 +1,4 @@
-import { type Guild, type GuildMember } from 'discord.js';
+import { Message, type Guild, type GuildMember } from 'discord.js';
 import client from '../../client';
 
 export function adequateHierarchy(member1: GuildMember, member2: GuildMember) {

@@ -6,8 +6,10 @@ import {
   ApplicationCommandDataResolvable
 } from 'discord.js';
 import { InfractionType } from '@prisma/client';
-const customCommandsConfirmed = new Set();
-const unresolvedGuilds = new Set<string>();
+
+// imported by messageCommand
+export const customCommandsConfirmed = new Set();
+export const unresolvedGuilds = new Set<string>();
 
 class ChatInputCommandListener extends Listener {
   constructor() {

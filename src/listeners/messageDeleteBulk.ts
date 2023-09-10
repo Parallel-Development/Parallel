@@ -1,5 +1,7 @@
 import { Collection, Colors, EmbedBuilder, Message, PartialMessage } from 'discord.js';
 import Listener from '../lib/structs/Listener';
+import discordTranscripts, { ExportReturnType } from 'discord-html-transcripts';
+import crypto from 'crypto';
 import { bin } from '../lib/util/functions';
 
 class MessageDeleteBulkListener extends Listener {
@@ -8,10 +10,9 @@ class MessageDeleteBulkListener extends Listener {
   }
 
   async run(messages: Collection<string, Message<true>>) {
-    messages = messages.filter(msg => msg instanceof Message && msg.content?.length > 0);
-    if (messages.size === 0) return false;
-
     const refMsg = messages.first()!;
+
+    messages = messages.filter(msg => msg.author !== null);
 
     const guild = await this.client.db.guild.findUnique({
       where: {
@@ -44,23 +45,27 @@ class MessageDeleteBulkListener extends Listener {
       })
       .setTimestamp();
 
-    const messagesArr = [...messages.values()];
-    const firstMsg = messagesArr.at(-1)!;
-    let prevUser = firstMsg.author.id;
+    if (messages.size === 0) return webhook.send({ embeds: [embed] });
 
-    let description = `${firstMsg.author.username} (${firstMsg.author.id}):\n> ${firstMsg.content}`;
+    const html = await discordTranscripts.generateFromMessages(messages.reverse(), refMsg.channel, {
+      poweredBy: false,
+      footerText: '',
+      returnType: ExportReturnType.String,
+      saveImages: false
+    });
 
-    for (let i = messagesArr.length - 2; i >= 0; i--) {
-      const message = messagesArr[i];
-
-      if (prevUser === message.author.id) description += `\n> ${message.content}`;
-      else description += `\n${message.author.username} (${message.author.id}):\n> ${message.content}`;
-
-      prevUser = message.author.id;
-    }
-
-    if (description.length > 3500) description = await bin(description);
-    embed.setDescription(description);
+    const chatlog = await this.client.db.chatlog.create({
+      data: {
+        id: crypto.randomBytes(4).toString('hex'),
+        guildId: refMsg.guildId,
+        expires: BigInt(Date.now() + 604800000),
+        html
+      }
+    });
+    
+    embed.setDescription(
+      `[View chat log](${process.env.API}/chatlog/${chatlog.id})\nAll chat logs are automatically deleted after one week.`
+    );
 
     return webhook.send({ embeds: [embed] });
   }

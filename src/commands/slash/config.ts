@@ -430,7 +430,7 @@ class ConfigCommand extends Command {
             const duration = ms(uDuration);
 
             if (duration === undefined) throw 'Invalid duration.';
-            if (duration < 60000 && duration !== 0) throw 'Duration must be at least 1 hour.';
+            if (duration < 86400000 && duration !== 0) throw 'Duration must be at least 1 day.';
 
             const strDuration = ms(duration, { long: true });
 
@@ -498,7 +498,7 @@ class ConfigCommand extends Command {
               where: { id: interaction.guildId }
             }))!;
 
-            const fixedLockChannels = lockChannels.filter(c => interaction.guild.channels.cache.get(c));
+            const fixedLockChannels = lockChannels.filter(c => interaction.guild.channels.cache.has(c));
 
             const lockChannelsStr = fixedLockChannels.map(c => `<#${c}>`).join(', ');
             if (lockChannelsStr.length == 0) return interaction.reply('You have no channels on the list.');
@@ -710,13 +710,13 @@ class ConfigCommand extends Command {
               }
             }))!;
 
-            const fixedChannels = messageLogIgnoredChannels.filter(c => interaction.guild.channels.cache.get(c));
+            const fixedChannels = messageLogIgnoredChannels.filter(c => interaction.guild.channels.cache.has(c));
 
             if (fixedChannels.length === 0) return interaction.reply('There are no channels on the ignored list.');
 
             const channelsStr = fixedChannels.map(c => `<#${c}>`);
 
-            if (channelsStr.length > 1000)
+            if (channelsStr.length > 2000)
               return interaction.reply(
                 `Too long to upload as a Discord message, view here: ${await bin(channelsStr.join('\n'))}`
               );

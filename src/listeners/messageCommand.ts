@@ -9,8 +9,9 @@ import {
   ApplicationCommandPermissions
 } from 'discord.js';
 import { InfractionType } from '@prisma/client';
-const customCommandsConfirmed = new Set();
-const unresolvedGuilds = new Set<string>();
+
+import { customCommandsConfirmed, unresolvedGuilds } from './chatInputCommand';
+
 export const commandsPermissionCache: Map<
   string,
   Collection<string, readonly ApplicationCommandPermissions[]>

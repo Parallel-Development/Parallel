@@ -38,7 +38,8 @@ import { getUser } from '../../lib/util/functions';
 class AppealCommand extends Command {
   async run(interaction: ChatInputCommandInteraction) {
     const id = interaction.options.getInteger('id');
-    if (interaction.inCachedGuild() && !id) throw 'An infraction ID is required. To retreive it, use /mywarnings.';
+    if (interaction.inCachedGuild() && !id)
+      throw "An infraction ID is required. To retreive it, use /myinfractions. If you are trying to appeal an infraction in another server, you will have to run this command in my DM's.";
 
     if (!id) {
       const message = await interaction.reply({

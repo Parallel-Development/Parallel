@@ -29,7 +29,7 @@ class AppealCommand extends Command {
   async run(message: Message, args: string[]) {
     const id = +args[0];
     if ((Number.isNaN(id) || !Number.isInteger(id)) && message.inGuild())
-      throw 'An infraction ID is required. To retreive it, use /mywarnings.';
+      throw "An infraction ID is required. To retreive it, use /myinfractions. If you are trying to appeal an infraction in another server, you will have to run this command in my DM's.";
 
     if (!id) {
       const msg = await message.reply({
