@@ -17,9 +17,15 @@ A Discord moderation bot.
 Create a `.env` file and paste below into it. Replace the placeholders with something valid.
 - `TOKEN`={Discord bot token}
 - `CLIENT_ID`={Discord client ID}
-- `DATABASE_URL`={Postgresql connect url}
 - `DEV`={Developer ID} # User permitted to run eval
 - `PREFIX`={Prefix in DM's / default prefix}
+- `DATABASE_URL`={Postgresql connect url}
+- `API`={API URL}
+
+## API
+The API is currently only used for chat logs, which allow you to view purged messages online with styling similar to Discord.
+The API source code is available at [here](https://github.com/Parallel-Development/Parallel-API). View its `README.md` for instructions on starting.
+If you are unable to host the API, it is recommended that you rewrite the code to utilize pastebins instead.
 
 ## Starting the Bot (For the First Time)
 Not required for starting, but recommended for personalization, replace all instances of `Parallel` in the `src` files with your bot's name.

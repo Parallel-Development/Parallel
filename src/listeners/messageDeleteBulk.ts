@@ -62,7 +62,7 @@ class MessageDeleteBulkListener extends Listener {
         html
       }
     });
-    
+
     embed.setDescription(
       `[View chat log](${process.env.API}/chatlog/${chatlog.id})\nAll chat logs are automatically deleted after one week.`
     );
