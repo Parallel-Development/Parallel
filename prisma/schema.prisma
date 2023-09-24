@@ -146,9 +146,11 @@ model Blacklist {
 }
 
 model Chatlog {
-  id        String @id
+  keyHash   Bytes @id
+  iv        Bytes
+  authTag   Bytes
+  html      Bytes
   guildId   String
-  html      String
   expires   BigInt
   guild     Guild  @relation(fields: [guildId], references: [id], onDelete: Cascade)
 }

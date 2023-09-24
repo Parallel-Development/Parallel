@@ -2,7 +2,6 @@ import { Collection, Colors, EmbedBuilder, Message, PartialMessage } from 'disco
 import Listener from '../lib/structs/Listener';
 import discordTranscripts, { ExportReturnType } from 'discord-html-transcripts';
 import crypto from 'crypto';
-import { bin } from '../lib/util/functions';
 
 class MessageDeleteBulkListener extends Listener {
   constructor() {
@@ -50,21 +49,35 @@ class MessageDeleteBulkListener extends Listener {
     const html = await discordTranscripts.generateFromMessages(messages.reverse(), refMsg.channel, {
       poweredBy: false,
       footerText: '',
-      returnType: ExportReturnType.String,
+      returnType: ExportReturnType.Buffer,
       saveImages: false
     });
 
-    const chatlog = await this.client.db.chatlog.create({
+    // create key hash.
+    const key = crypto.randomBytes(16);
+    const hash = crypto.createHash('sha256');
+    hash.update(key);
+    const keyHash = hash.digest();
+
+    // encrypt data with key
+    const iv = crypto.randomBytes(4);
+    const cipher = crypto.createCipheriv('aes-128-gcm', key, iv);
+    const cipherBytes = Buffer.concat([cipher.update(html), cipher.final()]);
+    const authTag = cipher.getAuthTag();
+
+    await this.client.db.chatlog.create({
       data: {
-        id: crypto.randomBytes(4).toString('hex'),
+        keyHash,
+        iv,
+        authTag,
+        html: cipherBytes,
         guildId: refMsg.guildId,
-        expires: BigInt(Date.now() + 604800000),
-        html
+        expires: BigInt(Date.now() + 604800000)
       }
     });
 
     embed.setDescription(
-      `[View chat log](${process.env.API}/chatlog/${chatlog.id})\nAll chat logs are automatically deleted after one week.`
+      `[View chat log](${process.env.API}/chatlog/${key.toString('hex')})`
     );
 
     return webhook.send({ embeds: [embed] });
