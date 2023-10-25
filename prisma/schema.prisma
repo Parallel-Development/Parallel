@@ -56,7 +56,6 @@ model Guild {
   autoModMaliciousImmuneChannels String[]
   autoModMaliciousImmuneRoles    String[]
 
-
   escalationsAutoMod             Json[]
   escalationsManual              Json[]
   lockChannels                   String[]
