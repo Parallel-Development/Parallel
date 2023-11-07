@@ -301,7 +301,7 @@ class AutomodCommand extends Command {
         value: punishment === 'delete' ? null : punishment,
         enumerable: true
       });
-      Object.defineProperty(data, module + 'Duration', { value: duration ?? undefined, enumerable: true });
+      Object.defineProperty(data, module + 'Duration', { value: duration ?? 0, enumerable: true });
 
       await this.client.db.guild.update({
         where: {

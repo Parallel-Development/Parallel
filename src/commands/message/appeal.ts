@@ -1,9 +1,8 @@
-import { AppealMethod, InfractionType } from '@prisma/client';
+import { InfractionType } from '@prisma/client';
 import {
   ModalBuilder,
   TextInputBuilder,
   ActionRowBuilder,
-  type ModalActionRowComponentBuilder,
   TextInputStyle,
   ComponentType,
   ButtonBuilder,
@@ -37,7 +36,7 @@ class AppealCommand extends Command {
         components: [yesNoRow]
       });
 
-      const q1 = await message
+      const q1 = await msg
         .awaitMessageComponent({ componentType: ComponentType.Button, time: 10000 })
         .catch(async () => {
           await msg.edit({ content: 'Timed out.', components: [] });
@@ -53,7 +52,7 @@ class AppealCommand extends Command {
         });
 
       q1.update('Do you know the name of the guild?');
-      const q2 = await message
+      const q2 = await msg
         .awaitMessageComponent({ componentType: ComponentType.Button, time: 10000 })
         .catch(async () => {
           await msg.edit({ content: 'Timed out', components: [] });
@@ -114,7 +113,7 @@ class AppealCommand extends Command {
           components: [row]
         });
 
-      const q3 = await message
+      const q3 = await msg
         .awaitMessageComponent({ componentType: ComponentType.Button, time: 10000 })
         .catch(async () => {
           await msg.edit({ content: 'Timed out.', components: [] });
@@ -220,74 +219,7 @@ class AppealCommand extends Command {
       return;
     }
 
-    const infraction = await this.client.db.infraction.findUnique({
-      where: {
-        id
-      },
-      include: { appeal: true, guild: true }
-    });
-
-    if (infraction?.guildId !== message.guildId && !(!message.inGuild() && infraction))
-      throw "No infraction with that ID exists. If you are trying to appeal an infraction in another server, you will have to run this command in my DM's.";
-    if (infraction.userId !== message.author.id)
-      throw 'You cannot create an appeal for an infraction that is not on your record.';
-    if (infraction.type === InfractionType.Unmute || infraction.type === InfractionType.Unban)
-      throw 'You cannot appeal that kind of infraction.';
-
-    const { guild } = infraction;
-
-    if (!guild.appealAllowed) throw 'This guild is not accepting infraction appeals.';
-
-    if (guild.appealBlacklist.includes(message.author.id))
-      throw 'You are blacklisted from creating new appeals in this guild.';
-
-    if (guild.appealMethod === AppealMethod.Link)
-      return message.reply(`Infraction appeals for this guild are set to be handled at ${guild.appealLink}`);
-
-    if (infraction.appeal) throw 'An appeal for that infraction has already been made.';
-
-    const modal = new ModalBuilder();
-    modal.setTitle('Appeal').setCustomId(`appeal:${id}`);
-
-    for (const question of guild.appealModalQuestions) {
-      const row = new ActionRowBuilder<ModalActionRowComponentBuilder>();
-      const questionText = new TextInputBuilder()
-        .setLabel(question)
-        .setMaxLength(1000)
-        .setCustomId(question)
-        .setStyle(TextInputStyle.Paragraph)
-        .setRequired(true);
-
-      row.setComponents(questionText);
-      modal.components.push(row);
-    }
-
-    // message command pathway to show modal
-    const pathBtn = new ButtonBuilder().setCustomId('?').setLabel('Begin').setStyle(ButtonStyle.Primary);
-
-    const pathRow = new ActionRowBuilder<ButtonBuilder>().addComponents(pathBtn);
-
-    const msg = await message.reply({ content: 'Click below to begin appealing.', components: [pathRow] });
-
-    const pathHandler = await msg
-      .awaitMessageComponent({
-        componentType: ComponentType.Button,
-        time: 10000,
-        filter: btn => {
-          return btn.user.id === message.author.id;
-        }
-      })
-      .catch(async () => {
-        await msg.edit({ content: 'Timed out.', components: [] });
-        return null;
-      });
-
-    if (!pathHandler) return;
-
-    pathHandler.showModal(modal);
-    await msg.edit({ content: 'Appealing...', components: [] });
-
-    return;
+    throw 'Please run this as a slash command.';
   }
 }
 

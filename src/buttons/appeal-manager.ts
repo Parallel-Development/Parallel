@@ -1,7 +1,6 @@
 import { InfractionType } from '@prisma/client';
 import {
   ActionRowBuilder,
-  ApplicationCommandPermissionType,
   ButtonBuilder,
   ButtonInteraction,
   ButtonStyle,
@@ -12,10 +11,8 @@ import {
 } from 'discord.js';
 import ms from 'ms';
 import Button from '../lib/structs/Button';
-import { getMember } from '../lib/util/functions';
+import { getMember, hasSlashCommandPermission } from '../lib/util/functions';
 const reason = 'Unspecified reason.';
-const tiedCommand = 'appeal-manager';
-const error = "You don't have permission to use this button.";
 
 class AppealManagerButton extends Button {
   constructor() {
@@ -23,38 +20,8 @@ class AppealManagerButton extends Button {
   }
 
   async run(interaction: ButtonInteraction<'cached'>) {
-    if (interaction.user.id !== interaction.guild.ownerId) {
-      const command =
-        this.client.application!.commands.cache.find(cmd => cmd.name === tiedCommand) ||
-        (await this.client.application!.commands.fetch().then(cmds => cmds.find(cmd => cmd.name === tiedCommand)))!;
-
-      const permissions = await this.client
-        .application!.commands.permissions.fetch({ command: command.id, guild: interaction.guildId })
-        .catch(() => null);
-
-      const hasDefault = interaction.member.permissions?.has(command.defaultMemberPermissions!);
-      const allowed = permissions?.filter(
-        permission =>
-          permission.permission === true &&
-          (permission.id === interaction.user.id || interaction.member.roles.cache.some(r => permission.id === r.id))
-      );
-      const denied = permissions?.filter(
-        permission =>
-          permission.permission === false &&
-          (permission.id === interaction.user.id || interaction.member.roles.cache.some(r => permission.id === r.id))
-      );
-
-      if (denied?.some(deny => deny.type === ApplicationCommandPermissionType.User)) throw error;
-
-      if (!allowed?.length && !(denied?.length && hasDefault)) {
-        if (
-          !interaction.member.roles.cache.some(
-            r => r.permissions.has(command.defaultMemberPermissions!) && !denied?.some(role => role.id === r.id)
-          )
-        )
-          throw error;
-      }
-    }
+    if (!(await hasSlashCommandPermission(interaction.member, 'appeal-manager')))
+      throw "You don't have permission to use this button.";
 
     const method = interaction.customId.split(':')[1].split('.')[0] as 'accept' | 'deny' | 'disregard' | 'context';
     const infractionId = +interaction.customId.split('.')[1];

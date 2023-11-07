@@ -37,12 +37,20 @@ class AutomodListener extends Listener {
         infoKick: true,
         infoBan: true,
 
-        escalationsAutoMod: true
+        escalationsAutoMod: true,
+        ticketAutoModeration: true,
+
+        tickets: {
+          where: {
+            channelId: message.channelId
+          }
+        }
       }
     });
 
     if (!automod) return;
     if (message.member.permissions.has(Permissions.Administrator)) return;
+    if (!automod.ticketAutoModeration && automod.tickets.length > 0) return;
 
     if (
       automod.autoModMaliciousToggle &&
@@ -53,7 +61,7 @@ class AutomodListener extends Listener {
         const req = await fetch('https://anti-fish.bitflow.dev/check', {
           method: 'POST',
           headers: {
-            'User-Agent': 'Parallel Discord Bot (https://discord.gg/v2AV3XtnBM)',
+            'User-Agent': 'Parallel Discord Bot (https://www.parallelbot.xyz)',
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({

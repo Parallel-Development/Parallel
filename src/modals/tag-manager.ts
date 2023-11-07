@@ -1,13 +1,15 @@
 import { ModalSubmitInteraction } from 'discord.js';
 import Modal from '../lib/structs/Modal';
+import { hasSlashCommandPermission } from '../lib/util/functions';
 
 class TagManagerModal extends Modal {
   constructor() {
     super('tag-manager');
   }
 
-  async run(interaction: ModalSubmitInteraction) {
-    if (!interaction.inCachedGuild()) return;
+  async run(interaction: ModalSubmitInteraction<'cached'>) {
+    if (!(await hasSlashCommandPermission(interaction.member, 'tag-manager'))) throw 'Permission revoked.';
+
     const name = interaction.fields.getTextInputValue('name').toLowerCase();
     const content = interaction.fields.getTextInputValue('content');
 

@@ -4,14 +4,12 @@ import {
   SlashCommandBuilder,
   PermissionFlagsBits as Permissions,
   PermissionsBitField,
-  ChannelType,
-  TextChannel
+  ChannelType
 } from 'discord.js';
 import ms from 'ms';
 import Command, { data } from '../../lib/structs/Command';
 import { urlReg } from '../../lib/util/constants';
 import { bin } from '../../lib/util/functions';
-import { Escalations } from '../../types';
 import yaml from 'js-yaml';
 
 @data(
@@ -107,17 +105,23 @@ import yaml from 'js-yaml';
             .addStringOption(opt => opt.setName('duration').setDescription('The duration to wait.').setRequired(true))
         )
     )
-    .addSubcommand(cmd =>
-      cmd
+    .addSubcommandGroup(group =>
+      group
         .setName('mod-log-channel')
         .setDescription('Log moderator actions in a designated channel.')
-        .addChannelOption(opt =>
-          opt
-            .setName('channel')
-            .setDescription('The channel to send moderator logs to.')
-            .setRequired(true)
-            .addChannelTypes(ChannelType.GuildText)
+        .addSubcommand(cmd =>
+          cmd
+            .setName('set')
+            .setDescription('Choose a channel to send moderation actions in.')
+            .addChannelOption(opt =>
+              opt
+                .setName('channel')
+                .setDescription('The channel to send moderator logs to.')
+                .setRequired(true)
+                .addChannelTypes(ChannelType.GuildText)
+            )
         )
+        .addSubcommand(cmd => cmd.setName('none').setDescription('Disable moderation logging.'))
     )
     .addSubcommand(cmd =>
       cmd
@@ -245,6 +249,7 @@ import yaml from 'js-yaml';
         .addSubcommand(cmd =>
           cmd.setName('ignored-channels-view').setDescription('View all ignored channels from the message logger.')
         )
+        .addSubcommand(cmd => cmd.setName('none').setDescription('Stop logging messages.'))
     )
     .addSubcommandGroup(group =>
       group
@@ -300,7 +305,7 @@ class ConfigCommand extends Command {
             if (!interaction.guild.members.me!.permissions.has(Permissions.ManageWebhooks))
               throw 'I need permission to manage webhooks.';
 
-            const channel = interaction.options.getChannel('channel', true) as TextChannel;
+            const channel = interaction.options.getChannel('channel', true, [ChannelType.GuildText]);
             await interaction.deferReply();
             const { appealAlertWebhookId } = (await this.client.db.guild.findUnique({
               where: { id: interaction.guildId }
@@ -610,7 +615,7 @@ class ConfigCommand extends Command {
             if (!interaction.guild.members.me!.permissions.has(Permissions.ManageWebhooks))
               throw 'I need permission to manage webhooks.';
 
-            const channel = interaction.options.getChannel('channel', true) as TextChannel;
+            const channel = interaction.options.getChannel('channel', true, [ChannelType.GuildText]);
             await interaction.deferReply();
             const { messageLogWebhookId } = (await this.client.db.guild.findUnique({
               where: { id: interaction.guildId }
@@ -627,7 +632,7 @@ class ConfigCommand extends Command {
                   channel: channel.id
                 })
                 .catch(() => {
-                  throw 'Failed to change alert channel likely due to permissions.';
+                  throw 'Failed to change log channel likely due to permissions.';
                 });
             } else {
               const newWebhook = await channel.createWebhook({
@@ -645,7 +650,7 @@ class ConfigCommand extends Command {
                   }
                 })
                 .catch(() => {
-                  throw 'Failed to set alert channel likely due to permissions.';
+                  throw 'Failed to set log channel likely due to permissions.';
                 });
             }
 
@@ -723,6 +728,29 @@ class ConfigCommand extends Command {
 
             return interaction.reply(channelsStr.join(', '));
           }
+          case 'none': {
+            const { messageLogWebhookId } = (await this.client.db.guild.findUnique({
+              where: {
+                id: interaction.guildId
+              }
+            }))!;
+
+            if (!messageLogWebhookId) return interaction.reply('Message logging disabled.');
+
+            await interaction.deferReply();
+            await this.client.deleteWebhook(messageLogWebhookId).catch(() => {});
+
+            await this.client.db.guild.update({
+              where: {
+                id: interaction.guildId
+              },
+              data: {
+                messageLogWebhookId: null
+              }
+            });
+
+            return interaction.editReply('Message logging disabled.');
+          }
         }
       }
       case 'message-commands': {
@@ -772,8 +800,63 @@ class ConfigCommand extends Command {
           }
         }
       }
+      case 'mod-log-channel': {
+        if (!interaction.guild.members.me!.permissions.has(Permissions.ManageWebhooks))
+          throw 'I need permission to manage webhooks.';
+
+        const { modLogWebhookId } = (await this.client.db.guild.findUnique({
+          where: { id: interaction.guildId }
+        }))!;
+
+        switch (subCmd) {
+          case 'set': {
+            const channel = interaction.options.getChannel('channel', true, [ChannelType.GuildText]);
+            await interaction.deferReply();
+
+            const webhooks = await interaction.guild.fetchWebhooks();
+            const webhook = webhooks.find(wh => wh.id === modLogWebhookId);
+
+            if (webhook) {
+              if (webhook.channel!.id === channel.id) throw 'Mod log channel is already set to that channel.';
+
+              await webhook
+                .edit({
+                  channel: channel.id
+                })
+                .catch(() => {
+                  throw 'Failed to change log channel likely due to permissions.';
+                });
+            } else {
+              const newWebhook = await channel.createWebhook({
+                name: 'Mod Logger',
+                avatar: this.client.user!.displayAvatarURL()
+              });
+
+              await this.client.db.guild
+                .update({
+                  where: {
+                    id: interaction.guildId
+                  },
+                  data: {
+                    modLogWebhookId: newWebhook.id
+                  }
+                })
+                .catch(() => {
+                  throw 'Failed to set log channel likely due to permissions.';
+                });
+            }
+
+            return interaction.editReply(`Mod log channel set to ${channel.toString()}.`);
+          }
+          case 'none': {
+            if (!modLogWebhookId) return interaction.reply('Moderation logging disabled.');
+            await interaction.deferReply();
+            await this.client.deleteWebhook(modLogWebhookId).catch(() => {});
+            return interaction.editReply('Moderation logging disabled.');
+          }
+        }
+      }
     }
-    // simple as that
 
     switch (subCmd) {
       case 'infraction-moderator-public': {
@@ -809,51 +892,6 @@ class ConfigCommand extends Command {
             ? 'Users will now be notified when an infraction is deleted or the reason or duration is changed.'
             : 'Users will no longer be notified when an infraction is deleted or the reason or duration is changed.'
         );
-      }
-      case 'mod-log-channel': {
-        if (!interaction.guild.members.me!.permissions.has(Permissions.ManageWebhooks))
-          throw 'I need permission to manage webhooks.';
-
-        const channel = interaction.options.getChannel('channel', true) as TextChannel;
-        await interaction.deferReply();
-        const { modLogWebhookId } = (await this.client.db.guild.findUnique({
-          where: { id: interaction.guildId }
-        }))!;
-
-        const webhooks = await interaction.guild.fetchWebhooks();
-        const webhook = webhooks.find(wh => wh.id === modLogWebhookId);
-
-        if (webhook) {
-          if (webhook.channel!.id === channel.id) throw 'Mod log channel is already set to that channel.';
-
-          await webhook
-            .edit({
-              channel: channel.id
-            })
-            .catch(() => {
-              throw 'Failed to change alert channel likely due to permissions.';
-            });
-        } else {
-          const newWebhook = await channel.createWebhook({
-            name: 'Mod Logger',
-            avatar: this.client.user!.displayAvatarURL()
-          });
-
-          await this.client.db.guild
-            .update({
-              where: {
-                id: interaction.guildId
-              },
-              data: {
-                modLogWebhookId: newWebhook.id
-              }
-            })
-            .catch(() => {
-              throw 'Failed to set alert channel likely due to permissions.';
-            });
-        }
-
-        return interaction.editReply(`Mod log channel set to ${channel.toString()}.`);
       }
       case 'additional-punishment-info': {
         let type = interaction.options.getString('punishment', true);

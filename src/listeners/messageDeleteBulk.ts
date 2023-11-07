@@ -76,9 +76,7 @@ class MessageDeleteBulkListener extends Listener {
       }
     });
 
-    embed.setDescription(
-      `[View chat log](${process.env.API}/chatlog/${key.toString('hex')})`
-    );
+    embed.setDescription(`[View chat log](${process.env.API}/chatlog/${key.toString('hex')})`);
 
     return webhook.send({ embeds: [embed] });
   }

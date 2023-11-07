@@ -1,4 +1,4 @@
-import { Message, type Guild, type GuildMember } from 'discord.js';
+import { type Guild, type GuildMember, ApplicationCommandPermissionType } from 'discord.js';
 import client from '../../client';
 
 export function adequateHierarchy(member1: GuildMember, member2: GuildMember) {
@@ -54,4 +54,38 @@ export async function bin(data: any, ext: string = 'js') {
 
 export async function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+export async function hasSlashCommandPermission(member: GuildMember, commandName: string) {
+  if (member.id === member.guild.ownerId) return true;
+
+  const command =
+    client.application!.commands.cache.find(cmd => cmd.name === commandName) ||
+    (await client.application!.commands.fetch().then(cmds => cmds.find(cmd => cmd.name === commandName)))!;
+
+  const permissions = await client
+    .application!.commands.permissions.fetch({ command: command.id, guild: member.guild.id })
+    .catch(() => null);
+  const hasDefault = member.permissions?.has(command.defaultMemberPermissions ?? 0n);
+  const allowed = permissions?.filter(
+    permission =>
+      permission.permission === true &&
+      (permission.id === member.id || member.roles.cache.some(r => permission.id === r.id))
+  );
+  const denied = permissions?.filter(
+    permission =>
+      permission.permission === false &&
+      (permission.id === member.id || member.roles.cache.some(r => permission.id === r.id))
+  );
+  if (denied?.some(deny => deny.type === ApplicationCommandPermissionType.User)) return false;
+  if (!allowed?.length && !(denied?.length && hasDefault)) {
+    if (
+      !member.roles.cache.some(
+        r => r.permissions.has(command.defaultMemberPermissions ?? 0n) && !denied?.some(role => role.id === r.id)
+      )
+    )
+      return false;
+  }
+
+  return true;
 }

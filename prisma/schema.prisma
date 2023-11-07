@@ -64,6 +64,15 @@ model Guild {
   messageCommandsEnabled         Boolean         @default(true)
   respondNoPermission            Boolean         @default(true)
 
+  ticketsEnabled                 Boolean         @default(false)
+  ticketLogWebhookId             String?
+  ticketLocation                 String?
+  allowUserCloseTicket           Boolean         @default(false)
+  pingRoleOnTicketCreation       String?
+  ticketAutoModeration           Boolean         @default(false)
+  ticketModeratorRoles           String[]
+  ticketBlacklist                String[]
+
   infractions Infraction[]
   appeals     Appeal[]
   tasks       Task[]
@@ -71,6 +80,7 @@ model Guild {
   tags        Tag[]
   shortcuts   Shortcut[]
   chatlogs    Chatlog[]
+  tickets     Ticket[]
 }
 
 model Infraction {
@@ -152,4 +162,15 @@ model Chatlog {
   guildId   String
   expires   BigInt
   guild     Guild  @relation(fields: [guildId], references: [id], onDelete: Cascade)
+}
+
+model Ticket {
+  channelId String  @id
+  title     String
+  creatorId String
+  invite    String? @unique
+  guildId   String
+
+  @@unique([guildId, creatorId])
+  guild     Guild   @relation(fields: [guildId], references: [id], onDelete: Cascade)
 }
