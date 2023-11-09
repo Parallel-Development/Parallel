@@ -12,6 +12,8 @@ class MessageLogListener extends Listener {
     if (message.author.bot) return;
     if (!message.guild) return;
 
+    if (oldMessage && oldMessage.content === message.content) return;
+
     const guild = await this.client.db.guild.findUnique({
       where: {
         id: message.guild.id
@@ -67,16 +69,23 @@ class MessageLogListener extends Listener {
           value: message.content.length > 1000 ? await bin(message.content) : message.content
         });
 
+      const url = message.attachments.first()?.url;
+      const qMarkIndex = url ? url.indexOf('?') : null;
       if (
         message.attachments.size === 1 &&
-        ['png', 'webp', 'jpg', 'jpeg', 'gif'].includes(message.attachments.first()!.url.slice(-3))
+        ['png', 'webp', 'jpg', /*j*/'peg', 'gif'].includes(url!.slice(0, qMarkIndex!).slice(-3))
       )
         embed.setImage(message.attachments.map(attachment => attachment.url).join('\n'));
-      else if (message.attachments.size > 0)
+      else if (message.attachments.size > 0) {
         embed.addFields({
           name: 'Attachments',
-          value: message.attachments.map(attachment => attachment.url).join('\n')
+          value: message.attachments.map(attachment => {
+            const qMarkIndex = attachment.url.lastIndexOf('?');
+            const stopAtFileName = attachment.url.slice(0, qMarkIndex);
+            return `[${stopAtFileName.slice(stopAtFileName.lastIndexOf('/') + 1)}](${attachment.url})`;
+          }).join('\n')
         });
+      }
     }
 
     return webhook.send({ embeds: [embed] });
