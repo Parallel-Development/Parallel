@@ -10,10 +10,12 @@ class CreateTicketButton extends Button {
   async run(interaction: ButtonInteraction<'cached'>) {
     if (!(await hasSlashCommandPermission(interaction.member, 'ticket')))
       throw "You don't have permission to use this button.";
-    const { ticketLocation, ticketBlacklist } = (await this.client.db.guild.findUnique({
+    const { ticketsEnabled, ticketLocation, ticketBlacklist } = (await this.client.db.guild.findUnique({
       where: { id: interaction.guildId },
-      select: { ticketLocation: true, ticketBlacklist: true }
+      select: { ticketsEnabled: true, ticketLocation: true, ticketBlacklist: true }
     }))!;
+
+    if (!ticketsEnabled) throw 'Tickets are not enabled in this server.';
 
     if (!ticketLocation || !interaction.guild.channels.cache.has(ticketLocation))
       throw 'This server has not properly configured tickets.';

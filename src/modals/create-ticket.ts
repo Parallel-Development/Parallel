@@ -13,10 +13,12 @@ class CreateTicketModal extends Modal {
     const title = interaction.fields.getTextInputValue('title');
     const description = interaction.fields.getTextInputValue('description');
 
-    const { ticketLocation, ticketBlacklist, pingRoleOnTicketCreation } = (await this.client.db.guild.findUnique({
+    const { ticketsEnabled, ticketLocation, ticketBlacklist, pingRoleOnTicketCreation } = (await this.client.db.guild.findUnique({
       where: { id: interaction.guildId },
-      select: { ticketLocation: true, ticketBlacklist: true, pingRoleOnTicketCreation: true }
+      select: { ticketsEnabled: true, ticketLocation: true, ticketBlacklist: true, pingRoleOnTicketCreation: true }
     }))!;
+
+    if (!ticketsEnabled) throw 'Tickets are not enabled in this server.';
 
     if (!ticketLocation || !interaction.guild.channels.cache.has(ticketLocation))
       throw 'This server has not properly configured tickets.';

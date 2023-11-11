@@ -36,10 +36,12 @@ class TicketCommand extends Command {
 
     switch (subCmd) {
       case 'open': {
-        const { ticketLocation, ticketBlacklist } = (await this.client.db.guild.findUnique({
+        const { ticketsEnabled, ticketLocation, ticketBlacklist } = (await this.client.db.guild.findUnique({
           where: { id: interaction.guildId },
-          select: { ticketLocation: true, ticketBlacklist: true }
+          select: { ticketsEnabled: true, ticketLocation: true, ticketBlacklist: true }
         }))!;
+
+        if (!ticketsEnabled) throw 'Tickets are not enabled in this server.';
 
         if (!ticketLocation || !interaction.guild.channels.cache.has(ticketLocation))
           throw 'This server has not properly configured tickets.';
