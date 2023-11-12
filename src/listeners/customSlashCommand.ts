@@ -1,4 +1,4 @@
-import { InfractionType as IT } from '@prisma/client';
+import { InfractionType as IT, InfractionType } from '@prisma/client';
 import {
   ChatInputCommandInteraction,
   Colors,
@@ -9,6 +9,7 @@ import {
 import Listener from '../lib/structs/Listener';
 import { pastTenseInfractionTypes } from '../lib/util/constants';
 import { adequateHierarchy } from '../lib/util/functions';
+import { Escalations } from '../types';
 
 class CustomSlashCommandListener extends Listener {
   constructor() {
@@ -76,7 +77,7 @@ class CustomSlashCommandListener extends Listener {
       },
       include: {
         guild: {
-          select: { infractionModeratorPublic: true, infoBan: true, infoKick: true, infoMute: true, infoWarn: true }
+          select: { infractionModeratorPublic: true, infoBan: true, infoKick: true, infoMute: true, infoWarn: true, escalationsManual: true }
         }
       }
     });
@@ -151,11 +152,122 @@ class CustomSlashCommandListener extends Listener {
     const tense = pastTenseInfractionTypes[lpunishment as keyof typeof pastTenseInfractionTypes];
     const upperTense = tense[0].toUpperCase() + tense.slice(1);
 
-    return interaction.editReply(
+    interaction.editReply(
       `${upperTense} **${target instanceof GuildMember ? target.user.username : target.username}** with ID \`${
         infraction.id
       }\``
     );
+
+    if (infraction.type !== InfractionType.Warn) return;
+    if (!(target instanceof GuildMember)) return;
+
+    // check for escalations
+    const infractionCount = await this.client.db.infraction.count({
+      where: {
+        guildId: interaction.guild.id,
+        userId: target.id,
+        type: InfractionType.Warn,
+        moderatorId: { not: this.client.user!.id }
+      }
+    });
+
+    const escalation = (infraction.guild.escalationsManual as Escalations).reduce(
+      (prev, curr) =>
+        infractionCount >= curr.amount
+          ? infractionCount - curr.amount < infractionCount - prev.amount
+            ? curr
+            : prev
+          : prev,
+      { amount: 0, punishment: InfractionType.Warn, duration: '0' }
+    );
+
+    if (escalation.amount === 0) return;
+
+    const eDuration = BigInt(escalation.duration);
+    const eExpires = eDuration ? date + eDuration : null;
+    const eExpiresStr = Math.floor(Number(eExpires) / 1000);
+
+    const eInfraction = await this.client.db.infraction.create({
+      data: {
+        userId: target.id,
+        guildId: interaction.guildId,
+        type: escalation.punishment,
+        date,
+        moderatorId: this.client.user!.id,
+        expires: eExpires,
+        reason: `Reaching or exceeding ${escalation.amount} infractions.`
+      }
+    });
+
+    if (eExpires) {
+      const data = {
+        guildId: interaction.guildId,
+        userId: target.id,
+        type: escalation.punishment,
+        expires: eExpires
+      };
+
+      await this.client.db.task.upsert({
+        where: {
+          userId_guildId_type: {
+            userId: target.id,
+            guildId: interaction.guildId,
+            type: escalation.punishment
+          }
+        },
+        update: data,
+        create: data
+      });
+    }
+
+    const eDm = new EmbedBuilder()
+      .setAuthor({ name: 'Parallel Moderation', iconURL: this.client.user!.displayAvatarURL() })
+      .setTitle(
+        `You were ${
+          pastTenseInfractionTypes[escalation.punishment.toLowerCase() as keyof typeof pastTenseInfractionTypes]
+        } ${
+          escalation.punishment === InfractionType.Ban || escalation.punishment === InfractionType.Kick ? 'from' : 'in'
+        } ${interaction.guild.name}`
+      )
+      .setColor(
+        escalation.punishment === InfractionType.Mute || escalation.punishment === InfractionType.Kick
+          ? Colors.Orange
+          : escalation.punishment === InfractionType.Unmute || escalation.punishment === InfractionType.Unban
+          ? Colors.Green
+          : Colors.Red
+      )
+      .setDescription(
+        `${eInfraction.reason}${eExpires ? `\n\n***•** Expires: <t:${eExpiresStr}> (<t:${eExpiresStr}:R>)*` : ''}`
+      )
+      .setFooter({ text: `Punishment ID: ${infraction.id}` })
+      .setTimestamp();
+
+    switch (escalation.punishment) {
+      case InfractionType.Ban:
+        if (infraction.guild.infoBan) eDm.addFields([{ name: 'Additional Information', value: infraction.guild.infoBan }]);
+      case InfractionType.Kick:
+        if (infraction.guild.infoKick) eDm.addFields([{ name: 'Additional Information', value: infraction.guild.infoKick }]);
+      case InfractionType.Mute:
+        if (infraction.guild.infoMute) eDm.addFields([{ name: 'Additional Information', value: infraction.guild.infoMute }]);
+      case InfractionType.Warn:
+        if (infraction.guild.infoWarn) eDm.addFields([{ name: 'Additional Information', value: infraction.guild.infoWarn }]);
+    }
+
+    await target.send({ embeds: [eDm] });
+
+    switch (escalation.punishment) {
+      case InfractionType.Ban:
+        await target.ban({ reason: eInfraction.reason });
+        break;
+      case InfractionType.Kick:
+        await target.kick(eInfraction.reason);
+        break;
+      case InfractionType.Mute:
+        await target.timeout(Number(eDuration), eInfraction.reason);
+        break;
+    }
+
+    this.client.emit('punishLog', eInfraction);
   }
 }
 

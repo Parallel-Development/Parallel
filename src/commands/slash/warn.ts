@@ -191,10 +191,13 @@ class WarnCommand extends Command {
     switch (escalation.punishment) {
       case InfractionType.Ban:
         await member!.ban({ reason: eInfraction.reason });
+        break;
       case InfractionType.Kick:
         if (member) await member!.kick(eInfraction.reason);
+        break;
       case InfractionType.Mute:
         if (member) await member!.timeout(Number(eDuration), eInfraction.reason);
+        break;
     }
 
     this.client.emit('punishLog', eInfraction);

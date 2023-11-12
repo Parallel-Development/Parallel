@@ -86,6 +86,9 @@ class ShortcutsCommand extends Command {
       if (!name.match(nameReg))
         throw 'The provided name contains illegal characters. Try limiting the name to letters, numbers, and dashes.';
 
+      const alreadyACommand = this.client.commands.slash.has(name) || this.client.aliases.has(name);
+      if (alreadyACommand) throw 'Shortcut name cannot match built in command names.';
+
       const description = interaction.options.getString('description', true);
       const punishment = interaction.options.getString('punishment', true) as IT;
       const reason = interaction.options.getString('reason', true);
