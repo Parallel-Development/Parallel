@@ -203,7 +203,7 @@ import yaml from 'js-yaml';
             .setName('add-override')
             .setDescription('Add an override to be updated when a channel is locked.')
             .addStringOption(opt =>
-              opt.setName('override').setDescription('The name of the override.').setRequired(true)
+              opt.setName('override').setDescription('The name of the override.').setAutocomplete(true).setRequired(true)
             )
         )
         .addSubcommand(cmd =>
@@ -211,7 +211,7 @@ import yaml from 'js-yaml';
             .setName('remove-override')
             .setDescription('Remove an override to be updated when a channel is locked.')
             .addStringOption(opt =>
-              opt.setName('override').setDescription('The name of the override.').setRequired(true)
+              opt.setName('override').setDescription('The name of the override.').setAutocomplete(true).setRequired(true)
             )
         )
         .addSubcommand(cmd =>
@@ -516,17 +516,10 @@ class ConfigCommand extends Command {
           }
           case 'add-override': {
             const override = interaction.options.getString('override', true);
-            const resolvable = override
-              .split(' ')
-              .map(word => `${word[0].toUpperCase()}${word.slice(1).toLowerCase()}`)
-              .join('')
-              .replace('TimeoutMembers', 'ModerateMembers')
-              .replace('UseVoiceActivity', 'UseVAD')
-              .replace('SendText-to-speechMessasges', 'SendTTSMessages');
 
-            if (!Permissions.hasOwnProperty(resolvable)) throw 'Invalid permission.';
+            if (!Permissions.hasOwnProperty(override)) throw 'Invalid permission.';
 
-            const permission = Permissions[resolvable as keyof typeof Permissions];
+            const permission = Permissions[override as keyof typeof Permissions];
 
             const { lockOverrides } = (await this.client.db.guild.findUnique({
               where: {
@@ -548,7 +541,7 @@ class ConfigCommand extends Command {
             });
 
             return interaction.editReply(
-              `The override \`${resolvable.replaceAll(
+              `The override \`${override.replaceAll(
                 /[a-z][A-Z]/g,
                 m => `${m[0]} ${m[1]}`
               )}\` will now be set to deny when a channel is locked.`
@@ -556,17 +549,10 @@ class ConfigCommand extends Command {
           }
           case 'remove-override': {
             const override = interaction.options.getString('override', true);
-            const resolvable = override
-              .split(' ')
-              .map(word => `${word[0].toUpperCase()}${word.slice(1).toLowerCase()}`)
-              .join('')
-              .replace('TimeoutMembers', 'ModerateMembers')
-              .replace('UseVoiceActivity', 'UseVAD')
-              .replace('SendText-to-speechMessasges', 'SendTTSMessages');
 
-            if (!Permissions.hasOwnProperty(resolvable)) throw 'Invalid permission.';
+            if (!Permissions.hasOwnProperty(override)) throw 'Invalid permission.';
 
-            const permission = Permissions[resolvable as keyof typeof Permissions];
+            const permission = Permissions[override as keyof typeof Permissions];
 
             const { lockOverrides } = (await this.client.db.guild.findUnique({
               where: {
@@ -588,7 +574,7 @@ class ConfigCommand extends Command {
             });
 
             return interaction.editReply(
-              `The override \`${resolvable.replaceAll(
+              `The override \`${override.replaceAll(
                 /[a-z][A-Z]/g,
                 m => `${m[0]} ${m[1]}`
               )}\` will no longer be de set to deny when a channel is locked.`
