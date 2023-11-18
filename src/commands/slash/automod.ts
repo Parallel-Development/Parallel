@@ -4,7 +4,10 @@ import {
   SlashCommandBuilder,
   PermissionFlagsBits as Permissions,
   Role,
-  ChannelType
+  ChannelType,
+  AutoModerationRuleTriggerType,
+  AutoModerationRuleEventType,
+  AutoModerationActionType
 } from 'discord.js';
 import ms from 'ms';
 import Command, { data } from '../../lib/structs/Command';
@@ -44,7 +47,8 @@ import { bin } from '../../lib/util/functions';
           option.setName('module').setDescription('The automod module.').setRequired(true).addChoices(
             // "Punishment" and "Duration" will be manually appended to modify those values. "autoModSpam" is not a valid module name itself.
             { name: 'Spam', value: 'autoModSpam' },
-            { name: 'Malicious Links', value: 'autoModMalicious' }
+            { name: 'Malicious Links', value: 'autoModMalicious' },
+            { name: 'Filter', value: 'autoModFilter' }
           )
         )
         .addStringOption(opt =>
@@ -84,7 +88,7 @@ import { bin } from '../../lib/util/functions';
                 .setRequired(true)
                 .addChoices(
                   { name: 'Spam', value: 'autoModSpamImmuneRoles' },
-                  { name: 'Malicious Links', value: 'autoModMaliciousImmuneRoles' }
+                  { name: 'Malicious Links', value: 'autoModMaliciousImmuneRoles' },
                 )
             )
         )
@@ -233,20 +237,53 @@ import { bin } from '../../lib/util/functions';
         )
         .addSubcommand(cmd => cmd.setName('triggers-view').setDescription('View all spam triggers.'))
     )
+    .addSubcommandGroup(group =>
+      group
+        .setName('filter')
+        .setDescription('Integrate Parallel infractions with built-in Discord AutoMod.')
+        .addSubcommand(cmd =>
+          cmd
+            .setName('rule')
+            .setDescription('Modify the AutoMod rule connected to Parallel.')
+            .addStringOption(opt => opt.setName('rule').setDescription('The name of the rule.').setAutocomplete(true).setRequired(true))
+        )
+        .addSubcommand(cmd =>
+          cmd
+            .setName('add')
+            .setDescription('Add a word or phrase to the AutoMod filter.')
+            .addStringOption(opt => opt.setName('word').setDescription('The word or phrase').setRequired(true))
+        )
+        .addSubcommand(cmd =>
+          cmd
+            .setName('remove')
+            .setDescription('Remove a word or phrase from the AutoMod filter.')
+            .addStringOption(opt => opt.setName('word').setDescription('The word or phrase').setRequired(true))
+        )
+        .addSubcommand(cmd =>
+          cmd
+            .setName('view')
+            .setDescription('View the AutoMod filter.')
+        )
+    )
 )
 class AutomodCommand extends Command {
   async run(interaction: ChatInputCommandInteraction<'cached'>) {
     const group = interaction.options.getSubcommandGroup();
     const subCmd = interaction.options.getSubcommand();
 
-    if (subCmd === 'view') {
+    if (!group && subCmd === 'view') {
       const {
         autoModSpamToggle,
         autoModSpamPunishment,
         autoModSpamDuration,
+
         autoModMaliciousToggle,
         autoModMaliciousPunishment,
-        autoModMaliciousDuration
+        autoModMaliciousDuration,
+
+        autoModFilterToggle,
+        autoModFilterPunishment,
+        autoModFilterDuration
       } = (await this.client.db.guild.findUnique({
         where: { id: interaction.guildId }
       }))!;
@@ -255,6 +292,8 @@ class AutomodCommand extends Command {
         autoModSpamDuration !== 0n ? `for ${ms(Number(autoModSpamDuration), { long: true })}` : ''
       }\nMalicious Links${!autoModMaliciousToggle ? ' (Disabled)' : ''}: ${autoModMaliciousPunishment ?? 'Delete'} ${
         autoModMaliciousDuration !== 0n ? `for ${ms(Number(autoModMaliciousDuration), { long: true })}` : ''
+      }\nFilter${!autoModFilterToggle ? ' (Disabled)' : ''}: ${autoModFilterPunishment ?? 'Delete'} ${
+        autoModFilterDuration !== 0n ? `for ${ms(Number(autoModFilterDuration), { long: true })}` : ''
       }`;
 
       return interaction.reply(`\`\`\`\n${str}\`\`\``);
@@ -465,6 +504,93 @@ class AutomodCommand extends Command {
           }
         }
         break;
+      case 'filter':
+        switch (subCmd) {
+          case 'rule': {
+            const rule = interaction.options.getString('rule', true);
+            await interaction.deferReply();
+
+            if (rule === 'create') {
+              const createdRule = await interaction.guild.autoModerationRules.create({
+                triggerType: AutoModerationRuleTriggerType.Keyword,
+                eventType: AutoModerationRuleEventType.MessageSend,
+                actions: [
+                  { type: AutoModerationActionType.BlockMessage }
+                ],
+                name: 'Parallel Moderation Filter',
+                enabled: true
+              });
+
+              await this.client.db.guild.update({
+                where: { id: interaction.guildId },
+                data: { autoModFilterRuleId: createdRule.id }
+              });
+
+              return interaction.editReply('Rule created and integrated!');
+            }
+
+            await this.client.db.guild.update({
+              where: { id: interaction.guildId },
+              data: { autoModFilterRuleId: rule }
+            });
+
+            return interaction.editReply('Rule integrated!');
+          }
+          case 'add': {
+            const word = interaction.options.getString('word', true);
+            await interaction.deferReply();
+
+            const { autoModFilterRuleId } = (await this.client.db.guild.findUnique({
+              where: { id: interaction.guildId }
+            }))!;
+
+            if (!autoModFilterRuleId) throw 'The AutoMod filter has not been properly configured. Please use `/automod filter rule`.';
+
+            const automodRule = await interaction.guild.autoModerationRules.fetch(autoModFilterRuleId);
+            if (automodRule.triggerMetadata.keywordFilter.includes(word)) throw 'That word or phrase is already on the filter list.';
+
+            await automodRule.setKeywordFilter(automodRule.triggerMetadata.keywordFilter.concat([word]));
+
+            return interaction.editReply(`Added \`${word}\` to the filter.`);
+          }
+          case 'remove': {
+            const word = interaction.options.getString('word', true);
+            await interaction.deferReply();
+
+            const { autoModFilterRuleId } = (await this.client.db.guild.findUnique({
+              where: { id: interaction.guildId }
+            }))!;
+
+            if (!autoModFilterRuleId) throw 'The AutoMod filter has not been properly configured. Please use `/automod filter rule`.';
+
+            const automodRule = await interaction.guild.autoModerationRules.fetch(autoModFilterRuleId);
+            if (!automodRule.triggerMetadata.keywordFilter.includes(word)) throw 'That word or phrase is not on the filter list.';
+
+            const filter = automodRule.triggerMetadata.keywordFilter;
+            filter.splice(filter.indexOf(word), 1)
+
+            await automodRule.setKeywordFilter(filter);
+
+            return interaction.editReply(`Removed \`${word}\` from the filter.`);
+          }
+          case 'view': {
+            await interaction.deferReply();
+
+            const { autoModFilterRuleId } = (await this.client.db.guild.findUnique({
+              where: { id: interaction.guildId }
+            }))!;
+
+            if (!autoModFilterRuleId) throw 'The AutoMod filter has not been properly configured. Please use `/automod filter rule`.';
+
+            const automodRule = await interaction.guild.autoModerationRules.fetch(autoModFilterRuleId);
+
+            const filter = automodRule.triggerMetadata.keywordFilter.join(', ');
+            if (filter.length === 0) return interaction.editReply('The automod filter is empty.')
+            if (filter.length > 1900) throw 'Too big to display. Please view in settings.';
+
+            return interaction.editReply(filter);
+          }
+        }
     }
   }
 }

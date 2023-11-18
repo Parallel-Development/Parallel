@@ -56,6 +56,11 @@ model Guild {
   autoModMaliciousImmuneChannels String[]
   autoModMaliciousImmuneRoles    String[]
 
+  autoModFilterToggle            Boolean         @default(false)
+  autoModFilterRuleId            String?
+  autoModFilterPunishment        InfractionType?
+  autoModFilterDuration          BigInt          @default(0)
+
   escalationsAutoMod             Json[]
   escalationsManual              Json[]
   lockChannels                   String[]

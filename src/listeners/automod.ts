@@ -1,8 +1,9 @@
 import { InfractionType } from '@prisma/client';
-import { Colors, EmbedBuilder, Message, PermissionFlagsBits as Permissions } from 'discord.js';
+import { Colors, EmbedBuilder, Guild, GuildMember, Message, PermissionFlagsBits as Permissions } from 'discord.js';
 import Listener from '../lib/structs/Listener';
 import { domainReg, pastTenseInfractionTypes } from '../lib/util/constants';
 import { AutoModSpamTriggers, Escalations } from '../types';
+import client from '../client';
 
 class AutomodListener extends Listener {
   // userId.guildId
@@ -32,12 +33,6 @@ class AutomodListener extends Listener {
         autoModMaliciousPunishment: true,
         autoModMaliciousDuration: true,
 
-        infoWarn: true,
-        infoMute: true,
-        infoKick: true,
-        infoBan: true,
-
-        escalationsAutoMod: true,
         ticketAutoModeration: true,
 
         tickets: {
@@ -72,14 +67,11 @@ class AutomodListener extends Listener {
         if (req.ok) {
           await message.delete();
 
-          const { infoWarn, infoMute, infoKick, infoBan } = automod;
-          return this.automodPunish(
-            message,
+          return AutomodListener.autoModPunish(
+            message.member, message.guild,
             'Malicious links.',
             automod.autoModMaliciousPunishment,
-            automod.autoModMaliciousDuration,
-            { infoWarn, infoMute, infoKick, infoBan },
-            automod.escalationsAutoMod as Escalations
+            automod.autoModMaliciousDuration
           );
         }
       }
@@ -107,14 +99,11 @@ class AutomodListener extends Listener {
           .slice(0, amount);
         await message.channel.bulkDelete(messages);
 
-        const { infoWarn, infoMute, infoKick, infoBan } = automod;
-        return this.automodPunish(
-          message,
+        return AutomodListener.autoModPunish(
+          message.member, message.guild,
           'Fast message spam.',
           automod.autoModSpamPunishment,
-          automod.autoModSpamDuration,
-          { infoWarn, infoMute, infoKick, infoBan },
-          automod.escalationsAutoMod as Escalations
+          automod.autoModSpamDuration
         );
       }
 
@@ -126,27 +115,32 @@ class AutomodListener extends Listener {
     }
   }
 
-  private async automodPunish(
-    message: Message<true>,
-    reason: 'Malicious links.' | 'Fast message spam.',
+  public static async autoModPunish(
+    member: GuildMember,
+    guild: Guild,
+    reason: string,
     punishment: InfractionType | null,
-    duration: bigint,
-    info: { infoWarn: string | null; infoMute: string | null; infoKick: string | null; infoBan: string | null },
-    escalations: Escalations
+    duration: bigint
   ) {
     if (!punishment) return false;
+
+    const { infoWarn, infoMute, infoKick, infoBan, escalationsAutoMod } = (await client.db.guild.findUnique({
+      where: { id: guild.id }
+    }))!;
+
+    const escalations = escalationsAutoMod as Escalations;
 
     const date = BigInt(Date.now());
     const expires = duration ? date + duration : null;
     const expiresStr = Math.floor(Number(expires) / 1000);
 
-    const infraction = await this.client.db.infraction.create({
+    const infraction = await client.db.infraction.create({
       data: {
-        userId: message.author.id,
-        guildId: message.guildId,
+        userId: member.id,
+        guildId: guild.id,
         type: punishment,
         date,
-        moderatorId: this.client.user!.id,
+        moderatorId: client.user!.id,
         expires,
         reason
       }
@@ -154,15 +148,15 @@ class AutomodListener extends Listener {
 
     if (expires && punishment !== InfractionType.Warn) {
       const data = {
-        guildId: message.guildId,
-        userId: message.author.id,
+        guildId: guild.id,
+        userId: member.id,
         type: punishment,
         expires
       };
 
-      await this.client.db.task.upsert({
+      await client.db.task.upsert({
         where: {
-          userId_guildId_type: { userId: message.author.id, guildId: message.guildId, type: punishment }
+          userId_guildId_type: { userId: member.id, guildId: guild.id, type: punishment }
         },
         update: data,
         create: data
@@ -170,11 +164,11 @@ class AutomodListener extends Listener {
     }
 
     const dm = new EmbedBuilder()
-      .setAuthor({ name: 'Parallel Moderation', iconURL: this.client.user!.displayAvatarURL() })
+      .setAuthor({ name: 'Parallel Moderation', iconURL: client.user!.displayAvatarURL() })
       .setTitle(
         `You were ${pastTenseInfractionTypes[punishment.toLowerCase() as keyof typeof pastTenseInfractionTypes]} ${
           punishment === InfractionType.Ban || punishment === InfractionType.Kick ? 'from' : 'in'
-        } ${message.guild.name}`
+        } ${guild.name}`
       )
       .setColor(
         punishment === InfractionType.Warn
@@ -191,37 +185,37 @@ class AutomodListener extends Listener {
 
     switch (punishment) {
       case InfractionType.Ban:
-        if (info.infoBan) dm.addFields([{ name: 'Additional Information', value: info.infoBan }]);
+        if (infoBan) dm.addFields([{ name: 'Additional Information', value: infoBan }]);
       case InfractionType.Kick:
-        if (info.infoKick) dm.addFields([{ name: 'Additional Information', value: info.infoKick }]);
+        if (infoKick) dm.addFields([{ name: 'Additional Information', value: infoKick }]);
       case InfractionType.Mute:
-        if (info.infoMute) dm.addFields([{ name: 'Additional Information', value: info.infoMute }]);
+        if (infoMute) dm.addFields([{ name: 'Additional Information', value: infoMute }]);
       case InfractionType.Warn:
-        if (info.infoWarn) dm.addFields([{ name: 'Additional Information', value: info.infoWarn }]);
+        if (infoWarn) dm.addFields([{ name: 'Additional Information', value: infoWarn }]);
     }
 
-    await message.member!.send({ embeds: [dm] }).catch(() => {});
+    await member!.send({ embeds: [dm] }).catch(() => {});
 
-    this.client.emit('punishLog', infraction);
+    client.emit('punishLog', infraction);
 
     switch (punishment) {
       case InfractionType.Ban:
-        await message.member!.ban({ reason });
+        await member!.ban({ reason });
       case InfractionType.Kick:
-        await message.member!.kick(reason);
+        await member!.kick(reason);
       case InfractionType.Mute:
-        await message.member!.timeout(Number(duration), reason);
+        await member!.timeout(Number(duration), reason);
     }
 
     if (punishment !== InfractionType.Warn) return true;
 
     // ESCALATION CHECK!
-    const infractionCount = await this.client.db.infraction.count({
+    const infractionCount = await client.db.infraction.count({
       where: {
-        guildId: message.guild.id,
-        userId: message.member!.id,
+        guildId: guild.id,
+        userId: member!.id,
         type: InfractionType.Warn,
-        moderatorId: this.client.user!.id
+        moderatorId: client.user!.id
       }
     });
 
@@ -245,13 +239,13 @@ class AutomodListener extends Listener {
     const eExpiresStr = Math.floor(Number(eExpires) / 1000);
     const eReason = `Reaching or exceeding ${escalation.amount} automod infractions.`;
 
-    const eInfraction = await this.client.db.infraction.create({
+    const eInfraction = await client.db.infraction.create({
       data: {
-        userId: message.author.id,
-        guildId: message.guildId,
+        userId: member.id,
+        guildId: guild.id,
         type: escalation.punishment,
         date,
-        moderatorId: this.client.user!.id,
+        moderatorId: client.user!.id,
         expires: eExpires,
         reason: eReason
       }
@@ -259,15 +253,15 @@ class AutomodListener extends Listener {
 
     if (eExpires) {
       const data = {
-        guildId: message.guildId,
-        userId: message.author.id,
+        guildId: guild.id,
+        userId: member.id,
         type: escalation.punishment,
         expires: eExpires
       };
 
-      await this.client.db.task.upsert({
+      await client.db.task.upsert({
         where: {
-          userId_guildId_type: { userId: message.author.id, guildId: message.guildId, type: escalation.punishment }
+          userId_guildId_type: { userId: member.id, guildId: guild.id, type: escalation.punishment }
         },
         update: data,
         create: data
@@ -275,13 +269,13 @@ class AutomodListener extends Listener {
     }
 
     const eDm = new EmbedBuilder()
-      .setAuthor({ name: 'Parallel Moderation', iconURL: this.client.user!.displayAvatarURL() })
+      .setAuthor({ name: 'Parallel Moderation', iconURL: client.user!.displayAvatarURL() })
       .setTitle(
         `You were ${
           pastTenseInfractionTypes[escalation.punishment.toLowerCase() as keyof typeof pastTenseInfractionTypes]
         } ${
           escalation.punishment === InfractionType.Ban || escalation.punishment === InfractionType.Kick ? 'from' : 'in'
-        } ${message.guild.name}`
+        } ${guild.name}`
       )
       .setColor(
         escalation.punishment === InfractionType.Mute || escalation.punishment === InfractionType.Kick
@@ -298,26 +292,26 @@ class AutomodListener extends Listener {
 
     switch (escalation.punishment) {
       case InfractionType.Ban:
-        if (info.infoBan) eDm.addFields([{ name: 'Additional Information', value: info.infoBan }]);
+        if (infoBan) eDm.addFields([{ name: 'Additional Information', value: infoBan }]);
       case InfractionType.Kick:
-        if (info.infoKick) eDm.addFields([{ name: 'Additional Information', value: info.infoKick }]);
+        if (infoKick) eDm.addFields([{ name: 'Additional Information', value: infoKick }]);
       case InfractionType.Mute:
-        if (info.infoMute) eDm.addFields([{ name: 'Additional Information', value: info.infoMute }]);
+        if (infoMute) eDm.addFields([{ name: 'Additional Information', value: infoMute }]);
       case InfractionType.Warn:
-        if (info.infoWarn) eDm.addFields([{ name: 'Additional Information', value: info.infoWarn }]);
+        if (infoWarn) eDm.addFields([{ name: 'Additional Information', value: infoWarn }]);
     }
 
-    await message.member!.send({ embeds: [eDm] }).catch(() => {});
+    await member!.send({ embeds: [eDm] }).catch(() => {});
 
-    this.client.emit('punishLog', eInfraction);
+    client.emit('punishLog', eInfraction);
 
     switch (escalation.punishment) {
       case InfractionType.Ban:
-        await message.member!.ban({ reason: eReason });
+        await member!.ban({ reason: eReason });
       case InfractionType.Kick:
-        await message.member!.kick(eReason);
+        await member!.kick(eReason);
       case InfractionType.Mute:
-        await message.member!.timeout(Number(eDuration), eReason);
+        await member!.timeout(Number(eDuration), eReason);
     }
 
     return true;

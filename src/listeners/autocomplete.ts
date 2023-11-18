@@ -1,5 +1,5 @@
 import Listener from '../lib/structs/Listener';
-import { AutocompleteInteraction } from 'discord.js';
+import { AutoModerationRuleTriggerType, AutocompleteInteraction } from 'discord.js';
 import { channelPermissionOverrides } from '../lib/util/constants';
 
 class AutocompleteListener extends Listener {
@@ -9,14 +9,33 @@ class AutocompleteListener extends Listener {
 
   async run(interaction: AutocompleteInteraction<'cached'>) {
     const focused = interaction.options.getFocused(true);
-    if (focused.name !== 'override') return;
+    const focusedLowercase = focused.value.toLowerCase();
 
-    const filtered = channelPermissionOverrides
-    .filter(override => override.name.toLowerCase().includes(focused.value.toLowerCase()))
-    .sort((a, b) => a.name.localeCompare(b.name))
-    .slice(0, 25);
+    switch (focused.name) {
+      case 'override': {
+        const filtered = channelPermissionOverrides
+        .filter(override => override.name.toLowerCase().includes(focusedLowercase))
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .slice(0, 25);
 
-    return interaction.respond(filtered).catch(() => {});
+        return interaction.respond(filtered).catch(() => {});
+      }
+      case 'rule': {
+        const rules = await interaction.guild.autoModerationRules.fetch();
+        const filtered = [
+          { name: 'Create For Me', id: 'create' },
+
+          ...rules
+          .filter(rule => rule.triggerType === AutoModerationRuleTriggerType.Keyword && rule.name.toLowerCase().includes(focusedLowercase))
+          .sort((a, b) => a.name.localeCompare(b.name))
+          .values()
+        ]
+        .slice(0, 24)
+        .map(rule => { return { name: rule.name, value: rule.id }})
+
+        return interaction.respond(filtered).catch(() => {});
+      }
+    }
   }
 }
 
