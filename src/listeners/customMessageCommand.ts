@@ -280,7 +280,7 @@ class CustomMessageCommandListener extends Listener {
       .setDescription(
         `${eInfraction.reason}${eExpires ? `\n\n***•** Expires: <t:${eExpiresStr}> (<t:${eExpiresStr}:R>)*` : ''}`
       )
-      .setFooter({ text: `Punishment ID: ${infraction.id}` })
+      .setFooter({ text: `Punishment ID: ${eInfraction.id}` })
       .setTimestamp();
 
     switch (escalation.punishment) {
