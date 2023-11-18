@@ -30,7 +30,7 @@ class CustomMessageCommandListener extends Listener {
 
     if (message.author.id !== message.guildId) {
       const slashCommand =
-        (await message.guild.commands.cache.find(c => c.name === commandName)) ||
+        (message.guild.commands.cache.find(c => c.name === commandName)) ||
         (await message.guild!.commands.fetch().then(cmds => cmds.find(cmd => cmd.name === commandName)))!;
 
       const permissions = await this.client
@@ -162,12 +162,16 @@ class CustomMessageCommandListener extends Listener {
     switch (punishment) {
       case IT.Ban:
         if (infoBan) dm.addFields([{ name: 'Additional Information', value: infoBan }]);
+        break;
       case IT.Kick:
         if (infoKick) dm.addFields([{ name: 'Additional Information', value: infoKick }]);
+        break;
       case IT.Mute:
         if (infoMute) dm.addFields([{ name: 'Additional Information', value: infoMute }]);
+        break;
       case IT.Warn:
         if (infoWarn) dm.addFields([{ name: 'Additional Information', value: infoWarn }]);
+        break;
     }
 
     if (target instanceof GuildMember) await target!.send({ embeds: [dm] }).catch(() => {});
@@ -283,15 +287,19 @@ class CustomMessageCommandListener extends Listener {
       case InfractionType.Ban:
         if (infraction.guild.infoBan)
           eDm.addFields([{ name: 'Additional Information', value: infraction.guild.infoBan }]);
+        break;
       case InfractionType.Kick:
         if (infraction.guild.infoKick)
           eDm.addFields([{ name: 'Additional Information', value: infraction.guild.infoKick }]);
+        break;
       case InfractionType.Mute:
         if (infraction.guild.infoMute)
           eDm.addFields([{ name: 'Additional Information', value: infraction.guild.infoMute }]);
+        break;
       case InfractionType.Warn:
         if (infraction.guild.infoWarn)
           eDm.addFields([{ name: 'Additional Information', value: infraction.guild.infoWarn }]);
+        break;
     }
 
     await target.send({ embeds: [eDm] });
