@@ -88,7 +88,7 @@ import { bin } from '../../lib/util/functions';
                 .setRequired(true)
                 .addChoices(
                   { name: 'Spam', value: 'autoModSpamImmuneRoles' },
-                  { name: 'Malicious Links', value: 'autoModMaliciousImmuneRoles' },
+                  { name: 'Malicious Links', value: 'autoModMaliciousImmuneRoles' }
                 )
             )
         )
@@ -245,7 +245,9 @@ import { bin } from '../../lib/util/functions';
           cmd
             .setName('rule')
             .setDescription('Modify the AutoMod rule connected to Parallel.')
-            .addStringOption(opt => opt.setName('rule').setDescription('The name of the rule.').setAutocomplete(true).setRequired(true))
+            .addStringOption(opt =>
+              opt.setName('rule').setDescription('The name of the rule.').setAutocomplete(true).setRequired(true)
+            )
         )
         .addSubcommand(cmd =>
           cmd
@@ -259,11 +261,7 @@ import { bin } from '../../lib/util/functions';
             .setDescription('Remove a word or phrase from the AutoMod filter.')
             .addStringOption(opt => opt.setName('word').setDescription('The word or phrase').setRequired(true))
         )
-        .addSubcommand(cmd =>
-          cmd
-            .setName('view')
-            .setDescription('View the AutoMod filter.')
-        )
+        .addSubcommand(cmd => cmd.setName('view').setDescription('View the AutoMod filter.'))
     )
 )
 class AutomodCommand extends Command {
@@ -514,9 +512,7 @@ class AutomodCommand extends Command {
               const createdRule = await interaction.guild.autoModerationRules.create({
                 triggerType: AutoModerationRuleTriggerType.Keyword,
                 eventType: AutoModerationRuleEventType.MessageSend,
-                actions: [
-                  { type: AutoModerationActionType.BlockMessage }
-                ],
+                actions: [{ type: AutoModerationActionType.BlockMessage }],
                 name: 'Parallel Moderation Filter',
                 enabled: true
               });
@@ -530,8 +526,7 @@ class AutomodCommand extends Command {
             }
 
             const automodRule = await interaction.guild.autoModerationRules.fetch(rule).catch(() => null);
-            if (!automodRule)
-              throw 'Invalid rule ID.';
+            if (!automodRule) throw 'Invalid rule ID.';
 
             await this.client.db.guild.update({
               where: { id: interaction.guildId },
@@ -548,9 +543,12 @@ class AutomodCommand extends Command {
               where: { id: interaction.guildId }
             }))!;
 
-            if (!autoModFilterRuleId) throw 'The AutoMod filter has not been properly configured. Please use `/automod filter rule`.';
+            if (!autoModFilterRuleId)
+              throw 'The AutoMod filter has not been properly configured. Please use `/automod filter rule`.';
 
-            const automodRule = await interaction.guild.autoModerationRules.fetch(autoModFilterRuleId).catch(() => null);
+            const automodRule = await interaction.guild.autoModerationRules
+              .fetch(autoModFilterRuleId)
+              .catch(() => null);
             if (!automodRule) {
               await this.client.db.guild.update({
                 where: { id: interaction.guildId },
@@ -560,7 +558,8 @@ class AutomodCommand extends Command {
               throw 'The AutoMod filter has not been properly configured. Please use `/automod filter rule`.';
             }
 
-            if (automodRule.triggerMetadata.keywordFilter.includes(word)) throw 'That word or phrase is already on the filter list.';
+            if (automodRule.triggerMetadata.keywordFilter.includes(word))
+              throw 'That word or phrase is already on the filter list.';
 
             await automodRule.setKeywordFilter(automodRule.triggerMetadata.keywordFilter.concat([word]));
 
@@ -574,9 +573,12 @@ class AutomodCommand extends Command {
               where: { id: interaction.guildId }
             }))!;
 
-            if (!autoModFilterRuleId) throw 'The AutoMod filter has not been properly configured. Please use `/automod filter rule`.';
+            if (!autoModFilterRuleId)
+              throw 'The AutoMod filter has not been properly configured. Please use `/automod filter rule`.';
 
-            const automodRule = await interaction.guild.autoModerationRules.fetch(autoModFilterRuleId).catch(() => null);
+            const automodRule = await interaction.guild.autoModerationRules
+              .fetch(autoModFilterRuleId)
+              .catch(() => null);
             if (!automodRule) {
               await this.client.db.guild.update({
                 where: { id: interaction.guildId },
@@ -586,10 +588,11 @@ class AutomodCommand extends Command {
               throw 'The AutoMod filter has not been properly configured. Please use `/automod filter rule`.';
             }
 
-            if (!automodRule.triggerMetadata.keywordFilter.includes(word)) throw 'That word or phrase is not on the filter list.';
+            if (!automodRule.triggerMetadata.keywordFilter.includes(word))
+              throw 'That word or phrase is not on the filter list.';
 
             const filter = automodRule.triggerMetadata.keywordFilter;
-            filter.splice(filter.indexOf(word), 1)
+            filter.splice(filter.indexOf(word), 1);
 
             await automodRule.setKeywordFilter(filter);
 
@@ -602,9 +605,12 @@ class AutomodCommand extends Command {
               where: { id: interaction.guildId }
             }))!;
 
-            if (!autoModFilterRuleId) throw 'The AutoMod filter has not been properly configured. Please use `/automod filter rule`.';
+            if (!autoModFilterRuleId)
+              throw 'The AutoMod filter has not been properly configured. Please use `/automod filter rule`.';
 
-            const automodRule = await interaction.guild.autoModerationRules.fetch(autoModFilterRuleId).catch(() => null);
+            const automodRule = await interaction.guild.autoModerationRules
+              .fetch(autoModFilterRuleId)
+              .catch(() => null);
             if (!automodRule) {
               await this.client.db.guild.update({
                 where: { id: interaction.guildId },
@@ -615,7 +621,7 @@ class AutomodCommand extends Command {
             }
 
             const filter = automodRule.triggerMetadata.keywordFilter.join(', ');
-            if (filter.length === 0) return interaction.editReply('The automod filter is empty.')
+            if (filter.length === 0) return interaction.editReply('The automod filter is empty.');
             if (filter.length > 1900) throw 'Too big to display. Please view in settings.';
 
             return interaction.editReply(filter);

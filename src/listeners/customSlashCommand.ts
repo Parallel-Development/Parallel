@@ -77,7 +77,14 @@ class CustomSlashCommandListener extends Listener {
       },
       include: {
         guild: {
-          select: { infractionModeratorPublic: true, infoBan: true, infoKick: true, infoMute: true, infoWarn: true, escalationsManual: true }
+          select: {
+            infractionModeratorPublic: true,
+            infoBan: true,
+            infoKick: true,
+            infoMute: true,
+            infoWarn: true,
+            escalationsManual: true
+          }
         }
       }
     });
@@ -244,13 +251,17 @@ class CustomSlashCommandListener extends Listener {
 
     switch (escalation.punishment) {
       case InfractionType.Ban:
-        if (infraction.guild.infoBan) eDm.addFields([{ name: 'Additional Information', value: infraction.guild.infoBan }]);
+        if (infraction.guild.infoBan)
+          eDm.addFields([{ name: 'Additional Information', value: infraction.guild.infoBan }]);
       case InfractionType.Kick:
-        if (infraction.guild.infoKick) eDm.addFields([{ name: 'Additional Information', value: infraction.guild.infoKick }]);
+        if (infraction.guild.infoKick)
+          eDm.addFields([{ name: 'Additional Information', value: infraction.guild.infoKick }]);
       case InfractionType.Mute:
-        if (infraction.guild.infoMute) eDm.addFields([{ name: 'Additional Information', value: infraction.guild.infoMute }]);
+        if (infraction.guild.infoMute)
+          eDm.addFields([{ name: 'Additional Information', value: infraction.guild.infoMute }]);
       case InfractionType.Warn:
-        if (infraction.guild.infoWarn) eDm.addFields([{ name: 'Additional Information', value: infraction.guild.infoWarn }]);
+        if (infraction.guild.infoWarn)
+          eDm.addFields([{ name: 'Additional Information', value: infraction.guild.infoWarn }]);
     }
 
     await target.send({ embeds: [eDm] });

@@ -11,19 +11,16 @@ class DiscordAutomodListener extends Listener {
     if (event.ruleTriggerType !== AutoModerationRuleTriggerType.Keyword) return;
     await event.guild.members.fetch(event.userId);
 
-    const { 
-      autoModFilterToggle, 
-      autoModFilterRuleId, 
-      autoModFilterPunishment,
-      autoModFilterDuration
-    } = (await this.client.db.guild.findUnique({
-      where: { id: event.guild.id }
-    }))!;
+    const { autoModFilterToggle, autoModFilterRuleId, autoModFilterPunishment, autoModFilterDuration } =
+      (await this.client.db.guild.findUnique({
+        where: { id: event.guild.id }
+      }))!;
 
     if (!autoModFilterToggle || event.ruleId !== autoModFilterRuleId || !autoModFilterPunishment) return;
 
     return AutomodListener.autoModPunish(
-      event.member!, event.guild,
+      event.member!,
+      event.guild,
       `Using a blacklisted word or phrase.`,
       autoModFilterPunishment,
       autoModFilterDuration

@@ -13,10 +13,11 @@ class CreateTicketModal extends Modal {
     const title = interaction.fields.getTextInputValue('title');
     const description = interaction.fields.getTextInputValue('description');
 
-    const { ticketsEnabled, ticketLocation, ticketBlacklist, pingRoleOnTicketCreation } = (await this.client.db.guild.findUnique({
-      where: { id: interaction.guildId },
-      select: { ticketsEnabled: true, ticketLocation: true, ticketBlacklist: true, pingRoleOnTicketCreation: true }
-    }))!;
+    const { ticketsEnabled, ticketLocation, ticketBlacklist, pingRoleOnTicketCreation } =
+      (await this.client.db.guild.findUnique({
+        where: { id: interaction.guildId },
+        select: { ticketsEnabled: true, ticketLocation: true, ticketBlacklist: true, pingRoleOnTicketCreation: true }
+      }))!;
 
     if (!ticketsEnabled) throw 'Tickets are not enabled in this server.';
 
@@ -26,13 +27,15 @@ class CreateTicketModal extends Modal {
 
     await interaction.deferReply({ ephemeral: true });
 
-    const channel = await interaction.guild.channels.create({
-      name: title,
-      parent: ticketLocation,
-      type: ChannelType.GuildText,
-      reason: 'Ticket created.',
-      position: 0
-    }).catch(() => null);
+    const channel = await interaction.guild.channels
+      .create({
+        name: title,
+        parent: ticketLocation,
+        type: ChannelType.GuildText,
+        reason: 'Ticket created.',
+        position: 0
+      })
+      .catch(() => null);
 
     if (!channel) throw 'Failed to create channel due to missing permissions.';
 

@@ -8,10 +8,14 @@ class InteractionCreateListener extends Listener {
 
   async run(interaction: Interaction) {
     switch (interaction.type) {
-      case InteractionType.ApplicationCommand: return this.client.emit('chatInputCommand', interaction);
-      case InteractionType.ModalSubmit: return this.client.emit('modalSubmit', interaction);
-      case InteractionType.MessageComponent: return this.client.emit('buttonPress', interaction);
-      case InteractionType.ApplicationCommandAutocomplete: return this.client.emit('autocomplete', interaction);
+      case InteractionType.ApplicationCommand:
+        return this.client.emit('chatInputCommand', interaction);
+      case InteractionType.ModalSubmit:
+        return this.client.emit('modalSubmit', interaction);
+      case InteractionType.MessageComponent:
+        return this.client.emit('buttonPress', interaction);
+      case InteractionType.ApplicationCommandAutocomplete:
+        return this.client.emit('autocomplete', interaction);
     }
   }
 }

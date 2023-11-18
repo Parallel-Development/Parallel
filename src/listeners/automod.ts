@@ -68,7 +68,8 @@ class AutomodListener extends Listener {
           await message.delete();
 
           return AutomodListener.autoModPunish(
-            message.member, message.guild,
+            message.member,
+            message.guild,
             'Malicious links.',
             automod.autoModMaliciousPunishment,
             automod.autoModMaliciousDuration
@@ -100,7 +101,8 @@ class AutomodListener extends Listener {
         await message.channel.bulkDelete(messages);
 
         return AutomodListener.autoModPunish(
-          message.member, message.guild,
+          message.member,
+          message.guild,
           'Fast message spam.',
           automod.autoModSpamPunishment,
           automod.autoModSpamDuration

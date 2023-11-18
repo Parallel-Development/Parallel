@@ -73,17 +73,19 @@ class MessageLogListener extends Listener {
       const qMarkIndex = url ? url.indexOf('?') : null;
       if (
         message.attachments.size === 1 &&
-        ['png', 'webp', 'jpg', /*j*/'peg', 'gif'].includes(url!.slice(0, qMarkIndex!).slice(-3))
+        ['png', 'webp', 'jpg', /*j*/ 'peg', 'gif'].includes(url!.slice(0, qMarkIndex!).slice(-3))
       )
         embed.setImage(message.attachments.map(attachment => attachment.url).join('\n'));
       else if (message.attachments.size > 0) {
         embed.addFields({
           name: 'Attachments',
-          value: message.attachments.map(attachment => {
-            const qMarkIndex = attachment.url.lastIndexOf('?');
-            const stopAtFileName = attachment.url.slice(0, qMarkIndex);
-            return `[${stopAtFileName.slice(stopAtFileName.lastIndexOf('/') + 1)}](${attachment.url})`;
-          }).join('\n')
+          value: message.attachments
+            .map(attachment => {
+              const qMarkIndex = attachment.url.lastIndexOf('?');
+              const stopAtFileName = attachment.url.slice(0, qMarkIndex);
+              return `[${stopAtFileName.slice(stopAtFileName.lastIndexOf('/') + 1)}](${attachment.url})`;
+            })
+            .join('\n')
         });
       }
     }

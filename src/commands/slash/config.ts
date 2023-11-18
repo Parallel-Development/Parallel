@@ -203,7 +203,11 @@ import yaml from 'js-yaml';
             .setName('add-override')
             .setDescription('Add an override to be updated when a channel is locked.')
             .addStringOption(opt =>
-              opt.setName('override').setDescription('The name of the override.').setAutocomplete(true).setRequired(true)
+              opt
+                .setName('override')
+                .setDescription('The name of the override.')
+                .setAutocomplete(true)
+                .setRequired(true)
             )
         )
         .addSubcommand(cmd =>
@@ -211,7 +215,11 @@ import yaml from 'js-yaml';
             .setName('remove-override')
             .setDescription('Remove an override to be updated when a channel is locked.')
             .addStringOption(opt =>
-              opt.setName('override').setDescription('The name of the override.').setAutocomplete(true).setRequired(true)
+              opt
+                .setName('override')
+                .setDescription('The name of the override.')
+                .setAutocomplete(true)
+                .setRequired(true)
             )
         )
         .addSubcommand(cmd =>
