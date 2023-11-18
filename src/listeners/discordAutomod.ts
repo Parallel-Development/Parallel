@@ -24,7 +24,7 @@ class DiscordAutomodListener extends Listener {
 
     return AutomodListener.autoModPunish(
       event.member!, event.guild,
-      `Using a blacklisted word or phrase.\nKeyword: \`${event.matchedKeyword}\``,
+      `Using a blacklisted word or phrase.`,
       autoModFilterPunishment,
       autoModFilterDuration
     );
