@@ -172,18 +172,22 @@ class WarnCommand extends Command {
       .setDescription(
         `${eInfraction.reason}${eExpires ? `\n\n***•** Expires: <t:${eExpiresStr}> (<t:${eExpiresStr}:R>)*` : ''}`
       )
-      .setFooter({ text: `Punishment ID: ${infraction.id}` })
+      .setFooter({ text: `Punishment ID: ${eInfraction.id}` })
       .setTimestamp();
 
     switch (escalation.punishment) {
       case InfractionType.Ban:
         if (guild.infoBan) eDm.addFields([{ name: 'Additional Information', value: guild.infoBan }]);
+        break;
       case InfractionType.Kick:
         if (guild.infoKick) eDm.addFields([{ name: 'Additional Information', value: guild.infoKick }]);
+        break;
       case InfractionType.Mute:
         if (guild.infoMute) eDm.addFields([{ name: 'Additional Information', value: guild.infoMute }]);
+        break;
       case InfractionType.Warn:
         if (guild.infoWarn) eDm.addFields([{ name: 'Additional Information', value: guild.infoWarn }]);
+        break;
     }
 
     if (member) await member!.send({ embeds: [eDm] });
