@@ -513,6 +513,9 @@ class AutomodCommand extends Command {
                 triggerType: AutoModerationRuleTriggerType.Keyword,
                 eventType: AutoModerationRuleEventType.MessageSend,
                 actions: [{ type: AutoModerationActionType.BlockMessage }],
+                triggerMetadata: {
+                  keywordFilter: []
+                },
                 name: 'Parallel Moderation Filter',
                 enabled: true
               });
