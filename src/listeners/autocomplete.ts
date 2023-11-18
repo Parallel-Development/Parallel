@@ -23,8 +23,6 @@ class AutocompleteListener extends Listener {
       case 'rule': {
         const rules = await interaction.guild.autoModerationRules.fetch();
         const filtered = [
-          { name: 'Create For Me', id: 'create' },
-
           ...rules
           .filter(rule => rule.triggerType === AutoModerationRuleTriggerType.Keyword && rule.name.toLowerCase().includes(focusedLowercase))
           .sort((a, b) => a.name.localeCompare(b.name))
@@ -33,7 +31,7 @@ class AutocompleteListener extends Listener {
         .slice(0, 24)
         .map(rule => { return { name: rule.name, value: rule.id }})
 
-        return interaction.respond(filtered).catch(() => {});
+        return interaction.respond([{ name: 'Create For Me', value: 'create' }].concat(filtered)).catch(() => {});
       }
     }
   }
