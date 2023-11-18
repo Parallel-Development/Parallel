@@ -150,11 +150,11 @@ import { bin } from '../../lib/util/functions';
         .addSubcommand(cmd =>
           cmd
             .setName('channels-remove')
-            .setDescription('Make a role no longer immune to an automod module.')
+            .setDescription('Make a channel no longer immune to an automod module.')
             .addChannelOption(opt =>
               opt
                 .setName('channel')
-                .setDescription('The role to make stop being immune.')
+                .setDescription('The channel to make stop being immune.')
                 .setRequired(true)
                 .addChannelTypes(ChannelType.GuildText, ChannelType.GuildVoice, ChannelType.GuildForum)
             )
@@ -529,6 +529,10 @@ class AutomodCommand extends Command {
               return interaction.editReply('Rule created and integrated!');
             }
 
+            const automodRule = await interaction.guild.autoModerationRules.fetch(rule).catch(() => null);
+            if (!automodRule)
+              throw 'Invalid rule ID.';
+
             await this.client.db.guild.update({
               where: { id: interaction.guildId },
               data: { autoModFilterRuleId: rule }
@@ -546,7 +550,16 @@ class AutomodCommand extends Command {
 
             if (!autoModFilterRuleId) throw 'The AutoMod filter has not been properly configured. Please use `/automod filter rule`.';
 
-            const automodRule = await interaction.guild.autoModerationRules.fetch(autoModFilterRuleId);
+            const automodRule = await interaction.guild.autoModerationRules.fetch(autoModFilterRuleId).catch(() => null);
+            if (!automodRule) {
+              await this.client.db.guild.update({
+                where: { id: interaction.guildId },
+                data: { autoModFilterRuleId: null }
+              });
+
+              throw 'The AutoMod filter has not been properly configured. Please use `/automod filter rule`.';
+            }
+
             if (automodRule.triggerMetadata.keywordFilter.includes(word)) throw 'That word or phrase is already on the filter list.';
 
             await automodRule.setKeywordFilter(automodRule.triggerMetadata.keywordFilter.concat([word]));
@@ -563,7 +576,16 @@ class AutomodCommand extends Command {
 
             if (!autoModFilterRuleId) throw 'The AutoMod filter has not been properly configured. Please use `/automod filter rule`.';
 
-            const automodRule = await interaction.guild.autoModerationRules.fetch(autoModFilterRuleId);
+            const automodRule = await interaction.guild.autoModerationRules.fetch(autoModFilterRuleId).catch(() => null);
+            if (!automodRule) {
+              await this.client.db.guild.update({
+                where: { id: interaction.guildId },
+                data: { autoModFilterRuleId: null }
+              });
+
+              throw 'The AutoMod filter has not been properly configured. Please use `/automod filter rule`.';
+            }
+
             if (!automodRule.triggerMetadata.keywordFilter.includes(word)) throw 'That word or phrase is not on the filter list.';
 
             const filter = automodRule.triggerMetadata.keywordFilter;
@@ -582,7 +604,15 @@ class AutomodCommand extends Command {
 
             if (!autoModFilterRuleId) throw 'The AutoMod filter has not been properly configured. Please use `/automod filter rule`.';
 
-            const automodRule = await interaction.guild.autoModerationRules.fetch(autoModFilterRuleId);
+            const automodRule = await interaction.guild.autoModerationRules.fetch(autoModFilterRuleId).catch(() => null);
+            if (!automodRule) {
+              await this.client.db.guild.update({
+                where: { id: interaction.guildId },
+                data: { autoModFilterRuleId: null }
+              });
+
+              throw 'The AutoMod filter has not been properly configured. Please use `/automod filter rule`.';
+            }
 
             const filter = automodRule.triggerMetadata.keywordFilter.join(', ');
             if (filter.length === 0) return interaction.editReply('The automod filter is empty.')
