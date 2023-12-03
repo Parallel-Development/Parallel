@@ -101,9 +101,17 @@ class AutocompleteListener extends Listener {
       }
       case 'command': {
         const commands = this.client.commands.slash;
+        const { shortcuts } = (await this.client.db.guild.findUnique({
+          where: {
+            id: interaction.guildId
+          },
+          select: { shortcuts: true }
+        }))!;
         const aliases = this.client.aliases;
 
-        const firstMatches = [...commands.keys(), ...aliases.keys()].filter(name => name.includes(focusedLowercase));
+        const firstMatches = [...commands.keys(), ...aliases.keys(), ...shortcuts.map(s => s.name)].filter(name =>
+          name.includes(focusedLowercase)
+        );
 
         const aliasesOmited: string[] = [];
         for (const match of firstMatches) {
@@ -111,7 +119,7 @@ class AutocompleteListener extends Listener {
           else if (aliases.has(match)) {
             const matchingCommand = commands.get(aliases.get(match)!)!;
             if (!aliasesOmited.includes(matchingCommand.data.name!)) aliasesOmited.push(matchingCommand.data.name!);
-          }
+          } else aliasesOmited.push(match);
         }
 
         const final = aliasesOmited
