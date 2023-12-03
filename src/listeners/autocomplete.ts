@@ -99,6 +99,30 @@ class AutocompleteListener extends Listener {
 
         return interaction.respond(respondData);
       }
+      case 'command': {
+        const commands = this.client.commands.slash;
+        const aliases = this.client.aliases;
+
+        const firstMatches = [...commands.keys(), ...aliases.keys()].filter(name => name.includes(focusedLowercase));
+
+        const aliasesOmited: string[] = [];
+        for (const match of firstMatches) {
+          if (commands.has(match)) aliasesOmited.push(match);
+          else if (aliases.has(match)) {
+            const matchingCommand = commands.get(aliases.get(match)!)!;
+            if (!aliasesOmited.includes(matchingCommand.data.name!)) aliasesOmited.push(matchingCommand.data.name!);
+          }
+        }
+
+        const final = aliasesOmited
+          .sort((a, b) => a.localeCompare(b))
+          .slice(0, 25)
+          .map(c => {
+            return { name: c, value: c };
+          });
+
+        return interaction.respond(final);
+      }
     }
   }
 }

@@ -7,7 +7,9 @@ import ms from 'ms';
   new SlashCommandBuilder()
     .setName('help')
     .setDescription('View all commands for Parallel.')
-    .addStringOption(opt => opt.setName('command').setDescription('Get specific help on a command.'))
+    .addStringOption(opt =>
+      opt.setName('command').setDescription('Get specific help on a command.').setAutocomplete(true)
+    )
 )
 @properties({
   allowDM: true
