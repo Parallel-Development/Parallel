@@ -4,6 +4,7 @@ import Listener from '../lib/structs/Listener';
 import { domainReg, pastTenseInfractionTypes } from '../lib/util/constants';
 import { AutoModSpamTriggers, Escalations } from '../types';
 import client from '../client';
+import ms from 'ms';
 
 class AutomodListener extends Listener {
   // userId.guildId
@@ -188,12 +189,16 @@ class AutomodListener extends Listener {
     switch (punishment) {
       case InfractionType.Ban:
         if (infoBan) dm.addFields([{ name: 'Additional Information', value: infoBan }]);
+        break;
       case InfractionType.Kick:
         if (infoKick) dm.addFields([{ name: 'Additional Information', value: infoKick }]);
+        break;
       case InfractionType.Mute:
         if (infoMute) dm.addFields([{ name: 'Additional Information', value: infoMute }]);
+        break;
       case InfractionType.Warn:
         if (infoWarn) dm.addFields([{ name: 'Additional Information', value: infoWarn }]);
+        break;
     }
 
     await member!.send({ embeds: [dm] }).catch(() => {});
@@ -203,35 +208,46 @@ class AutomodListener extends Listener {
     switch (punishment) {
       case InfractionType.Ban:
         await member!.ban({ reason });
+        break;
       case InfractionType.Kick:
         await member!.kick(reason);
+        break;
       case InfractionType.Mute:
         await member!.timeout(Number(duration), reason);
+        break;
     }
 
     if (punishment !== InfractionType.Warn) return true;
 
     // ESCALATION CHECK!
-    const infractionCount = await client.db.infraction.count({
+    const infractionHistory = await client.db.infraction.findMany({
       where: {
         guildId: guild.id,
         userId: member!.id,
         type: InfractionType.Warn,
         moderatorId: client.user!.id
+      },
+      orderBy: {
+        date: 'desc'
       }
     });
 
-    if (infractionCount === 0) return false;
+    if (infractionHistory.length === 0) return false;
 
-    // find closest escalation
+    // find matching escalations
     const escalation = escalations.reduce(
-      (prev, curr) =>
-        infractionCount >= curr.amount
-          ? infractionCount - curr.amount < infractionCount - prev.amount
-            ? curr
-            : prev
-          : prev,
-      { amount: 0, punishment: InfractionType.Warn, duration: '0' }
+      (prev, curr) => {
+        const within = +curr.within;
+
+        return infractionHistory.length >= curr.amount &&
+          curr.amount >= prev.amount &&
+          (within !== 0
+            ? within < (+prev.within || Infinity) && date - infractionHistory[curr.amount - 1].date <= within
+            : curr.amount !== prev.amount)
+          ? curr
+          : prev;
+      },
+      { amount: 0, within: '0', punishment: InfractionType.Warn, duration: '0' }
     );
 
     if (escalation.amount === 0) return false;
@@ -239,7 +255,9 @@ class AutomodListener extends Listener {
     const eDuration = BigInt(escalation.duration);
     const eExpires = eDuration ? date + eDuration : null;
     const eExpiresStr = Math.floor(Number(eExpires) / 1000);
-    const eReason = `Reaching or exceeding ${escalation.amount} automod infractions.`;
+    const eReason = `Reaching or exceeding ${escalation.amount} automod infractions${
+      escalation.within !== '0' ? ` within ${ms(+escalation.within, { long: true })}` : ''
+    }.`;
 
     const eInfraction = await client.db.infraction.create({
       data: {
@@ -295,12 +313,16 @@ class AutomodListener extends Listener {
     switch (escalation.punishment) {
       case InfractionType.Ban:
         if (infoBan) eDm.addFields([{ name: 'Additional Information', value: infoBan }]);
+        break;
       case InfractionType.Kick:
         if (infoKick) eDm.addFields([{ name: 'Additional Information', value: infoKick }]);
+        break;
       case InfractionType.Mute:
         if (infoMute) eDm.addFields([{ name: 'Additional Information', value: infoMute }]);
+        break;
       case InfractionType.Warn:
         if (infoWarn) eDm.addFields([{ name: 'Additional Information', value: infoWarn }]);
+        break;
     }
 
     await member!.send({ embeds: [eDm] }).catch(() => {});
@@ -310,10 +332,13 @@ class AutomodListener extends Listener {
     switch (escalation.punishment) {
       case InfractionType.Ban:
         await member!.ban({ reason: eReason });
+        break;
       case InfractionType.Kick:
         await member!.kick(eReason);
+        break;
       case InfractionType.Mute:
         await member!.timeout(Number(eDuration), eReason);
+        break;
     }
 
     return true;

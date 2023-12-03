@@ -1,9 +1,9 @@
 import { InfractionType } from '@prisma/client';
 import { PermissionFlagsBits as Permissions, EmbedBuilder, Colors, Message } from 'discord.js';
 import ms from 'ms';
-import Command, { properties, data } from '../../lib/structs/Command';
+import Command, { properties } from '../../lib/structs/Command';
 import { adequateHierarchy, getMember } from '../../lib/util/functions';
-const d28 = ms('28d');
+import { d28 } from '../../lib/util/constants';
 
 @properties<true>({
   name: 'mute',

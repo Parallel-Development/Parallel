@@ -14,6 +14,7 @@ export type EscalationType = 'Manual' | 'AutoMod';
 
 export type Escalations = {
   amount: number;
+  within: `${number}`;
   punishment: InfractionType;
   duration: `${number}`;
 }[];

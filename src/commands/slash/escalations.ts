@@ -38,7 +38,15 @@ import { EscalationType, Escalations } from '../../types';
             )
             .setRequired(true)
         )
-        .addStringOption(opt => opt.setName('duration').setDescription('The duration of the punishment'))
+        .addStringOption(opt =>
+          opt.setName('duration').setDescription('The duration of the punishment').setAutocomplete(true)
+        )
+        .addStringOption(opt =>
+          opt
+            .setName('within')
+            .setDescription('Within what time frame the amount of infractions have to be accumulated.')
+            .setAutocomplete(true)
+        )
     )
     .addSubcommand(cmd =>
       cmd
@@ -57,6 +65,12 @@ import { EscalationType, Escalations } from '../../types';
             .setDescription('Whether this is an escalation for automod warnings or for manual warnings.')
             .addChoices({ name: 'Manual', value: 'Manual' }, { name: 'AutoMod', value: 'AutoMod' })
             .setRequired(true)
+        )
+        .addStringOption(opt =>
+          opt
+            .setName('with-in')
+            .setDescription('Within what time frame the amount of infractions have to be accumulated.')
+            .setAutocomplete(true)
         )
     )
     .addSubcommand(cmd =>
@@ -88,39 +102,56 @@ class EscalationsCommand extends Command {
     switch (subCmd) {
       case 'add': {
         const amount = interaction.options.getInteger('amount', true);
+        const uWithin = interaction.options.getString('within') ?? '0';
+        const within = ms(uWithin);
+
         const punishment = interaction.options.getString('punishment', true) as InfractionType;
         const uDuration = interaction.options.getString('duration');
         const duration = uDuration ? ms(uDuration) : null;
+
         if (duration === undefined) throw 'Invalid duration.';
         if (punishment === InfractionType.Mute && !duration) throw 'A duration is required for punishment `Mute`.';
         if (punishment === InfractionType.Kick && duration)
           throw 'A duration cannot be provided for punishment `Kick`.';
 
-        if (escalations.some(e => e.amount === amount)) throw 'There is already an escalation for this amount.';
+        if (escalations.some(e => e.amount === amount && +e.within === within))
+          throw `There is already an escalation for this amount${within ? ' for this duration' : ''}.`;
 
         await interaction.deferReply();
 
         type === 'Manual'
           ? await this.client.db.guild.update({
               where: { id: interaction.guildId },
-              data: { escalationsManual: { push: { amount, duration: duration?.toString() ?? '0', punishment } } }
+              data: {
+                escalationsManual: {
+                  push: { amount, within: within.toString(), duration: duration?.toString() ?? '0', punishment }
+                }
+              }
             })
           : await this.client.db.guild.update({
               where: { id: interaction.guildId },
-              data: { escalationsAutoMod: { push: { amount, duration: duration?.toString() ?? '0', punishment } } }
+              data: {
+                escalationsAutoMod: {
+                  push: { amount, within: within.toString(), duration: duration?.toString() ?? '0', punishment }
+                }
+              }
             });
 
         return interaction.editReply(
           `Escalation added: ${punishment.toLowerCase()} a member${
             duration ? ` for ${ms(duration, { long: true })}` : ''
-          } for having or exceeding ${amount} ${type.toLowerCase()} warnings.`
+          } for having or exceeding ${amount} ${type.toLowerCase()} warnings${
+            within ? ` within ${ms(Number(within), { long: true })}` : ''
+          }.`
         );
       }
       case 'remove': {
         const amount = interaction.options.getInteger('amount', true);
+        const uWithin = interaction.options.getString('with-in') ?? '0';
+        const within = ms(uWithin);
 
-        const escalation = escalations.find(e => e.amount === amount);
-        if (!escalation) throw 'There is no escalation for this amount.';
+        const escalation = escalations.find(e => e.amount === amount && +e.within === within);
+        if (!escalation) throw `There is no escalation for this amount${within ? ' for this duration' : ''}.`;
 
         await interaction.deferReply();
 
@@ -139,7 +170,9 @@ class EscalationsCommand extends Command {
         return interaction.editReply(
           `Escalation removed: ${escalation.punishment.toLowerCase()} a member${
             escalation.duration !== '0' ? ` for ${ms(+escalation.duration, { long: true })}` : ''
-          } for having or exceeding ${amount} ${type.toLowerCase()} warnings.`
+          } for having or exceeding ${amount} ${type.toLowerCase()} warnings${
+            within ? ` within ${ms(Number(within), { long: true })}` : ''
+          }.`
         );
       }
       case 'view': {
@@ -147,10 +180,10 @@ class EscalationsCommand extends Command {
           return interaction.reply(`This guild has no ${type.toLowerCase()} escalations set up.`);
 
         const escalationsStr = escalations
-          .sort((a, b) => a.amount - b.amount)
+          .sort((a, b) => (a.amount !== b.amount ? a.amount - b.amount : +a.within - +b.within))
           .map(
             e =>
-              `${e.amount} = ${e.punishment} ${
+              `${e.amount} ${+e.within !== 0 ? `within ${ms(+e.within, { long: true })} ` : ''}= ${e.punishment} ${
                 e.duration !== '0' ? `for ${ms(Number(e.duration), { long: true })}` : ''
               }`
           )

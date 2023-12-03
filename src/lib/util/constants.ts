@@ -1,4 +1,5 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Colors, MessageActionRowComponentBuilder } from 'discord.js';
+import ms from 'ms';
 
 export const infractionsPerPage = 7;
 
@@ -16,8 +17,12 @@ export const pastTenseInfractionTypes = {
   ban: 'banned',
   kick: 'kicked',
   mute: 'muted',
-  warn: 'warned'
+  warn: 'warned',
+  unban: 'unbanned',
+  unmute: 'unmuted'
 };
+
+export const d28 = ms('28d');
 
 export const channelPermissionOverrides = [
   { name: 'Add Reactions', value: 'AddReactions' },
@@ -50,3 +55,15 @@ export const channelPermissionOverrides = [
   { name: 'Use Voice-Activity-Detection (VAD)', value: 'UseVAD' },
   { name: 'View Channel', value: 'ViewChannel' }
 ];
+
+export const commonDurations = [
+  { name: '1 minute', value: '1 minute' },
+  { name: '10 minutes', value: '10 minutes' },
+  { name: '30 minutes', value: '30 minutes' },
+  { name: '1 hour', value: '1 hour' },
+  { name: '6 hours', value: '6 hours' },
+  { name: '12 hours', value: '12 hours' },
+  { name: '1 day', value: '1 day' }
+];
+
+export const commonDurationUnits = ['second', 'minute', 'hour', 'day', 'week'];

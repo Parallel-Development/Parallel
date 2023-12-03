@@ -9,7 +9,7 @@ import {
 import ms from 'ms';
 import Command, { properties, data } from '../../lib/structs/Command';
 import { adequateHierarchy } from '../../lib/util/functions';
-const d28 = ms('28d');
+import { d28 } from '../../lib/util/constants';
 
 @data(
   new SlashCommandBuilder()
@@ -21,6 +21,7 @@ const d28 = ms('28d');
       option
         .setName('duration')
         .setDescription('The duration of the mute. Required unless a default mute duration is set!')
+        .setAutocomplete(true)
     )
     .addStringOption(option => option.setName('reason').setDescription('The reason for the mute.').setMaxLength(3500))
 )

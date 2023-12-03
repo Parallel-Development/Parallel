@@ -8,7 +8,7 @@ import {
 } from 'discord.js';
 import ms from 'ms';
 import Command, { data } from '../../lib/structs/Command';
-import { mainColor } from '../../lib/util/constants';
+import { d28, mainColor } from '../../lib/util/constants';
 import { bin } from '../../lib/util/functions';
 const nameReg = /^[\p{Ll}\p{Lm}\p{Lo}\p{N}\p{sc=Devanagari}\p{sc=Thai}_-]+$/u;
 
@@ -48,7 +48,9 @@ const nameReg = /^[\p{Ll}\p{Lm}\p{Lo}\p{N}\p{sc=Devanagari}\p{sc=Thai}_-]+$/u;
         .addStringOption(option =>
           option.setName('reason').setDescription('The reason for the punishment.').setMaxLength(1000).setRequired(true)
         )
-        .addStringOption(option => option.setName('duration').setDescription('Duration for the punishment.'))
+        .addStringOption(option =>
+          option.setName('duration').setDescription('Duration for the punishment.').setAutocomplete(true)
+        )
         .addStringOption(option =>
           option
             .setName('delete-previous-messages')
@@ -109,6 +111,8 @@ class ShortcutsCommand extends Command {
       if (uDuration && !duration && duration !== 0) throw 'Invalid duration.';
       if (duration && duration < 1000) throw 'Duration must be at least 1 second.';
       if (!duration && punishment === IT.Mute) throw 'A duration must be provided for type `mute`.';
+      if (punishment === IT.Mute && duration! > d28)
+        throw 'The duration cannot be over 28 days for the mute punishment.';
 
       const count = await this.client.db.shortcut.count({
         where: {

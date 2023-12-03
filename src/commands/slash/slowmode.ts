@@ -7,7 +7,9 @@ import Command, { data } from '../../lib/structs/Command';
     .setName('slowmode')
     .setDescription('Modify the slowmode in a channel.')
     .setDefaultMemberPermissions(Permissions.ManageChannels)
-    .addStringOption(option => option.setName('slowmode').setDescription('Slowmode to set.').setRequired(true))
+    .addStringOption(option =>
+      option.setName('slowmode').setDescription('Slowmode to set.').setRequired(true).setAutocomplete(true)
+    )
     .addStringOption(option =>
       option
         .setName('method')

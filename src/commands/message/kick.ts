@@ -1,16 +1,8 @@
-import { SlashCommandBuilder, PermissionFlagsBits as Permissions, Colors, EmbedBuilder, Message } from 'discord.js';
+import { PermissionFlagsBits as Permissions, Colors, EmbedBuilder, Message } from 'discord.js';
 import { adequateHierarchy, getMember } from '../../lib/util/functions';
 import { InfractionType } from '@prisma/client';
-import Command, { properties, data } from '../../lib/structs/Command';
+import Command, { properties } from '../../lib/structs/Command';
 
-@data(
-  new SlashCommandBuilder()
-    .setName('kick')
-    .setDescription('Kick a member from the guild.')
-    .setDefaultMemberPermissions(Permissions.KickMembers)
-    .addUserOption(option => option.setName('member').setDescription('The member to kick.').setRequired(true))
-    .addStringOption(option => option.setName('reason').setDescription('The reason for kicking.'))
-)
 @properties<true>({
   name: 'kick',
   description: 'Kick a member from the guild.',

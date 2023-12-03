@@ -11,6 +11,7 @@ import Listener from '../lib/structs/Listener';
 import { pastTenseInfractionTypes } from '../lib/util/constants';
 import { adequateHierarchy, getMember, getUser } from '../lib/util/functions';
 import { Escalations } from '../types';
+import ms from 'ms';
 
 class CustomMessageCommandListener extends Listener {
   constructor() {
@@ -30,7 +31,7 @@ class CustomMessageCommandListener extends Listener {
 
     if (message.author.id !== message.guildId) {
       const slashCommand =
-        (message.guild.commands.cache.find(c => c.name === commandName)) ||
+        message.guild.commands.cache.find(c => c.name === commandName) ||
         (await message.guild!.commands.fetch().then(cmds => cmds.find(cmd => cmd.name === commandName)))!;
 
       const permissions = await this.client
@@ -188,6 +189,12 @@ class CustomMessageCommandListener extends Listener {
       case IT.Mute:
         await (target as GuildMember).timeout(Number(duration), reason);
         break;
+      case IT.Unban:
+        await message.guild.bans.remove(target.id, reason);
+        break;
+      case IT.Unmute:
+        await (target as GuildMember).timeout(null);
+        break;
     }
 
     const tense = pastTenseInfractionTypes[lpunishment as keyof typeof pastTenseInfractionTypes];
@@ -202,27 +209,38 @@ class CustomMessageCommandListener extends Listener {
     if (infraction.type !== InfractionType.Warn) return;
     if (!(target instanceof GuildMember)) return;
 
-    // check for escalations
-    const infractionCount = await this.client.db.infraction.count({
+    // ESCALATION CHECK!
+    const infractionHistory = await this.client.db.infraction.findMany({
       where: {
         guildId: message.guild.id,
-        userId: target.id,
+        userId: target!.id,
         type: InfractionType.Warn,
         moderatorId: { not: this.client.user!.id }
+      },
+      orderBy: {
+        date: 'desc'
       }
     });
 
+    if (infractionHistory.length === 0) return false;
+
+    // find matching escalations
     const escalation = (infraction.guild.escalationsManual as Escalations).reduce(
-      (prev, curr) =>
-        infractionCount >= curr.amount
-          ? infractionCount - curr.amount < infractionCount - prev.amount
-            ? curr
-            : prev
-          : prev,
-      { amount: 0, punishment: InfractionType.Warn, duration: '0' }
+      (prev, curr) => {
+        const within = +curr.within;
+
+        return infractionHistory.length >= curr.amount &&
+          curr.amount >= prev.amount &&
+          (within !== 0
+            ? within < (+prev.within || Infinity) && date - infractionHistory[curr.amount - 1].date <= within
+            : curr.amount !== prev.amount)
+          ? curr
+          : prev;
+      },
+      { amount: 0, within: '0', punishment: InfractionType.Warn, duration: '0' }
     );
 
-    if (escalation.amount === 0) return;
+    if (escalation.amount === 0) return false;
 
     const eDuration = BigInt(escalation.duration);
     const eExpires = eDuration ? date + eDuration : null;
@@ -236,7 +254,9 @@ class CustomMessageCommandListener extends Listener {
         date,
         moderatorId: this.client.user!.id,
         expires: eExpires,
-        reason: `Reaching or exceeding ${escalation.amount} infractions.`
+        reason: `Reaching or exceeding ${escalation.amount} manual infractions${
+          escalation.within !== '0' ? ` within ${ms(+escalation.within, { long: true })}` : ''
+        }.`
       }
     });
 

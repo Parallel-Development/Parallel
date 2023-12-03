@@ -16,7 +16,9 @@ import { adequateHierarchy } from '../../lib/util/functions';
     .setDescription('Ban a member from the guild.')
     .setDefaultMemberPermissions(Permissions.KickMembers)
     .addUserOption(option => option.setName('user').setDescription('The user to ban.').setRequired(true))
-    .addStringOption(option => option.setName('duration').setDescription('The duration of the ban.'))
+    .addStringOption(option =>
+      option.setName('duration').setDescription('The duration of the ban.').setAutocomplete(true)
+    )
     .addStringOption(option => option.setName('reason').setDescription('The reason for banning.').setMaxLength(3500))
     .addStringOption(option =>
       option

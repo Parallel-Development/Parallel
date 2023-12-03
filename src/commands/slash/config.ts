@@ -8,7 +8,7 @@ import {
 } from 'discord.js';
 import ms from 'ms';
 import Command, { data } from '../../lib/structs/Command';
-import { urlReg } from '../../lib/util/constants';
+import { d28, urlReg } from '../../lib/util/constants';
 import { bin } from '../../lib/util/functions';
 import yaml from 'js-yaml';
 
@@ -102,7 +102,9 @@ import yaml from 'js-yaml';
           cmd
             .setName('disregard-after')
             .setDescription('Manage how long an appeal has to go unanswered before being automatically disregarded.')
-            .addStringOption(opt => opt.setName('duration').setDescription('The duration to wait.').setRequired(true))
+            .addStringOption(opt =>
+              opt.setName('duration').setDescription('The duration to wait.').setRequired(true).setAutocomplete(true)
+            )
         )
     )
     .addSubcommandGroup(group =>
@@ -161,7 +163,11 @@ import yaml from 'js-yaml';
             .setRequired(true)
         )
         .addStringOption(opt =>
-          opt.setName('duration').setDescription('The default duration. Use `0` to disable.').setRequired(true)
+          opt
+            .setName('duration')
+            .setDescription('The default duration. Use `0` to disable.')
+            .setRequired(true)
+            .setAutocomplete(true)
         )
     )
     .addSubcommand(cmd => cmd.setName('view').setDescription('View all configurations.'))
@@ -944,7 +950,9 @@ class ConfigCommand extends Command {
         data[type] = duration;
 
         if (!duration && duration !== 0) throw 'Invalid duration.';
-        if (duration < 1 && duration !== 0) throw 'Duration must be at least 1 seconds or 0.';
+        if (duration < 1 && duration !== 0) throw 'The duration must be at least 1 seconds or 0.';
+        if (type === 'defaultMuteDuration' && duration > d28)
+          throw 'The duration cannot be over 28 days for the mute punishment.';
 
         await this.client.db.guild.update({
           where: { id: interaction.guildId },

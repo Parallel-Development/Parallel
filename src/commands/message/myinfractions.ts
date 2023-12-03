@@ -31,6 +31,9 @@ class MyInfractionsCommand extends Command {
         userId: user.id
       },
       include: { appeal: true, guild: { select: { infractionModeratorPublic: true } } },
+      orderBy: {
+        id: 'desc'
+      },
       take: infractionsPerPage,
       skip: infractionsPerPage * (page - 1)
     });

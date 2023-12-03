@@ -40,6 +40,9 @@ class InfractionsCommand extends Command {
         userId: user.id
       },
       include: { appeal: true },
+      orderBy: {
+        id: 'desc'
+      },
       take: infractionsPerPage,
       skip: infractionsPerPage * (page - 1)
     });

@@ -70,6 +70,7 @@ import { bin } from '../../lib/util/functions';
             .setDescription(
               'The duration of the punishment. Required for punishment `Mute`. Not allowed for `Delete` or `Kick`.'
             )
+            .setAutocomplete(true)
         )
     )
     .addSubcommandGroup(group =>

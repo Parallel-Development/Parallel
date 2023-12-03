@@ -7,7 +7,7 @@ import {
 } from 'discord.js';
 import Command, { data } from '../../lib/structs/Command';
 import ms from 'ms';
-import { adequateHierarchy, getMember } from '../../lib/util/functions';
+import { adequateHierarchy } from '../../lib/util/functions';
 import { InfractionType } from '@prisma/client';
 import { pastTenseInfractionTypes } from '../../lib/util/constants';
 import { Escalations } from '../../types';
@@ -22,7 +22,10 @@ import { Escalations } from '../../types';
       option.setName('reason').setDescription('The reason for the infraction.').setMaxLength(3500)
     )
     .addStringOption(option =>
-      option.setName('erase-after').setDescription('Erase the warning after the specific duration')
+      option
+        .setName('erase-after')
+        .setDescription('Erase the warning after the specific duration')
+        .setAutocomplete(true)
     )
 )
 class WarnCommand extends Command {
@@ -94,27 +97,38 @@ class WarnCommand extends Command {
 
     await interaction.editReply(`Warning issued for **${member.user.username}** with ID \`${infraction.id}\``);
 
-    // check for escalations
-    const infractionCount = await this.client.db.infraction.count({
+    // ESCALATION CHECK!
+    const infractionHistory = await this.client.db.infraction.findMany({
       where: {
-        guildId: interaction.guild.id,
-        userId: member.user.id,
+        guildId: guild.id,
+        userId: member!.id,
         type: InfractionType.Warn,
         moderatorId: { not: this.client.user!.id }
+      },
+      orderBy: {
+        date: 'desc'
       }
     });
 
+    if (infractionHistory.length === 0) return false;
+
+    // find matching escalations
     const escalation = (guild.escalationsManual as Escalations).reduce(
-      (prev, curr) =>
-        infractionCount >= curr.amount
-          ? infractionCount - curr.amount < infractionCount - prev.amount
-            ? curr
-            : prev
-          : prev,
-      { amount: 0, punishment: InfractionType.Warn, duration: '0' }
+      (prev, curr) => {
+        const within = +curr.within;
+
+        return infractionHistory.length >= curr.amount &&
+          curr.amount >= prev.amount &&
+          (within !== 0
+            ? within < (+prev.within || Infinity) && date - infractionHistory[curr.amount - 1].date <= within
+            : curr.amount !== prev.amount)
+          ? curr
+          : prev;
+      },
+      { amount: 0, within: '0', punishment: InfractionType.Warn, duration: '0' }
     );
 
-    if (escalation.amount === 0) return;
+    if (escalation.amount === 0) return false;
 
     const eDuration = BigInt(escalation.duration);
     const eExpires = eDuration ? date + eDuration : null;
@@ -128,7 +142,9 @@ class WarnCommand extends Command {
         date,
         moderatorId: this.client.user!.id,
         expires: eExpires,
-        reason: `Reaching or exceeding ${escalation.amount} infractions.`
+        reason: `Reaching or exceeding ${escalation.amount} manual infractions${
+          escalation.within !== '0' ? ` within ${ms(+escalation.within, { long: true })}` : ''
+        }.`
       }
     });
 
