@@ -101,15 +101,22 @@ class AutocompleteListener extends Listener {
       }
       case 'command': {
         const commands = this.client.commands.slash;
-        const { shortcuts } = (await this.client.db.guild.findUnique({
-          where: {
-            id: interaction.guildId
-          },
-          select: { shortcuts: true }
-        }))!;
         const aliases = this.client.aliases;
 
-        const firstMatches = [...commands.keys(), ...aliases.keys(), ...shortcuts.map(s => s.name)].filter(name =>
+        let firstMatches = [...commands.keys(), ...aliases.keys()];
+
+        if (interaction.inCachedGuild()) {
+          const { shortcuts } = (await this.client.db.guild.findUnique({
+            where: {
+              id: interaction.guildId
+            },
+            select: { shortcuts: true }
+          }))!;
+
+          firstMatches.push(...shortcuts.map(s => s.name));
+        }
+
+        firstMatches = firstMatches.filter(name =>
           name.includes(focusedLowercase)
         );
 
