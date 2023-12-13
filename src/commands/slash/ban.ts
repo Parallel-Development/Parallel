@@ -14,7 +14,7 @@ import { adequateHierarchy } from '../../lib/util/functions';
   new SlashCommandBuilder()
     .setName('ban')
     .setDescription('Ban a member from the guild.')
-    .setDefaultMemberPermissions(Permissions.KickMembers)
+    .setDefaultMemberPermissions(Permissions.BanMembers)
     .addUserOption(option => option.setName('user').setDescription('The user to ban.').setRequired(true))
     .addStringOption(option =>
       option.setName('duration').setDescription('The duration of the ban.').setAutocomplete(true)
