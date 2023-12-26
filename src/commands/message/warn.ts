@@ -38,7 +38,7 @@ class WarnCommand extends Command {
 
     let expires = duration ? duration + date : null;
 
-    if (duration) args.shift();
+    if (duration || durationStr === 'never') args.shift();
     const reason = args.slice(1).join(' ') || 'Unspecified reason.';
     if (reason.length > 3500) throw `The reason may only be a maximum of 3500 characters (${reason.length} provided.)`;
 

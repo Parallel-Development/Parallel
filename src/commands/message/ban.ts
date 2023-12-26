@@ -28,6 +28,7 @@ class BanCommand extends Command {
         throw 'I cannot ban this member due to inadequete hierarchy.';
     }
 
+    const durationStr = args[1];
     let duration = null;
     if (args.length >= 2 && args[1] !== 'never') {
       const unaryTest = +args[1];
@@ -42,7 +43,7 @@ class BanCommand extends Command {
     if (duration && duration < 1000) throw 'Temporary ban duration must be at least 1 second.';
     let expires = duration ? duration + date : null;
 
-    if (duration) args.shift();
+    if (duration || durationStr === 'never') args.shift();
     const reason = args.slice(1).join(' ') || 'Unspecified reason.';
     if (reason.length > 3500) throw `The reason may only be a maximum of 3500 characters (${reason.length} provided.)`;
 
@@ -51,7 +52,7 @@ class BanCommand extends Command {
       select: { infractionModeratorPublic: true, infoBan: true, defaultBanDuration: true }
     }))!;
 
-    if (!expires && args[1] !== 'never' && guild.defaultBanDuration !== 0n) expires = guild.defaultBanDuration + date;
+    if (!expires && durationStr !== 'never' && guild.defaultBanDuration !== 0n) expires = guild.defaultBanDuration + date;
 
     const infraction = await this.client.db.infraction.create({
       data: {

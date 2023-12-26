@@ -98,7 +98,7 @@ class LockserverCommand extends Command {
         });
       }
 
-      await channel.send({ embeds: [embed] });
+      await channel.send({ embeds: [embed] }).catch(() => {});
       await sleep(1000);
     }
 
