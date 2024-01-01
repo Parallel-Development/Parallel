@@ -44,9 +44,8 @@ class AppealModal extends Modal {
     if ([...interaction.fields.fields.values()].slice(1).join('').length > 1000)
       throw 'Length of answers combined totals to a length greater than 1000.';
 
-    const response: AppealResponse = interaction.fields.fields.map(field => {
-      return { question: field.customId, response: field.value };
-    });
+    const response: AppealResponse = interaction.fields.fields
+    .map(field => ({ question: field.customId, response: field.value }));
 
     await interaction.deferReply();
 

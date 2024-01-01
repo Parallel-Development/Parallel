@@ -35,9 +35,7 @@ class AutocompleteListener extends Listener {
             .values()
         ]
           .slice(0, 24)
-          .map(rule => {
-            return { name: rule.name, value: rule.id };
-          });
+          .map(rule => ({ name: rule.name, value: rule.id }));
 
         return interaction.respond([{ name: 'Create For Me', value: 'create' }].concat(filtered)).catch(() => {});
       }
@@ -58,15 +56,11 @@ class AutocompleteListener extends Listener {
 
         if (num === 1)
           return interaction.respond(
-            matchingUnits.map(unit => {
-              return { name: `1 ${unit}`, value: `1 ${unit}` };
-            })
+            matchingUnits.map(unit => ({ name: `1 ${unit}`, value: `1 ${unit}`}))
           );
         else
           return interaction.respond(
-            matchingUnits.map(unit => {
-              return { name: `${num} ${unit}s`, value: `${num} ${unit}s` };
-            })
+            matchingUnits.map(unit => ({ name: `${num} ${unit}s`, value: `${num} ${unit}s` }))
           );
       }
       // lol
@@ -88,9 +82,9 @@ class AutocompleteListener extends Listener {
         const relevant = escalations.filter(e => e.amount === amount && e.within !== '0');
 
         const respondData = relevant
-          .map(e => {
-            return { name: ms(+e.within, { long: true }), value: e.within };
-          })
+          .map(e => 
+            ({ name: ms(+e.within, { long: true }), value: e.within })
+          )
           .filter(e => e.name.includes(focusedLowercase))
           .sort((a, b) => +a.value - +b.value)
           .slice(0, 25);
@@ -132,9 +126,7 @@ class AutocompleteListener extends Listener {
         const final = aliasesOmited
           .sort((a, b) => a.localeCompare(b))
           .slice(0, 25)
-          .map(c => {
-            return { name: c, value: c };
-          });
+          .map(c => ({ name: c, value: c }));
 
         return interaction.respond(final);
       }

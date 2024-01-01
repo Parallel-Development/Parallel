@@ -2,7 +2,10 @@ import { EmbedBuilder } from '@discordjs/builders';
 import { Colors, PermissionFlagsBits as Permissions } from 'discord.js';
 import { Infraction, InfractionType } from '@prisma/client';
 import client from './client';
-import { getMember } from './lib/util/functions';
+import { getMember, sleep } from './lib/util/functions';
+
+const MS_1_MINUTE = 60000;
+const MS_24_HOURS = 86400000;
 
 // for infractions
 setInterval(async () => {
@@ -53,7 +56,6 @@ setInterval(async () => {
       } else {
         const member = await getMember(guild, task.userId);
         if (member) {
-          // parallel listens for timeout changes, but in the event that it misses it, we still double check
           // if the user is timed out for more than `10` seconds then we'll update the expiration date accordingly
           if (member.communicationDisabledUntil && +member.communicationDisabledUntil > Number(task.expires) + 10000) {
             await client.db.task.update({
@@ -95,7 +97,7 @@ setInterval(async () => {
       } as Infraction);
     }
   }
-}, 60000);
+}, MS_1_MINUTE);
 
 // for less important objects that can expire, like appeals or chatlogs
 // Its not an interval so that it can be called immediately
@@ -117,7 +119,8 @@ async function sweeper() {
   });
 
   // call the function in 24 hours
-  setTimeout(sweeper, 86400000);
+  await sleep(MS_24_HOURS);
+  sweeper();
 }
 
 sweeper();
