@@ -70,12 +70,12 @@ export async function hasSlashCommandPermission(member: GuildMember, commandName
   const allowed = permissions?.filter(
     permission =>
       permission.permission === true &&
-      (permission.id === member.id || member.roles.cache.some(r => permission.id === r.id))
+      (permission.id === member.id || member.roles.cache.has(permission.id))
   );
   const denied = permissions?.filter(
     permission =>
       permission.permission === false &&
-      (permission.id === member.id || member.roles.cache.some(r => permission.id === r.id))
+      (permission.id === member.id || member.roles.cache.has(permission.id))
   );
   if (denied?.some(deny => deny.type === ApplicationCommandPermissionType.User)) return false;
   if (!allowed?.length && !(denied?.length && hasDefault)) {
