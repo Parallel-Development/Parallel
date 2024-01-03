@@ -47,7 +47,7 @@ class LockserverCommand extends Command {
     const embed = new EmbedBuilder().setColor(Colors.Orange).setTitle('Server Locked').setDescription(reason);
 
     for (const channelId of lockChannels) {
-      const channel = interaction.guild.channels.cache.get(channelId) as TextChannel | null;
+      const channel = interaction.guild.channels.cache.get(channelId) as TextChannel;
       if (!channel) continue;
 
       if (!interaction.guild.members.me!.permissions.has(Permissions.Administrator)) {
@@ -98,7 +98,7 @@ class LockserverCommand extends Command {
         });
       }
 
-      await channel.send({ embeds: [embed] }).catch(() => {});
+      if (channel.isTextBased()) await channel.send({ embeds: [embed] }).catch(() => {});
       await sleep(1000);
     }
 

@@ -102,7 +102,7 @@ class UnlockserverCommand extends Command {
 
       const embed = new EmbedBuilder().setColor(Colors.Green).setTitle('Server Unlocked').setDescription(reason);
 
-      await channel.send({ embeds: [embed] }).catch(() => {});
+      if (channel.isTextBased()) await channel.send({ embeds: [embed] }).catch(() => {});
       await sleep(1000);
     }
 

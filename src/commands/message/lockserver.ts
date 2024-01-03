@@ -88,7 +88,7 @@ class LockserverCommand extends Command {
         });
       }
 
-      await channel.send({ embeds: [embed] }).catch(() => {});
+      if (channel.isTextBased()) await channel.send({ embeds: [embed] }).catch(() => {});
       await sleep(1000);
     }
 
