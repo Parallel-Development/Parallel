@@ -209,7 +209,7 @@ class AppealCommand extends Command {
             }\n**Reason:** ${infraction.reason}`
           );
 
-        return message.edit({
+        return msg.edit({
           content: 'This is my best guess for the infraction you are trying to appeal:',
           embeds: [infractionEmbed],
           components: []
