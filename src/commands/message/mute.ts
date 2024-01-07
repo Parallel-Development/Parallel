@@ -8,7 +8,7 @@ import { d28 } from '../../lib/util/constants';
 @properties<true>({
   name: 'mute',
   description: 'Mute a member.',
-  args: ['[member] [duration] <reason>'],
+  args: ['<member> <duration> [reason]'],
   aliases: ['m', 'silence', 'shut', 'shush', 'quiet'],
   clientPermissions: [Permissions.ModerateMembers]
 })

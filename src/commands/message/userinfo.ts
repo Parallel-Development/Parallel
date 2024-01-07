@@ -7,6 +7,7 @@ import { getMember, getUser } from '../../lib/util/functions';
 @properties<true>({
   name: 'userinfo',
   description: 'Get information on a user.',
+  args: ['[user]'],
   allowDM: true
 })
 class UserinfoCommand extends Command {

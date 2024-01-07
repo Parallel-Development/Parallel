@@ -5,7 +5,7 @@ import { bin } from '../../lib/util/functions';
 @properties<true>({
   name: 'tag-manager',
   description: 'Manage tags in the guild. Tags are (typically) informational text that can be referenced.',
-  args: ['create [name] [content]', 'delete [name]', 'rename [name] [new_name]', 'edit [name] [new_content]'],
+  args: ['create <name> <content>', 'delete <name>', 'rename <name> <new_name>', 'edit <name> <new_content>'],
   aliases: ['tags']
 })
 class TagManagerCommand extends Command {

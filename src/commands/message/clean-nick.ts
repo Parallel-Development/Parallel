@@ -7,7 +7,7 @@ import { adequateHierarchy, getMember } from '../../lib/util/functions';
 @properties<true>({
   name: 'clean-nick',
   description: 'Correct a non-default font, hoisted, or any other unwanted user/nickname.',
-  args: ['[member] <what: font | hoist | other>'],
+  args: ['<member> [font | hoist | other]'],
   clientPermissions: [Permissions.ManageNicknames]
 })
 class CleannickCommand extends Command {

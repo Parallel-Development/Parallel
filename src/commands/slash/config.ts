@@ -285,7 +285,7 @@ import yaml from 'js-yaml';
           cmd
             .setName('prefix')
             .setDescription('The prefix required before a command name for it to be treated as a command.')
-            .addStringOption(opt => opt.setName('prefix').setDescription('The prefix.'))
+            .addStringOption(opt => opt.setName('prefix').setDescription('The prefix.').setRequired(true))
         )
     )
 )

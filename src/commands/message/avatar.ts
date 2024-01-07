@@ -5,9 +5,9 @@ import { getUser } from '../../lib/util/functions';
 @properties<true>({
   name: 'avatar',
   description: "Get a user's avatar.",
-  args: ['<user>'],
+  args: ['[user]'],
   allowDM: true,
-  aliases: ['av']
+  aliases: ['av', 'pfp']
 })
 class AvatarCommand extends Command {
   async run(message: Message, args: string[]) {

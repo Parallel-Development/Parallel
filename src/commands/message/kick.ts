@@ -6,7 +6,7 @@ import Command, { properties } from '../../lib/structs/Command';
 @properties<true>({
   name: 'kick',
   description: 'Kick a member from the guild.',
-  args: ['[member] <reason>'],
+  args: ['<member> [reason]'],
   aliases: ['k', 'boot', 'remove'],
   clientPermissions: [Permissions.KickMembers]
 })

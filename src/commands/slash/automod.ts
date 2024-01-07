@@ -1,4 +1,4 @@
-import { InfractionType } from '@prisma/client';
+import { InfractionType, Prisma } from '@prisma/client';
 import {
   ChatInputCommandInteraction,
   SlashCommandBuilder,
@@ -484,7 +484,7 @@ class AutomodCommand extends Command {
 
             await this.client.db.guild.update({
               where: { id: interaction.guildId },
-              data: { autoModSpamTriggers }
+              data: { autoModSpamTriggers: autoModSpamTriggers as Prisma.InputJsonValue[] }
             });
 
             return interaction.editReply('Trigger removed.');

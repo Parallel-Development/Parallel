@@ -6,7 +6,7 @@ import { sleep } from '../../lib/util/functions';
 @properties<true>({
   name: 'lockserver',
   description: 'Restrict members from sending messages in all desingated channels.',
-  args: ['<reason>'],
+  args: ['[reason]'],
   aliases: ['lockall'],
   guildResolve: true
 })

@@ -6,7 +6,7 @@ import { Infraction, InfractionType } from '@prisma/client';
 @properties<true>({
   name: 'remove-infraction',
   description: 'Remove an infraction.',
-  args: ['[id] <reason> <--undo-punishment>'],
+  args: ['<id> [reason] [--undo-punishment'],
   aliases: ['delete-infraction', 'rmwarn']
 })
 class RemoveInfractionCommand extends Command {

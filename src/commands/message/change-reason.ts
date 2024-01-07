@@ -5,7 +5,7 @@ import { getMember } from '../../lib/util/functions';
 @properties<true>({
   name: 'change-reason',
   description: 'Change the reason for an infraction.',
-  args: ['[id] [new_reason]']
+  args: ['<id> <new_reason>']
 })
 class ChangeReason extends Command {
   async run(message: Message<true>, args: string[]) {

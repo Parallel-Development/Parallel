@@ -58,9 +58,9 @@ class HelpCommand extends Command {
       let description = `${command.description}\n\n`;
       if (command.NA) description += '***• This command is only available via slash commands!***\n';
       if (command.args)
-        description += `**•** *Usage: \`${command.args.map(way => `/${command.name} ${way}`).join('\n')}\`*\n`;
+        description += `**•** Usage: \`${command.args.map(way => `/${command.name} ${way}`).join('\n')}\`\n`;
       if (command.aliases.length > 0)
-        description += `**•** *Aliases: ${command.aliases.map(alias => `\`${alias}\``).join(', ')}*\n`;
+        description += `**•** Aliases: ${command.aliases.map(alias => `\`${alias}\``).join(', ')}\n`;
       if (command.allowDM) description += `**•** *This command can be ran in DM's.*`;
 
       embed.setDescription(description);

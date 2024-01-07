@@ -5,7 +5,7 @@ import { infractionsPerPage, mainColor } from '../../lib/util/constants';
 @properties<true>({
   name: 'myinfractions',
   description: 'View your current infractions.',
-  args: ['<page>'],
+  args: ['[page]'],
   aliases: ['mywarnings']
 })
 class MyInfractionsCommand extends Command {

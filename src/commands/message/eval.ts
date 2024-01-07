@@ -8,9 +8,9 @@ let _; // used to reference the last returned expression
 @properties<true>({
   name: 'eval',
   description: 'Execute a string of JavaScript code.',
-  args: ['[code] <--async> <--depth={depth}>'],
+  args: ['<code> [--async] [--depth={depth}]'],
   allowDM: true,
-  aliases: ['evaluate', 'run']
+  aliases: ['evaluate', 'run', 'ev', 'e']
 })
 class EvalCommand extends Command {
   async run(message: Message, args: string[]) {

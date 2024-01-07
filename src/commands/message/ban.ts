@@ -7,7 +7,7 @@ import { adequateHierarchy, getMember, getUser } from '../../lib/util/functions'
 @properties<true>({
   name: 'ban',
   description: 'Ban a member from the guild.',
-  args: ['[user] <duration> <reason>'],
+  args: ['<user> [duration>] [reason]'],
   aliases: ['banish', 'b'],
   clientPermissions: [Permissions.BanMembers]
 })

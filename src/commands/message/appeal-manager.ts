@@ -9,11 +9,11 @@ import { AppealResponse } from '../../types';
   name: 'appeal-manager',
   description: 'Manage infraction appeals.',
   args: [
-    'accept [id] <reason> <--dont-undo>',
-    'deny [id] <reason>',
+    'accept <id> [reason] [--dont-undo]',
+    'deny <id> [reason]',
     'view-pending',
-    'blacklist add [id]',
-    'blacklist remove [id]',
+    'blacklist add <id>',
+    'blacklist remove <id>',
     'blacklist clear',
     'blacklist view'
   ],

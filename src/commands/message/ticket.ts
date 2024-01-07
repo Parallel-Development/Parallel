@@ -17,7 +17,7 @@ import { mainColor } from '../../lib/util/constants';
 @properties<true>({
   name: 'ticket',
   description: 'Create and manage a ticket.',
-  args: ['open', 'close', 'share', 'join [code]']
+  args: ['open', 'close', 'share', 'join <code>']
 })
 class TicketCommand extends Command {
   async run(message: Message<true>, args: string[]) {

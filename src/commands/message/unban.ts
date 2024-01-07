@@ -6,7 +6,7 @@ import { getUser } from '../../lib/util/functions';
 @properties<true>({
   name: 'unban',
   description: 'Unban a member from the guild.',
-  args: ['[user] <reason>'],
+  args: ['<user> [reason]'],
   aliases: ['ub', 'unbanish'],
   clientPermissions: [Permissions.BanMembers]
 })

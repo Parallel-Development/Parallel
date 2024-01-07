@@ -5,7 +5,7 @@ import Command, { properties } from '../../lib/structs/Command';
 @properties<true>({
   name: 'slowmode',
   description: 'Modify the slowmode in a channel',
-  args: ['<set | add | remove> [slowmode]'],
+  args: ['[set | add | remove] <slowmode>'],
   aliases: ['sm']
 })
 class SlowmodeCommand extends Command {

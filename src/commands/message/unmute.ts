@@ -6,7 +6,7 @@ import { adequateHierarchy, getMember } from '../../lib/util/functions';
 @properties<true>({
   name: 'unmute',
   description: 'Unmute a member.',
-  args: ['[member] <reason>'],
+  args: ['<member> [reason]'],
   aliases: ['um'],
   clientPermissions: [Permissions.ModerateMembers]
 })
