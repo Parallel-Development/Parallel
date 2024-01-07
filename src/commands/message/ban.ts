@@ -3,6 +3,7 @@ import { PermissionFlagsBits as Permissions, EmbedBuilder, Colors, Message, Guil
 import ms from 'ms';
 import Command, { properties } from '../../lib/structs/Command';
 import { adequateHierarchy, getMember, getUser } from '../../lib/util/functions';
+import punishLog from '../../handlers/punishLog';
 
 @properties<true>({
   name: 'ban',
@@ -52,7 +53,8 @@ class BanCommand extends Command {
       select: { infractionModeratorPublic: true, infoBan: true, defaultBanDuration: true }
     }))!;
 
-    if (!expires && durationStr !== 'never' && guild.defaultBanDuration !== 0n) expires = guild.defaultBanDuration + date;
+    if (!expires && durationStr !== 'never' && guild.defaultBanDuration !== 0n)
+      expires = guild.defaultBanDuration + date;
 
     const infraction = await this.client.db.infraction.create({
       data: {
@@ -81,7 +83,12 @@ class BanCommand extends Command {
         update: data,
         create: data
       });
-    }
+    } else
+      await this.client.db.task.delete({
+        where: {
+          userId_guildId_type: { userId: user.id, guildId: message.guildId, type: InfractionType.Ban }
+        }
+      });
 
     const { infractionModeratorPublic, infoBan } = guild;
     const expiresStr = Math.floor(Number(infraction.expires) / 1000);
@@ -104,11 +111,17 @@ class BanCommand extends Command {
 
     await message.guild.members.ban(user.id, { reason });
 
-    this.client.emit('punishLog', infraction);
+    punishLog(infraction);
 
-    return message.reply(
-      `Banned **${user instanceof GuildMember ? user.user.username : user.username}** with ID \`${infraction.id}\``
-    );
+    const embed = new EmbedBuilder()
+      .setColor(Colors.Red)
+      .setDescription(
+        `**${user instanceof GuildMember ? user.user.username : user.username}** has been banned with ID \`${
+          infraction.id
+        }\``
+      );
+
+    return message.reply({ embeds: [embed] });
   }
 }
 

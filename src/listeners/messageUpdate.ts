@@ -1,5 +1,7 @@
 import { Message } from 'discord.js';
 import Listener from '../lib/structs/Listener';
+import messageLog from '../handlers/messageLog';
+import automod from '../handlers/automod';
 
 class MessageUpdateListener extends Listener {
   constructor() {
@@ -7,8 +9,8 @@ class MessageUpdateListener extends Listener {
   }
 
   async run(oldMsg: Message<true>, newMsg: Message<true>) {
-    this.client.emit('messageLog', oldMsg, newMsg, 'edit');
-    return this.client.emit('automod', newMsg.content);
+    messageLog(oldMsg, newMsg);
+    automod(newMsg);
   }
 }
 

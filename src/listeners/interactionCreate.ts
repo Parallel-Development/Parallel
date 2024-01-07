@@ -1,5 +1,15 @@
+import autocomplete from '../handlers/autocomplete';
+import buttonPress from '../handlers/buttonPress';
+import chatInputCommand from '../handlers/chatInputCommand';
+import modalSubmit from '../handlers/modalSubmit';
 import Listener from '../lib/structs/Listener';
-import { InteractionType, type Interaction } from 'discord.js';
+import {
+  InteractionType,
+  type Interaction,
+  ChatInputCommandInteraction,
+  ButtonInteraction,
+  AutocompleteInteraction
+} from 'discord.js';
 
 class InteractionCreateListener extends Listener {
   constructor() {
@@ -9,13 +19,13 @@ class InteractionCreateListener extends Listener {
   async run(interaction: Interaction) {
     switch (interaction.type) {
       case InteractionType.ApplicationCommand:
-        return this.client.emit('chatInputCommand', interaction);
+        return chatInputCommand(interaction as ChatInputCommandInteraction);
       case InteractionType.ModalSubmit:
-        return this.client.emit('modalSubmit', interaction);
+        return modalSubmit(interaction);
       case InteractionType.MessageComponent:
-        return this.client.emit('buttonPress', interaction);
+        return buttonPress(interaction as ButtonInteraction);
       case InteractionType.ApplicationCommandAutocomplete:
-        return this.client.emit('autocomplete', interaction);
+        return autocomplete(interaction as AutocompleteInteraction<'cached'>);
     }
   }
 }

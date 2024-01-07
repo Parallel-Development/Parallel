@@ -63,19 +63,19 @@ export async function hasSlashCommandPermission(member: GuildMember, commandName
     client.application!.commands.cache.find(cmd => cmd.name === commandName) ||
     (await client.application!.commands.fetch().then(cmds => cmds.find(cmd => cmd.name === commandName)))!;
 
+  if (!command) return true;
+
   const permissions = await client
     .application!.commands.permissions.fetch({ command: command.id, guild: member.guild.id })
     .catch(() => null);
   const hasDefault = member.permissions?.has(command.defaultMemberPermissions ?? 0n);
   const allowed = permissions?.filter(
     permission =>
-      permission.permission === true &&
-      (permission.id === member.id || member.roles.cache.has(permission.id))
+      permission.permission === true && (permission.id === member.id || member.roles.cache.has(permission.id))
   );
   const denied = permissions?.filter(
     permission =>
-      permission.permission === false &&
-      (permission.id === member.id || member.roles.cache.has(permission.id))
+      permission.permission === false && (permission.id === member.id || member.roles.cache.has(permission.id))
   );
   if (denied?.some(deny => deny.type === ApplicationCommandPermissionType.User)) return false;
   if (!allowed?.length && !(denied?.length && hasDefault)) {

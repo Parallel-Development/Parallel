@@ -1,5 +1,6 @@
 import { Message } from 'discord.js';
 import Listener from '../lib/structs/Listener';
+import messageLog from '../handlers/messageLog';
 
 class MessageDeleteListener extends Listener {
   constructor() {
@@ -7,7 +8,7 @@ class MessageDeleteListener extends Listener {
   }
 
   async run(message: Message<true>) {
-    return this.client.emit('messageLog', null, message, 'delete');
+    messageLog(null, message);
   }
 }
 

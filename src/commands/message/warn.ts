@@ -5,6 +5,7 @@ import { adequateHierarchy, getMember } from '../../lib/util/functions';
 import { Escalations } from '../../types';
 import { InfractionType } from '@prisma/client';
 import { pastTenseInfractionTypes } from '../../lib/util/constants';
+import punishLog from '../../handlers/punishLog';
 
 @properties<true>({
   name: 'warn',
@@ -77,9 +78,13 @@ class WarnCommand extends Command {
     if (infoWarn) dm.addFields([{ name: 'Additional Information', value: infoWarn }]);
 
     await member.send({ embeds: [dm] }).catch(() => {});
-    this.client.emit('punishLog', infraction);
+    punishLog(infraction);
 
-    await message.reply(`Warning issued for **${member.user.username}** with ID \`${infraction.id}\``);
+    const embed = new EmbedBuilder()
+      .setColor(Colors.Yellow)
+      .setDescription(`Warning issued for **${member.user.username}** with ID \`${infraction.id}\``);
+
+    await message.reply({ embeds: [embed] });
 
     // ESCALATION CHECK!
     const infractionHistory = await this.client.db.infraction.findMany({
@@ -204,7 +209,7 @@ class WarnCommand extends Command {
         break;
     }
 
-    this.client.emit('punishLog', eInfraction);
+    punishLog(eInfraction);
   }
 }
 

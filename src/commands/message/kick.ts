@@ -2,6 +2,7 @@ import { PermissionFlagsBits as Permissions, Colors, EmbedBuilder, Message } fro
 import { adequateHierarchy, getMember } from '../../lib/util/functions';
 import { InfractionType } from '@prisma/client';
 import Command, { properties } from '../../lib/structs/Command';
+import punishLog from '../../handlers/punishLog';
 
 @properties<true>({
   name: 'kick',
@@ -57,9 +58,13 @@ class KickCommand extends Command {
 
     await member.kick(reason);
 
-    this.client.emit('punishLog', infraction);
+    punishLog(infraction);
 
-    return message.reply(`Kicked **${member.user.username}** with ID \`${infraction.id}\``);
+    const embed = new EmbedBuilder()
+      .setColor(Colors.Orange)
+      .setDescription(`**${member.user.username}**has been kicked with ID \`${infraction.id}\``);
+
+    return message.reply({ embeds: [embed] });
   }
 }
 

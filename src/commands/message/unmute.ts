@@ -2,6 +2,7 @@ import { InfractionType } from '@prisma/client';
 import { PermissionFlagsBits as Permissions, EmbedBuilder, Colors, Message } from 'discord.js';
 import Command, { properties, data } from '../../lib/structs/Command';
 import { adequateHierarchy, getMember } from '../../lib/util/functions';
+import punishLog from '../../handlers/punishLog';
 
 @properties<true>({
   name: 'unmute',
@@ -67,9 +68,13 @@ class MuteCommand extends Command {
 
     await member.send({ embeds: [dm] }).catch(() => {});
 
-    this.client.emit('punishLog', infraction);
+    punishLog(infraction);
 
-    return message.reply(`Unmuted **${member.user.username}**.`);
+    const embed = new EmbedBuilder()
+      .setColor(Colors.Green)
+      .setDescription(`**${member.user.username}** has been unmuted.`);
+
+    return message.reply({ embeds: [embed] });
   }
 }
 

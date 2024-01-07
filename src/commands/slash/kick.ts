@@ -8,6 +8,7 @@ import {
 import { adequateHierarchy } from '../../lib/util/functions';
 import { InfractionType } from '@prisma/client';
 import Command, { properties, data } from '../../lib/structs/Command';
+import punishLog from '../../handlers/punishLog';
 
 @data(
   new SlashCommandBuilder()
@@ -67,9 +68,13 @@ class KickCommand extends Command {
 
     await member.kick(reason);
 
-    this.client.emit('punishLog', infraction);
+    punishLog(infraction);
 
-    return interaction.editReply(`Kicked **${member.user.username}** with ID \`${infraction.id}\``);
+    const embed = new EmbedBuilder()
+      .setColor(Colors.Orange)
+      .setDescription(`**${member.user.username}** has been kicked with ID \`${infraction.id}\``);
+
+    return interaction.editReply({ embeds: [embed] });
   }
 }
 

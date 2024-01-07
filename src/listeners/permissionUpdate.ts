@@ -1,6 +1,6 @@
 import { ApplicationCommandPermissionsUpdateData } from 'discord.js';
 import Listener from '../lib/structs/Listener';
-import { commandsPermissionCache } from './messageCommand';
+import { commandsPermissionCache } from '../handlers/messageCommand';
 
 class PermissionUpdateListener extends Listener {
   constructor() {

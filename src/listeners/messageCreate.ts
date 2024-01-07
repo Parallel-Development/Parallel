@@ -1,5 +1,7 @@
 import { Message } from 'discord.js';
 import Listener from '../lib/structs/Listener';
+import automod from '../handlers/automod';
+import messageCommand from '../handlers/messageCommand';
 
 class MessageCreateListener extends Listener {
   constructor() {
@@ -7,8 +9,8 @@ class MessageCreateListener extends Listener {
   }
 
   async run(message: Message) {
-    if (message.inGuild()) this.client.emit('automod', message);
-    this.client.emit('messageCommand', message);
+    if (message.inGuild()) automod(message);
+    messageCommand(message);
   }
 }
 

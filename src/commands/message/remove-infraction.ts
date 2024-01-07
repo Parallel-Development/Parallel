@@ -2,6 +2,7 @@ import { PermissionFlagsBits as Permissions, EmbedBuilder, Colors, Message } fro
 import Command, { properties } from '../../lib/structs/Command';
 import { getMember } from '../../lib/util/functions';
 import { Infraction, InfractionType } from '@prisma/client';
+import punishLog from '../../handlers/punishLog';
 
 @properties<true>({
   name: 'remove-infraction',
@@ -60,7 +61,7 @@ class RemoveInfractionCommand extends Command {
           throw 'I cannot undo that type of punishment.';
       }
 
-      this.client.emit('punishLog', {
+      punishLog({
         userId: infraction.userId,
         guildId: message.guildId,
         moderatorId: message.author.id,

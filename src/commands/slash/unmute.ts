@@ -8,6 +8,7 @@ import {
 } from 'discord.js';
 import Command, { properties, data } from '../../lib/structs/Command';
 import { adequateHierarchy } from '../../lib/util/functions';
+import punishLog from '../../handlers/punishLog';
 
 @data(
   new SlashCommandBuilder()
@@ -74,9 +75,13 @@ class MuteCommand extends Command {
 
     await member.send({ embeds: [dm] }).catch(() => {});
 
-    this.client.emit('punishLog', infraction);
+    punishLog(infraction);
 
-    return interaction.editReply(`Unmuted **${member.user.username}**.`);
+    const embed = new EmbedBuilder()
+      .setColor(Colors.Green)
+      .setDescription(`**${member.user.username}** has been unmuted with ID \`${infraction.id}\``);
+
+    return interaction.editReply({ embeds: [embed] });
   }
 }
 

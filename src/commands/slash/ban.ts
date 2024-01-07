@@ -9,6 +9,7 @@ import {
 import ms from 'ms';
 import Command, { properties, data } from '../../lib/structs/Command';
 import { adequateHierarchy } from '../../lib/util/functions';
+import punishLog from '../../handlers/punishLog';
 
 @data(
   new SlashCommandBuilder()
@@ -111,7 +112,12 @@ class BanCommand extends Command {
         update: data,
         create: data
       });
-    }
+    } else
+      await this.client.db.task.delete({
+        where: {
+          userId_guildId_type: { userId: user.id, guildId: interaction.guildId, type: InfractionType.Ban }
+        }
+      });
 
     const { infractionModeratorPublic, infoBan } = guild;
     const expiresStr = Math.floor(Number(infraction.expires) / 1000);
@@ -134,9 +140,13 @@ class BanCommand extends Command {
 
     await interaction.guild.members.ban(user.id, { reason, deleteMessageSeconds });
 
-    this.client.emit('punishLog', infraction);
+    punishLog(infraction);
 
-    return interaction.editReply(`Banned **${user.username}** with ID \`${infraction.id}\``);
+    const embed = new EmbedBuilder()
+      .setColor(Colors.Red)
+      .setDescription(`**${user.username}** has been banned with ID \`${infraction.id}\``);
+
+    return interaction.editReply({ embeds: [embed] });
   }
 }
 

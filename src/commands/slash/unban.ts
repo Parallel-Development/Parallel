@@ -1,6 +1,13 @@
 import { InfractionType } from '@prisma/client';
-import { SlashCommandBuilder, PermissionFlagsBits as Permissions, type ChatInputCommandInteraction } from 'discord.js';
+import {
+  SlashCommandBuilder,
+  PermissionFlagsBits as Permissions,
+  type ChatInputCommandInteraction,
+  EmbedBuilder,
+  Colors
+} from 'discord.js';
 import Command, { properties, data } from '../../lib/structs/Command';
+import punishLog from '../../handlers/punishLog';
 
 @data(
   new SlashCommandBuilder()
@@ -37,9 +44,13 @@ class UnbanCommand extends Command {
 
     await interaction.guild.members.unban(user.id, reason);
 
-    this.client.emit('punishLog', infraction);
+    punishLog(infraction);
 
-    return interaction.editReply(`Unbanned **${user.username}** with ID \`${infraction.id}\``);
+    const embed = new EmbedBuilder()
+      .setColor(Colors.Green)
+      .setDescription(`**${user.username}** has been unbanned with ID \`${infraction.id}\``);
+
+    return interaction.editReply({ embeds: [embed] });
   }
 }
 

@@ -4,6 +4,7 @@ import ms from 'ms';
 import Command, { properties } from '../../lib/structs/Command';
 import { adequateHierarchy, getMember } from '../../lib/util/functions';
 import { d28 } from '../../lib/util/constants';
+import punishLog from '../../handlers/punishLog';
 
 @properties<true>({
   name: 'mute',
@@ -109,9 +110,13 @@ class MuteCommand extends Command {
 
     await member.send({ embeds: [dm] }).catch(() => {});
 
-    this.client.emit('punishLog', infraction);
+    punishLog(infraction);
 
-    return message.reply(`Muted **${member.user.username}** with ID \`${infraction.id}\``);
+    const embed = new EmbedBuilder()
+      .setColor(Colors.Orange)
+      .setDescription(`**${member.user.username}** has been muted with ID \`${infraction.id}\``);
+
+    return message.reply({ embeds: [embed] });
   }
 }
 

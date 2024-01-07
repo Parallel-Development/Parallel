@@ -1,13 +1,14 @@
 import { InfractionType } from '@prisma/client';
-import { PermissionFlagsBits as Permissions, Message } from 'discord.js';
+import { PermissionFlagsBits as Permissions, Message, EmbedBuilder, Colors } from 'discord.js';
 import Command, { properties, data } from '../../lib/structs/Command';
 import { getUser } from '../../lib/util/functions';
+import punishLog from '../../handlers/punishLog';
 
 @properties<true>({
   name: 'unban',
   description: 'Unban a member from the guild.',
   args: ['<user> [reason]'],
-  aliases: ['ub', 'unbanish'],
+  aliases: ['ub', 'unbanish', 'pardon'],
   clientPermissions: [Permissions.BanMembers]
 })
 class UnbanCommand extends Command {
@@ -38,9 +39,13 @@ class UnbanCommand extends Command {
 
     await message.guild.members.unban(user.id, reason);
 
-    this.client.emit('punishLog', infraction);
+    punishLog(infraction);
 
-    return message.reply(`Unbanned **${user.username}** with ID \`${infraction.id}\``);
+    const embed = new EmbedBuilder()
+      .setColor(Colors.Green)
+      .setDescription(`**${user.username}** has been unbanned with ID \`${infraction.id}\``);
+
+    return message.reply({ embeds: [embed] });
   }
 }
 
