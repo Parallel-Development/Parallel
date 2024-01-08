@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Colors, MessageActionRowComponentBuilder } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Colors } from 'discord.js';
 import ms from 'ms';
 
 export const infractionsPerPage = 7;
@@ -20,6 +20,15 @@ export const pastTenseInfractionTypes = {
   warn: 'warned',
   unban: 'unbanned',
   unmute: 'unmuted'
+};
+
+export const infractionColors = {
+  Warn: Colors.Yellow,
+  Mute: Colors.Orange,
+  Kick: Colors.Orange,
+  Ban: Colors.Red,
+  Unmute: Colors.Green,
+  Unban: Colors.Green
 };
 
 export const d28 = ms('28d');

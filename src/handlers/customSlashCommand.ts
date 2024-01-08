@@ -6,7 +6,7 @@ import {
   GuildMember,
   PermissionFlagsBits as Permissions
 } from 'discord.js';
-import { pastTenseInfractionTypes } from '../lib/util/constants';
+import { infractionColors, pastTenseInfractionTypes } from '../lib/util/constants';
 import { adequateHierarchy } from '../lib/util/functions';
 import { Escalations } from '../types';
 import ms from 'ms';
@@ -22,7 +22,7 @@ export default async function (interaction: ChatInputCommandInteraction<'cached'
 
   if (!command) throw 'Unknown Command.';
 
-  const target = interaction.options.getMember('member') ?? interaction.options.getUser('member');
+  const target = interaction.options.getMember('member') ?? interaction.options.getUser('member') ?? interaction.options.getUser('user');
 
   if (!target) throw 'The provided user is not in this guild.';
 
@@ -102,15 +102,7 @@ export default async function (interaction: ChatInputCommandInteraction<'cached'
         punishment === IT.Ban || punishment === IT.Kick ? 'from' : 'in'
       } ${interaction.guild.name}`
     )
-    .setColor(
-      punishment === IT.Warn
-        ? Colors.Yellow
-        : punishment === IT.Mute || punishment === IT.Kick
-        ? Colors.Orange
-        : punishment === IT.Unmute || punishment === IT.Unban
-        ? Colors.Green
-        : Colors.Red
-    )
+    .setColor(infractionColors[punishment])
     .setDescription(`${reason}${expires ? `\n\n***•** Expires: <t:${expiresStr}> (<t:${expiresStr}:R>)*` : ''}`)
     .setFooter({ text: `Punishment ID: ${infraction.id}` })
     .setTimestamp();
@@ -130,7 +122,7 @@ export default async function (interaction: ChatInputCommandInteraction<'cached'
       break;
   }
 
-  if (target instanceof GuildMember) await target!.send({ embeds: [dm] }).catch(() => {});
+  if (target instanceof GuildMember) await target.send({ embeds: [dm] }).catch(() => {});
 
   punishLog(infraction);
 
@@ -155,13 +147,7 @@ export default async function (interaction: ChatInputCommandInteraction<'cached'
   const tense = pastTenseInfractionTypes[lpunishment as keyof typeof pastTenseInfractionTypes];
 
   const embed = new EmbedBuilder()
-  .setColor(
-    punishment === InfractionType.Mute || punishment === InfractionType.Kick
-      ? Colors.Orange
-      : punishment === InfractionType.Unmute || punishment === InfractionType.Unban
-      ? Colors.Green
-      : Colors.Red
-  )
+  .setColor(infractionColors[punishment])
   .setDescription(`**${target instanceof GuildMember ? target.user.username : target.username}** has been ${tense} with ID \`${
     infraction.id
   }\``)
@@ -175,7 +161,7 @@ export default async function (interaction: ChatInputCommandInteraction<'cached'
   const infractionHistory = await client.db.infraction.findMany({
     where: {
       guildId: interaction.guild.id,
-      userId: target!.id,
+      userId: target.id,
       type: InfractionType.Warn,
       moderatorId: { not: client.user!.id }
     },
@@ -252,13 +238,7 @@ export default async function (interaction: ChatInputCommandInteraction<'cached'
         escalation.punishment === InfractionType.Ban || escalation.punishment === InfractionType.Kick ? 'from' : 'in'
       } ${interaction.guild.name}`
     )
-    .setColor(
-      escalation.punishment === InfractionType.Mute || escalation.punishment === InfractionType.Kick
-        ? Colors.Orange
-        : escalation.punishment === InfractionType.Unmute || escalation.punishment === InfractionType.Unban
-        ? Colors.Green
-        : Colors.Red
-    )
+    .setColor(infractionColors[escalation.punishment])
     .setDescription(
       `${eInfraction.reason}${eExpires ? `\n\n***•** Expires: <t:${eExpiresStr}> (<t:${eExpiresStr}:R>)*` : ''}`
     )
