@@ -159,13 +159,20 @@ export default async function (message: Message<true>, args: string[], commandNa
   }
 
   const tense = pastTenseInfractionTypes[lpunishment as keyof typeof pastTenseInfractionTypes];
-  const upperTense = tense[0].toUpperCase() + tense.slice(1);
 
-  message.reply(
-    `${upperTense} **${target instanceof GuildMember ? target.user.username : target.username}** with ID \`${
-      infraction.id
-    }\``
-  );
+  const embed = new EmbedBuilder()
+  .setColor(
+    punishment === InfractionType.Mute || punishment === InfractionType.Kick
+      ? Colors.Orange
+      : punishment === InfractionType.Unmute || punishment === InfractionType.Unban
+      ? Colors.Green
+      : Colors.Red
+  )
+  .setDescription(`**${target instanceof GuildMember ? target.user.username : target.username}** has been ${tense} with ID \`${
+    infraction.id
+  }\``)
+
+  message.reply({ embeds: [embed] });
 
   if (infraction.type !== InfractionType.Warn) return;
   if (!(target instanceof GuildMember)) return;
