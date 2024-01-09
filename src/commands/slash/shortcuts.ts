@@ -150,7 +150,8 @@ class ShortcutsCommand extends Command {
               description: `The ${
                 punishment === IT.Ban || punishment === IT.Unban ? 'user' : 'member'
               } to ${punishment}.`,
-              type: OptionType.User
+              type: OptionType.User,
+              required: true
             }
           ]
         })
