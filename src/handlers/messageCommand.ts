@@ -44,14 +44,12 @@ export default async function (message: Message) {
     if (!message.inGuild()) return;
 
     try {
-      await customMessageCommand(message, args, commandName);
+      await customMessageCommand(message, args, commandName, respondIfNoPermission);
     } catch (e) {
       if (typeof e !== 'string') {
         console.error(e);
         return;
       }
-
-      if (!respondIfNoPermission) return;
 
       const embed = new EmbedBuilder().setColor(Colors.Red).setDescription(e);
 

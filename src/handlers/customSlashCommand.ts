@@ -4,7 +4,8 @@ import {
   Colors,
   EmbedBuilder,
   GuildMember,
-  PermissionFlagsBits as Permissions
+  PermissionFlagsBits as Permissions,
+  User
 } from 'discord.js';
 import { infractionColors, pastTenseInfractionTypes } from '../lib/util/constants';
 import { adequateHierarchy } from '../lib/util/functions';
@@ -25,6 +26,8 @@ export default async function (interaction: ChatInputCommandInteraction<'cached'
   const target = interaction.options.getMember('member') ?? interaction.options.getUser('member') ?? interaction.options.getUser('user');
 
   if (!target) throw 'The provided user is not in this guild.';
+  if (command.punishment !== IT.Ban && command.punishment !== IT.Unban && target instanceof User)
+    throw 'The provided user is not in this guild.';
 
   const { punishment, reason, duration, deleteTime } = command;
   const date = BigInt(Date.now());

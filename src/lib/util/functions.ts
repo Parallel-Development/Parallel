@@ -56,12 +56,16 @@ export async function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export async function hasSlashCommandPermission(member: GuildMember, commandName: string) {
+export async function hasSlashCommandPermission(member: GuildMember, commandName: string, type: 'global' | 'guild' = 'global') {
   if (member.id === member.guild.ownerId) return true;
 
   const command =
-    client.application!.commands.cache.find(cmd => cmd.name === commandName) ||
-    (await client.application!.commands.fetch().then(cmds => cmds.find(cmd => cmd.name === commandName)))!;
+    type === 'global' 
+    ?
+      client.application!.commands.cache.find(cmd => cmd.name === commandName) ||
+      (await client.application!.commands.fetch().then(cmds => cmds.find(cmd => cmd.name === commandName)))!
+    : member.guild.commands.cache.find(c => c.name === commandName) ||
+      (await member.guild.commands.fetch().then(cmds => cmds.find(cmd => cmd.name === commandName)))!;
 
   if (!command) return true;
 

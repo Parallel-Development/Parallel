@@ -1,11 +1,10 @@
 import { InfractionType as IT, InfractionType } from '@prisma/client';
 import {
-  ApplicationCommandPermissionType,
-  Colors,
   EmbedBuilder,
   GuildMember,
   Message,
-  PermissionFlagsBits as Permissions
+  PermissionFlagsBits as Permissions,
+  User
 } from 'discord.js';
 import { infractionColors, pastTenseInfractionTypes } from '../lib/util/constants';
 import { adequateHierarchy, getMember, getUser, hasSlashCommandPermission } from '../lib/util/functions';
@@ -14,7 +13,7 @@ import ms from 'ms';
 import client from '../client';
 import punishLog from './punishLog';
 
-export default async function (message: Message<true>, args: string[], commandName: string) {
+export default async function (message: Message<true>, args: string[], commandName: string, respondIfNoPermission: boolean) {
   if (!message.member) return;
 
   const command = await client.db.shortcut.findUnique({
@@ -25,14 +24,17 @@ export default async function (message: Message<true>, args: string[], commandNa
 
   if (!command) return;
 
-  if (!(await hasSlashCommandPermission(message.member, commandName)))
-    throw 'You do not have permission to use this command.';
+  if (!(await hasSlashCommandPermission(message.member, commandName, 'guild')))
+    if (respondIfNoPermission) throw 'You do not have permission to use this command.';
+    else return;
 
   if (args.length == 0) throw 'Missing required argument `user`.';
 
   const target = (await getMember(message.guildId, args[0])) ?? (await getUser(args[0]));
 
-  if (!target) throw 'The provided user is not in this guild.';
+  if (!target) throw 'Invalid user.';
+  if (command.punishment !== IT.Ban && command.punishment !== IT.Unban && target instanceof User)
+    throw 'The provided user is not in this guild.';
 
   const { punishment, reason, duration, deleteTime } = command;
   const date = BigInt(Date.now());
