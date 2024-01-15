@@ -1,5 +1,13 @@
-import { type Guild, type GuildMember, ApplicationCommandPermissionType } from 'discord.js';
+import {
+  type Guild,
+  type GuildMember,
+  ApplicationCommandPermissionType,
+  Collection,
+  ApplicationCommandPermissions,
+  PermissionFlagsBits as Permissions
+} from 'discord.js';
 import client from '../../client';
+export const commandsPermissionCache = new Map<string, Collection<string, readonly ApplicationCommandPermissions[]>>();
 
 export function adequateHierarchy(member1: GuildMember, member2: GuildMember) {
   if (member1.guild.ownerId === member1.id) return true;
@@ -56,23 +64,31 @@ export async function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export async function hasSlashCommandPermission(member: GuildMember, commandName: string, type: 'global' | 'guild' = 'global') {
-  if (member.id === member.guild.ownerId) return true;
+export async function hasSlashCommandPermission(
+  member: GuildMember,
+  commandName: string,
+  type: 'global' | 'guild' = 'global'
+) {
+  if (member.permissions.has(Permissions.Administrator)) return true;
+
   const cmdId = type === 'global' ? client.commands.slash.get(commandName)?.id! : '';
-  const shortcutId = type === 'guild' 
-  ? (await client.db.shortcut.findUnique({ where: { guildId_name: { guildId: member.guild.id, name: commandName } } }))?.id! 
-  : '';
+  const shortcutId =
+    type === 'guild'
+      ? (
+          await client.db.shortcut.findUnique({
+            where: { guildId_name: { guildId: member.guild.id, name: commandName } }
+          })
+        )?.id!
+      : '';
 
   const command =
-    type === 'global' 
-    ? (await client.application!.commands.fetch(cmdId, { guildId: member.guild.id }))
-    : (await member.guild.commands.fetch(shortcutId));
+    type === 'global'
+      ? await client.application!.commands.fetch(cmdId, { guildId: member.guild.id })
+      : await member.guild.commands.fetch(shortcutId);
 
   if (!command) return true;
 
-  const permissions = await client
-    .application!.commands.permissions.fetch({ command: command.id, guild: member.guild.id })
-    .catch(() => null);
+  const permissions = commandsPermissionCache.get(member.guild.id)!.get(command.id);
   const hasDefault = member.permissions?.has(command.defaultMemberPermissions ?? 0n);
   const allowed = permissions?.filter(
     permission =>

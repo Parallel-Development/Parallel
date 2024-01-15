@@ -1,11 +1,5 @@
 import { InfractionType as IT, InfractionType } from '@prisma/client';
-import {
-  EmbedBuilder,
-  GuildMember,
-  Message,
-  PermissionFlagsBits as Permissions,
-  User
-} from 'discord.js';
+import { EmbedBuilder, GuildMember, Message, PermissionFlagsBits as Permissions, User } from 'discord.js';
 import { infractionColors, pastTenseInfractionTypes } from '../lib/util/constants';
 import { adequateHierarchy, getMember, getUser, hasSlashCommandPermission } from '../lib/util/functions';
 import { Escalations } from '../types';
@@ -13,7 +7,12 @@ import ms from 'ms';
 import client from '../client';
 import punishLog from './punishLog';
 
-export default async function (message: Message<true>, args: string[], commandName: string, respondIfNoPermission: boolean) {
+export default async function (
+  message: Message<true>,
+  args: string[],
+  commandName: string,
+  respondIfNoPermission: boolean
+) {
   if (!message.member) return;
 
   const command = await client.db.shortcut.findUnique({
@@ -155,10 +154,12 @@ export default async function (message: Message<true>, args: string[], commandNa
   const tense = pastTenseInfractionTypes[lpunishment as keyof typeof pastTenseInfractionTypes];
 
   const embed = new EmbedBuilder()
-  .setColor(infractionColors[punishment])
-  .setDescription(`**${target instanceof GuildMember ? target.user.username : target.username}** has been ${tense} with ID \`${
-    infraction.id
-  }\``)
+    .setColor(infractionColors[punishment])
+    .setDescription(
+      `**${target instanceof GuildMember ? target.user.username : target.username}** has been ${tense} with ID \`${
+        infraction.id
+      }\``
+    );
 
   message.reply({ embeds: [embed] });
 

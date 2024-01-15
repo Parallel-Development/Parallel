@@ -4,6 +4,7 @@ import { checkBlacklisted, confirmGuild, unresolvedGuilds } from './chatInputCom
 import { hasSlashCommandPermission } from '../lib/util/functions';
 import client from '../client';
 import customMessageCommand from './customMessageCommand';
+import { commandsPermissionCache } from '../lib/util/functions';
 
 export default async function (message: Message) {
   if (message.author.bot || !message.content) return;
@@ -14,20 +15,17 @@ export default async function (message: Message) {
   let usedPrefix = process.env.PREFIX!;
   let respondIfNoPermission = true;
   if (message.inGuild()) {
-    await confirmGuild(message.guildId);
-    const {
-      prefix,
-      messageCommandsEnabled,
-      respondNoPermission
-    }: { prefix: string; messageCommandsEnabled: boolean; respondNoPermission: boolean } =
-      (await client.db.guild.findUnique({
-        where: { id: message.guildId },
-        select: { prefix: true, messageCommandsEnabled: true, respondNoPermission: true }
-      }))!;
+    const guild = await confirmGuild(message.guildId);
+    const { prefix, messageCommandsEnabled, respondNoPermission } = guild;
 
     if (!messageCommandsEnabled) return false;
     usedPrefix = prefix;
     respondIfNoPermission = respondNoPermission;
+
+    if (!commandsPermissionCache.has(message.guild.id)) {
+      const permissions = await client.application!.commands.permissions.fetch({ guild: message.guild.id });
+      commandsPermissionCache.set(message.guild.id, permissions);
+    }
   }
 
   if (!message.content.startsWith(usedPrefix)) return;

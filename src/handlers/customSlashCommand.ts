@@ -22,7 +22,10 @@ export default async function (interaction: ChatInputCommandInteraction<'cached'
 
   if (!command) throw 'Unknown Command.';
 
-  const target = interaction.options.getMember('member') ?? interaction.options.getUser('member') ?? interaction.options.getUser('user');
+  const target =
+    interaction.options.getMember('member') ??
+    interaction.options.getUser('member') ??
+    interaction.options.getUser('user');
 
   if (!target) throw 'The provided user is not in this guild.';
   if (command.punishment !== IT.Ban && command.punishment !== IT.Unban && target instanceof User)
@@ -149,10 +152,12 @@ export default async function (interaction: ChatInputCommandInteraction<'cached'
   const tense = pastTenseInfractionTypes[lpunishment as keyof typeof pastTenseInfractionTypes];
 
   const embed = new EmbedBuilder()
-  .setColor(infractionColors[punishment])
-  .setDescription(`**${target instanceof GuildMember ? target.user.username : target.username}** has been ${tense} with ID \`${
-    infraction.id
-  }\``)
+    .setColor(infractionColors[punishment])
+    .setDescription(
+      `**${target instanceof GuildMember ? target.user.username : target.username}** has been ${tense} with ID \`${
+        infraction.id
+      }\``
+    );
 
   interaction.editReply({ embeds: [embed] });
 

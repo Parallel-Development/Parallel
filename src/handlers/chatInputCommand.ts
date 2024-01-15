@@ -101,15 +101,13 @@ export async function confirmGuild(guildId: string) {
     }
   });
 
-  if (guild) return true;
+  if (guild) return guild;
 
-  await client.db.guild.create({
+  return client.db.guild.create({
     data: {
       id: guildId
     }
   });
-
-  return true;
 }
 
 export async function checkShortcuts(guildId: string) {
@@ -169,7 +167,7 @@ export async function checkShortcuts(guildId: string) {
       data: {
         id: cmd.id
       }
-    })
+    });
   }
 }
 
