@@ -149,7 +149,7 @@ class ShortcutsCommand extends Command {
               name: punishment === IT.Ban || punishment === IT.Unban ? 'user' : 'member',
               description: `The ${
                 punishment === IT.Ban || punishment === IT.Unban ? 'user' : 'member'
-              } to ${punishment}.`,
+              } to ${punishment.toLowerCase()}.`,
               type: OptionType.User,
               required: true
             }

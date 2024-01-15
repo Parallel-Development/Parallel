@@ -148,8 +148,9 @@ export async function checkShortcuts(guildId: string) {
               : 'member',
           description: `The ${
             command.punishment === InfractionType.Ban || command.punishment === InfractionType.Unban ? 'user' : 'member'
-          } to ${command.punishment}.`,
-          type: ApplicationCommandOptionType.User
+          } to ${command.punishment.toLowerCase()}.`,
+          type: ApplicationCommandOptionType.User,
+          required: true
         }
       ]
     });
