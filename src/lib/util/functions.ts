@@ -58,14 +58,15 @@ export async function sleep(ms: number) {
 
 export async function hasSlashCommandPermission(member: GuildMember, commandName: string, type: 'global' | 'guild' = 'global') {
   if (member.id === member.guild.ownerId) return true;
+  const cmdId = type === 'global' ? client.commands.slash.get(commandName)?.id! : '';
+  const shortcutId = type === 'guild' 
+  ? (await client.db.shortcut.findUnique({ where: { guildId_name: { guildId: member.guild.id, name: commandName } } }))?.id! 
+  : '';
 
   const command =
     type === 'global' 
-    ?
-      client.application!.commands.cache.find(cmd => cmd.name === commandName) ||
-      (await client.application!.commands.fetch().then(cmds => cmds.find(cmd => cmd.name === commandName)))!
-    : member.guild.commands.cache.find(c => c.name === commandName) ||
-      (await member.guild.commands.fetch().then(cmds => cmds.find(cmd => cmd.name === commandName)))!;
+    ? (await client.application!.commands.fetch(cmdId, { guildId: member.guild.id }))
+    : (await member.guild.commands.fetch(shortcutId));
 
   if (!command) return true;
 

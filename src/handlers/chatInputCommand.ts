@@ -2,9 +2,9 @@ import {
   type ChatInputCommandInteraction,
   PermissionFlagsBits as Permissions,
   ApplicationCommandOptionType,
-  ApplicationCommandDataResolvable,
   EmbedBuilder,
-  Colors
+  Colors,
+  ApplicationCommandData
 } from 'discord.js';
 import { InfractionType } from '@prisma/client';
 import client from '../client';
@@ -89,7 +89,7 @@ export default async function (interaction: ChatInputCommandInteraction) {
   }
 }
 
-async function confirmGuild(guildId: string) {
+export async function confirmGuild(guildId: string) {
   if (!customCommandsConfirmed.has(guildId)) {
     checkShortcuts(guildId);
     customCommandsConfirmed.add(guildId);
@@ -121,12 +121,12 @@ export async function checkShortcuts(guildId: string) {
 
   const guild = client.guilds.cache.get(guildId)!;
 
-  const put: ApplicationCommandDataResolvable[] = [];
+  const put: ApplicationCommandData[] = [];
   let changed = 0;
   for (const command of customCommands) {
     const sCommand = guild.commands.cache.find(cmd => cmd.name === command.name);
     if (sCommand) {
-      put.push(sCommand as ApplicationCommandDataResolvable);
+      put.push(sCommand as ApplicationCommandData);
       continue;
     }
     changed++;
@@ -159,6 +159,18 @@ export async function checkShortcuts(guildId: string) {
 
   if (changed === 0) return;
   await guild.commands.set(put);
+
+  // update IDs
+  for (const cmd of guild.commands.cache.values()) {
+    await client.db.shortcut.update({
+      where: {
+        guildId_name: { guildId, name: cmd.name }
+      },
+      data: {
+        id: cmd.id
+      }
+    })
+  }
 }
 
 export async function checkBlacklisted(userId: string) {

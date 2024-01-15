@@ -1,7 +1,6 @@
 import { InfractionType as IT, InfractionType } from '@prisma/client';
 import {
   ChatInputCommandInteraction,
-  Colors,
   EmbedBuilder,
   GuildMember,
   PermissionFlagsBits as Permissions,

@@ -132,7 +132,7 @@ class ShortcutsCommand extends Command {
 
       await interaction.deferReply();
 
-      await interaction.guild.commands
+      const cmd = await interaction.guild.commands
         .create({
           name,
           description,
@@ -162,6 +162,7 @@ class ShortcutsCommand extends Command {
       await this.client.db.shortcut.create({
         data: {
           guildId: interaction.guildId,
+          id: cmd.id,
           name,
           description,
           punishment,

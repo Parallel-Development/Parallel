@@ -6,6 +6,8 @@ export default abstract class Command<IsMsg extends boolean = false> {
   public readonly data: IsMsg extends false ? Partial<SlashCommandBuilder> : null = null!;
   public clientPermissions: PermissionsBitField | null = null;
 
+  // only present in slash commands
+  public id: If<IsMsg, null, string> = null!;
   // not present in slash commands
   public name: If<IsMsg, string> = null!;
   public description: If<IsMsg, string> = null!;

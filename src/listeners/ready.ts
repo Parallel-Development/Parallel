@@ -6,8 +6,14 @@ class ReadyListener extends Listener {
   }
 
   async run() {
+    const commands = await this.client.application!.commands.fetch();
+
+    for (const cmd of commands.values()) {
+      const command = this.client.commands.slash.get(cmd.name)!;
+      command.id = cmd.id;
+    }
+
     console.log(`Logged in as ${this.client.user!.username}`);
-    this.client.application!.commands.fetch();
   }
 }
 

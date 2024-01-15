@@ -1,11 +1,9 @@
-import { Message, Collection, ApplicationCommandPermissions, EmbedBuilder, Colors } from 'discord.js';
+import { Message, EmbedBuilder, Colors } from 'discord.js';
 
-import { checkBlacklisted, checkShortcuts, customCommandsConfirmed, unresolvedGuilds } from './chatInputCommand';
+import { checkBlacklisted, confirmGuild, unresolvedGuilds } from './chatInputCommand';
 import { hasSlashCommandPermission } from '../lib/util/functions';
 import client from '../client';
 import customMessageCommand from './customMessageCommand';
-
-export const commandsPermissionCache = new Map<string, Collection<string, readonly ApplicationCommandPermissions[]>>();
 
 export default async function (message: Message) {
   if (message.author.bot || !message.content) return;
@@ -107,27 +105,4 @@ export default async function (message: Message) {
 
     return message.reply({ embeds: [embed] });
   }
-}
-
-async function confirmGuild(guildId: string) {
-  if (!customCommandsConfirmed.has(guildId)) {
-    checkShortcuts(guildId);
-    customCommandsConfirmed.add(guildId);
-  }
-
-  const guild = await client.db.guild.findUnique({
-    where: {
-      id: guildId
-    }
-  });
-
-  if (guild) return true;
-
-  await client.db.guild.create({
-    data: {
-      id: guildId
-    }
-  });
-
-  return true;
 }
