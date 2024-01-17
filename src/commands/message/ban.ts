@@ -88,7 +88,7 @@ class BanCommand extends Command {
         where: {
           userId_guildId_type: { userId: user.id, guildId: message.guildId, type: InfractionType.Ban }
         }
-      });
+      }).catch(() => {});
 
     const { infractionModeratorPublic, infoBan } = guild;
     const expiresStr = Math.floor(Number(infraction.expires) / 1000);
