@@ -102,40 +102,6 @@ export async function confirmGuild(guildId: string) {
     }
   });
 
-  // if (guild) {
-    // const spam: AutoModConfig<'raw'> = {
-    //   toggle: guild.autoModSpamToggle,
-    //   punishment: guild.autoModSpamPunishment,
-    //   duration: guild.autoModSpamDuration.toString() as `${number}`,
-    //   immuneChannels: guild.autoModSpamImmuneChannels,
-    //   immuneRoles: guild.autoModSpamImmuneRoles
-    // }
-
-    // const malicious: AutoModConfig<'raw'> = {
-    //   toggle: guild.autoModMaliciousToggle,
-    //   punishment: guild.autoModMaliciousPunishment,
-    //   duration: guild.autoModMaliciousDuration.toString() as `${number}`,
-    //   immuneChannels: guild.autoModMaliciousImmuneChannels,
-    //   immuneRoles: guild.autoModMaliciousImmuneRoles
-    // }
-
-    // const filter: AutoModConfig<'integrated'> = {
-    //   toggle: guild.autoModFilterToggle,
-    //   punishment: guild.autoModFilterPunishment,
-    //   duration: guild.autoModFilterDuration.toString() as `${number}`,
-    //   ruleId: guild.autoModFilterRuleId ?? ''
-    // }
-
-    // const autoMod = [spam, filter, malicious];
-
-    // await client.db.guild.update({
-    //   where: { id: guildId },
-    //   data: {
-    //     autoMod
-    //   }
-    // })
-  // }
-
   if (guild) return guild;
 
   return client.db.guild.create({
