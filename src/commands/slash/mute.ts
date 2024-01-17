@@ -1,7 +1,7 @@
 import { InfractionType } from '@prisma/client';
 import {
   SlashCommandBuilder,
-  PermissionFlagsBits as Permissions,
+  PermissionFlagsBits,
   type ChatInputCommandInteraction,
   EmbedBuilder,
   Colors
@@ -16,7 +16,7 @@ import punishLog from '../../handlers/punishLog';
   new SlashCommandBuilder()
     .setName('mute')
     .setDescription('Mute a member.')
-    .setDefaultMemberPermissions(Permissions.ModerateMembers)
+    .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers)
     .addUserOption(option => option.setName('member').setDescription('The member to mute.').setRequired(true))
     .addStringOption(option =>
       option
@@ -26,8 +26,8 @@ import punishLog from '../../handlers/punishLog';
     )
     .addStringOption(option => option.setName('reason').setDescription('The reason for the mute.').setMaxLength(3500))
 )
-@properties({
-  clientPermissions: [Permissions.ModerateMembers]
+@properties<'slash'>({
+  clientPermissions: PermissionFlagsBits.ModerateMembers
 })
 class MuteCommand extends Command {
   async run(interaction: ChatInputCommandInteraction<'cached'>) {
@@ -42,7 +42,7 @@ class MuteCommand extends Command {
     if (!adequateHierarchy(interaction.guild.members.me!, member))
       throw 'I cannot mute this member due to inadequete hierarchy.';
 
-    if (member.permissions.has(Permissions.Administrator)) throw 'You cannot mute an administrator.';
+    if (member.permissions.has(PermissionFlagsBits.Administrator)) throw 'You cannot mute an administrator.';
 
     const reason = interaction.options.getString('reason') ?? 'Unspecified reason.';
 

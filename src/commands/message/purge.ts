@@ -1,8 +1,8 @@
-import { PermissionFlagsBits as Permissions, Message } from 'discord.js';
+import { PermissionFlagsBits, Message } from 'discord.js';
 import Command, { properties } from '../../lib/structs/Command';
 import { getUser } from '../../lib/util/functions';
 
-@properties<true>({
+@properties<'message'>({
   name: 'purge',
   description:
     'Purge messages from a channel. Use the slash command version of this command if you want to utilize the `after` option.',
@@ -14,10 +14,10 @@ class PurgeCommand extends Command {
     if (args.length === 0) throw 'Missing required argument `count`.';
 
     if (!message.channel) throw 'Command cannot be ran here.';
-    if (!message.channel.permissionsFor(message.member!).has(Permissions.ManageMessages))
+    if (!message.channel.permissionsFor(message.member!).has(PermissionFlagsBits.ManageMessages))
       throw 'You need the `Manage Messages` permission in this channel to run this command here.';
 
-    if (!message.channel.permissionsFor(message.member!).has(Permissions.ManageMessages))
+    if (!message.channel.permissionsFor(message.member!).has(PermissionFlagsBits.ManageMessages))
       throw 'I need the `Manage Messages` permission in this channel to run this command here.';
 
     const user = await getUser(args[0]);

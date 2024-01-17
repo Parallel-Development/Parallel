@@ -1,9 +1,9 @@
 import { EmbedBuilder } from '@discordjs/builders';
-import { PermissionFlagsBits as Permissions, Colors, Message } from 'discord.js';
+import { PermissionFlagsBits, Colors, Message } from 'discord.js';
 import Command, { properties } from '../../lib/structs/Command';
 import { getChannel } from '../../lib/util/functions';
 
-@properties<true>({
+@properties<'message'>({
   name: 'unlock',
   description: 'Allow members to speak in the target channel.',
   args: ['[channel] <reason>']
@@ -35,8 +35,8 @@ class UnlockCommand extends Command {
         })
       )?.allow ?? 0n;
 
-    if (!message.guild.members.me!.permissions.has(Permissions.Administrator)) {
-      if (!channel.permissionsFor(message.guild.members.me!).has(Permissions.ManageChannels))
+    if (!message.guild.members.me!.permissions.has(PermissionFlagsBits.Administrator)) {
+      if (!channel.permissionsFor(message.guild.members.me!).has(PermissionFlagsBits.ManageChannels))
         throw "I don't have permission to unlock this channel (Missing `Manage Channel` permissions.)";
 
       if (

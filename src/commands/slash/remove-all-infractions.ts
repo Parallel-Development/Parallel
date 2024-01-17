@@ -1,11 +1,11 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder, PermissionFlagsBits as Permissions } from 'discord.js';
+import { ChatInputCommandInteraction, SlashCommandBuilder, PermissionFlagsBits } from 'discord.js';
 import Command, { data } from '../../lib/structs/Command';
 
 @data(
   new SlashCommandBuilder()
     .setName('remove-all-infractions')
     .setDescription('Remove all infractions from a user.')
-    .setDefaultMemberPermissions(Permissions.ModerateMembers)
+    .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers)
     .addUserOption(option =>
       option.setName('user').setDescription('The user to remove all infractions from').setRequired(true)
     )

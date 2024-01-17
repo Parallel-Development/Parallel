@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder, PermissionFlagsBits as Permissions } from 'discord.js';
+import { ChatInputCommandInteraction, SlashCommandBuilder, PermissionFlagsBits } from 'discord.js';
 import ms from 'ms';
 import Command, { data } from '../../lib/structs/Command';
 
@@ -6,7 +6,7 @@ import Command, { data } from '../../lib/structs/Command';
   new SlashCommandBuilder()
     .setName('slowmode')
     .setDescription('Modify the slowmode in a channel.')
-    .setDefaultMemberPermissions(Permissions.ManageChannels)
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
     .addStringOption(option =>
       option.setName('slowmode').setDescription('Slowmode to set.').setRequired(true).setAutocomplete(true)
     )
@@ -20,7 +20,7 @@ import Command, { data } from '../../lib/structs/Command';
 class SlowmodeCommand extends Command {
   async run(interaction: ChatInputCommandInteraction<'cached'>) {
     if (!interaction.channel?.isTextBased()) throw "You can't set the slowmode in this channel.";
-    if (!interaction.channel.permissionsFor(interaction.guild.members.me!).has(Permissions.ManageChannels))
+    if (!interaction.channel.permissionsFor(interaction.guild.members.me!).has(PermissionFlagsBits.ManageChannels))
       throw 'I do not have permission to change the slowmode in this channel.';
 
     const uSlowmode = interaction.options.getString('slowmode', true);

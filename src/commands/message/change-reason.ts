@@ -2,7 +2,7 @@ import { EmbedBuilder, Colors, Message } from 'discord.js';
 import Command, { properties } from '../../lib/structs/Command';
 import { getMember } from '../../lib/util/functions';
 
-@properties<true>({
+@properties<'message'>({
   name: 'change-reason',
   description: 'Change the reason for an infraction.',
   args: ['<id> <new_reason>']

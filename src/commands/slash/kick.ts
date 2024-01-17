@@ -1,6 +1,6 @@
 import {
   SlashCommandBuilder,
-  PermissionFlagsBits as Permissions,
+  PermissionFlagsBits,
   type ChatInputCommandInteraction,
   Colors,
   EmbedBuilder
@@ -14,12 +14,12 @@ import punishLog from '../../handlers/punishLog';
   new SlashCommandBuilder()
     .setName('kick')
     .setDescription('Kick a member from the guild.')
-    .setDefaultMemberPermissions(Permissions.KickMembers)
+    .setDefaultMemberPermissions(PermissionFlagsBits.KickMembers)
     .addUserOption(option => option.setName('member').setDescription('The member to kick.').setRequired(true))
     .addStringOption(option => option.setName('reason').setDescription('The reason for kicking.').setMaxLength(3500))
 )
-@properties({
-  clientPermissions: [Permissions.KickMembers]
+@properties<'slash'>({
+  clientPermissions: PermissionFlagsBits.KickMembers
 })
 class KickCommand extends Command {
   async run(interaction: ChatInputCommandInteraction<'cached'>) {

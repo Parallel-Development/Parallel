@@ -19,7 +19,7 @@ import Command, { properties } from '../../lib/structs/Command';
 import { infractionsPerPage, mainColor, yesNoRow } from '../../lib/util/constants';
 import { getUser } from '../../lib/util/functions';
 
-@properties<true>({
+@properties<'message'>({
   name: 'appeal',
   description: 'Create a new appeal for an infraction.',
   allowDM: true

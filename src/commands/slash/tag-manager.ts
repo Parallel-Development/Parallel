@@ -1,10 +1,5 @@
 import { ActionRowBuilder, ModalActionRowComponentBuilder, ModalBuilder, TextInputBuilder } from '@discordjs/builders';
-import {
-  ChatInputCommandInteraction,
-  SlashCommandBuilder,
-  PermissionFlagsBits as Permissions,
-  TextInputStyle
-} from 'discord.js';
+import { ChatInputCommandInteraction, SlashCommandBuilder, PermissionFlagsBits, TextInputStyle } from 'discord.js';
 import Command, { data } from '../../lib/structs/Command';
 import { bin } from '../../lib/util/functions';
 
@@ -12,7 +7,7 @@ import { bin } from '../../lib/util/functions';
   new SlashCommandBuilder()
     .setName('tag-manager')
     .setDescription('Manage tags in the guild. Tags are (typically) informational text that can be referenced.')
-    .setDefaultMemberPermissions(Permissions.ManageGuild)
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
     .addSubcommand(command =>
       command
         .setName('create')

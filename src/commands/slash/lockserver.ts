@@ -1,11 +1,5 @@
 import { EmbedBuilder } from '@discordjs/builders';
-import {
-  ChatInputCommandInteraction,
-  SlashCommandBuilder,
-  PermissionFlagsBits as Permissions,
-  TextChannel,
-  Colors
-} from 'discord.js';
+import { ChatInputCommandInteraction, SlashCommandBuilder, PermissionFlagsBits, TextChannel, Colors } from 'discord.js';
 import Command, { data, properties } from '../../lib/structs/Command';
 import { sleep } from '../../lib/util/functions';
 
@@ -13,12 +7,12 @@ import { sleep } from '../../lib/util/functions';
   new SlashCommandBuilder()
     .setName('lockserver')
     .setDescription('Restrict members from sending messages in all desingated channels.')
-    .setDefaultMemberPermissions(Permissions.ManageChannels)
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
     .addStringOption(option =>
       option.setName('reason').setDescription('The reason for locking the server.').setMaxLength(3500)
     )
 )
-@properties({
+@properties<'slash'>({
   guildResolve: true
 })
 class LockserverCommand extends Command {
@@ -50,8 +44,8 @@ class LockserverCommand extends Command {
       const channel = interaction.guild.channels.cache.get(channelId) as TextChannel;
       if (!channel) continue;
 
-      if (!interaction.guild.members.me!.permissions.has(Permissions.Administrator)) {
-        if (!channel.permissionsFor(interaction.guild.members.me!).has(Permissions.ManageChannels)) continue;
+      if (!interaction.guild.members.me!.permissions.has(PermissionFlagsBits.Administrator)) {
+        if (!channel.permissionsFor(interaction.guild.members.me!).has(PermissionFlagsBits.ManageChannels)) continue;
 
         if (
           !channel.permissionOverwrites.cache.some(override => {

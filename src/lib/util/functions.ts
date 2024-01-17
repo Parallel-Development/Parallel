@@ -4,7 +4,7 @@ import {
   ApplicationCommandPermissionType,
   Collection,
   ApplicationCommandPermissions,
-  PermissionFlagsBits as Permissions
+  PermissionFlagsBits
 } from 'discord.js';
 import client from '../../client';
 export const commandsPermissionCache = new Map<string, Collection<string, readonly ApplicationCommandPermissions[]>>();
@@ -69,7 +69,7 @@ export async function hasSlashCommandPermission(
   commandName: string,
   type: 'global' | 'guild' = 'global'
 ) {
-  if (member.permissions.has(Permissions.Administrator)) return true;
+  if (member.permissions.has(PermissionFlagsBits.Administrator)) return true;
 
   const cmdId = type === 'global' ? client.commands.slash.get(commandName)?.id! : '';
   const shortcutId =

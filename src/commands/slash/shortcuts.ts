@@ -2,7 +2,7 @@ import { InfractionType as IT } from '@prisma/client';
 import {
   ChatInputCommandInteraction,
   SlashCommandBuilder,
-  PermissionFlagsBits as Permissions,
+  PermissionFlagsBits,
   ApplicationCommandOptionType as OptionType,
   EmbedBuilder
 } from 'discord.js';
@@ -16,7 +16,7 @@ const nameReg = /^[\p{Ll}\p{Lm}\p{Lo}\p{N}\p{sc=Devanagari}\p{sc=Thai}_-]+$/u;
   new SlashCommandBuilder()
     .setName('shortcuts')
     .setDescription('Manage the shortcuts on this guild.')
-    .setDefaultMemberPermissions(Permissions.ManageGuild)
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
     .addSubcommand(command =>
       command
         .setName('create')
@@ -138,12 +138,12 @@ class ShortcutsCommand extends Command {
           description,
           defaultMemberPermissions:
             punishment === IT.Ban || punishment === IT.Unban
-              ? Permissions.BanMembers
+              ? PermissionFlagsBits.BanMembers
               : punishment === IT.Mute || punishment === IT.Unmute
-              ? Permissions.MuteMembers
+              ? PermissionFlagsBits.MuteMembers
               : punishment === IT.Kick
-              ? Permissions.KickMembers
-              : Permissions.ModerateMembers,
+              ? PermissionFlagsBits.KickMembers
+              : PermissionFlagsBits.ModerateMembers,
           options: [
             {
               name: punishment === IT.Ban || punishment === IT.Unban ? 'user' : 'member',

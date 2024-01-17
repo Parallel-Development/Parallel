@@ -1,7 +1,7 @@
 import { InfractionType } from '@prisma/client';
 import {
   SlashCommandBuilder,
-  PermissionFlagsBits as Permissions,
+  PermissionFlagsBits,
   type ChatInputCommandInteraction,
   EmbedBuilder,
   Colors
@@ -13,12 +13,12 @@ import punishLog from '../../handlers/punishLog';
   new SlashCommandBuilder()
     .setName('unban')
     .setDescription('Unban a member from the guild.')
-    .setDefaultMemberPermissions(Permissions.BanMembers)
+    .setDefaultMemberPermissions(PermissionFlagsBits.BanMembers)
     .addUserOption(option => option.setName('user').setDescription('The user to unban.').setRequired(true))
     .addStringOption(option => option.setName('reason').setDescription('The reason for unbanning.').setMaxLength(3500))
 )
-@properties({
-  clientPermissions: [Permissions.BanMembers]
+@properties<'slash'>({
+  clientPermissions: PermissionFlagsBits.BanMembers
 })
 class UnbanCommand extends Command {
   async run(interaction: ChatInputCommandInteraction<'cached'>) {

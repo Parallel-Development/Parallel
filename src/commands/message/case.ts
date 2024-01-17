@@ -3,7 +3,7 @@ import Command, { properties } from '../../lib/structs/Command';
 import { InfractionType } from '@prisma/client';
 import ms from 'ms';
 
-@properties<true>({
+@properties<'message'>({
   name: 'case',
   description: 'View detailed information on an infraction.',
   args: ['<id>']

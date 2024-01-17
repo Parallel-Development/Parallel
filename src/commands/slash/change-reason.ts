@@ -1,6 +1,6 @@
 import {
   SlashCommandBuilder,
-  PermissionFlagsBits as Permissions,
+  PermissionFlagsBits,
   ChatInputCommandInteraction,
   EmbedBuilder,
   Colors
@@ -12,7 +12,7 @@ import { getMember } from '../../lib/util/functions';
   new SlashCommandBuilder()
     .setName('change-reason')
     .setDescription('Change the reason for an infraction.')
-    .setDefaultMemberPermissions(Permissions.ModerateMembers)
+    .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers)
     .addIntegerOption(option =>
       option.setName('id').setDescription('The infraction ID.').setMinValue(1).setRequired(true)
     )

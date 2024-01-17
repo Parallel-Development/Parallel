@@ -1,10 +1,10 @@
-import { PermissionFlagsBits as Permissions, EmbedBuilder, Colors, Message } from 'discord.js';
+import { PermissionFlagsBits, EmbedBuilder, Colors, Message } from 'discord.js';
 import Command, { properties } from '../../lib/structs/Command';
 import { getMember } from '../../lib/util/functions';
 import { Infraction, InfractionType } from '@prisma/client';
 import punishLog from '../../handlers/punishLog';
 
-@properties<true>({
+@properties<'message'>({
   name: 'remove-infraction',
   description: 'Remove an infraction.',
   args: ['<id> [reason] [--undo-punishment'],
@@ -41,14 +41,14 @@ class RemoveInfractionCommand extends Command {
     if (undo) {
       switch (infraction.type) {
         case InfractionType.Ban:
-          if (!message.guild.members.me!.permissions.has(Permissions.BanMembers))
+          if (!message.guild.members.me!.permissions.has(PermissionFlagsBits.BanMembers))
             throw 'I cannot undo the punishment because I do not have the Ban Members permission.';
           await message.guild.members.unban(infraction.userId, reason).catch(() => {
             throw 'That member is not banned.';
           });
           break;
         case InfractionType.Mute:
-          if (!message.guild.members.me!.permissions.has(Permissions.ModerateMembers))
+          if (!message.guild.members.me!.permissions.has(PermissionFlagsBits.ModerateMembers))
             throw 'I cannot undo the punishment because I do not have the Moderate Members permission.';
           await message.guild.members
             .fetch(infraction.userId)

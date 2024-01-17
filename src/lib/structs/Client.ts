@@ -26,7 +26,8 @@ class Client extends DJSClient {
         Intents.GuildMessages,
         Intents.MessageContent,
         Intents.DirectMessages,
-        Intents.AutoModerationExecution
+        Intents.AutoModerationExecution,
+        Intents.AutoModerationConfiguration
       ],
       partials: [Partials.Message, Partials.Channel],
       makeCache: Options.cacheWithLimits({

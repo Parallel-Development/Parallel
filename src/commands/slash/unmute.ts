@@ -1,7 +1,7 @@
 import { InfractionType } from '@prisma/client';
 import {
   SlashCommandBuilder,
-  PermissionFlagsBits as Permissions,
+  PermissionFlagsBits,
   type ChatInputCommandInteraction,
   EmbedBuilder,
   Colors
@@ -14,12 +14,12 @@ import punishLog from '../../handlers/punishLog';
   new SlashCommandBuilder()
     .setName('unmute')
     .setDescription('Unmute a member.')
-    .setDefaultMemberPermissions(Permissions.ModerateMembers)
+    .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers)
     .addUserOption(option => option.setName('member').setDescription('The member to unmute.').setRequired(true))
     .addStringOption(option => option.setName('reason').setDescription('The reason for the unmute.').setMaxLength(3500))
 )
-@properties({
-  clientPermissions: [Permissions.ModerateMembers]
+@properties<'slash'>({
+  clientPermissions: PermissionFlagsBits.ModerateMembers
 })
 class MuteCommand extends Command {
   async run(interaction: ChatInputCommandInteraction<'cached'>) {

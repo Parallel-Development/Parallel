@@ -1,7 +1,7 @@
 import { Message } from 'discord.js';
 import Command, { properties } from '../../lib/structs/Command';
 
-@properties<true>({
+@properties<'message'>({
   name: 'escalations',
   description: 'Escalations allow you to punish members for reaching an amount of warnings.',
   NA: true

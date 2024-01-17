@@ -1,6 +1,6 @@
 import { AutoModerationRuleTriggerType, AutocompleteInteraction } from 'discord.js';
 import { channelPermissionOverrides, commonDurations, commonDurationUnits } from '../lib/util/constants';
-import { Escalations } from '../types';
+import { Escalation } from '../types';
 import ms from 'ms';
 import client from '../client';
 
@@ -67,7 +67,7 @@ export default async function (interaction: AutocompleteInteraction<'cached'>) {
       const escalations = (await client.db.guild.findUnique({
         where: { id: interaction.guildId },
         select: selectTypeAsQuery
-      }))![selectType] as Escalations;
+      }))![selectType] as Escalation[];
 
       const relevant = escalations.filter(e => e.amount === amount && e.within !== '0');
 

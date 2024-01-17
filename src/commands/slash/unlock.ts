@@ -2,7 +2,7 @@ import { EmbedBuilder } from '@discordjs/builders';
 import {
   ChatInputCommandInteraction,
   SlashCommandBuilder,
-  PermissionFlagsBits as Permissions,
+  PermissionFlagsBits,
   ChannelType,
   TextChannel,
   Colors
@@ -13,7 +13,7 @@ import Command, { data } from '../../lib/structs/Command';
   new SlashCommandBuilder()
     .setName('unlock')
     .setDescription('Allow members to speak in the target channel.')
-    .setDefaultMemberPermissions(Permissions.ManageChannels)
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
     .addChannelOption(option =>
       option
         .setName('channel')
@@ -48,8 +48,8 @@ class UnlockCommand extends Command {
         })
       )?.allow ?? 0n;
 
-    if (!interaction.guild.members.me!.permissions.has(Permissions.Administrator)) {
-      if (!channel.permissionsFor(interaction.guild.members.me!).has(Permissions.ManageChannels))
+    if (!interaction.guild.members.me!.permissions.has(PermissionFlagsBits.Administrator)) {
+      if (!channel.permissionsFor(interaction.guild.members.me!).has(PermissionFlagsBits.ManageChannels))
         throw "I don't have permission to unlock this channel (Missing `Manage Channel` permissions.)";
 
       if (
@@ -81,8 +81,6 @@ class UnlockCommand extends Command {
 
     if (newDenyOverride === everyoneOverrideDeny) throw 'Channel is already in an unlocked state.';
 
-    await interaction.deferReply({ ephemeral: interaction.channel === channel });
-
     await channel.permissionOverwrites.set(
       [
         ...channel.permissionOverwrites.cache.values(),
@@ -95,7 +93,7 @@ class UnlockCommand extends Command {
       reason
     );
 
-    await interaction.editReply('Channel unlocked.');
+    await interaction.reply('Channel unlocked.');
 
     const embed = new EmbedBuilder().setColor(Colors.Green).setTitle('Channel Unlocked').setDescription(reason);
 

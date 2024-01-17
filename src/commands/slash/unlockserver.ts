@@ -2,7 +2,7 @@ import { EmbedBuilder } from '@discordjs/builders';
 import {
   ChatInputCommandInteraction,
   SlashCommandBuilder,
-  PermissionFlagsBits as Permissions,
+  PermissionFlagsBits,
   TextChannel,
   Colors,
   VoiceChannel
@@ -14,12 +14,12 @@ import { sleep } from '../../lib/util/functions';
   new SlashCommandBuilder()
     .setName('unlockserver')
     .setDescription('Unlock all locked channels.')
-    .setDefaultMemberPermissions(Permissions.ManageChannels)
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
     .addStringOption(option =>
       option.setName('reason').setDescription('The reason for unlocking the server.').setMaxLength(3500)
     )
 )
-@properties({
+@properties<'slash'>({
   guildResolve: true
 })
 class UnlockserverCommand extends Command {
@@ -49,8 +49,8 @@ class UnlockserverCommand extends Command {
       const channel = interaction.guild.channels.cache.get(channelId) as TextChannel | VoiceChannel | null;
       if (!channel) continue;
 
-      if (!interaction.guild.members.me!.permissions.has(Permissions.Administrator)) {
-        if (!channel.permissionsFor(interaction.guild.members.me!).has(Permissions.ManageChannels)) continue;
+      if (!interaction.guild.members.me!.permissions.has(PermissionFlagsBits.Administrator)) {
+        if (!channel.permissionsFor(interaction.guild.members.me!).has(PermissionFlagsBits.ManageChannels)) continue;
 
         if (
           !channel.permissionOverwrites.cache.some(override => {

@@ -7,14 +7,14 @@ import {
   Collection,
   EmbedBuilder,
   TextChannel,
-  PermissionFlagsBits as Permissions
+  PermissionFlagsBits
 } from 'discord.js';
 import Command, { properties } from '../../lib/structs/Command';
 import discordTranscripts, { ExportReturnType } from 'discord-html-transcripts';
 import crypto from 'crypto';
 import { mainColor } from '../../lib/util/constants';
 
-@properties<true>({
+@properties<'message'>({
   name: 'ticket',
   description: 'Create and manage a ticket.',
   args: ['open', 'close', 'share', 'join <code>']
@@ -42,7 +42,7 @@ class TicketCommand extends Command {
         if (!ticket) throw 'Channel is not a ticket.';
 
         if (
-          !message.member!.permissions.has(Permissions.ManageGuild) &&
+          !message.member!.permissions.has(PermissionFlagsBits.ManageGuild) &&
           !ticketModeratorRoles.some(r => message.member!.roles.cache.has(r))
         ) {
           if (message.author.id !== ticket.creatorId) throw 'You do not have permission to manage tickets.';
@@ -152,7 +152,7 @@ class TicketCommand extends Command {
         if (!ticket) throw 'Invalid invite code.';
 
         const channel = message.guild.channels.cache.get(ticket.channelId) as TextChannel;
-        if (channel.permissionsFor(message.member!).has(Permissions.ViewChannel))
+        if (channel.permissionsFor(message.member!).has(PermissionFlagsBits.ViewChannel))
           throw 'This user can already view this ticket.';
 
         await this.client.db.ticket.update({

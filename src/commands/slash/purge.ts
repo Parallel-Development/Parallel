@@ -1,11 +1,11 @@
-import { type ChatInputCommandInteraction, PermissionFlagsBits as Permissions, SlashCommandBuilder } from 'discord.js';
+import { type ChatInputCommandInteraction, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
 import Command, { data } from '../../lib/structs/Command';
 
 @data(
   new SlashCommandBuilder()
     .setName('purge')
     .setDescription('Purge messages from a channel.')
-    .setDefaultMemberPermissions(Permissions.ManageMessages)
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
     .addIntegerOption(option =>
       option.setName('count').setDescription('Amount of messages to delete').setMinValue(1).setMaxValue(100)
     )
@@ -16,10 +16,10 @@ import Command, { data } from '../../lib/structs/Command';
 class PurgeCommand extends Command {
   async run(interaction: ChatInputCommandInteraction<'cached'>) {
     if (!interaction.channel) throw 'Command cannot be ran here.';
-    if (!interaction.channel.permissionsFor(interaction.member).has(Permissions.ManageMessages))
+    if (!interaction.channel.permissionsFor(interaction.member).has(PermissionFlagsBits.ManageMessages))
       throw 'You need the `Manage Messages` permission in this channel to run this command here.';
 
-    if (!interaction.channel.permissionsFor(interaction.member).has(Permissions.ManageMessages))
+    if (!interaction.channel.permissionsFor(interaction.member).has(PermissionFlagsBits.ManageMessages))
       throw 'I need the `Manage Messages` permission in this channel to run this command here.';
 
     let count = interaction.options.getInteger('count');

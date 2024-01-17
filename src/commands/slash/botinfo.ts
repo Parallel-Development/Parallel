@@ -5,7 +5,7 @@ import Command, { properties, data } from '../../lib/structs/Command';
 import { mainColor } from '../../lib/util/constants';
 
 @data(new SlashCommandBuilder().setName('botinfo').setDescription('Get statistics on me.'))
-@properties({
+@properties<'slash'>({
   allowDM: true
 })
 class BotinfoCommand extends Command {

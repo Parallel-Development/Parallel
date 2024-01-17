@@ -76,3 +76,9 @@ export const commonDurations = [
 ];
 
 export const commonDurationUnits = ['second', 'minute', 'hour', 'day', 'week'];
+
+export enum AutoModLocations {
+  Spam = 0,
+  Filter = 1,
+  MaliciousLinks = 2
+}

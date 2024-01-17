@@ -2,12 +2,12 @@ import { EmbedBuilder, Colors, Message } from 'discord.js';
 import Command, { properties } from '../../lib/structs/Command';
 import ms from 'ms';
 import { adequateHierarchy, getMember } from '../../lib/util/functions';
-import { Escalations } from '../../types';
+import { Escalation } from '../../types';
 import { InfractionType } from '@prisma/client';
 import { pastTenseInfractionTypes } from '../../lib/util/constants';
 import punishLog from '../../handlers/punishLog';
 
-@properties<true>({
+@properties<'message'>({
   name: 'warn',
   description: 'Issue an infraction for a member.',
   args: ['<member> [erase-after] [reason]'],
@@ -102,7 +102,7 @@ class WarnCommand extends Command {
     if (infractionHistory.length === 0) return false;
 
     // find matching escalations
-    const escalation = (guild.escalationsManual as Escalations).reduce(
+    const escalation = (guild.escalationsManual as Escalation[]).reduce(
       (prev, curr) => {
         const within = +curr.within;
 

@@ -2,7 +2,7 @@ import {
   type ChatInputCommandInteraction,
   SlashCommandBuilder,
   ChannelType,
-  PermissionFlagsBits as Permissions,
+  PermissionFlagsBits,
   ButtonStyle,
   ModalBuilder,
   ActionRowBuilder,
@@ -16,7 +16,7 @@ import { bin } from '../../lib/util/functions';
   new SlashCommandBuilder()
     .setName('ticket-manager')
     .setDescription('Manage ticket configuration.')
-    .setDefaultMemberPermissions(Permissions.ManageGuild)
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
     .addSubcommand(cmd =>
       cmd
         .setName('enabled')
@@ -144,7 +144,7 @@ class TicketManagerCommand extends Command {
     if (group) {
       switch (group) {
         case 'log-channel': {
-          if (!interaction.guild.members.me!.permissions.has(Permissions.ManageWebhooks))
+          if (!interaction.guild.members.me!.permissions.has(PermissionFlagsBits.ManageWebhooks))
             throw 'I need permission to manage webhooks.';
 
           const { ticketLogWebhookId } = (await this.client.db.guild.findUnique({

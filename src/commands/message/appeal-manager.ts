@@ -1,11 +1,11 @@
 import { InfractionType } from '@prisma/client';
-import { PermissionFlagsBits as Permissions, EmbedBuilder, Colors, Message } from 'discord.js';
+import { PermissionFlagsBits, EmbedBuilder, Colors, Message } from 'discord.js';
 import Command, { properties } from '../../lib/structs/Command';
 import { mainColor } from '../../lib/util/constants';
 import { bin, getMember, getUser } from '../../lib/util/functions';
 import { AppealResponse } from '../../types';
 
-@properties<true>({
+@properties<'message'>({
   name: 'appeal-manager',
   description: 'Manage infraction appeals.',
   args: [
@@ -150,8 +150,8 @@ class AppealManagerCommand extends Command {
       case 'view':
         let embedDescription = '';
         embedDescription += `**Infraction ID:** ${appeal.id}\n**Infraction Type:** ${infraction.type.toString()}\n\n`;
-        embedDescription += (appeal.response as AppealResponse)
-          .map((field: any) => `Question: ${field.question}\nResponse: ${field.response}`)
+        embedDescription += (appeal.response as AppealResponse[])
+          .map(field => `Question: ${field.question}\nResponse: ${field.response}`)
           .join('\n\n');
 
         const user = (await this.client.users.fetch(appeal.userId))!;
@@ -179,7 +179,7 @@ class AppealManagerCommand extends Command {
         if (!dontUndo) {
           switch (infraction.type) {
             case InfractionType.Ban: {
-              if (!message.guild.members.me!.permissions.has(Permissions.BanMembers))
+              if (!message.guild.members.me!.permissions.has(PermissionFlagsBits.BanMembers))
                 throw "I cannot undo the punishment because I do not have the Ban Members permission. If you don't want to undo the punishment, use the command `/appeal-manager accept` and set the `dont-undo` option to `True`";
 
               await message.guild.members.unban(infraction.userId, reason).catch(() => {
@@ -201,7 +201,7 @@ class AppealManagerCommand extends Command {
               break;
             }
             case InfractionType.Mute: {
-              if (!message.guild.members.me!.permissions.has(Permissions.ModerateMembers))
+              if (!message.guild.members.me!.permissions.has(PermissionFlagsBits.ModerateMembers))
                 throw "I cannot undo the punishment because I do not have the Moderate Members permission. If you don't want to undo the punishment, use the command `/appeal-manager accept` and set the `dont-undo` option to `True`";
 
               const member = await getMember(message.guild, infraction.userId);

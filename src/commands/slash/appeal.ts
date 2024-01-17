@@ -32,7 +32,7 @@ import { getUser } from '../../lib/util/functions';
         .setMinValue(1)
     )
 )
-@properties({
+@properties<'slash'>({
   allowDM: true
 })
 class AppealCommand extends Command {

@@ -10,7 +10,7 @@ import { getMember } from '../../lib/util/functions';
     .setDescription('Get information on a user.')
     .addUserOption(option => option.setName('user').setDescription('The user to get information on.'))
 )
-@properties({
+@properties<'slash'>({
   allowDM: true
 })
 class UserinfoCommand extends Command {

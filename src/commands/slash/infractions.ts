@@ -1,7 +1,7 @@
 import {
   type ChatInputCommandInteraction,
   SlashCommandBuilder,
-  PermissionFlagsBits as Permissions,
+  PermissionFlagsBits,
   EmbedBuilder,
   type EmbedField
 } from 'discord.js';
@@ -12,7 +12,7 @@ import { infractionsPerPage, mainColor } from '../../lib/util/constants';
   new SlashCommandBuilder()
     .setName('infractions')
     .setDescription("View a user's current infractions.")
-    .setDefaultMemberPermissions(Permissions.ModerateMembers)
+    .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers)
     .addUserOption(option =>
       option.setName('user').setDescription('The user to get the infractions of.').setRequired(true)
     )

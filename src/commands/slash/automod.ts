@@ -2,23 +2,40 @@ import { InfractionType, Prisma } from '@prisma/client';
 import {
   ChatInputCommandInteraction,
   SlashCommandBuilder,
-  PermissionFlagsBits as Permissions,
+  PermissionFlagsBits,
   Role,
   ChannelType,
   AutoModerationRuleTriggerType,
   AutoModerationRuleEventType,
-  AutoModerationActionType
+  AutoModerationActionType,
+  Guild,
+  AutoModerationRule
 } from 'discord.js';
 import ms from 'ms';
-import Command, { data } from '../../lib/structs/Command';
-import { AutoModSpamTriggers } from '../../types';
+import Command, { data, properties } from '../../lib/structs/Command';
+import { AutoModConfig, AutoModSpamTrigger } from '../../types';
 import { bin } from '../../lib/util/functions';
+import { AutoModLocations } from '../../lib/util/constants';
+import { isIntegrated, isRaw } from '../../types/typeguard';
+import client from '../../client';
+
+const autoModuleOptions = [
+  { name: 'Spam', value: AutoModLocations.Spam.toString() },
+  { name: 'Malicious Links', value: AutoModLocations.MaliciousLinks.toString() },
+  { name: 'Filter', value: AutoModLocations.Filter.toString() }
+];
+
+const reverseModules = {
+  0: 'spam',
+  1: 'filter',
+  2: 'malicious links'
+};
 
 @data(
   new SlashCommandBuilder()
     .setName('automod')
     .setDescription('Manage the automod configuration.')
-    .setDefaultMemberPermissions(Permissions.ManageGuild)
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
     .addSubcommand(cmd => cmd.setName('view').setDescription('View the automod settings.'))
     .addSubcommand(cmd =>
       cmd
@@ -29,11 +46,7 @@ import { bin } from '../../lib/util/functions';
             .setName('module')
             .setDescription('The automod module.')
             .setRequired(true)
-            .addChoices(
-              { name: 'Spam', value: 'autoModSpamToggle' },
-              { name: 'Malicious Links', value: 'autoModMaliciousToggle' },
-              { name: 'Filter', value: 'autoModFilterToggle' }
-            )
+            .addChoices(...autoModuleOptions)
         )
         .addBooleanOption(opt =>
           opt.setName('toggle').setDescription('True for enabled, False for disabled.').setRequired(true)
@@ -44,12 +57,11 @@ import { bin } from '../../lib/util/functions';
         .setName('punishment')
         .setDescription('The punishment for violating an automod rule.')
         .addStringOption(option =>
-          option.setName('module').setDescription('The automod module.').setRequired(true).addChoices(
-            // "Punishment" and "Duration" will be manually appended to modify those values. "autoModSpam" is not a valid module name itself.
-            { name: 'Spam', value: 'autoModSpam' },
-            { name: 'Malicious Links', value: 'autoModMalicious' },
-            { name: 'Filter', value: 'autoModFilter' }
-          )
+          option
+            .setName('module')
+            .setDescription('The automod module.')
+            .setRequired(true)
+            .addChoices(...autoModuleOptions)
         )
         .addStringOption(opt =>
           opt
@@ -87,10 +99,7 @@ import { bin } from '../../lib/util/functions';
                 .setName('module')
                 .setDescription('The automod module.')
                 .setRequired(true)
-                .addChoices(
-                  { name: 'Spam', value: 'autoModSpamImmuneRoles' },
-                  { name: 'Malicious Links', value: 'autoModMaliciousImmuneRoles' }
-                )
+                .addChoices(...autoModuleOptions)
             )
         )
         .addSubcommand(cmd =>
@@ -105,10 +114,7 @@ import { bin } from '../../lib/util/functions';
                 .setName('module')
                 .setDescription('The automod module.')
                 .setRequired(true)
-                .addChoices(
-                  { name: 'Spam', value: 'autoModSpamImmuneRoles' },
-                  { name: 'Malicious Links', value: 'autoModMaliciousImmuneRoles' }
-                )
+                .addChoices(...autoModuleOptions)
             )
         )
         .addSubcommand(cmd =>
@@ -120,10 +126,7 @@ import { bin } from '../../lib/util/functions';
                 .setName('module')
                 .setDescription('The automod module.')
                 .setRequired(true)
-                .addChoices(
-                  { name: 'Spam', value: 'autoModSpamImmuneRoles' },
-                  { name: 'Malicious Links', value: 'autoModMaliciousImmuneRoles' }
-                )
+                .addChoices(...autoModuleOptions)
             )
         )
         .addSubcommand(cmd =>
@@ -142,10 +145,7 @@ import { bin } from '../../lib/util/functions';
                 .setName('module')
                 .setDescription('The automod module.')
                 .setRequired(true)
-                .addChoices(
-                  { name: 'Spam', value: 'autoModSpamImmuneChannels' },
-                  { name: 'Malicious Links', value: 'autoModMaliciousImmuneChannels' }
-                )
+                .addChoices(...autoModuleOptions)
             )
         )
         .addSubcommand(cmd =>
@@ -164,10 +164,7 @@ import { bin } from '../../lib/util/functions';
                 .setName('module')
                 .setDescription('The automod module.')
                 .setRequired(true)
-                .addChoices(
-                  { name: 'Spam', value: 'autoModSpamImmuneChannels' },
-                  { name: 'Malicious Links', value: 'autoModMaliciousImmuneChannels' }
-                )
+                .addChoices(...autoModuleOptions)
             )
         )
         .addSubcommand(cmd =>
@@ -179,10 +176,7 @@ import { bin } from '../../lib/util/functions';
                 .setName('module')
                 .setDescription('The automod module.')
                 .setRequired(true)
-                .addChoices(
-                  { name: 'Spam', value: 'autoModSpamImmuneChannels' },
-                  { name: 'Malicious Links', value: 'autoModMaliciousImmuneChannels' }
-                )
+                .addChoices(...autoModuleOptions)
             )
         )
     )
@@ -244,14 +238,6 @@ import { bin } from '../../lib/util/functions';
         .setDescription('Integrate Parallel infractions with built-in Discord AutoMod.')
         .addSubcommand(cmd =>
           cmd
-            .setName('rule')
-            .setDescription('Modify the AutoMod rule connected to Parallel.')
-            .addStringOption(opt =>
-              opt.setName('rule').setDescription('The name of the rule.').setAutocomplete(true).setRequired(true)
-            )
-        )
-        .addSubcommand(cmd =>
-          cmd
             .setName('add')
             .setDescription('Add a word or phrase to the AutoMod filter.')
             .addStringOption(opt => opt.setName('word').setDescription('The word or phrase').setRequired(true))
@@ -265,173 +251,178 @@ import { bin } from '../../lib/util/functions';
         .addSubcommand(cmd => cmd.setName('view').setDescription('View the AutoMod filter.'))
     )
 )
+@properties<'slash'>({
+  clientPermissions: PermissionFlagsBits.ManageGuild
+})
 class AutomodCommand extends Command {
   async run(interaction: ChatInputCommandInteraction<'cached'>) {
     const group = interaction.options.getSubcommandGroup();
     const subCmd = interaction.options.getSubcommand();
 
-    if (!group && subCmd === 'view') {
-      const {
-        autoModSpamToggle,
-        autoModSpamPunishment,
-        autoModSpamDuration,
+    const { autoMod, autoModSpamTriggers } = (await this.client.db.guild.findUnique({
+      where: { id: interaction.guildId },
+      select: { autoMod: true, autoModSpamTriggers: true }
+    }))! as { autoMod: AutoModConfig[]; autoModSpamTriggers: AutoModSpamTrigger[] };
 
-        autoModMaliciousToggle,
-        autoModMaliciousPunishment,
-        autoModMaliciousDuration,
+    if (!group)
+      switch (subCmd) {
+        case 'view':
+          let str = '';
+          for (const module of autoModuleOptions) {
+            const config = autoMod[+module.value] as AutoModConfig;
+            str += `${module.name}${!config.toggle ? ' (Disabled)' : ''}: ${config.punishment ?? 'Delete'} ${
+              config.duration !== '0' ? `for ${ms(+config.duration, { long: true })}` : ''
+            }\n`;
+          }
 
-        autoModFilterToggle,
-        autoModFilterPunishment,
-        autoModFilterDuration
-      } = (await this.client.db.guild.findUnique({
-        where: { id: interaction.guildId }
-      }))!;
+          return interaction.reply(`\`\`\`\n${str}\`\`\``);
+        case 'toggle': {
+          const location = +interaction.options.getString('module', true);
+          const value = interaction.options.getBoolean('toggle', true);
 
-      const str = `Spam${!autoModSpamToggle ? ' (Disabled)' : ''}: ${autoModSpamPunishment ?? 'Delete'} ${
-        autoModSpamDuration !== 0n ? `for ${ms(Number(autoModSpamDuration), { long: true })}` : ''
-      }\nMalicious Links${!autoModMaliciousToggle ? ' (Disabled)' : ''}: ${autoModMaliciousPunishment ?? 'Delete'} ${
-        autoModMaliciousDuration !== 0n ? `for ${ms(Number(autoModMaliciousDuration), { long: true })}` : ''
-      }\nFilter${!autoModFilterToggle ? ' (Disabled)' : ''}: ${autoModFilterPunishment ?? 'Delete'} ${
-        autoModFilterDuration !== 0n ? `for ${ms(Number(autoModFilterDuration), { long: true })}` : ''
-      }`;
+          const config = autoMod[location];
+          config.toggle = value;
 
-      return interaction.reply(`\`\`\`\n${str}\`\`\``);
-    } else if (subCmd === 'toggle') {
-      const module = interaction.options.getString('module', true);
-      const value = interaction.options.getBoolean('toggle', true);
+          await this.client.db.guild.update({
+            where: { id: interaction.guildId },
+            data: {
+              autoMod
+            }
+          });
 
-      const data = {};
-      Object.defineProperty(data, module, {
-        value,
-        enumerable: true
-      });
+          if (isIntegrated(config))
+            await interaction.guild.autoModerationRules.edit(config.ruleId, {
+              enabled: value
+            });
 
-      await this.client.db.guild.update({
-        where: {
-          id: interaction.guildId
-        },
-        data
-      });
+          return interaction.reply(
+            `${value ? 'Enabled' : 'Disabled'} module ${reverseModules[location as keyof typeof reverseModules]}.`
+          );
+        }
+        case 'punishment': {
+          const location = +interaction.options.getString('module', true);
+          const punishment = interaction.options.getString('punishment', true) as InfractionType | 'delete';
+          const durationStr = interaction.options.getString('duration');
+          if (durationStr && (punishment === 'delete' || punishment === InfractionType.Kick))
+            throw `Cannot use duration and the ${punishment.toLowerCase()} punishment together.`;
+          if (!durationStr && punishment === InfractionType.Mute) throw 'Must use duration for mute punishment.';
 
-      return interaction.reply(`${value ? 'Enabled' : 'Disabled'} module.`);
-    } else if (subCmd === 'punishment') {
-      const module = interaction.options.getString('module', true);
-      const punishment = interaction.options.getString('punishment', true) as InfractionType | 'delete';
-      const durationStr = interaction.options.getString('duration');
-      if (durationStr && (punishment === 'delete' || punishment === InfractionType.Kick))
-        throw `Cannot use duration and the ${punishment.toLowerCase()} punishment together.`;
-      if (!durationStr && punishment === InfractionType.Mute) throw 'Must use duration for mute punishment.';
+          let duration = null;
+          if (durationStr && durationStr !== 'never') {
+            const unaryTest = +durationStr;
+            if (unaryTest) duration = unaryTest * 1000;
+            else duration = ms(durationStr) ?? null;
 
-      let duration = null;
-      if (durationStr && durationStr !== 'never') {
-        const unaryTest = +durationStr;
-        if (unaryTest) duration = unaryTest * 1000;
-        else duration = ms(durationStr) ?? null;
+            if (!duration) throw 'Invalid duration.';
+          }
+          if (duration && duration < 1000) throw 'Duration must be at least 1 second.';
 
-        if (!duration) throw 'Invalid duration.';
-        duration = BigInt(duration);
+          const config = autoMod[location];
+          config.punishment = punishment === 'delete' ? null : punishment;
+          config.duration = (duration?.toString() as `${number}`) ?? '0';
+
+          await this.client.db.guild.update({
+            where: {
+              id: interaction.guildId
+            },
+            data: {
+              autoMod
+            }
+          });
+
+          return interaction.reply(
+            `Punishment for ${
+              reverseModules[location as keyof typeof reverseModules]
+            } module set to ${punishment.toLowerCase()} ${
+              duration ? `for ${ms(Number(duration), { long: true })}` : ''
+            }`
+          );
+        }
       }
-      if (duration && duration < 1000) throw 'Duration must be at least 1 second.';
-
-      const data = {};
-      // "Punishment" and "Duration" will be manually appended to modify values. "autoModSpam" is not a valid module name itself.
-      Object.defineProperty(data, module + 'Punishment', {
-        value: punishment === 'delete' ? null : punishment,
-        enumerable: true
-      });
-      Object.defineProperty(data, module + 'Duration', { value: duration ?? 0, enumerable: true });
-
-      await this.client.db.guild.update({
-        where: {
-          id: interaction.guildId
-        },
-        data
-      });
-
-      return interaction.reply(
-        `Punishment for module set to ${punishment.toLowerCase()} ${
-          duration ? `for ${ms(Number(duration), { long: true })}` : ''
-        }`
-      );
-    }
 
     switch (group) {
       case 'immunity':
         const thing = (interaction.options.getRole('role') ?? interaction.options.getChannel('channel'))!;
         const isRole = thing instanceof Role;
 
-        await interaction.deferReply();
-        const guild = (await this.client.db.guild.findUnique({
-          where: {
-            id: interaction.guildId
-          },
-          select: {
-            autoModSpamImmuneRoles: true,
-            autoModSpamImmuneChannels: true,
-            autoModMaliciousImmuneRoles: true,
-            autoModMaliciousImmuneChannels: true
-          }
-        }))!;
+        const location = +interaction.options.getString('module', true);
+        const config = autoMod[location];
+        const raw = isRaw(config);
 
-        const data = {};
+        const moduleName = reverseModules[location as keyof typeof reverseModules];
+        const thingName = isRole ? 'role' : 'channel';
 
-        const module = interaction.options.getString('module', true) as keyof typeof guild;
+        let array: string[] = [];
+
+        if (isIntegrated(config)) {
+          if (!config.ruleId) await makeRule(interaction.guild, config, autoMod, AutoModLocations.Filter);
+
+          const autoModArr = await interaction.guild.autoModerationRules
+            .fetch(config.ruleId!)
+            .then(r => [...r[isRole ? 'exemptRoles' : 'exemptChannels'].values()].map(e => e.id))
+            .catch(() => null);
+          if (autoModArr) array = autoModArr;
+          else
+            array = [
+              ...(await makeRule(interaction.guild, config, autoMod, AutoModLocations.Filter))[
+                isRole ? 'exemptRoles' : 'exemptChannels'
+              ].values()
+            ].map(e => e.id);
+        } else array = (config as AutoModConfig<'raw'>)[isRole ? 'immuneRoles' : 'immuneChannels'];
+
         switch (subCmd) {
           case 'roles-add':
           case 'channels-add':
-            if (guild[module]?.includes(thing.id))
-              throw `This ${isRole ? 'role' : 'channel'} is already immune to that automod module.`;
+            if (array.includes(thing.id))
+              throw `This ${thingName} is already immune to the ${moduleName} automod module.`;
 
-            const push = { push: thing.id };
+            array.push(thing.id);
 
-            Object.defineProperty(data, module, { value: push, enumerable: true });
+            raw
+              ? await this.client.db.guild.update({
+                  where: {
+                    id: interaction.guildId
+                  },
+                  data: { autoMod }
+                })
+              : await interaction.guild.autoModerationRules.edit((config as AutoModConfig<'integrated'>).ruleId, {
+                  ...(isRole ? { exemptRoles: array } : { exemptChannels: array })
+                });
 
-            await this.client.db.guild.update({
-              where: {
-                id: interaction.guildId
-              },
-              data
-            });
-
-            return interaction.editReply(
-              `${isRole ? `<@&${thing.id}>` : `<#${thing.id}>`} is now immune to the provided automod module.`
-            );
+            return interaction.reply(`${thing.toString()} is now immune to the ${moduleName} automod module.`);
           case 'roles-remove':
           case 'channels-remove':
-            if (!guild[module]?.includes(thing.id))
-              throw `This ${isRole ? 'role' : 'channel'} is not immune to that automod module.`;
-            guild[module].splice(guild[module].indexOf(thing.id), 1);
+            if (!array.includes(thing.id)) throw `This ${thingName} is not immune to the ${moduleName} automod module.`;
 
-            Object.defineProperty(data, module, { value: guild[module], enumerable: true });
+            array.splice(array.indexOf(thing.id), 1);
 
-            await this.client.db.guild.update({
-              where: {
-                id: interaction.guildId
-              },
-              data
-            });
+            raw
+              ? await this.client.db.guild.update({
+                  where: {
+                    id: interaction.guildId
+                  },
+                  data: { autoMod }
+                })
+              : await interaction.guild.autoModerationRules.edit((config as AutoModConfig<'integrated'>).ruleId, {
+                  ...(isRole ? { exemptRoles: array } : { exemptChannels: array })
+                });
 
-            return interaction.editReply(
-              `${isRole ? `<@&${thing.id}>` : `<#${thing.id}>`} is no longer immune to the provided automod module.`
-            );
+            return interaction.reply(`${thing.toString()} is no longer immune to the ${moduleName} automod module.`);
           case 'roles-view':
           case 'channels-view':
             const listStr =
               subCmd === 'roles-view'
-                ? guild[module].filter(roc => interaction.guild.roles.cache.has(roc)).map(roc => `<@&${roc}>`)
-                : guild[module].filter(roc => interaction.guild.channels.cache.has(roc)).map(roc => `<#${roc}>`);
+                ? array.filter(roc => interaction.guild.roles.cache.has(roc)).map(roc => `<@&${roc}>`)
+                : array.filter(roc => interaction.guild.channels.cache.has(roc)).map(roc => `<#${roc}>`);
 
             if (listStr.length > 2000)
-              return interaction.editReply(
+              return interaction.reply(
                 `Too long to upload as a Discord message, view here: ${await bin(listStr.join('\n'))}`
               );
 
-            if (listStr.length === 0)
-              return interaction.editReply(
-                `No immune ${subCmd === 'roles-view' ? 'roles' : 'channels'} set for this module.`
-              );
+            if (listStr.length === 0) return interaction.reply(`No immune ${thingName}s set for this module.`);
 
-            return interaction.editReply(listStr.join(', '));
+            return interaction.reply(listStr.join(', '));
         }
 
         break;
@@ -442,41 +433,26 @@ class AutomodCommand extends Command {
             const within = interaction.options.getInteger('in', true);
             const trigger = { amount, within };
 
-            const { autoModSpamTriggers } = (await this.client.db.guild.findUnique({
-              where: {
-                id: interaction.guildId
-              }
-            }))!;
-
-            if ((autoModSpamTriggers as AutoModSpamTriggers).some(trig => trig.amount === amount))
+            if ((autoModSpamTriggers as AutoModSpamTrigger[]).some(trig => trig.amount === amount))
               throw 'There is already a trigger with that amount.';
 
             if (autoModSpamTriggers.length >= 5) throw 'You cannot set more than 5 triggers.';
-
-            await interaction.deferReply();
 
             await this.client.db.guild.update({
               where: { id: interaction.guildId },
               data: { autoModSpamTriggers: { push: trigger } }
             });
 
-            return interaction.editReply('Trigger added.');
+            return interaction.reply('Trigger added.');
           }
           case 'triggers-remove': {
             const amount = interaction.options.getInteger('amount', true);
             const within = interaction.options.getInteger('in', true);
-            const { autoModSpamTriggers } = (await this.client.db.guild.findUnique({
-              where: {
-                id: interaction.guildId
-              }
-            }))!;
 
-            if (!(autoModSpamTriggers as AutoModSpamTriggers).some(trig => trig.amount === amount))
+            if (!(autoModSpamTriggers as AutoModSpamTrigger[]).some(trig => trig.amount === amount))
               throw 'There is no trigger with that amount.';
 
-            await interaction.deferReply();
-
-            const object = (autoModSpamTriggers as AutoModSpamTriggers).find(
+            const object = (autoModSpamTriggers as AutoModSpamTrigger[]).find(
               trig => trig.amount == amount && trig.within == within
             )!;
             const index = autoModSpamTriggers.indexOf(object);
@@ -487,7 +463,7 @@ class AutomodCommand extends Command {
               data: { autoModSpamTriggers: autoModSpamTriggers as Prisma.InputJsonValue[] }
             });
 
-            return interaction.editReply('Trigger removed.');
+            return interaction.reply('Trigger removed.');
           }
           case 'triggers-view': {
             const { autoModSpamTriggers } = (await this.client.db.guild.findUnique({
@@ -496,71 +472,25 @@ class AutomodCommand extends Command {
 
             if (autoModSpamTriggers.length === 0) return interaction.reply('No triggers set.');
 
-            const spamTriggersStr = (autoModSpamTriggers as AutoModSpamTriggers)
+            const spamTriggersStr = (autoModSpamTriggers as AutoModSpamTrigger[])
               .map(trig => `${trig.amount} messages in ${trig.within} seconds`)
               .join('\n');
             return interaction.reply(`\`\`\`\n${spamTriggersStr}\`\`\``);
           }
         }
         break;
-      case 'filter':
+      case 'filter': {
+        const config = autoMod[AutoModLocations.Filter] as AutoModConfig<'integrated'>;
+        await interaction.deferReply();
+
+        if (!config.ruleId) await makeRule(interaction.guild, config, autoMod, AutoModLocations.Filter);
+
+        let automodRule = await interaction.guild.autoModerationRules.fetch(config.ruleId!).catch(() => null);
+        if (!automodRule) automodRule = await makeRule(interaction.guild, config, autoMod, AutoModLocations.Filter);
+
         switch (subCmd) {
-          case 'rule': {
-            const rule = interaction.options.getString('rule', true);
-            await interaction.deferReply();
-
-            if (rule === 'create') {
-              const createdRule = await interaction.guild.autoModerationRules.create({
-                triggerType: AutoModerationRuleTriggerType.Keyword,
-                eventType: AutoModerationRuleEventType.MessageSend,
-                actions: [{ type: AutoModerationActionType.BlockMessage }],
-                triggerMetadata: {
-                  keywordFilter: []
-                },
-                name: 'Parallel Moderation Filter',
-                enabled: true
-              });
-
-              await this.client.db.guild.update({
-                where: { id: interaction.guildId },
-                data: { autoModFilterRuleId: createdRule.id }
-              });
-
-              return interaction.editReply('Rule created and integrated!');
-            }
-
-            const automodRule = await interaction.guild.autoModerationRules.fetch(rule).catch(() => null);
-            if (!automodRule) throw 'Invalid rule ID.';
-
-            await this.client.db.guild.update({
-              where: { id: interaction.guildId },
-              data: { autoModFilterRuleId: rule }
-            });
-
-            return interaction.editReply('Rule integrated!');
-          }
           case 'add': {
             const word = interaction.options.getString('word', true);
-            await interaction.deferReply();
-
-            const { autoModFilterRuleId } = (await this.client.db.guild.findUnique({
-              where: { id: interaction.guildId }
-            }))!;
-
-            if (!autoModFilterRuleId)
-              throw 'The AutoMod filter has not been properly configured. Please use `/automod filter rule`.';
-
-            const automodRule = await interaction.guild.autoModerationRules
-              .fetch(autoModFilterRuleId)
-              .catch(() => null);
-            if (!automodRule) {
-              await this.client.db.guild.update({
-                where: { id: interaction.guildId },
-                data: { autoModFilterRuleId: null }
-              });
-
-              throw 'The AutoMod filter has not been properly configured. Please use `/automod filter rule`.';
-            }
 
             if (automodRule.triggerMetadata.keywordFilter.includes(word))
               throw 'That word or phrase is already on the filter list.';
@@ -571,26 +501,6 @@ class AutomodCommand extends Command {
           }
           case 'remove': {
             const word = interaction.options.getString('word', true);
-            await interaction.deferReply();
-
-            const { autoModFilterRuleId } = (await this.client.db.guild.findUnique({
-              where: { id: interaction.guildId }
-            }))!;
-
-            if (!autoModFilterRuleId)
-              throw 'The AutoMod filter has not been properly configured. Please use `/automod filter rule`.';
-
-            const automodRule = await interaction.guild.autoModerationRules
-              .fetch(autoModFilterRuleId)
-              .catch(() => null);
-            if (!automodRule) {
-              await this.client.db.guild.update({
-                where: { id: interaction.guildId },
-                data: { autoModFilterRuleId: null }
-              });
-
-              throw 'The AutoMod filter has not been properly configured. Please use `/automod filter rule`.';
-            }
 
             if (!automodRule.triggerMetadata.keywordFilter.includes(word))
               throw 'That word or phrase is not on the filter list.';
@@ -603,27 +513,6 @@ class AutomodCommand extends Command {
             return interaction.editReply(`Removed \`${word}\` from the filter.`);
           }
           case 'view': {
-            await interaction.deferReply();
-
-            const { autoModFilterRuleId } = (await this.client.db.guild.findUnique({
-              where: { id: interaction.guildId }
-            }))!;
-
-            if (!autoModFilterRuleId)
-              throw 'The AutoMod filter has not been properly configured. Please use `/automod filter rule`.';
-
-            const automodRule = await interaction.guild.autoModerationRules
-              .fetch(autoModFilterRuleId)
-              .catch(() => null);
-            if (!automodRule) {
-              await this.client.db.guild.update({
-                where: { id: interaction.guildId },
-                data: { autoModFilterRuleId: null }
-              });
-
-              throw 'The AutoMod filter has not been properly configured. Please use `/automod filter rule`.';
-            }
-
             const filter = automodRule.triggerMetadata.keywordFilter.join(', ');
             if (filter.length === 0) return interaction.editReply('The automod filter is empty.');
             if (filter.length > 1900) throw 'Too big to display. Please view in settings.';
@@ -631,8 +520,44 @@ class AutomodCommand extends Command {
             return interaction.editReply(filter);
           }
         }
+      }
     }
   }
+}
+
+async function makeRule(
+  guild: Guild,
+  config: AutoModConfig<'integrated'>,
+  autoMod: AutoModConfig[],
+  module: AutoModLocations
+) {
+  let createdRule: AutoModerationRule;
+
+  switch (module) {
+    case AutoModLocations.Filter:
+      createdRule = await guild.autoModerationRules.create({
+        triggerType: AutoModerationRuleTriggerType.Keyword,
+        eventType: AutoModerationRuleEventType.MessageSend,
+        actions: [{ type: AutoModerationActionType.BlockMessage }],
+        triggerMetadata: {
+          keywordFilter: []
+        },
+        name: 'Filter',
+        enabled: true
+      });
+      break;
+    default:
+      throw new Error();
+  }
+
+  config.ruleId = createdRule.id;
+
+  await client.db.guild.update({
+    where: { id: guild.id },
+    data: { autoMod }
+  });
+
+  return createdRule;
 }
 
 export default AutomodCommand;

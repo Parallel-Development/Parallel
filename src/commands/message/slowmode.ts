@@ -1,8 +1,8 @@
-import { PermissionFlagsBits as Permissions, Message } from 'discord.js';
+import { PermissionFlagsBits, Message } from 'discord.js';
 import ms from 'ms';
 import Command, { properties } from '../../lib/structs/Command';
 
-@properties<true>({
+@properties<'message'>({
   name: 'slowmode',
   description: 'Modify the slowmode in a channel',
   args: ['[set | add | remove] <slowmode>'],
@@ -13,7 +13,7 @@ class SlowmodeCommand extends Command {
     if (args.length === 0) throw 'Missing required argument `slowmode`.';
 
     if (!message.channel?.isTextBased()) throw "You can't set the slowmode in this channel.";
-    if (!message.channel.permissionsFor(message.guild.members.me!).has(Permissions.ManageChannels))
+    if (!message.channel.permissionsFor(message.guild.members.me!).has(PermissionFlagsBits.ManageChannels))
       throw 'I do not have permission to change the slowmode in this channel.';
 
     const method = args[0];

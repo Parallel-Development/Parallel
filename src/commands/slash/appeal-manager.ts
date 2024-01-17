@@ -2,7 +2,7 @@ import { InfractionType } from '@prisma/client';
 import {
   type ChatInputCommandInteraction,
   SlashCommandBuilder,
-  PermissionFlagsBits as Permissions,
+  PermissionFlagsBits,
   EmbedBuilder,
   Colors
 } from 'discord.js';
@@ -15,7 +15,7 @@ import { AppealResponse } from '../../types';
   new SlashCommandBuilder()
     .setName('appeal-manager')
     .setDescription('Manage infraction appeals.')
-    .setDefaultMemberPermissions(Permissions.Administrator)
+    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
     .addSubcommand(command =>
       command
         .setName('view')
@@ -209,7 +209,7 @@ class AppealManagerCommand extends Command {
       case 'view':
         let embedDescription = '';
         embedDescription += `**Infraction ID:** ${appeal.id}\n**Infraction Type:** ${infraction.type.toString()}\n\n`;
-        embedDescription += (appeal.response as AppealResponse)
+        embedDescription += (appeal.response as AppealResponse[])
           .map((field: any) => `Question: ${field.question}\nResponse: ${field.response}`)
           .join('\n\n');
 
@@ -238,7 +238,7 @@ class AppealManagerCommand extends Command {
         if (!dontUndo) {
           switch (infraction.type) {
             case InfractionType.Ban: {
-              if (!interaction.guild.members.me!.permissions.has(Permissions.BanMembers))
+              if (!interaction.guild.members.me!.permissions.has(PermissionFlagsBits.BanMembers))
                 throw "I cannot undo the punishment because I do not have the Ban Members permission. If you don't want to undo the punishment, use the command `/appeal-manager accept` and set the `dont-undo` option to `True`";
 
               await interaction.guild.members.unban(infraction.userId, reason).catch(() => {
@@ -260,7 +260,7 @@ class AppealManagerCommand extends Command {
               break;
             }
             case InfractionType.Mute: {
-              if (!interaction.guild.members.me!.permissions.has(Permissions.ModerateMembers))
+              if (!interaction.guild.members.me!.permissions.has(PermissionFlagsBits.ModerateMembers))
                 throw "I cannot undo the punishment because I do not have the Moderate Members permission. If you don't want to undo the punishment, use the command `/appeal-manager accept` and set the `dont-undo` option to `True`";
 
               const member = await getMember(interaction.guild, infraction.userId);
@@ -284,8 +284,6 @@ class AppealManagerCommand extends Command {
             }
           }
         }
-
-        await interaction.deferReply();
 
         await this.client.db.appeal.delete({
           where: {
@@ -318,7 +316,7 @@ class AppealManagerCommand extends Command {
             .then(user => user.send({ embeds: [acceptEmbed] }))
             .catch(() => {});
 
-        return interaction.editReply('Appeal accepted.');
+        return interaction.reply('Appeal accepted.');
       case 'deny':
         await this.client.db.appeal.delete({
           where: {

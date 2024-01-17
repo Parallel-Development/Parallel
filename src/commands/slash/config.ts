@@ -2,12 +2,12 @@ import { AppealMethod, InfractionType } from '@prisma/client';
 import {
   ChatInputCommandInteraction,
   SlashCommandBuilder,
-  PermissionFlagsBits as Permissions,
+  PermissionFlagsBits,
   PermissionsBitField,
   ChannelType
 } from 'discord.js';
 import ms from 'ms';
-import Command, { data } from '../../lib/structs/Command';
+import Command, { data, properties } from '../../lib/structs/Command';
 import { d28, urlReg } from '../../lib/util/constants';
 import { bin } from '../../lib/util/functions';
 import yaml from 'js-yaml';
@@ -16,7 +16,7 @@ import yaml from 'js-yaml';
   new SlashCommandBuilder()
     .setName('config')
     .setDescription('Manage the guild configuration.')
-    .setDefaultMemberPermissions(Permissions.ManageGuild)
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
     .addSubcommand(cmd =>
       cmd
         .setName('infraction-moderator-public')
@@ -273,13 +273,13 @@ import yaml from 'js-yaml';
           cmd
             .setName('enable')
             .setDescription('Enable message commands on the guild.')
-            .addBooleanOption(opt => opt.setName('value').setDescription('Toggle for this setting.'))
+            .addBooleanOption(opt => opt.setName('value').setDescription('Toggle for this setting.').setRequired(true))
         )
         .addSubcommand(cmd =>
           cmd
             .setName('respond-no-permission')
             .setDescription("Respond to a user if they attempt to run a command they don't have permission to run.")
-            .addBooleanOption(opt => opt.setName('value').setDescription('Toggle for this setting.'))
+            .addBooleanOption(opt => opt.setName('value').setDescription('Toggle for this setting.').setRequired(true))
         )
         .addSubcommand(cmd =>
           cmd
@@ -289,6 +289,9 @@ import yaml from 'js-yaml';
         )
     )
 )
+@properties<'slash'>({
+  clientPermissions: PermissionFlagsBits.ManageGuild
+})
 class ConfigCommand extends Command {
   async run(interaction: ChatInputCommandInteraction<'cached'>) {
     const group = interaction.options.getSubcommandGroup();
@@ -316,7 +319,7 @@ class ConfigCommand extends Command {
             );
           }
           case 'alert-channel': {
-            if (!interaction.guild.members.me!.permissions.has(Permissions.ManageWebhooks))
+            if (!interaction.guild.members.me!.permissions.has(PermissionFlagsBits.ManageWebhooks))
               throw 'I need permission to manage webhooks.';
 
             const channel = interaction.options.getChannel('channel', true, [ChannelType.GuildText]);
@@ -401,14 +404,12 @@ class ConfigCommand extends Command {
             if (appealModalQuestions.length >= 5) throw 'You cannot have more than four questions.';
             const question = interaction.options.getString('question', true);
 
-            await interaction.deferReply();
-
             await this.client.db.guild.update({
               where: { id: interaction.guildId },
               data: { appealModalQuestions: { push: question } }
             });
 
-            return interaction.editReply(`Question added: ${question}`);
+            return interaction.reply(`Question added: ${question}`);
           }
           case 'remove-question': {
             const { appealModalQuestions } = (await this.client.db.guild.findUnique({
@@ -421,7 +422,6 @@ class ConfigCommand extends Command {
             const index = interaction.options.getInteger('question-index', true);
             if (index > appealModalQuestions.length) throw `There is no index \`${index}\`.`;
 
-            await interaction.deferReply();
             const question = appealModalQuestions[index - 1];
 
             appealModalQuestions.splice(index - 1, 1);
@@ -431,7 +431,7 @@ class ConfigCommand extends Command {
               data: { appealModalQuestions }
             });
 
-            return interaction.editReply(`Removed question #${index}: ${question}`);
+            return interaction.reply(`Removed question #${index}: ${question}`);
           }
           case 'view-questions': {
             const { appealModalQuestions } = (await this.client.db.guild.findUnique({
@@ -469,7 +469,6 @@ class ConfigCommand extends Command {
         switch (subCmd) {
           case 'add-channel': {
             const channel = interaction.options.getChannel('channel', true);
-            await interaction.deferReply();
 
             const { lockChannels } = (await this.client.db.guild.findUnique({
               where: { id: interaction.guildId }
@@ -486,7 +485,7 @@ class ConfigCommand extends Command {
               }
             });
 
-            return interaction.editReply(`Added ${channel.toString()} to the list of channels to lock.`);
+            return interaction.reply(`Added ${channel.toString()} to the list of channels to lock.`);
           }
           case 'remove-channel': {
             const channel = interaction.options.getChannel('channel', true);
@@ -496,8 +495,6 @@ class ConfigCommand extends Command {
             }))!;
 
             if (!lockChannels.includes(channel.id)) throw 'That channel is not on the list of channels to lock.';
-
-            await interaction.deferReply();
 
             lockChannels.splice(lockChannels.indexOf(channel.id), 1);
 
@@ -510,7 +507,7 @@ class ConfigCommand extends Command {
               }
             });
 
-            return interaction.editReply(`Removed ${channel.toString()} from the list of channels to lock.`);
+            return interaction.reply(`Removed ${channel.toString()} from the list of channels to lock.`);
           }
           case 'view-channels': {
             const { lockChannels } = (await this.client.db.guild.findUnique({
@@ -531,9 +528,9 @@ class ConfigCommand extends Command {
           case 'add-override': {
             const override = interaction.options.getString('override', true);
 
-            if (!Permissions.hasOwnProperty(override)) throw 'Invalid permission.';
+            if (!PermissionFlagsBits.hasOwnProperty(override)) throw 'Invalid permission.';
 
-            const permission = Permissions[override as keyof typeof Permissions];
+            const permission = PermissionFlagsBits[override as keyof typeof PermissionFlagsBits];
 
             const { lockOverrides } = (await this.client.db.guild.findUnique({
               where: {
@@ -542,8 +539,6 @@ class ConfigCommand extends Command {
             }))!;
 
             if (lockOverrides & permission) throw 'That override is already on the list of lock overrides.';
-
-            await interaction.deferReply();
 
             await this.client.db.guild.update({
               where: {
@@ -554,7 +549,7 @@ class ConfigCommand extends Command {
               }
             });
 
-            return interaction.editReply(
+            return interaction.reply(
               `The override \`${override.replaceAll(
                 /[a-z][A-Z]/g,
                 m => `${m[0]} ${m[1]}`
@@ -564,9 +559,9 @@ class ConfigCommand extends Command {
           case 'remove-override': {
             const override = interaction.options.getString('override', true);
 
-            if (!Permissions.hasOwnProperty(override)) throw 'Invalid permission.';
+            if (!PermissionFlagsBits.hasOwnProperty(override)) throw 'Invalid permission.';
 
-            const permission = Permissions[override as keyof typeof Permissions];
+            const permission = PermissionFlagsBits[override as keyof typeof PermissionFlagsBits];
 
             const { lockOverrides } = (await this.client.db.guild.findUnique({
               where: {
@@ -575,8 +570,6 @@ class ConfigCommand extends Command {
             }))!;
 
             if ((lockOverrides & permission) === 0n) throw 'That override is not on the list of lock overrides.';
-
-            await interaction.deferReply();
 
             await this.client.db.guild.update({
               where: {
@@ -587,7 +580,7 @@ class ConfigCommand extends Command {
               }
             });
 
-            return interaction.editReply(
+            return interaction.reply(
               `The override \`${override.replaceAll(
                 /[a-z][A-Z]/g,
                 m => `${m[0]} ${m[1]}`
@@ -612,7 +605,7 @@ class ConfigCommand extends Command {
       case 'message-logging': {
         switch (subCmd) {
           case 'channel': {
-            if (!interaction.guild.members.me!.permissions.has(Permissions.ManageWebhooks))
+            if (!interaction.guild.members.me!.permissions.has(PermissionFlagsBits.ManageWebhooks))
               throw 'I need permission to manage webhooks.';
 
             const channel = interaction.options.getChannel('channel', true, [ChannelType.GuildText]);
@@ -668,8 +661,6 @@ class ConfigCommand extends Command {
             if (messageLogIgnoredChannels.includes(channel.id))
               throw 'That channel is already on the list of ignored channels.';
 
-            await interaction.deferReply();
-
             await this.client.db.guild.update({
               where: {
                 id: interaction.guild.id
@@ -679,7 +670,7 @@ class ConfigCommand extends Command {
               }
             });
 
-            return interaction.editReply(`Added ${channel.toString()} the list of ignored channels.`);
+            return interaction.reply(`Added ${channel.toString()} the list of ignored channels.`);
           }
           case 'ignored-channels-remove': {
             const channel = interaction.options.getChannel('channel', true);
@@ -693,8 +684,6 @@ class ConfigCommand extends Command {
             if (!messageLogIgnoredChannels.includes(channel.id))
               throw 'That channel is not on the list of ignored channels.';
 
-            await interaction.deferReply();
-
             messageLogIgnoredChannels.splice(messageLogIgnoredChannels.indexOf(channel.id), 1);
 
             await this.client.db.guild.update({
@@ -706,7 +695,7 @@ class ConfigCommand extends Command {
               }
             });
 
-            return interaction.editReply(`Removed ${channel.toString()} from the list of ignored channels.`);
+            return interaction.reply(`Removed ${channel.toString()} from the list of ignored channels.`);
           }
           case 'ignored-channels-view': {
             const { messageLogIgnoredChannels } = (await this.client.db.guild.findUnique({
@@ -801,7 +790,7 @@ class ConfigCommand extends Command {
         }
       }
       case 'mod-log-channel': {
-        if (!interaction.guild.members.me!.permissions.has(Permissions.ManageWebhooks))
+        if (!interaction.guild.members.me!.permissions.has(PermissionFlagsBits.ManageWebhooks))
           throw 'I need permission to manage webhooks.';
 
         const { modLogWebhookId } = (await this.client.db.guild.findUnique({

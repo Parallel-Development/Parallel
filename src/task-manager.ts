@@ -1,5 +1,5 @@
 import { EmbedBuilder } from '@discordjs/builders';
-import { Colors, PermissionFlagsBits as Permissions } from 'discord.js';
+import { Colors, PermissionFlagsBits } from 'discord.js';
 import { Infraction, InfractionType } from '@prisma/client';
 import client from './client';
 import { getMember, sleep } from './lib/util/functions';
@@ -37,7 +37,7 @@ setInterval(async () => {
     }
 
     const permissions = guild.members.me!.permissions;
-    const banPerm = permissions.has(Permissions.BanMembers);
+    const banPerm = permissions.has(PermissionFlagsBits.BanMembers);
 
     if (!banPerm) {
       await client.db.task.deleteMany({

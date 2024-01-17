@@ -1,7 +1,7 @@
 import {
   type ChatInputCommandInteraction,
   SlashCommandBuilder,
-  PermissionFlagsBits as Permissions,
+  PermissionFlagsBits,
   EmbedBuilder,
   Colors
 } from 'discord.js';
@@ -13,7 +13,7 @@ import ms from 'ms';
   new SlashCommandBuilder()
     .setName('case')
     .setDescription('View detailed information on an infraction.')
-    .setDefaultMemberPermissions(Permissions.ModerateMembers)
+    .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers)
     .addIntegerOption(option =>
       option.setName('id').setDescription('The infraction ID.').setMinValue(1).setRequired(true)
     )

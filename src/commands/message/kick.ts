@@ -1,15 +1,15 @@
-import { PermissionFlagsBits as Permissions, Colors, EmbedBuilder, Message } from 'discord.js';
+import { PermissionFlagsBits, Colors, EmbedBuilder, Message } from 'discord.js';
 import { adequateHierarchy, getMember } from '../../lib/util/functions';
 import { InfractionType } from '@prisma/client';
 import Command, { properties } from '../../lib/structs/Command';
 import punishLog from '../../handlers/punishLog';
 
-@properties<true>({
+@properties<'message'>({
   name: 'kick',
   description: 'Kick a member from the guild.',
   args: ['<member> [reason]'],
   aliases: ['k', 'boot', 'remove'],
-  clientPermissions: [Permissions.KickMembers]
+  clientPermissions: PermissionFlagsBits.KickMembers
 })
 class KickCommand extends Command {
   async run(message: Message<true>, args: string[]) {

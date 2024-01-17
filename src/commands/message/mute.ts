@@ -1,17 +1,17 @@
 import { InfractionType } from '@prisma/client';
-import { PermissionFlagsBits as Permissions, EmbedBuilder, Colors, Message } from 'discord.js';
+import { PermissionFlagsBits, EmbedBuilder, Colors, Message } from 'discord.js';
 import ms from 'ms';
 import Command, { properties } from '../../lib/structs/Command';
 import { adequateHierarchy, getMember } from '../../lib/util/functions';
 import { d28 } from '../../lib/util/constants';
 import punishLog from '../../handlers/punishLog';
 
-@properties<true>({
+@properties<'message'>({
   name: 'mute',
   description: 'Mute a member.',
   args: ['<member> <duration> [reason]'],
   aliases: ['m', 'silence', 'shut', 'shush', 'quiet'],
-  clientPermissions: [Permissions.ModerateMembers]
+  clientPermissions: PermissionFlagsBits.ModerateMembers
 })
 class MuteCommand extends Command {
   async run(message: Message<true>, args: string[]) {
@@ -28,7 +28,7 @@ class MuteCommand extends Command {
     if (!adequateHierarchy(message.guild.members.me!, member))
       throw 'I cannot mute this member due to inadequete hierarchy.';
 
-    if (member.permissions.has(Permissions.Administrator)) throw 'You cannot mute an administrator.';
+    if (member.permissions.has(PermissionFlagsBits.Administrator)) throw 'You cannot mute an administrator.';
 
     const durationStr = args[1];
     let duration = null;

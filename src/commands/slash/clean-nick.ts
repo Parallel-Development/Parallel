@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, PermissionFlagsBits as Permissions, ChatInputCommandInteraction } from 'discord.js';
+import { SlashCommandBuilder, PermissionFlagsBits, ChatInputCommandInteraction } from 'discord.js';
 import Command, { data, properties } from '../../lib/structs/Command';
 const decancer = require('decancer');
 import { commonChars } from '../../lib/util/constants';
@@ -8,7 +8,7 @@ import { adequateHierarchy } from '../../lib/util/functions';
   new SlashCommandBuilder()
     .setName('clean-nick')
     .setDescription('Correct a non-default font, hoisted, or any other unwanted user/nickname.')
-    .setDefaultMemberPermissions(Permissions.ManageNicknames)
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageNicknames)
     .addUserOption(option => option.setName('member').setDescription('The member to correct.').setRequired(true))
     .addStringOption(option =>
       option
@@ -24,8 +24,8 @@ import { adequateHierarchy } from '../../lib/util/functions';
       option.setName('from-username').setDescription('Clean from username rather than guild nickname.')
     )
 )
-@properties({
-  clientPermissions: [Permissions.ManageNicknames]
+@properties<'slash'>({
+  clientPermissions: PermissionFlagsBits.ManageNicknames
 })
 class CleannickCommand extends Command {
   async run(interaction: ChatInputCommandInteraction<'cached'>) {
@@ -46,8 +46,6 @@ class CleannickCommand extends Command {
     let fixed = '';
     const code = 'XXXX'.replaceAll('X', x => commonChars[Math.floor(Math.random() * commonChars.length)]);
 
-    await interaction.deferReply();
-
     switch (type) {
       case 'font':
         fixed = decancer(name).toString();
@@ -67,7 +65,7 @@ class CleannickCommand extends Command {
     }
 
     await member.setNickname(fixed);
-    return interaction.editReply('Nickname cleaned.');
+    return interaction.reply('Nickname cleaned.');
   }
 }
 

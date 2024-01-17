@@ -2,7 +2,7 @@ import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 import Command, { data, properties } from '../../lib/structs/Command';
 
 @data(new SlashCommandBuilder().setName('invite').setDescription('Retrieve the invite for Parallel.'))
-@properties({
+@properties<'slash'>({
   allowDM: true
 })
 class InviteCommand extends Command {

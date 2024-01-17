@@ -1,8 +1,8 @@
 import { InfractionType as IT, InfractionType } from '@prisma/client';
-import { EmbedBuilder, GuildMember, Message, PermissionFlagsBits as Permissions, User } from 'discord.js';
+import { EmbedBuilder, GuildMember, Message, PermissionFlagsBits, User } from 'discord.js';
 import { infractionColors, pastTenseInfractionTypes } from '../lib/util/constants';
 import { adequateHierarchy, getMember, getUser, hasSlashCommandPermission } from '../lib/util/functions';
-import { Escalations } from '../types';
+import { Escalation } from '../types';
 import ms from 'ms';
 import client from '../client';
 import punishLog from './punishLog';
@@ -48,7 +48,7 @@ export default async function (
   if (target.id === client.user!.id) throw `You cannot ${lpunishment} me.`;
 
   if (target instanceof GuildMember) {
-    if (punishment === IT.Mute && target.permissions.has(Permissions.Administrator))
+    if (punishment === IT.Mute && target.permissions.has(PermissionFlagsBits.Administrator))
       throw 'You cannot mute an administrator.';
 
     if (!adequateHierarchy(message.member, target))
@@ -182,7 +182,7 @@ export default async function (
   if (infractionHistory.length === 0) return false;
 
   // find matching escalations
-  const escalation = (infraction.guild.escalationsManual as Escalations).reduce(
+  const escalation = (infraction.guild.escalationsManual as Escalation[]).reduce(
     (prev, curr) => {
       const within = +curr.within;
 

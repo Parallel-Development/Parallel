@@ -1,7 +1,7 @@
 import {
   type ChatInputCommandInteraction,
   SlashCommandBuilder,
-  PermissionFlagsBits as Permissions,
+  PermissionFlagsBits,
   EmbedBuilder,
   Colors
 } from 'discord.js';
@@ -10,14 +10,14 @@ import ms from 'ms';
 import { adequateHierarchy } from '../../lib/util/functions';
 import { InfractionType } from '@prisma/client';
 import { pastTenseInfractionTypes } from '../../lib/util/constants';
-import { Escalations } from '../../types';
+import { Escalation } from '../../types';
 import punishLog from '../../handlers/punishLog';
 
 @data(
   new SlashCommandBuilder()
     .setName('warn')
     .setDescription('Issue an infraction for a member.')
-    .setDefaultMemberPermissions(Permissions.ModerateMembers)
+    .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers)
     .addUserOption(option => option.setName('member').setDescription('The member to warn.').setRequired(true))
     .addStringOption(option =>
       option.setName('reason').setDescription('The reason for the infraction.').setMaxLength(3500)
@@ -118,7 +118,7 @@ class WarnCommand extends Command {
     if (infractionHistory.length === 0) return false;
 
     // find matching escalations
-    const escalation = (guild.escalationsManual as Escalations).reduce(
+    const escalation = (guild.escalationsManual as Escalation[]).reduce(
       (prev, curr) => {
         const within = +curr.within;
 

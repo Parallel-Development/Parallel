@@ -1,6 +1,6 @@
 import {
   type ChatInputCommandInteraction,
-  PermissionFlagsBits as Permissions,
+  PermissionFlagsBits,
   ApplicationCommandOptionType,
   EmbedBuilder,
   Colors,
@@ -9,6 +9,7 @@ import {
 import { InfractionType } from '@prisma/client';
 import client from '../client';
 import customSlashCommand from './customSlashCommand';
+import { AutoModConfig } from '../types';
 
 // imported by messageCommand
 export const customCommandsConfirmed = new Set();
@@ -101,6 +102,40 @@ export async function confirmGuild(guildId: string) {
     }
   });
 
+  // if (guild) {
+    // const spam: AutoModConfig<'raw'> = {
+    //   toggle: guild.autoModSpamToggle,
+    //   punishment: guild.autoModSpamPunishment,
+    //   duration: guild.autoModSpamDuration.toString() as `${number}`,
+    //   immuneChannels: guild.autoModSpamImmuneChannels,
+    //   immuneRoles: guild.autoModSpamImmuneRoles
+    // }
+
+    // const malicious: AutoModConfig<'raw'> = {
+    //   toggle: guild.autoModMaliciousToggle,
+    //   punishment: guild.autoModMaliciousPunishment,
+    //   duration: guild.autoModMaliciousDuration.toString() as `${number}`,
+    //   immuneChannels: guild.autoModMaliciousImmuneChannels,
+    //   immuneRoles: guild.autoModMaliciousImmuneRoles
+    // }
+
+    // const filter: AutoModConfig<'integrated'> = {
+    //   toggle: guild.autoModFilterToggle,
+    //   punishment: guild.autoModFilterPunishment,
+    //   duration: guild.autoModFilterDuration.toString() as `${number}`,
+    //   ruleId: guild.autoModFilterRuleId ?? ''
+    // }
+
+    // const autoMod = [spam, filter, malicious];
+
+    // await client.db.guild.update({
+    //   where: { id: guildId },
+    //   data: {
+    //     autoMod
+    //   }
+    // })
+  // }
+
   if (guild) return guild;
 
   return client.db.guild.create({
@@ -134,12 +169,12 @@ export async function checkShortcuts(guildId: string) {
       description: command.description,
       defaultMemberPermissions:
         command.punishment === InfractionType.Ban || command.punishment === InfractionType.Unban
-          ? Permissions.BanMembers
+          ? PermissionFlagsBits.BanMembers
           : command.punishment === InfractionType.Mute || command.punishment === InfractionType.Unmute
-          ? Permissions.MuteMembers
+          ? PermissionFlagsBits.MuteMembers
           : command.punishment === InfractionType.Kick
-          ? Permissions.KickMembers
-          : Permissions.ModerateMembers,
+          ? PermissionFlagsBits.KickMembers
+          : PermissionFlagsBits.ModerateMembers,
       options: [
         {
           name:

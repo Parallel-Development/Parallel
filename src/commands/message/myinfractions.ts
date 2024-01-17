@@ -2,7 +2,7 @@ import { type ChatInputCommandInteraction, EmbedBuilder, type EmbedField, Messag
 import Command, { properties } from '../../lib/structs/Command';
 import { infractionsPerPage, mainColor } from '../../lib/util/constants';
 
-@properties<true>({
+@properties<'message'>({
   name: 'myinfractions',
   description: 'View your current infractions.',
   args: ['[page]'],

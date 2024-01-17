@@ -11,7 +11,7 @@ import ms from 'ms';
       opt.setName('command').setDescription('Get specific help on a command.').setAutocomplete(true)
     )
 )
-@properties({
+@properties<'slash'>({
   allowDM: true
 })
 class HelpCommand extends Command {

@@ -7,7 +7,7 @@ import Command, { properties, data } from '../../lib/structs/Command';
     .setDescription("Get a user's avatar.")
     .addUserOption(option => option.setName('user').setDescription('The user to get the avatar of.'))
 )
-@properties({
+@properties<'slash'>({
   allowDM: true
 })
 class AvatarCommand extends Command {

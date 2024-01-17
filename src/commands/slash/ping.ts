@@ -2,7 +2,7 @@ import { type ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.j
 import Command, { properties, data } from '../../lib/structs/Command';
 
 @data(new SlashCommandBuilder().setName('ping').setDescription("Get the bot's API latency and websocket heartbeat."))
-@properties({
+@properties<'slash'>({
   allowDM: true
 })
 class PingCommand extends Command {

@@ -1,7 +1,7 @@
 import {
   type ChatInputCommandInteraction,
   SlashCommandBuilder,
-  PermissionFlagsBits as Permissions,
+  PermissionFlagsBits,
   EmbedBuilder,
   Colors
 } from 'discord.js';
@@ -14,7 +14,7 @@ import punishLog from '../../handlers/punishLog';
   new SlashCommandBuilder()
     .setName('remove-infraction')
     .setDescription('Remove an infraction.')
-    .setDefaultMemberPermissions(Permissions.ModerateMembers)
+    .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers)
     .addIntegerOption(option =>
       option.setName('id').setDescription('The infraction ID.').setMinValue(1).setRequired(true)
     )
@@ -47,14 +47,14 @@ class RemoveInfractionCommand extends Command {
     if (undo) {
       switch (infraction.type) {
         case InfractionType.Ban:
-          if (!interaction.guild.members.me!.permissions.has(Permissions.BanMembers))
+          if (!interaction.guild.members.me!.permissions.has(PermissionFlagsBits.BanMembers))
             throw 'I cannot undo the punishment because I do not have the Ban Members permission.';
           await interaction.guild.members.unban(infraction.userId, reason).catch(() => {
             throw 'That member is not banned.';
           });
           break;
         case InfractionType.Mute:
-          if (!interaction.guild.members.me!.permissions.has(Permissions.ModerateMembers))
+          if (!interaction.guild.members.me!.permissions.has(PermissionFlagsBits.ModerateMembers))
             throw 'I cannot undo the punishment because I do not have the Moderate Members permission.';
           await interaction.guild.members
             .fetch(infraction.userId)

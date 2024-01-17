@@ -1,8 +1,8 @@
-import { PermissionFlagsBits as Permissions, Message } from 'discord.js';
+import { PermissionFlagsBits, Message } from 'discord.js';
 import Command, { data, properties } from '../../lib/structs/Command';
 import { bin } from '../../lib/util/functions';
 
-@properties<true>({
+@properties<'message'>({
   name: 'tag-manager',
   description: 'Manage tags in the guild. Tags are (typically) informational text that can be referenced.',
   args: ['create <name> <content>', 'delete <name>', 'rename <name> <new_name>', 'edit <name> <new_content>'],

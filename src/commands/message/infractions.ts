@@ -1,9 +1,9 @@
-import { PermissionFlagsBits as Permissions, EmbedBuilder, type EmbedField, Message } from 'discord.js';
+import { PermissionFlagsBits, EmbedBuilder, type EmbedField, Message } from 'discord.js';
 import Command, { properties } from '../../lib/structs/Command';
 import { infractionsPerPage, mainColor } from '../../lib/util/constants';
 import { getUser } from '../../lib/util/functions';
 
-@properties<true>({
+@properties<'message'>({
   name: 'infractions',
   description: "View a user's current infractions.",
   args: ['<user> [page]'],

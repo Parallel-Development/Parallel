@@ -1,15 +1,15 @@
 import { InfractionType } from '@prisma/client';
-import { PermissionFlagsBits as Permissions, Message, EmbedBuilder, Colors } from 'discord.js';
+import { PermissionFlagsBits, Message, EmbedBuilder, Colors } from 'discord.js';
 import Command, { properties, data } from '../../lib/structs/Command';
 import { getUser } from '../../lib/util/functions';
 import punishLog from '../../handlers/punishLog';
 
-@properties<true>({
+@properties<'message'>({
   name: 'unban',
   description: 'Unban a member from the guild.',
   args: ['<user> [reason]'],
   aliases: ['ub', 'unbanish', 'pardon'],
-  clientPermissions: [Permissions.BanMembers]
+  clientPermissions: PermissionFlagsBits.BanMembers
 })
 class UnbanCommand extends Command {
   async run(message: Message<true>, args: string[]) {

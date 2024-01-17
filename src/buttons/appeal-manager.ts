@@ -7,7 +7,7 @@ import {
   Colors,
   EmbedBuilder,
   EmbedData,
-  PermissionFlagsBits as Permissions
+  PermissionFlagsBits
 } from 'discord.js';
 import ms from 'ms';
 import Button from '../lib/structs/Button';
@@ -68,7 +68,7 @@ class AppealManagerButton extends Button {
       case 'accept': {
         switch (infraction.type) {
           case InfractionType.Ban: {
-            if (!interaction.guild.members.me!.permissions.has(Permissions.BanMembers))
+            if (!interaction.guild.members.me!.permissions.has(PermissionFlagsBits.BanMembers))
               throw "I cannot undo the punishment because I do not have the Ban Members permission. If you don't want to undo the punishment, use the command `/appeal-manager accept` and set the `dont-undo` option to `True`";
 
             await interaction.guild.members.unban(infraction.userId, reason).catch(() => {
@@ -90,7 +90,7 @@ class AppealManagerButton extends Button {
             break;
           }
           case InfractionType.Mute: {
-            if (!interaction.guild.members.me!.permissions.has(Permissions.ModerateMembers))
+            if (!interaction.guild.members.me!.permissions.has(PermissionFlagsBits.ModerateMembers))
               throw "I cannot undo the punishment because I do not have the Moderate Members permission. If you don't want to undo the punishment, use the command `/appeal-manager accept` and set the `dont-undo` option to `True`";
 
             const member = await getMember(interaction.guild, infraction.userId);
@@ -222,8 +222,6 @@ class AppealManagerButton extends Button {
         return interaction.editReply({ components: [row], embeds: [embed] });
       }
       case 'context': {
-        await interaction.deferReply({ ephemeral: true });
-
         const infractionEmbed = new EmbedBuilder()
           .setTitle(`Case ${infractionId} | ${infraction.type.toString()}`)
           .setColor(
@@ -253,7 +251,7 @@ class AppealManagerButton extends Button {
             }`
           );
 
-        return interaction.editReply({ embeds: [infractionEmbed] });
+        return interaction.reply({ embeds: [infractionEmbed] });
       }
     }
   }

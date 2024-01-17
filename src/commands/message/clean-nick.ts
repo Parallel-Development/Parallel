@@ -1,14 +1,14 @@
-import { PermissionFlagsBits as Permissions, Message } from 'discord.js';
+import { PermissionFlagsBits, Message } from 'discord.js';
 import Command, { properties } from '../../lib/structs/Command';
 const decancer = require('decancer');
 import { commonChars } from '../../lib/util/constants';
 import { adequateHierarchy, getMember } from '../../lib/util/functions';
 
-@properties<true>({
+@properties<'message'>({
   name: 'clean-nick',
   description: 'Correct a non-default font, hoisted, or any other unwanted user/nickname.',
   args: ['<member> [font | hoist | other]'],
-  clientPermissions: [Permissions.ManageNicknames]
+  clientPermissions: PermissionFlagsBits.ManageNicknames
 })
 class CleannickCommand extends Command {
   async run(message: Message<true>, args: string[]) {

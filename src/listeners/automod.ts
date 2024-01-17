@@ -1,6 +1,8 @@
 import { AutoModerationActionExecution, AutoModerationRuleTriggerType } from 'discord.js';
 import Listener from '../lib/structs/Listener';
 import { autoModPunish } from '../handlers/automod';
+import { AutoModLocations } from '../lib/util/constants';
+import { AutoModConfig } from '../types';
 
 class DiscordAutomodListener extends Listener {
   constructor() {
@@ -11,20 +13,24 @@ class DiscordAutomodListener extends Listener {
     if (event.ruleTriggerType !== AutoModerationRuleTriggerType.Keyword) return;
     await event.guild.members.fetch(event.userId);
 
-    const { autoModFilterToggle, autoModFilterRuleId, autoModFilterPunishment, autoModFilterDuration } =
-      (await this.client.db.guild.findUnique({
-        where: { id: event.guild.id }
-      }))!;
+    const { autoMod } = (await this.client.db.guild.findUnique({
+      where: { id: event.guild.id },
+      select: { autoMod: true }
+    }))! as { autoMod: AutoModConfig[] };
 
-    if (!autoModFilterToggle || event.ruleId !== autoModFilterRuleId || !autoModFilterPunishment) return;
+    const config = autoMod[AutoModLocations.Filter];
+    if (!config.punishment) return;
 
-    return autoModPunish(
-      event.member!,
-      event.guild,
-      `Using a blacklisted word or phrase.`,
-      autoModFilterPunishment,
-      autoModFilterDuration
-    );
+    switch (event.ruleTriggerType) {
+      case AutoModerationRuleTriggerType.Keyword:
+        return autoModPunish(
+          event.member!,
+          event.guild,
+          'Using a blacklisted word or phrase.',
+          config.punishment,
+          BigInt(+config.duration)
+        );
+    }
   }
 }
 

@@ -2,7 +2,7 @@ import { Message } from 'discord.js';
 import Command, { properties } from '../../lib/structs/Command';
 import { getUser } from '../../lib/util/functions';
 
-@properties<true>({
+@properties<'message'>({
   name: 'avatar',
   description: "Get a user's avatar.",
   args: ['[user]'],

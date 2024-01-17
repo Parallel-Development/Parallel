@@ -5,7 +5,7 @@ import util from 'util';
 import { bin } from '../../lib/util/functions';
 let _; // used to reference the last returned expression
 
-@properties<true>({
+@properties<'message'>({
   name: 'eval',
   description: 'Execute a string of JavaScript code.',
   args: ['<code> [--async] [--depth={depth}]'],

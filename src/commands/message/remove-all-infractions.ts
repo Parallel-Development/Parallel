@@ -2,7 +2,7 @@ import { Message } from 'discord.js';
 import Command, { properties } from '../../lib/structs/Command';
 import { getUser } from '../../lib/util/functions';
 
-@properties<true>({
+@properties<'message'>({
   name: 'remove-all-infractions',
   description: 'Remove all infractions from a user.',
   args: ['<user>']

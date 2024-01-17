@@ -9,7 +9,7 @@ import {
   Collection,
   EmbedBuilder,
   TextChannel,
-  PermissionFlagsBits as Permissions
+  PermissionFlagsBits
 } from 'discord.js';
 import Command, { data } from '../../lib/structs/Command';
 import discordTranscripts, { ExportReturnType } from 'discord-html-transcripts';
@@ -97,7 +97,7 @@ class TicketCommand extends Command {
         if (!ticket) throw 'Channel is not a ticket.';
 
         if (
-          !interaction.member.permissions.has(Permissions.ManageGuild) &&
+          !interaction.member.permissions.has(PermissionFlagsBits.ManageGuild) &&
           !ticketModeratorRoles.some(r => interaction.member.roles.cache.has(r))
         ) {
           if (interaction.user.id !== ticket.creatorId) throw 'You do not have permission to manage tickets.';
@@ -206,7 +206,7 @@ class TicketCommand extends Command {
         if (!ticket) throw 'Invalid invite code.';
 
         const channel = interaction.guild.channels.cache.get(ticket.channelId) as TextChannel;
-        if (channel.permissionsFor(interaction.member).has(Permissions.ViewChannel))
+        if (channel.permissionsFor(interaction.member).has(PermissionFlagsBits.ViewChannel))
           throw 'This user can already view this ticket.';
 
         await this.client.db.ticket.update({

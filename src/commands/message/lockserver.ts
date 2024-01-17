@@ -1,9 +1,9 @@
 import { EmbedBuilder } from '@discordjs/builders';
-import { PermissionFlagsBits as Permissions, TextChannel, Colors, Message } from 'discord.js';
+import { PermissionFlagsBits, TextChannel, Colors, Message } from 'discord.js';
 import Command, { properties } from '../../lib/structs/Command';
 import { sleep } from '../../lib/util/functions';
 
-@properties<true>({
+@properties<'message'>({
   name: 'lockserver',
   description: 'Restrict members from sending messages in all desingated channels.',
   args: ['[reason]'],
@@ -40,8 +40,8 @@ class LockserverCommand extends Command {
       const channel = message.guild.channels.cache.get(channelId) as TextChannel | null;
       if (!channel) continue;
 
-      if (!message.guild.members.me!.permissions.has(Permissions.Administrator)) {
-        if (!channel.permissionsFor(message.guild.members.me!).has(Permissions.ManageChannels)) continue;
+      if (!message.guild.members.me!.permissions.has(PermissionFlagsBits.Administrator)) {
+        if (!channel.permissionsFor(message.guild.members.me!).has(PermissionFlagsBits.ManageChannels)) continue;
 
         if (
           !channel.permissionOverwrites.cache.some(override => {

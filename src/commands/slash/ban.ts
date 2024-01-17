@@ -1,7 +1,7 @@
 import { InfractionType } from '@prisma/client';
 import {
   SlashCommandBuilder,
-  PermissionFlagsBits as Permissions,
+  PermissionFlagsBits,
   type ChatInputCommandInteraction,
   EmbedBuilder,
   Colors
@@ -15,7 +15,7 @@ import punishLog from '../../handlers/punishLog';
   new SlashCommandBuilder()
     .setName('ban')
     .setDescription('Ban a member from the guild.')
-    .setDefaultMemberPermissions(Permissions.BanMembers)
+    .setDefaultMemberPermissions(PermissionFlagsBits.BanMembers)
     .addUserOption(option => option.setName('user').setDescription('The user to ban.').setRequired(true))
     .addStringOption(option =>
       option.setName('duration').setDescription('The duration of the ban.').setAutocomplete(true)
@@ -35,8 +35,8 @@ import punishLog from '../../handlers/punishLog';
         )
     )
 )
-@properties({
-  clientPermissions: [Permissions.BanMembers]
+@properties<'slash'>({
+  clientPermissions: PermissionFlagsBits.BanMembers
 })
 class BanCommand extends Command {
   async run(interaction: ChatInputCommandInteraction<'cached'>) {
@@ -113,11 +113,13 @@ class BanCommand extends Command {
         create: data
       });
     } else
-      await this.client.db.task.delete({
-        where: {
-          userId_guildId_type: { userId: user.id, guildId: interaction.guildId, type: InfractionType.Ban }
-        }
-      });
+      await this.client.db.task
+        .delete({
+          where: {
+            userId_guildId_type: { userId: user.id, guildId: interaction.guildId, type: InfractionType.Ban }
+          }
+        })
+        .catch(() => {});
 
     const { infractionModeratorPublic, infoBan } = guild;
     const expiresStr = Math.floor(Number(infraction.expires) / 1000);

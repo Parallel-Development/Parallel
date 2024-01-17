@@ -27,7 +27,7 @@ let _; // used to reference the last returned expression
     .addBooleanOption(option => option.setName('async').setDescription('Evaluate the code in an async function.'))
     .addIntegerOption(option => option.setName('depth').setDescription('Output depth.').setMinValue(0))
 )
-@properties({
+@properties<'slash'>({
   allowDM: true
 })
 class EvalCommand extends Command {

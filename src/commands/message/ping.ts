@@ -1,7 +1,7 @@
 import { type Message } from 'discord.js';
 import Command, { properties } from '../../lib/structs/Command';
 
-@properties<true>({
+@properties<'message'>({
   name: 'ping',
   description: "Get the bot's API latency and websocket heartbeat.",
   allowDM: true,

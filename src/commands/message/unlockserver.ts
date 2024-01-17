@@ -1,9 +1,9 @@
 import { EmbedBuilder } from '@discordjs/builders';
-import { PermissionFlagsBits as Permissions, TextChannel, Colors, VoiceChannel, Message } from 'discord.js';
+import { PermissionFlagsBits, TextChannel, Colors, VoiceChannel, Message } from 'discord.js';
 import Command, { properties } from '../../lib/structs/Command';
 import { sleep } from '../../lib/util/functions';
 
-@properties<true>({
+@properties<'message'>({
   name: 'unlockserver',
   description: 'Unlock all locked channels.',
   args: ['[reason]'],
@@ -38,8 +38,8 @@ class UnlockserverCommand extends Command {
       const channel = message.guild.channels.cache.get(channelId) as TextChannel | VoiceChannel | null;
       if (!channel) continue;
 
-      if (!message.guild.members.me!.permissions.has(Permissions.Administrator)) {
-        if (!channel.permissionsFor(message.guild.members.me!).has(Permissions.ManageChannels)) continue;
+      if (!message.guild.members.me!.permissions.has(PermissionFlagsBits.Administrator)) {
+        if (!channel.permissionsFor(message.guild.members.me!).has(PermissionFlagsBits.ManageChannels)) continue;
 
         if (
           !channel.permissionOverwrites.cache.some(override => {

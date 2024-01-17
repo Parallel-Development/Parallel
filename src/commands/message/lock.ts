@@ -1,9 +1,9 @@
 import { EmbedBuilder } from '@discordjs/builders';
-import { PermissionFlagsBits as Permissions, Colors, Message } from 'discord.js';
+import { PermissionFlagsBits, Colors, Message } from 'discord.js';
 import Command, { properties } from '../../lib/structs/Command';
 import { getChannel } from '../../lib/util/functions';
 
-@properties<true>({
+@properties<'message'>({
   name: 'lock',
   description: 'Restrict members from sending messages in the target channel.',
   args: ['[channel] [reason]']
@@ -26,8 +26,8 @@ class LockCommand extends Command {
       }
     }))!;
 
-    if (!message.guild.members.me!.permissions.has(Permissions.Administrator)) {
-      if (!channel.permissionsFor(message.guild.members.me!).has(Permissions.ManageChannels))
+    if (!message.guild.members.me!.permissions.has(PermissionFlagsBits.Administrator)) {
+      if (!channel.permissionsFor(message.guild.members.me!).has(PermissionFlagsBits.ManageChannels))
         throw "I don't have permission to lock this channel (Missing Manage Channel permissions.)";
 
       if (

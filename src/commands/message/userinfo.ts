@@ -4,7 +4,7 @@ import Command, { properties } from '../../lib/structs/Command';
 import { mainColor } from '../../lib/util/constants';
 import { getMember, getUser } from '../../lib/util/functions';
 
-@properties<true>({
+@properties<'message'>({
   name: 'userinfo',
   description: 'Get information on a user.',
   args: ['[user]'],

@@ -1,7 +1,7 @@
 import { Message } from 'discord.js';
 import Command, { properties } from '../../lib/structs/Command';
 
-@properties<true>({
+@properties<'message'>({
   name: 'automod',
   description: 'Manage the automod configuration.',
   NA: true

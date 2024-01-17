@@ -1,15 +1,15 @@
 import { InfractionType } from '@prisma/client';
-import { PermissionFlagsBits as Permissions, EmbedBuilder, Colors, Message } from 'discord.js';
+import { PermissionFlagsBits, EmbedBuilder, Colors, Message } from 'discord.js';
 import Command, { properties, data } from '../../lib/structs/Command';
 import { adequateHierarchy, getMember } from '../../lib/util/functions';
 import punishLog from '../../handlers/punishLog';
 
-@properties<true>({
+@properties<'message'>({
   name: 'unmute',
   description: 'Unmute a member.',
   args: ['<member> [reason]'],
   aliases: ['um'],
-  clientPermissions: [Permissions.ModerateMembers]
+  clientPermissions: PermissionFlagsBits.ModerateMembers
 })
 class MuteCommand extends Command {
   async run(message: Message<true>, args: string[]) {

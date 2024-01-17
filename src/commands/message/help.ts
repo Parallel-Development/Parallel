@@ -3,7 +3,7 @@ import Command, { properties } from '../../lib/structs/Command';
 import { mainColor } from '../../lib/util/constants';
 import ms from 'ms';
 
-@properties<true>({
+@properties<'message'>({
   name: 'help',
   description: 'Get a list of all commands or get help on a certain command.',
   args: ['[command]'],

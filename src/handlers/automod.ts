@@ -1,7 +1,7 @@
 import { InfractionType } from '@prisma/client';
-import { Colors, EmbedBuilder, Guild, GuildMember, Message, PermissionFlagsBits as Permissions } from 'discord.js';
-import { domainReg, pastTenseInfractionTypes } from '../lib/util/constants';
-import { AutoModSpamTriggers, Escalations } from '../types';
+import { Colors, EmbedBuilder, Guild, GuildMember, Message, PermissionFlagsBits } from 'discord.js';
+import { AutoModLocations, domainReg, pastTenseInfractionTypes } from '../lib/util/constants';
+import { AutoModConfig, AutoModSpamTrigger, Escalation } from '../types';
 import client from '../client';
 import ms from 'ms';
 import punishLog from './punishLog';
@@ -17,17 +17,8 @@ export default async function (message: Message<true>) {
       id: message.guildId
     },
     select: {
-      autoModSpamToggle: true,
+      autoMod: true,
       autoModSpamTriggers: true,
-      autoModSpamImmuneChannels: true,
-      autoModSpamImmuneRoles: true,
-      autoModSpamPunishment: true,
-      autoModSpamDuration: true,
-      autoModMaliciousToggle: true,
-      autoModMaliciousImmuneChannels: true,
-      autoModMaliciousImmuneRoles: true,
-      autoModMaliciousPunishment: true,
-      autoModMaliciousDuration: true,
 
       ticketAutoModeration: true,
 
@@ -40,13 +31,16 @@ export default async function (message: Message<true>) {
   });
 
   if (!automod) return;
-  if (message.member.permissions.has(Permissions.Administrator)) return;
+  if (message.member.permissions.has(PermissionFlagsBits.Administrator)) return;
   if (!automod.ticketAutoModeration && automod.tickets.length > 0) return;
 
+  const malicious = automod.autoMod[AutoModLocations.MaliciousLinks] as AutoModConfig<'raw'>;
+  const spam = automod.autoMod[AutoModLocations.Spam] as AutoModConfig<'raw'>;
+
   if (
-    automod.autoModMaliciousToggle &&
-    !automod.autoModMaliciousImmuneChannels.includes(message.channelId) &&
-    !message.member!.roles.cache.some(role => automod.autoModMaliciousImmuneRoles.includes(role.id))
+    malicious.toggle &&
+    !malicious.immuneChannels.includes(message.channelId) &&
+    !message.member!.roles.cache.some(role => malicious.immuneRoles.includes(role.id))
   ) {
     if (domainReg.test(message.content)) {
       const req = await fetch('https://anti-fish.bitflow.dev/check', {
@@ -62,28 +56,29 @@ export default async function (message: Message<true>) {
 
       if (req.ok) {
         await message.delete();
+        if (!malicious.punishment) return;
 
         return autoModPunish(
           message.member,
           message.guild,
           'Malicious links.',
-          automod.autoModMaliciousPunishment,
-          automod.autoModMaliciousDuration
+          malicious.punishment,
+          BigInt(+malicious.duration)
         );
       }
     }
   }
 
   if (
-    automod.autoModSpamToggle &&
-    !automod.autoModSpamImmuneChannels.includes(message.channelId) &&
-    !message.member!.roles.cache.some(role => automod.autoModSpamImmuneRoles.includes(role.id))
+    spam.toggle &&
+    !spam.immuneChannels.includes(message.channelId) &&
+    !message.member!.roles.cache.some(role => spam.immuneRoles.includes(role.id))
   ) {
     const key = `${message.author.id}.${message.guildId}`;
     const userSpam = spamTrack.get(key)?.concat([Date.now()]) ?? [Date.now()];
     spamTrack.set(key, userSpam);
 
-    for (const trigger of automod.autoModSpamTriggers as AutoModSpamTriggers) {
+    for (const trigger of automod.autoModSpamTriggers as AutoModSpamTrigger[]) {
       const { amount, within } = trigger;
       if (userSpam.length < amount) continue;
 
@@ -95,17 +90,18 @@ export default async function (message: Message<true>) {
         .filter(msg => msg.author.id === message.author.id)
         .slice(0, amount);
       await message.channel.bulkDelete(messages);
+      if (!spam.punishment) return;
 
       return autoModPunish(
         message.member,
         message.guild,
         'Fast message spam.',
-        automod.autoModSpamPunishment,
-        automod.autoModSpamDuration
+        spam.punishment,
+        BigInt(+spam.duration)
       );
     }
 
-    const biggest = (automod.autoModSpamTriggers as AutoModSpamTriggers).reduce((prev, curr) =>
+    const biggest = (automod.autoModSpamTriggers as AutoModSpamTrigger[]).reduce((prev, curr) =>
       curr.amount > prev.amount ? curr : prev
     ).amount;
     if (userSpam.length > biggest) spamTrack.set(key, userSpam.slice(1));
@@ -117,7 +113,7 @@ export async function autoModPunish(
   member: GuildMember,
   guild: Guild,
   reason: string,
-  punishment: InfractionType | null,
+  punishment: InfractionType,
   duration: bigint
 ) {
   if (!punishment) return false;
@@ -126,7 +122,7 @@ export async function autoModPunish(
     where: { id: guild.id }
   }))!;
 
-  const escalations = escalationsAutoMod as Escalations;
+  const escalations = escalationsAutoMod as Escalation[];
 
   const date = BigInt(Date.now());
   const expires = duration ? date + duration : null;

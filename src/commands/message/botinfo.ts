@@ -4,7 +4,7 @@ import ms from 'ms';
 import Command, { properties } from '../../lib/structs/Command';
 import { mainColor } from '../../lib/util/constants';
 
-@properties<true>({
+@properties<'message'>({
   name: 'botinfo',
   description: 'Get statistics on me',
   allowDM: true

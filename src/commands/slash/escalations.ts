@@ -1,14 +1,14 @@
-import { type ChatInputCommandInteraction, SlashCommandBuilder, PermissionFlagsBits as Permissions } from 'discord.js';
+import { type ChatInputCommandInteraction, SlashCommandBuilder, PermissionFlagsBits } from 'discord.js';
 import Command, { data } from '../../lib/structs/Command';
 import { InfractionType } from '@prisma/client';
 import ms from 'ms';
-import { EscalationType, Escalations } from '../../types';
+import { EscalationType, Escalation } from '../../types';
 
 @data(
   new SlashCommandBuilder()
     .setName('escalations')
     .setDescription('Escalations allow you to punish members for reaching an amount of warnings.')
-    .setDefaultMemberPermissions(Permissions.ManageGuild)
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
     .addSubcommand(cmd =>
       cmd
         .setName('add')
@@ -97,7 +97,7 @@ class EscalationsCommand extends Command {
       }
     }))!;
 
-    const escalations = (type === 'Manual' ? guild.escalationsManual : guild.escalationsAutoMod) as Escalations;
+    const escalations = (type === 'Manual' ? guild.escalationsManual : guild.escalationsAutoMod) as Escalation[];
 
     switch (subCmd) {
       case 'add': {
@@ -117,8 +117,6 @@ class EscalationsCommand extends Command {
         if (escalations.some(e => e.amount === amount && +e.within === within))
           throw `There is already an escalation for this amount${within ? ' for this duration' : ''}.`;
 
-        await interaction.deferReply();
-
         type === 'Manual'
           ? await this.client.db.guild.update({
               where: { id: interaction.guildId },
@@ -137,7 +135,7 @@ class EscalationsCommand extends Command {
               }
             });
 
-        return interaction.editReply(
+        return interaction.reply(
           `Escalation added: ${punishment.toLowerCase()} a member${
             duration ? ` for ${ms(duration, { long: true })}` : ''
           } for having or exceeding ${amount} ${type.toLowerCase()} warnings${
@@ -153,8 +151,6 @@ class EscalationsCommand extends Command {
         const escalation = escalations.find(e => e.amount === amount && +e.within === within);
         if (!escalation) throw `There is no escalation for this amount${within ? ' for this duration' : ''}.`;
 
-        await interaction.deferReply();
-
         escalations.splice(escalations.indexOf(escalation), 1);
 
         type === 'Manual'
@@ -167,7 +163,7 @@ class EscalationsCommand extends Command {
               data: { escalationsAutoMod: escalations }
             });
 
-        return interaction.editReply(
+        return interaction.reply(
           `Escalation removed: ${escalation.punishment.toLowerCase()} a member${
             escalation.duration !== '0' ? ` for ${ms(+escalation.duration, { long: true })}` : ''
           } for having or exceeding ${amount} ${type.toLowerCase()} warnings${

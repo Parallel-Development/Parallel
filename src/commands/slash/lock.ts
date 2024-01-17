@@ -2,7 +2,7 @@ import { EmbedBuilder } from '@discordjs/builders';
 import {
   ChatInputCommandInteraction,
   SlashCommandBuilder,
-  PermissionFlagsBits as Permissions,
+  PermissionFlagsBits,
   ChannelType,
   TextChannel,
   Colors,
@@ -14,7 +14,7 @@ import Command, { data } from '../../lib/structs/Command';
   new SlashCommandBuilder()
     .setName('lock')
     .setDescription('Restrict members from sending messages in the target channel.')
-    .setDefaultMemberPermissions(Permissions.ManageChannels)
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
     .addChannelOption(option =>
       option
         .setName('channel')
@@ -40,8 +40,8 @@ class LockCommand extends Command {
       }
     }))!;
 
-    if (!interaction.guild.members.me!.permissions.has(Permissions.Administrator)) {
-      if (!channel.permissionsFor(interaction.guild.members.me!).has(Permissions.ManageChannels))
+    if (!interaction.guild.members.me!.permissions.has(PermissionFlagsBits.Administrator)) {
+      if (!channel.permissionsFor(interaction.guild.members.me!).has(PermissionFlagsBits.ManageChannels))
         throw "I don't have permission to lock this channel (Missing Manage Channel permissions.)";
 
       if (
@@ -63,8 +63,6 @@ class LockCommand extends Command {
 
     const newOverride = everyoneOverrideDeny + (lockOverrides - (everyoneOverrideDeny & lockOverrides));
     if (newOverride === everyoneOverrideDeny) throw 'Channel is already locked.';
-
-    await interaction.deferReply({ ephemeral: interaction.channel === channel });
 
     await channel.permissionOverwrites.set(
       [
@@ -93,7 +91,7 @@ class LockCommand extends Command {
       });
     }
 
-    await interaction.editReply('Channel locked.');
+    await interaction.reply('Channel locked.');
 
     const embed = new EmbedBuilder().setColor(Colors.Orange).setTitle('Channel Locked').setDescription(reason);
 
