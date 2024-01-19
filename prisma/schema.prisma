@@ -43,7 +43,7 @@ model Guild {
   defaultMuteDuration            BigInt          @default(0)
   defaultBanDuration             BigInt          @default(0)
 
-  autoMod                        Json[]          @default(["{\"toggle\": false, \"duration\": \"0\", \"punishment\": null, \"immuneRoles\": [], \"immuneChannels\": []}","{\"ruleId\": \"\", \"toggle\": false, \"duration\": \"0\", \"punishment\": null}","{\"toggle\": false, \"duration\": \"0\", \"punishment\": null, \"immuneRoles\": [], \"immuneChannels\": []}"])
+  autoMod                        Json[]          @default(["{\"toggle\": false, \"duration\": \"0\", \"punishment\": null, \"immuneRoles\": [], \"immuneChannels\": []}","{\"ruleId\": \"\", \"toggle\": false, \"duration\": \"0\", \"punishment\": null}","{\"toggle\": false, \"duration\": \"0\", \"punishment\": null, \"immuneRoles\": [], \"immuneChannels\": []}","{\"ruleId\": \"\", \"toggle\": false, \"duration\": \"0\", \"punishment\": null}","{\"ruleId\": \"\", \"toggle\": false, \"duration\": \"0\", \"punishment\": null}"])
   autoModSpamTriggers            Json[]          @default(["{ \"amount\": 5, \"within\": 5 }", "{ \"amount\": 10, \"within\": 20 }"])
 
   escalationsAutoMod             Json[]

@@ -3,6 +3,12 @@ import Listener from '../lib/structs/Listener';
 import { autoModPunish } from '../handlers/automod';
 import { AutoModLocations } from '../lib/util/constants';
 import { AutoModConfig } from '../types';
+import { isIntegrated } from '../types/typeguard';
+
+const reasons: string[] = [];
+reasons[AutoModLocations.Filter] = 'Using a blacklisted word or phrase.';
+reasons[AutoModLocations.Links] = 'Sending a link.';
+reasons[AutoModLocations.Invites] = 'Sending a Discord server invite.';
 
 class DiscordAutomodListener extends Listener {
   constructor() {
@@ -18,19 +24,19 @@ class DiscordAutomodListener extends Listener {
       select: { autoMod: true }
     }))! as { autoMod: AutoModConfig[] };
 
-    const config = autoMod[AutoModLocations.Filter];
+    const index = autoMod.findIndex(mod => isIntegrated(mod) && mod.ruleId === event.ruleId);
+    if (index === -1) return;
+    
+    const config = autoMod[index] as AutoModConfig<'integrated'>;
     if (!config.punishment) return;
 
-    switch (event.ruleTriggerType) {
-      case AutoModerationRuleTriggerType.Keyword:
-        return autoModPunish(
-          event.member!,
-          event.guild,
-          'Using a blacklisted word or phrase.',
-          config.punishment,
-          BigInt(+config.duration)
-        );
-    }
+    return autoModPunish(
+      event.member!,
+      event.guild,
+      reasons[index],
+      config.punishment,
+      BigInt(+config.duration)
+    );
   }
 }
 

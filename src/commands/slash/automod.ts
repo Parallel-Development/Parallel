@@ -22,14 +22,17 @@ import client from '../../client';
 const autoModuleOptions = [
   { name: 'Spam', value: AutoModLocations.Spam.toString() },
   { name: 'Malicious Links', value: AutoModLocations.MaliciousLinks.toString() },
-  { name: 'Filter', value: AutoModLocations.Filter.toString() }
+  { name: 'Filter', value: AutoModLocations.Filter.toString() },
+  { name: 'Links', value: AutoModLocations.Links.toString() },
+  { name: 'Invites', value: AutoModLocations.Invites.toString() }
 ];
 
-const reverseModules = {
-  0: 'spam',
-  1: 'filter',
-  2: 'malicious links'
-};
+const reverseModules: { [key: string]: string } = {};
+reverseModules[AutoModLocations.Spam] = 'spam';
+reverseModules[AutoModLocations.Filter] = 'filter';
+reverseModules[AutoModLocations.MaliciousLinks] = 'malicious links';
+reverseModules[AutoModLocations.Links] = 'links';
+reverseModules[AutoModLocations.Invites] = 'invites';
 
 @data(
   new SlashCommandBuilder()
@@ -283,6 +286,17 @@ class AutomodCommand extends Command {
           const config = autoMod[location];
           config.toggle = value;
 
+          if (isIntegrated(config)) {
+            if (!config.ruleId) await makeRule(interaction.guild, config, autoMod, location);
+            else {
+              const rule = await interaction.guild.autoModerationRules
+                .fetch(config.ruleId!)
+                .catch(() => null);
+
+              if (!rule) await makeRule(interaction.guild, config, autoMod, location); 
+            }
+          }
+
           await this.client.db.guild.update({
             where: { id: interaction.guildId },
             data: {
@@ -321,6 +335,17 @@ class AutomodCommand extends Command {
           config.punishment = punishment === 'delete' ? null : punishment;
           config.duration = (duration?.toString() as `${number}`) ?? '0';
 
+          if (isIntegrated(config)) {
+            if (!config.ruleId) await makeRule(interaction.guild, config, autoMod, location);
+            else {
+              const rule = await interaction.guild.autoModerationRules
+                .fetch(config.ruleId!)
+                .catch(() => null);
+
+              if (!rule) await makeRule(interaction.guild, config, autoMod, location); 
+            }
+          }
+
           await this.client.db.guild.update({
             where: {
               id: interaction.guildId
@@ -355,7 +380,7 @@ class AutomodCommand extends Command {
         let array: string[] = [];
 
         if (isIntegrated(config)) {
-          if (!config.ruleId) await makeRule(interaction.guild, config, autoMod, AutoModLocations.Filter);
+          if (!config.ruleId) await makeRule(interaction.guild, config, autoMod, location);
 
           const autoModArr = await interaction.guild.autoModerationRules
             .fetch(config.ruleId!)
@@ -364,7 +389,7 @@ class AutomodCommand extends Command {
           if (autoModArr) array = autoModArr;
           else
             array = [
-              ...(await makeRule(interaction.guild, config, autoMod, AutoModLocations.Filter))[
+              ...(await makeRule(interaction.guild, config, autoMod, location))[
                 isRole ? 'exemptRoles' : 'exemptChannels'
               ].values()
             ].map(e => e.id);
@@ -543,6 +568,30 @@ async function makeRule(
           keywordFilter: []
         },
         name: 'Filter',
+        enabled: true
+      });
+      break;
+    case AutoModLocations.Links:
+      createdRule = await guild.autoModerationRules.create({
+        triggerType: AutoModerationRuleTriggerType.Keyword,
+        eventType: AutoModerationRuleEventType.MessageSend,
+        actions: [{ type: AutoModerationActionType.BlockMessage }],
+        triggerMetadata: {
+          regexPatterns: ['https?://[A-Za-z0-9]{1,64}\.[a-z]{2,}']
+        },
+        name: 'Links',
+        enabled: true
+      });
+      break;
+    case AutoModLocations.Invites:
+      createdRule = await guild.autoModerationRules.create({
+        triggerType: AutoModerationRuleTriggerType.Keyword,
+        eventType: AutoModerationRuleEventType.MessageSend,
+        actions: [{ type: AutoModerationActionType.BlockMessage }],
+        triggerMetadata: {
+          regexPatterns: ['(https?://)?discord(app)?\.(gg|com/invite)/[A-Za-z0-9]{1,}']
+        },
+        name: 'Invites',
         enabled: true
       });
       break;
