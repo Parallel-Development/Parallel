@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import './task-manager';
+import './routines';
 import client from './client';
 
 client.login(process.env.TOKEN!);
