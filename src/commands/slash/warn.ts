@@ -98,7 +98,7 @@ class WarnCommand extends Command {
 
     const embed = new EmbedBuilder()
       .setColor(Colors.Yellow)
-      .setDescription(`Warning issued for **${member.user.username}** with ID \`${infraction.id}\``);
+      .setDescription(`**${member.user.username}** has been warned with ID \`${infraction.id}\``);
 
     await interaction.editReply({ embeds: [embed] });
 
