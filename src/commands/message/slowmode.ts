@@ -6,7 +6,7 @@ import Command, { properties } from '../../lib/structs/Command';
   name: 'slowmode',
   description: 'Modify the slowmode in a channel',
   args: ['[set | add | remove] <slowmode>'],
-  aliases: ['sm']
+  aliases: ['sm', 'slow']
 })
 class SlowmodeCommand extends Command {
   async run(message: Message<true>, args: string[]) {

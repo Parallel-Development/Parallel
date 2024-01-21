@@ -7,6 +7,7 @@ import { getMember, getUser } from '../../lib/util/functions';
 @properties<'message'>({
   name: 'userinfo',
   description: 'Get information on a user.',
+  aliases: ['user', 'ui', 'whois', 'who'],
   args: ['[user]'],
   allowDM: true
 })
