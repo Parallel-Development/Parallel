@@ -6,7 +6,8 @@ import { infractionColors } from '../../lib/util/constants';
 @properties<'message'>({
   name: 'change-reason',
   description: 'Change the reason for an infraction.',
-  args: ['<id> <new_reason>']
+  args: ['<id> <new_reason>'],
+  aliases: ['switch-reason', 'reason', 'r']
 })
 class ChangeReason extends Command {
   async run(message: Message<true>, args: string[]) {

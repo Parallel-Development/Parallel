@@ -12,10 +12,18 @@ import { d28, infractionColors } from '../../lib/util/constants';
 @properties<'message'>({
   name: 'duration',
   description: 'Change the duration of a punishment.',
-  args: ['<id> <duration> [reason]']
+  args: ['<id> <duration> [reason]'],
+  aliases: ['d']
 })
 class DurationCommand extends Command {
   async run(message: Message<true>, args: string[]) {
+    if (!(
+      (await hasSlashCommandPermission(message.member!, 'warn')) ||
+      (await hasSlashCommandPermission(message.member!, 'mute')) ||
+      (await hasSlashCommandPermission(message.member!, 'ban'))
+    ))
+      throw 'You do not have permission to use this command.';
+
     if (args.length === 0) throw 'Missing required arguments `id` and `duration`.';
     if (args.length === 1) throw 'Missing required argument `duration`.';
 

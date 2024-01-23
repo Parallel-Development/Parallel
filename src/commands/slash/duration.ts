@@ -34,6 +34,13 @@ import { d28, infractionColors } from '../../lib/util/constants';
 )
 class DurationCommand extends Command {
   async run(interaction: ChatInputCommandInteraction<'cached'>) {
+    if (!(
+      (await hasSlashCommandPermission(interaction.member, 'warn')) ||
+      (await hasSlashCommandPermission(interaction.member, 'mute')) ||
+      (await hasSlashCommandPermission(interaction.member, 'ban'))
+    ))
+      throw 'You do not have permission to use this command.';
+
     const id = interaction.options.getInteger('id', true);
     const reason = interaction.options.getString('reason') ?? 'Unspecified reason.';
 
