@@ -57,7 +57,10 @@ class DurationCommand extends Command {
     )
       throw 'You cannot change the duration for that kind of infraction.';
 
-    if (!hasSlashCommandPermission(message.member!, infraction.type.toLowerCase()))
+    console.log(message.member!);
+    console.log(infraction.type.toLowerCase());
+
+    if (!(await hasSlashCommandPermission(message.member!, infraction.type.toLowerCase())))
       throw 'You do not have permission to change the duration of this type of infraction.';
 
     if (infraction.expires !== null && date >= infraction.expires)
