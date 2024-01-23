@@ -16,6 +16,9 @@ import { d28, infractionColors } from '../../lib/util/constants';
 })
 class DurationCommand extends Command {
   async run(message: Message<true>, args: string[]) {
+    if (args.length === 0) throw 'Missing required arguments `id` and `duration`.';
+    if (args.length === 1) throw 'Missing required argument `duration`.';
+
     const id = +args[0];
     if (Number.isNaN(id) || !Number.isInteger(id)) throw 'Invalid ID.';
 
