@@ -112,7 +112,7 @@ class MuteCommand extends Command {
     const dm = new EmbedBuilder()
       .setAuthor({ name: 'Parallel Moderation', iconURL: this.client.user!.displayAvatarURL() })
       .setTitle(`You were muted in ${interaction.guild.name}`)
-      .setColor(Colors.Yellow)
+      .setColor(Colors.Orange)
       .setDescription(
         `${reason}${expires ? `\n\n***•** Expires: <t:${expiresStr}> (<t:${expiresStr}:R>)*` : ''}${
           infractionModeratorPublic ? `\n***•** Muted by ${interaction.member.toString()}*\n` : ''

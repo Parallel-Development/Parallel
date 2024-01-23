@@ -31,7 +31,7 @@ class BanCommand extends Command {
 
     const durationStr = args[1];
     let duration = null;
-    if (args.length >= 2 && args[1] !== 'never') {
+    if (args.length >= 2 && args[1] !== 'permanent') {
       const unaryTest = +args[1];
       if (unaryTest) duration = unaryTest * 1000;
       else duration = ms(args[1]) ?? null;
@@ -44,7 +44,7 @@ class BanCommand extends Command {
     if (duration && duration < 1000) throw 'Temporary ban duration must be at least 1 second.';
     let expires = duration ? duration + date : null;
 
-    if (duration || durationStr === 'never') args.shift();
+    if (duration || durationStr === 'permanent') args.shift();
     const reason = args.slice(1).join(' ') || 'Unspecified reason.';
     if (reason.length > 3500) throw `The reason may only be a maximum of 3500 characters (${reason.length} provided.)`;
 
@@ -53,7 +53,7 @@ class BanCommand extends Command {
       select: { infractionModeratorPublic: true, infoBan: true, defaultBanDuration: true }
     }))!;
 
-    if (!expires && durationStr !== 'never' && guild.defaultBanDuration !== 0n)
+    if (!expires && durationStr !== 'permanent' && guild.defaultBanDuration !== 0n)
       expires = guild.defaultBanDuration + date;
 
     const infraction = await this.client.db.infraction.create({

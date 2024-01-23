@@ -322,7 +322,7 @@ class AutomodCommand extends Command {
           if (!durationStr && punishment === InfractionType.Mute) throw 'Must use duration for mute punishment.';
 
           let duration = null;
-          if (durationStr && durationStr !== 'never') {
+          if (durationStr && durationStr !== 'permanent') {
             const unaryTest = +durationStr;
             if (unaryTest) duration = unaryTest * 1000;
             else duration = ms(durationStr) ?? null;

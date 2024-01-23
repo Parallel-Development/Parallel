@@ -10,7 +10,7 @@ import punishLog from '../../handlers/punishLog';
   name: 'mute',
   description: 'Mute a member.',
   args: ['<member> <duration> [reason]'],
-  aliases: ['m', 'silence', 'shut', 'shush', 'quiet'],
+  aliases: ['m', 'silence', 'shut', 'shush', 'quiet', 'timeout'],
   clientPermissions: PermissionFlagsBits.ModerateMembers
 })
 class MuteCommand extends Command {
@@ -97,7 +97,7 @@ class MuteCommand extends Command {
     const dm = new EmbedBuilder()
       .setAuthor({ name: 'Parallel Moderation', iconURL: this.client.user!.displayAvatarURL() })
       .setTitle(`You were muted in ${message.guild.name}`)
-      .setColor(Colors.Yellow)
+      .setColor(Colors.Orange)
       .setDescription(
         `${reason}${expires ? `\n\n***•** Expires: <t:${expiresStr}> (<t:${expiresStr}:R>)*` : ''}${
           infractionModeratorPublic ? `\n***•** Muted by ${message.member!.toString()}*\n` : ''

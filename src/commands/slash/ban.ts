@@ -58,7 +58,7 @@ class BanCommand extends Command {
 
     const durationStr = interaction.options.getString('duration');
     let duration = null;
-    if (durationStr && durationStr !== 'never') {
+    if (durationStr && durationStr !== 'permanent') {
       const unaryTest = +durationStr;
       if (unaryTest) duration = unaryTest * 1000;
       else duration = ms(durationStr) ?? null;
@@ -82,7 +82,7 @@ class BanCommand extends Command {
       select: { infractionModeratorPublic: true, infoBan: true, defaultBanDuration: true }
     }))!;
 
-    if (!expires && durationStr !== 'never' && guild.defaultBanDuration !== 0n)
+    if (!expires && durationStr !== 'permanent' && guild.defaultBanDuration !== 0n)
       expires = guild.defaultBanDuration + date;
 
     const infraction = await this.client.db.infraction.create({

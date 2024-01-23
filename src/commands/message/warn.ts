@@ -26,7 +26,7 @@ class WarnCommand extends Command {
 
     const durationStr = args[1];
     let duration = null;
-    if (durationStr && durationStr !== 'never') {
+    if (durationStr && durationStr !== 'permanent') {
       const unaryTest = +durationStr;
       if (unaryTest) duration = unaryTest * 1000;
       else duration = ms(durationStr) ?? null;
@@ -39,7 +39,7 @@ class WarnCommand extends Command {
 
     let expires = duration ? duration + date : null;
 
-    if (duration || durationStr === 'never') args.shift();
+    if (duration || durationStr === 'permanent') args.shift();
     const reason = args.slice(1).join(' ') || 'Unspecified reason.';
     if (reason.length > 3500) throw `The reason may only be a maximum of 3500 characters (${reason.length} provided.)`;
 
@@ -47,7 +47,7 @@ class WarnCommand extends Command {
       where: { id: message.guildId }
     }))!;
 
-    if (!expires && durationStr !== 'never' && guild.defaultWarnDuration !== 0n)
+    if (!expires && durationStr !== 'permanent' && guild.defaultWarnDuration !== 0n)
       expires = guild.defaultWarnDuration + date;
 
     const infraction = await this.client.db.infraction.create({

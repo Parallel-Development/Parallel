@@ -43,7 +43,7 @@ class WarnCommand extends Command {
 
     const durationStr = interaction.options.getString('erase-after');
     let duration = null;
-    if (durationStr && durationStr !== 'never') {
+    if (durationStr && durationStr !== 'permanent') {
       const unaryTest = +durationStr;
       if (unaryTest) duration = unaryTest * 1000;
       else duration = ms(durationStr) ?? null;
@@ -63,7 +63,7 @@ class WarnCommand extends Command {
       where: { id: interaction.guildId }
     }))!;
 
-    if (!expires && durationStr !== 'never' && guild.defaultWarnDuration !== 0n)
+    if (!expires && durationStr !== 'permanent' && guild.defaultWarnDuration !== 0n)
       expires = guild.defaultWarnDuration + date;
 
     const infraction = await this.client.db.infraction.create({

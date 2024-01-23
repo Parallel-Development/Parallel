@@ -15,12 +15,14 @@ A Discord moderation bot.
 
 ## Enviornment Variables
 Create a `.env` file and paste below into it. Replace the placeholders with something valid.
-- `TOKEN`={Discord bot token}
-- `CLIENT_ID`={Discord client ID}
-- `DEV`={Developer ID} # User permitted to run eval
-- `PREFIX`={Prefix in DM's / default prefix}
-- `DATABASE_URL`={Postgresql connect url}
-- `API`={API URL}
+```
+TOKEN={Discord bot token}
+CLIENT_ID={Discord client ID}
+DEV={Developer ID} # User permitted to run eval
+PREFIX={Prefix in DM's / default prefix}
+DATABASE_URL={Postgresql connect url}
+API={API URL}
+```
 
 ## API
 The API is currently only used for chat logs, which allow you to view purged messages online with styling similar to Discord.

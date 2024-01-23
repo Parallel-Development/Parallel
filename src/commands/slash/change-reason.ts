@@ -7,6 +7,7 @@ import {
 } from 'discord.js';
 import Command, { data } from '../../lib/structs/Command';
 import { getMember } from '../../lib/util/functions';
+import { infractionColors } from '../../lib/util/constants';
 
 @data(
   new SlashCommandBuilder()
@@ -25,20 +26,20 @@ class ChangeReason extends Command {
     const id = interaction.options.getInteger('id', true);
     const newReason = interaction.options.getString('new_reason', true);
 
-    await interaction.deferReply();
-
     const infraction = await this.client.db.infraction.findUnique({
       where: {
         id
       },
       include: {
-        guild: { select: { notifyInfractionChange: true } }
+        guild: { select: { notifyInfractionChange: true, infractionModeratorPublic: true } }
       }
     });
 
     if (infraction?.guildId !== interaction.guildId) throw 'No infraction with that ID exists in this guild.';
 
     if (newReason === infraction.reason) throw 'The two reasons are the same.';
+
+    await interaction.deferReply();
 
     await this.client.db.infraction.update({
       where: {
@@ -49,17 +50,17 @@ class ChangeReason extends Command {
       }
     });
 
-    const { notifyInfractionChange } = infraction.guild;
+    const { notifyInfractionChange, infractionModeratorPublic } = infraction.guild;
     if (notifyInfractionChange) {
       const notifyDM = new EmbedBuilder()
         .setAuthor({ name: 'Parallel Moderation', iconURL: this.client.user!.displayAvatarURL() })
-        .setTitle('Infraction Reason Changed')
-        .setColor(Colors.Yellow)
+        .setTitle(`${infraction.type} Reason Changed`)
+        .setColor(infractionColors[infraction.type])
         .setDescription(
-          `**Infraction ID:** \`${
-            infraction.id
-          }\`\n**Infraction punishment:** \`${infraction.type.toString()}\`\n${newReason}`
-        );
+          `${newReason}${infractionModeratorPublic ? `\n\n***•** Changed by: ${interaction.user.toString()}*` : ''}`
+        )
+        .setFooter({ text: `Original Infraction ID: ${infraction.id}` })
+        .setTimestamp();;
 
       const member = await getMember(interaction.guildId, infraction.userId);
       if (member) await member.send({ embeds: [notifyDM] }).catch(() => {});

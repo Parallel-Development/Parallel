@@ -1,15 +1,16 @@
 import { EmbedBuilder, Colors, Message } from 'discord.js';
-import Command, { data, properties } from '../../lib/structs/Command';
+import Command, { properties } from '../../lib/structs/Command';
 import { InfractionType } from '@prisma/client';
 import ms from 'ms';
 
 @properties<'message'>({
   name: 'mycase',
   description: 'View detailed information on an infraction that you have.',
-  args: ['<id>']
+  args: ['<id>'],
+  allowDM: true
 })
 class MyCaseCommand extends Command {
-  async run(message: Message<true>, args: string[]) {
+  async run(message: Message, args: string[]) {
     if (args.length === 0) throw 'Missing required argument `id`.';
 
     const id = +args[0];
@@ -21,12 +22,12 @@ class MyCaseCommand extends Command {
       include: { appeal: true }
     });
 
-    if (infraction?.guildId !== message.guildId) throw 'No infraction with that ID exists in this guild.';
+    if (!infraction || (message.inGuild() && infraction?.guildId !== message.guildId)) throw 'No infraction with that ID exists in this guild.';
     if (infraction.userId !== message.author.id) throw 'That infraction is not on your record.';
 
     const { infractionModeratorPublic } = (await this.client.db.guild.findUnique({
       where: {
-        id: message.guildId
+        id: infraction.guildId
       },
       select: { infractionModeratorPublic: true }
     }))!;

@@ -1,6 +1,7 @@
 import { EmbedBuilder, Colors, Message } from 'discord.js';
 import Command, { properties } from '../../lib/structs/Command';
 import { getMember } from '../../lib/util/functions';
+import { infractionColors } from '../../lib/util/constants';
 
 @properties<'message'>({
   name: 'change-reason',
@@ -24,7 +25,7 @@ class ChangeReason extends Command {
         id
       },
       include: {
-        guild: { select: { notifyInfractionChange: true } }
+        guild: { select: { notifyInfractionChange: true, infractionModeratorPublic: true } }
       }
     });
 
@@ -41,17 +42,17 @@ class ChangeReason extends Command {
       }
     });
 
-    const { notifyInfractionChange } = infraction.guild;
+    const { notifyInfractionChange, infractionModeratorPublic } = infraction.guild;
     if (notifyInfractionChange) {
       const notifyDM = new EmbedBuilder()
         .setAuthor({ name: 'Parallel Moderation', iconURL: this.client.user!.displayAvatarURL() })
-        .setTitle('Infraction Reason Changed')
-        .setColor(Colors.Yellow)
+        .setTitle(`${infraction.type} Reason Changed`)
+        .setColor(infractionColors[infraction.type])
         .setDescription(
-          `**Infraction ID:** \`${
-            infraction.id
-          }\`\n**Infraction punishment:** \`${infraction.type.toString()}\`\n${newReason}`
-        );
+          `${newReason}${infractionModeratorPublic ? `\n\n***•** Changed by: ${message.author.toString()}*` : ''}`
+        )
+        .setFooter({ text: `Original Infraction ID: ${infraction.id}` })
+        .setTimestamp();;
 
       const member = await getMember(message.guildId, infraction.userId);
       if (member) await member.send({ embeds: [notifyDM] }).catch(() => {});
