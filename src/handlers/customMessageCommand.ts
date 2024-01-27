@@ -273,7 +273,7 @@ export default async function (
       break;
   }
 
-  await target.send({ embeds: [eDm] });
+  await target.send({ embeds: [eDm] }).catch(() => {});
 
   switch (escalation.punishment) {
     case InfractionType.Ban:

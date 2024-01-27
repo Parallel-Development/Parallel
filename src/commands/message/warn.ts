@@ -195,7 +195,7 @@ class WarnCommand extends Command {
         break;
     }
 
-    if (member) await member!.send({ embeds: [eDm] });
+    if (member) await member!.send({ embeds: [eDm] }).catch(() => {});
 
     switch (escalation.punishment) {
       case InfractionType.Ban:

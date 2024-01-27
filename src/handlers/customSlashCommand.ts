@@ -265,7 +265,7 @@ export default async function (interaction: ChatInputCommandInteraction<'cached'
       break;
   }
 
-  await target.send({ embeds: [eDm] });
+  await target.send({ embeds: [eDm] }).catch(() => {});
 
   switch (escalation.punishment) {
     case InfractionType.Ban:
