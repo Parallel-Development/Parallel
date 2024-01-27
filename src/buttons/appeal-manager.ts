@@ -166,7 +166,7 @@ class AppealManagerButton extends Button {
           where: {
             id: infractionId
           }
-        });
+        }).catch(() => {});
 
         const denyButton = new ButtonBuilder()
           .setCustomId('?')
@@ -206,7 +206,7 @@ class AppealManagerButton extends Button {
           where: {
             id: infractionId
           }
-        });
+        }).catch(() => {});
 
         const disregardButton = new ButtonBuilder()
           .setCustomId('?')
