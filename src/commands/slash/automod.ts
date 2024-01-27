@@ -289,11 +289,9 @@ class AutomodCommand extends Command {
           if (isIntegrated(config)) {
             if (!config.ruleId) await makeRule(interaction.guild, config, autoMod, location);
             else {
-              const rule = await interaction.guild.autoModerationRules
-                .fetch(config.ruleId!)
-                .catch(() => null);
+              const rule = await interaction.guild.autoModerationRules.fetch(config.ruleId!).catch(() => null);
 
-              if (!rule) await makeRule(interaction.guild, config, autoMod, location); 
+              if (!rule) await makeRule(interaction.guild, config, autoMod, location);
             }
           }
 
@@ -338,11 +336,9 @@ class AutomodCommand extends Command {
           if (isIntegrated(config)) {
             if (!config.ruleId) await makeRule(interaction.guild, config, autoMod, location);
             else {
-              const rule = await interaction.guild.autoModerationRules
-                .fetch(config.ruleId!)
-                .catch(() => null);
+              const rule = await interaction.guild.autoModerationRules.fetch(config.ruleId!).catch(() => null);
 
-              if (!rule) await makeRule(interaction.guild, config, autoMod, location); 
+              if (!rule) await makeRule(interaction.guild, config, autoMod, location);
             }
           }
 
@@ -577,7 +573,7 @@ async function makeRule(
         eventType: AutoModerationRuleEventType.MessageSend,
         actions: [{ type: AutoModerationActionType.BlockMessage }],
         triggerMetadata: {
-          regexPatterns: ['https?://[A-Za-z0-9]{1,64}\.[a-z]{2,}']
+          regexPatterns: ['https?://[A-Za-z0-9]{1,64}.[a-z]{2,}']
         },
         name: 'Links',
         enabled: true
@@ -589,7 +585,7 @@ async function makeRule(
         eventType: AutoModerationRuleEventType.MessageSend,
         actions: [{ type: AutoModerationActionType.BlockMessage }],
         triggerMetadata: {
-          regexPatterns: ['(https?://)?discord(app)?\.(gg|com/invite)/[A-Za-z0-9]{1,}']
+          regexPatterns: ['(https?://)?discord(app)?.(gg|com/invite)/[A-Za-z0-9]{1,}']
         },
         name: 'Invites',
         enabled: true

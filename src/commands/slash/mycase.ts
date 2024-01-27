@@ -22,7 +22,8 @@ class MyCaseCommand extends Command {
       include: { appeal: true }
     });
 
-    if (!infraction || (interaction.inCachedGuild() && infraction?.guildId !== interaction.guildId)) throw 'No infraction with that ID exists in this guild.';
+    if (!infraction || (interaction.inCachedGuild() && infraction?.guildId !== interaction.guildId))
+      throw 'No infraction with that ID exists in this guild.';
     if (infraction.userId !== interaction.user.id) throw 'That infraction is not on your record.';
 
     const { infractionModeratorPublic } = (await this.client.db.guild.findUnique({

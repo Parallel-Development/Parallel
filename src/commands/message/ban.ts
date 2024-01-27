@@ -84,11 +84,13 @@ class BanCommand extends Command {
         create: data
       });
     } else
-      await this.client.db.task.delete({
-        where: {
-          userId_guildId_type: { userId: user.id, guildId: message.guildId, type: InfractionType.Ban }
-        }
-      }).catch(() => {});
+      await this.client.db.task
+        .delete({
+          where: {
+            userId_guildId_type: { userId: user.id, guildId: message.guildId, type: InfractionType.Ban }
+          }
+        })
+        .catch(() => {});
 
     const { infractionModeratorPublic, infoBan } = guild;
     const expiresStr = Math.floor(Number(infraction.expires) / 1000);

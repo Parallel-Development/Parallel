@@ -60,7 +60,7 @@ class ChangeReason extends Command {
           `${newReason}${infractionModeratorPublic ? `\n\n***•** Changed by: ${interaction.user.toString()}*` : ''}`
         )
         .setFooter({ text: `Original Infraction ID: ${infraction.id}` })
-        .setTimestamp();;
+        .setTimestamp();
 
       const member = await getMember(interaction.guildId, infraction.userId);
       if (member) await member.send({ embeds: [notifyDM] }).catch(() => {});

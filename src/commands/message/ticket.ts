@@ -1,10 +1,4 @@
-import {
-  Message,
-  Collection,
-  EmbedBuilder,
-  TextChannel,
-  PermissionFlagsBits
-} from 'discord.js';
+import { Message, Collection, EmbedBuilder, TextChannel, PermissionFlagsBits } from 'discord.js';
 import Command, { properties } from '../../lib/structs/Command';
 import discordTranscripts, { ExportReturnType } from 'discord-html-transcripts';
 import crypto from 'crypto';

@@ -251,7 +251,7 @@ class AppealManagerButton extends Button {
             }`
           );
 
-        return interaction.reply({ embeds: [infractionEmbed] });
+        return interaction.reply({ embeds: [infractionEmbed], ephemeral: true });
       }
     }
   }

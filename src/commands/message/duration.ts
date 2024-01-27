@@ -1,8 +1,4 @@
-import {
-  EmbedBuilder,
-  Message,
-  PermissionFlagsBits
-} from 'discord.js';
+import { EmbedBuilder, Message, PermissionFlagsBits } from 'discord.js';
 import Command, { properties } from '../../lib/structs/Command';
 import ms from 'ms';
 import { InfractionType } from '@prisma/client';
@@ -17,11 +13,13 @@ import { d28, infractionColors } from '../../lib/util/constants';
 })
 class DurationCommand extends Command {
   async run(message: Message<true>, args: string[]) {
-    if (!(
-      (await hasSlashCommandPermission(message.member!, 'warn')) ||
-      (await hasSlashCommandPermission(message.member!, 'mute')) ||
-      (await hasSlashCommandPermission(message.member!, 'ban'))
-    ))
+    if (
+      !(
+        (await hasSlashCommandPermission(message.member!, 'warn')) ||
+        (await hasSlashCommandPermission(message.member!, 'mute')) ||
+        (await hasSlashCommandPermission(message.member!, 'ban'))
+      )
+    )
       throw 'You do not have permission to use this command.';
 
     if (args.length === 0) throw 'Missing required arguments `id` and `duration`.';
@@ -68,8 +66,7 @@ class DurationCommand extends Command {
     if (!(await hasSlashCommandPermission(message.member!, infraction.type.toLowerCase())))
       throw 'You do not have permission to change the duration of this type of infraction.';
 
-    if (infraction.expires !== null && date >= infraction.expires)
-      throw 'This infraction has already expired.';
+    if (infraction.expires !== null && date >= infraction.expires) throw 'This infraction has already expired.';
 
     if (infraction.type === InfractionType.Mute) {
       if (!message.guild.members.me!.permissions.has(PermissionFlagsBits.MuteMembers))
@@ -128,7 +125,9 @@ class DurationCommand extends Command {
         .setTitle(`${infraction.type} Duration Changed`)
         .setColor(infractionColors[infraction.type])
         .setDescription(
-          `New Expiration: ${expires ? `<t:${expiresStr}> (<t:${expiresStr}:R>)` : 'never'}\nReason: ${reason}${infractionModeratorPublic ? `\n\n***•** Changed by: ${message.author.toString()}*` : ''}`
+          `New Expiration: ${expires ? `<t:${expiresStr}> (<t:${expiresStr}:R>)` : 'never'}\nReason: ${reason}${
+            infractionModeratorPublic ? `\n\n***•** Changed by: ${message.author.toString()}*` : ''
+          }`
         )
         .setFooter({ text: `Original Infraction ID: ${infraction.id}` })
         .setTimestamp();
