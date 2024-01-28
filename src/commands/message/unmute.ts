@@ -7,7 +7,7 @@ import punishLog from '../../handlers/punishLog';
 @properties<'message'>({
   name: 'unmute',
   description: 'Unmute a member.',
-  args: ['<member> [reason]'],
+  args: '<member> [reason]',
   aliases: ['um'],
   clientPermissions: PermissionFlagsBits.ModerateMembers
 })

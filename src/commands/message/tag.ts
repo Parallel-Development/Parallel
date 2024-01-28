@@ -5,7 +5,7 @@ import { getUser } from '../../lib/util/functions';
 @properties<'message'>({
   name: 'tag',
   description: 'Reference text',
-  args: ['<name> [target]']
+  args: '<name> [target]'
 })
 class TagCommand extends Command {
   async run(message: Message<true>, args: string[]) {

@@ -109,6 +109,9 @@ export default async function (interaction: AutocompleteInteraction<'cached'>) {
         } else aliasesOmited.push(match);
       }
 
+      const evalIndex = aliasesOmited.indexOf('eval');
+      if (evalIndex !== -1) aliasesOmited.splice(evalIndex, 1);
+
       const final = aliasesOmited
         .sort((a, b) => a.localeCompare(b))
         .slice(0, 25)

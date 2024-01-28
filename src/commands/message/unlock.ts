@@ -6,7 +6,7 @@ import { getChannel } from '../../lib/util/functions';
 @properties<'message'>({
   name: 'unlock',
   description: 'Allow members to speak in the target channel.',
-  args: ['[channel] <reason>']
+  args: '[channel] <reason>'
 })
 class UnlockCommand extends Command {
   async run(message: Message<true>, args: string[]) {

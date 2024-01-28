@@ -6,7 +6,7 @@ import { getChannel } from '../../lib/util/functions';
 @properties<'message'>({
   name: 'lock',
   description: 'Restrict members from sending messages in the target channel.',
-  args: ['[channel] [reason]']
+  args: '[channel] [reason]'
 })
 class LockCommand extends Command {
   async run(message: Message<true>, args: string[]) {

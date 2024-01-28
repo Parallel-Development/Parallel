@@ -8,7 +8,7 @@ let _; // used to reference the last returned expression
 @properties<'message'>({
   name: 'eval',
   description: 'Execute a string of JavaScript code.',
-  args: ['<code> [--async] [--depth={depth}]'],
+  args: '<code> [--async] [--depth={depth}]',
   allowDM: true,
   aliases: ['evaluate', 'run', 'ev', 'e']
 })

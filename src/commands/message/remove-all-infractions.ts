@@ -5,7 +5,7 @@ import { getUser } from '../../lib/util/functions';
 @properties<'message'>({
   name: 'remove-all-infractions',
   description: 'Remove all infractions from a user.',
-  args: ['<user>']
+  args: '<user>'
 })
 class RemoveAllInfractions extends Command {
   async run(message: Message<true>, args: string[]) {

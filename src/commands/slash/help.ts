@@ -17,10 +17,18 @@ import ms from 'ms';
 class HelpCommand extends Command {
   async run(interaction: ChatInputCommandInteraction) {
     const commandName = interaction.options.getString('command');
+
+    const prefix = interaction.inCachedGuild()
+    ? (await this.client.db.guild.findUnique({ where: { id: interaction.guildId }, select: { prefix: true } }))!.prefix
+    : process.env.PREFIX!;
+    
     if (commandName) {
       const command =
         this.client.commands.message.get(commandName) ??
         this.client.commands.message.get(this.client.aliases.get(commandName) as string);
+
+      if (command?.name === 'eval' && interaction.user.id !== process.env.DEV)
+        throw 'The eval command is restricted for developers.';
 
       if (!command) {
         // check for shortcut
@@ -56,9 +64,9 @@ class HelpCommand extends Command {
         .setColor(mainColor);
 
       let description = `${command.description}\n\n`;
-      if (command.NA) description += '***• This command is only available via slash commands!***\n';
+      if (command.slashOnly) description += '***• This command is only available via slash commands!***\n';
       if (command.args)
-        description += `**•** Usage: \`${command.args.map(way => `/${command.name} ${way}`).join('\n')}\`\n`;
+        description += `**•** Usage: \`${command.args.map(way => `${prefix}${command.name} ${way}`).join('\n')}\`\n`;
       if (command.aliases.length > 0)
         description += `**•** Aliases: ${command.aliases.map(alias => `\`${alias}\``).join(', ')}\n`;
       if (command.allowDM) description += `**•** *This command can be ran in DM's.*`;
@@ -68,6 +76,12 @@ class HelpCommand extends Command {
       return interaction.reply({ embeds: [embed] });
     }
 
+    const commands = [...this.client.commands.message.values()];
+    commands.splice(
+      commands.findIndex(c => c.name === 'eval'),
+      1
+    );
+
     const shortcuts = interaction.inGuild()
       ? (await this.client.db.shortcut.findMany({ where: { guildId: interaction.guildId } }))!
       : null;
@@ -76,7 +90,8 @@ class HelpCommand extends Command {
       .setAuthor({ name: 'Parallel', iconURL: this.client.user!.displayAvatarURL() })
       .setTitle('Command List')
       .setColor(mainColor)
-      .setDescription([...this.client.commands.message.values()].map(cmd => `\`${cmd.name}\``).join(', '));
+      .setDescription(commands.map(cmd => `\`${cmd.name}\``).join(', '))
+      .setFooter({ text: `Prefix: ${prefix} `});
 
     if (shortcuts && shortcuts.length !== 0)
       embed.addFields({

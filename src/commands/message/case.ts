@@ -6,7 +6,7 @@ import ms from 'ms';
 @properties<'message'>({
   name: 'case',
   description: 'View detailed information on an infraction.',
-  args: ['<id>']
+  args: '<id>'
 })
 class CaseCommand extends Command {
   async run(message: Message<true>, args: string[]) {

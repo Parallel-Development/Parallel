@@ -6,7 +6,7 @@ import { getUser } from '../../lib/util/functions';
   name: 'purge',
   description:
     'Purge messages from a channel. Use the slash command version of this command if you want to utilize the `after` option.',
-  args: ['[from] <count> [before]'],
+  args: '[from] <count> [before]',
   aliases: ['clear']
 })
 class PurgeCommand extends Command {

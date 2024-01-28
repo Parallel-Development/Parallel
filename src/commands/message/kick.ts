@@ -7,7 +7,7 @@ import punishLog from '../../handlers/punishLog';
 @properties<'message'>({
   name: 'kick',
   description: 'Kick a member from the guild.',
-  args: ['<member> [reason]'],
+  args: '<member> [reason]',
   aliases: ['k', 'boot', 'remove'],
   clientPermissions: PermissionFlagsBits.KickMembers
 })

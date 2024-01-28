@@ -6,7 +6,7 @@ import { getUser } from '../../lib/util/functions';
 @properties<'message'>({
   name: 'infractions',
   description: "View a user's current infractions.",
-  args: ['<user> [page]'],
+  args: '<user> [page]',
   aliases: ['warnings']
 })
 class InfractionsCommand extends Command {

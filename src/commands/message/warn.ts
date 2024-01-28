@@ -10,7 +10,7 @@ import punishLog from '../../handlers/punishLog';
 @properties<'message'>({
   name: 'warn',
   description: 'Issue an infraction for a member.',
-  args: ['<member> [erase-after] [reason]'],
+  args: '<member> [erase-after] [reason]',
   aliases: ['w', 'strike']
 })
 class WarnCommand extends Command {

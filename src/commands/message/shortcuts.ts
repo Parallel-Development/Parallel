@@ -4,7 +4,7 @@ import Command, { properties } from '../../lib/structs/Command';
 @properties<'message'>({
   name: 'shortcuts',
   description: 'Manage the shortcuts on this guild.',
-  NA: true
+  slashOnly: true
 })
 class ShortcutsCommand extends Command {
   async run(message: Message<true>) {

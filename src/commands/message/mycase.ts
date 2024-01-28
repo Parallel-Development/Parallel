@@ -6,7 +6,7 @@ import ms from 'ms';
 @properties<'message'>({
   name: 'mycase',
   description: 'View detailed information on an infraction that you have.',
-  args: ['<id>'],
+  args: '<id>',
   allowDM: true
 })
 class MyCaseCommand extends Command {

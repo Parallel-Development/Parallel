@@ -1,6 +1,7 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder, PermissionsBitField, Message, If } from 'discord.js';
 import client from '../../client';
-import { CommandProperties, MessageCommandProperties } from '../../types';
+import { CommandProperties } from '../../types';
+import { isMessageCommandProperties } from '../../types/typeguard';
 
 export default abstract class Command<IsMsg extends boolean = false> {
   public readonly data: IsMsg extends false ? Partial<SlashCommandBuilder> : null = null!;
@@ -14,7 +15,7 @@ export default abstract class Command<IsMsg extends boolean = false> {
   public aliases: If<IsMsg, string[]> = null!;
   public args: If<IsMsg, string[] | null> = null!;
   // Not Available - Redirect to slash command
-  public NA: If<IsMsg, boolean> = null!;
+  public slashOnly: If<IsMsg, boolean> = null!;
 
   public allowDM = false;
   public guildResolve = false;
@@ -36,11 +37,15 @@ export function properties<M extends 'message' | 'slash'>(properties: CommandPro
     return class extends constructor {
       clientPermissions = properties.clientPermissions ? new PermissionsBitField(properties.clientPermissions) : null;
 
-      name = (properties as MessageCommandProperties).name ?? null;
-      description = (properties as MessageCommandProperties).description ?? null;
-      args = (properties as MessageCommandProperties).args ?? null;
-      aliases = (properties as MessageCommandProperties).aliases ?? [];
-      NA = (properties as MessageCommandProperties).NA ?? false;
+      name = isMessageCommandProperties(properties) ? properties.name : null;
+      description = isMessageCommandProperties(properties) ? properties.description : null;
+      args = isMessageCommandProperties(properties)
+        ? typeof properties.args === 'string'
+          ? [properties.args]
+          : properties.args
+        : null;
+      aliases = isMessageCommandProperties(properties) ? properties.aliases ?? [] : [];
+      slashOnly = isMessageCommandProperties(properties) ? properties.slashOnly : null;
 
       allowDM = properties.allowDM;
       guildResolve = properties.guildResolve;

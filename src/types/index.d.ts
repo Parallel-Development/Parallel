@@ -47,12 +47,12 @@ export type AutoModConfig<I extends 'integrated' | 'raw' = null> = I extends 'in
 type MessageCommandProperties = {
   name: string;
   description: string;
-  args?: string[];
+  args?: string | string[];
   clientPermissions?: bigint | bigint[];
   allowDM?: boolean;
   guildResolve?: boolean;
   aliases?: string[];
-  NA?: boolean;
+  slashOnly?: boolean;
 };
 
 export type CommandProperties<M extends 'slash' | 'message'> = M extends 'message'

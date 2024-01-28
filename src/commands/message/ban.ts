@@ -8,7 +8,7 @@ import punishLog from '../../handlers/punishLog';
 @properties<'message'>({
   name: 'ban',
   description: 'Ban a member from the guild.',
-  args: ['<user> [duration>] [reason]'],
+  args: '<user> [duration>] [reason]',
   aliases: ['banish', 'b'],
   clientPermissions: PermissionFlagsBits.BanMembers
 })

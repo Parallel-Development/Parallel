@@ -5,7 +5,7 @@ import { getUser } from '../../lib/util/functions';
 @properties<'message'>({
   name: 'avatar',
   description: "Get a user's avatar.",
-  args: ['[user]'],
+  args: '[user]',
   allowDM: true,
   aliases: ['av', 'pfp']
 })

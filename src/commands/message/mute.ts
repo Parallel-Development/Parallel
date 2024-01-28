@@ -9,7 +9,7 @@ import punishLog from '../../handlers/punishLog';
 @properties<'message'>({
   name: 'mute',
   description: 'Mute a member.',
-  args: ['<member> <duration> [reason]'],
+  args: '<member> <duration> [reason]',
   aliases: ['m', 'silence', 'shut', 'shush', 'quiet', 'timeout'],
   clientPermissions: PermissionFlagsBits.ModerateMembers
 })

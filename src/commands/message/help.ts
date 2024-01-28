@@ -1,4 +1,4 @@
-import { Colors, EmbedBuilder, Message } from 'discord.js';
+import { EmbedBuilder, Message } from 'discord.js';
 import Command, { properties } from '../../lib/structs/Command';
 import { mainColor } from '../../lib/util/constants';
 import ms from 'ms';
@@ -6,20 +6,23 @@ import ms from 'ms';
 @properties<'message'>({
   name: 'help',
   description: 'Get a list of all commands or get help on a certain command.',
-  args: ['[command]'],
+  args: '[command]',
   allowDM: true
 })
 class HelpCommand extends Command {
   async run(message: Message, args: string[]) {
+    const prefix = message.inGuild()
+      ? (await this.client.db.guild.findUnique({ where: { id: message.guildId }, select: { prefix: true } }))!.prefix
+      : process.env.PREFIX!;
+
     if (args.length > 0) {
       const commandName = args[0];
       const command =
         this.client.commands.message.get(commandName) ??
         this.client.commands.message.get(this.client.aliases.get(commandName) as string);
 
-      const prefix = message.inGuild()
-        ? (await this.client.db.guild.findUnique({ where: { id: message.guildId }, select: { prefix: true } }))!.prefix
-        : process.env.PREFIX!;
+      if (command?.name === 'eval' && message.author.id !== process.env.DEV)
+        throw 'The eval command is restricted for developers.';
 
       if (!command) {
         // check for shortcut
@@ -52,10 +55,10 @@ class HelpCommand extends Command {
       const embed = new EmbedBuilder()
         .setAuthor({ name: 'Parallel', iconURL: this.client.user!.displayAvatarURL() })
         .setTitle(command.name)
-        .setColor(!command.NA ? mainColor : Colors.Red);
+        .setColor(mainColor);
 
       let description = `${command.description}\n\n`;
-      if (command.NA) description += '***• This command is only available via slash commands!***\n';
+      if (command.slashOnly) description += '***• This command is only available via slash commands!***\n';
       if (command.args)
         description += `**•** Usage: \`${command.args.map(way => `${prefix}${command.name} ${way}`).join('\n')}\`\n`;
       if (command.aliases.length > 0)
@@ -67,6 +70,12 @@ class HelpCommand extends Command {
       return message.reply({ embeds: [embed] });
     }
 
+    const commands = [...this.client.commands.message.values()];
+    commands.splice(
+      commands.findIndex(c => c.name === 'eval'),
+      1
+    );
+
     const shortcuts = message.inGuild()
       ? (await this.client.db.shortcut.findMany({ where: { guildId: message.guildId } }))!
       : null;
@@ -75,11 +84,8 @@ class HelpCommand extends Command {
       .setAuthor({ name: 'Parallel', iconURL: this.client.user!.displayAvatarURL() })
       .setTitle('Command List')
       .setColor(mainColor)
-      .setDescription(
-        [...this.client.commands.message.values()]
-          .map(cmd => `${cmd.NA ? '~~' : ''}\`${cmd.name}\`${cmd.NA ? '~~' : ''}`)
-          .join(', ')
-      );
+      .setDescription(commands.map(cmd => `\`${cmd.name}\``).join(', '))
+      .setFooter({ text: `Prefix: ${prefix}` });
 
     if (shortcuts && shortcuts.length !== 0)
       embed.addFields({

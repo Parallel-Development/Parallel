@@ -6,7 +6,7 @@ import { sleep } from '../../lib/util/functions';
 @properties<'message'>({
   name: 'unlockserver',
   description: 'Unlock all locked channels.',
-  args: ['[reason]'],
+  args: '[reason]',
   aliases: ['unlockall'],
   guildResolve: true
 })

@@ -1,47 +1,36 @@
-import { ChatInputCommandInteraction, EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
-import Command, { data } from '../../lib/structs/Command';
+import { EmbedBuilder, Message, PermissionFlagsBits } from 'discord.js';
+import Command, { properties } from '../../lib/structs/Command';
 import ms from 'ms';
 import { InfractionType } from '@prisma/client';
 import { adequateHierarchy, getMember, hasSlashCommandPermission } from '../../lib/util/functions';
 import { d28, infractionColors } from '../../lib/util/constants';
 
-@data(
-  new SlashCommandBuilder()
-    .setName('duration')
-    .setDescription('Change the duration of a punishment.')
-    .addIntegerOption(opt =>
-      opt
-        .setName('id')
-        .setDescription('The ID of the infraction to change the duration of.')
-        .setMinValue(1)
-        .setRequired(true)
-    )
-    .addStringOption(opt =>
-      opt
-        .setName('duration')
-        .setDescription('The new duration. Use `permanent` to make permanent.')
-        .setAutocomplete(true)
-        .setRequired(true)
-    )
-    .addStringOption(opt =>
-      opt.setName('reason').setDescription('The reason for changing the duration').setMaxLength(3500)
-    )
-)
+@properties<'message'>({
+  name: 'change-duration',
+  description: 'Change the duration of a punishment.',
+  args: '<id> <duration> [reason]',
+  aliases: ['duration', 'd']
+})
 class DurationCommand extends Command {
-  async run(interaction: ChatInputCommandInteraction<'cached'>) {
+  async run(message: Message<true>, args: string[]) {
     if (
       !(
-        (await hasSlashCommandPermission(interaction.member, 'warn')) ||
-        (await hasSlashCommandPermission(interaction.member, 'mute')) ||
-        (await hasSlashCommandPermission(interaction.member, 'ban'))
+        (await hasSlashCommandPermission(message.member!, 'warn')) ||
+        (await hasSlashCommandPermission(message.member!, 'mute')) ||
+        (await hasSlashCommandPermission(message.member!, 'ban'))
       )
     )
       throw 'You do not have permission to use this command.';
 
-    const id = interaction.options.getInteger('id', true);
-    const reason = interaction.options.getString('reason') ?? 'Unspecified reason.';
+    if (args.length === 0) throw 'Missing required arguments `id` and `duration`.';
+    if (args.length === 1) throw 'Missing required argument `duration`.';
 
-    const durationStr = interaction.options.getString('duration', true);
+    const id = +args[0];
+    if (Number.isNaN(id) || !Number.isInteger(id)) throw 'Invalid ID.';
+
+    const reason = args.slice(2).join(' ') || 'Unspecified reason.';
+
+    const durationStr = args[1];
     let duration: number | null = null;
 
     if (durationStr.toLowerCase() === 'permanent') duration = 0;
@@ -65,7 +54,7 @@ class DurationCommand extends Command {
       include: { guild: { select: { notifyInfractionChange: true, infractionModeratorPublic: true } } }
     });
 
-    if (infraction?.guildId !== interaction.guildId) throw 'No infraction with that ID exists in this guild.';
+    if (infraction?.guildId !== message.guildId) throw 'No infraction with that ID exists in this guild.';
 
     if (
       infraction.type === InfractionType.Unban ||
@@ -74,27 +63,25 @@ class DurationCommand extends Command {
     )
       throw 'You cannot change the duration for that kind of infraction.';
 
-    if (!(await hasSlashCommandPermission(interaction.member, infraction.type.toLowerCase())))
+    if (!(await hasSlashCommandPermission(message.member!, infraction.type.toLowerCase())))
       throw 'You do not have permission to change the duration of this type of infraction.';
 
     if (infraction.expires !== null && date >= infraction.expires) throw 'This infraction has already expired.';
 
     if (infraction.type === InfractionType.Mute) {
-      if (!interaction.guild.members.me!.permissions.has(PermissionFlagsBits.MuteMembers))
+      if (!message.guild.members.me!.permissions.has(PermissionFlagsBits.MuteMembers))
         throw 'I do not have permission to mute members.';
 
       if (duration > d28 || duration === 0) throw 'Mute duration must be 28 days or less.';
 
-      const member = await getMember(interaction.guild, infraction.userId);
+      const member = await getMember(message.guild, infraction.userId);
       if (!member) throw 'Cannot change the duration of the mute because the user is no longer in the server.';
 
-      if (!adequateHierarchy(interaction.guild.members.me!, member))
+      if (!adequateHierarchy(message.guild.members.me!, member))
         throw 'I cannote mute this member due to inadequate hierarchy.';
 
       await member.timeout(duration, reason);
     }
-
-    await interaction.deferReply();
 
     await this.client.db.infraction.update({
       where: { id },
@@ -109,7 +96,7 @@ class DurationCommand extends Command {
           where: {
             userId_guildId_type: {
               userId: infraction.userId,
-              guildId: interaction.guildId,
+              guildId: message.guildId,
               type: infraction.type
             }
           },
@@ -122,7 +109,7 @@ class DurationCommand extends Command {
           where: {
             userId_guildId_type: {
               userId: infraction.userId,
-              guildId: interaction.guildId,
+              guildId: message.guildId,
               type: infraction.type
             }
           }
@@ -139,17 +126,17 @@ class DurationCommand extends Command {
         .setColor(infractionColors[infraction.type])
         .setDescription(
           `New Expiration: ${expires ? `<t:${expiresStr}> (<t:${expiresStr}:R>)` : 'never'}\nReason: ${reason}${
-            infractionModeratorPublic ? `\n\n***•** Changed by: ${interaction.user.toString()}*` : ''
+            infractionModeratorPublic ? `\n\n***•** Changed by: ${message.author.toString()}*` : ''
           }`
         )
         .setFooter({ text: `Original Infraction ID: ${infraction.id}` })
         .setTimestamp();
 
-      const member = await getMember(interaction.guildId, infraction.userId);
+      const member = await getMember(message.guildId, infraction.userId);
       if (member) await member.send({ embeds: [notifyDM] }).catch(() => {});
     }
 
-    return interaction.editReply(
+    return message.reply(
       `${infraction.type} duration of infraction \`${infraction.id}\` for <@${infraction.userId}> changed to \`${
         duration ? ms(duration, { long: true }) : 'permanent'
       }\`.`

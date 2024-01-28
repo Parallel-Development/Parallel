@@ -162,11 +162,13 @@ class AppealManagerButton extends Button {
       case 'deny': {
         await interaction.deferUpdate();
 
-        await this.client.db.appeal.delete({
-          where: {
-            id: infractionId
-          }
-        }).catch(() => {});
+        await this.client.db.appeal
+          .delete({
+            where: {
+              id: infractionId
+            }
+          })
+          .catch(() => {});
 
         const denyButton = new ButtonBuilder()
           .setCustomId('?')
@@ -202,11 +204,13 @@ class AppealManagerButton extends Button {
       case 'disregard': {
         await interaction.deferUpdate();
 
-        await this.client.db.appeal.delete({
-          where: {
-            id: infractionId
-          }
-        }).catch(() => {});
+        await this.client.db.appeal
+          .delete({
+            where: {
+              id: infractionId
+            }
+          })
+          .catch(() => {});
 
         const disregardButton = new ButtonBuilder()
           .setCustomId('?')
