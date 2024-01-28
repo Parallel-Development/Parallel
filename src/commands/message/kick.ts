@@ -62,7 +62,7 @@ class KickCommand extends Command {
 
     const embed = new EmbedBuilder()
       .setColor(Colors.Orange)
-      .setDescription(`**${member.user.username}**has been kicked with ID \`${infraction.id}\``);
+      .setDescription(`**${member.user.username}** has been kicked with ID \`${infraction.id}\``);
 
     return message.reply({ embeds: [embed] });
   }
