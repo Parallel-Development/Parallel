@@ -18,6 +18,8 @@ class DiscordAutomodListener extends Listener {
   async run(event: AutoModerationActionExecution) {
     if (event.ruleTriggerType !== AutoModerationRuleTriggerType.Keyword) return;
     await event.guild.members.fetch(event.userId);
+    await this.client.users.fetch(event.userId);
+
     if (event.user!.bot) return;
 
     const { autoMod } = (await this.client.db.guild.findUnique({

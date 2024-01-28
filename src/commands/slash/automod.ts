@@ -508,7 +508,7 @@ class AutomodCommand extends Command {
 
         switch (subCmd) {
           case 'add': {
-            const word = interaction.options.getString('word', true);
+            const word = interaction.options.getString('word', true).toLowerCase();
 
             if (automodRule.triggerMetadata.keywordFilter.includes(word))
               throw 'That word or phrase is already on the filter list.';

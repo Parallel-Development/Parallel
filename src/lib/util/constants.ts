@@ -35,7 +35,7 @@ export const d28 = ms('28d');
 
 export const channelPermissionOverrides = [
   { name: 'Add Reactions', value: 'AddReactions' },
-  { name: 'AttachFiles', value: 'AttachFiles' },
+  { name: 'Attach Files', value: 'AttachFiles' },
   { name: 'Connect', value: 'Connect' },
   { name: 'Create Invite', value: 'CreateInstantInvite' },
   { name: 'Create Private Threads', value: 'CreatePrivateThreads' },

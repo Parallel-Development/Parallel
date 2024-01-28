@@ -10,7 +10,7 @@ import punishLog from './punishLog';
 const spamTrack = new Map<string, number[]>();
 
 export default async function (message: Message<true>) {
-  if (!message?.member) return;
+  if (!message?.member || message.author.bot) return;
 
   const automod = await client.db.guild.findUnique({
     where: {
