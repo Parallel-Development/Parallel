@@ -14,7 +14,7 @@ import {
 import ms from 'ms';
 import Command, { data, properties } from '../../lib/structs/Command';
 import { AutoModConfig, AutoModSpamTrigger } from '../../types';
-import { bin } from '../../lib/util/functions';
+import { bin, parseDuration } from '../../lib/util/functions';
 import { AutoModLocations } from '../../lib/util/constants';
 import { isIntegrated, isRaw } from '../../types/typeguard';
 import client from '../../client';
@@ -321,11 +321,8 @@ class AutomodCommand extends Command {
 
           let duration = null;
           if (durationStr && durationStr !== 'permanent') {
-            const unaryTest = +durationStr;
-            if (unaryTest) duration = unaryTest * 1000;
-            else duration = ms(durationStr) ?? null;
-
-            if (!duration) throw 'Invalid duration.';
+            duration = parseDuration(durationStr);
+            if (Number.isNaN(duration)) throw 'Invalid duration.';
           }
           if (duration && duration < 1000) throw 'Duration must be at least 1 second.';
 

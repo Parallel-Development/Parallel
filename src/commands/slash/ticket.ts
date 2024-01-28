@@ -156,7 +156,7 @@ class TicketCommand extends Command {
                 authTag,
                 html: cipherBytes,
                 guildId: interaction.guildId,
-                expires: BigInt(Date.now() + 604800000)
+                expires: BigInt(Date.now() + 604800000) // 7 days
               }
             });
 

@@ -26,7 +26,7 @@ class UnbanCommand extends Command {
     if (!(await interaction.guild.bans.fetch(user.id).catch(() => null))) throw 'That user is not banned.';
 
     const reason = interaction.options.getString('reason') ?? 'Unspecified reason.';
-    const date = BigInt(Date.now());
+    const date = Date.now();
 
     await interaction.deferReply();
 

@@ -7,6 +7,7 @@ import {
   PermissionFlagsBits
 } from 'discord.js';
 import client from '../../client';
+import ms from 'ms';
 export const commandsPermissionCache = new Map<string, Collection<string, readonly ApplicationCommandPermissions[]>>();
 
 export function adequateHierarchy(member1: GuildMember, member2: GuildMember) {
@@ -47,6 +48,16 @@ export function getChannel(guild: Guild | string, channel: string) {
 
   if (typeof guild === 'string') return client.guilds.cache.get(guild)!.channels.cache.get(channel) ?? null;
   else return guild.channels.cache.get(channel) ?? null;
+}
+
+export function parseDuration(durationStr: string) {
+  let duration;
+  
+  const unaryTest = +durationStr;
+  if (unaryTest) duration = unaryTest * 1000;
+  else duration = ms(durationStr) ?? NaN;
+
+  return duration;
 }
 
 export async function bin(data: any, ext: string = 'js') {

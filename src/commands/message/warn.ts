@@ -1,7 +1,7 @@
 import { EmbedBuilder, Colors, Message } from 'discord.js';
 import Command, { properties } from '../../lib/structs/Command';
 import ms from 'ms';
-import { adequateHierarchy, getMember } from '../../lib/util/functions';
+import { adequateHierarchy, getMember, parseDuration } from '../../lib/util/functions';
 import { Escalation } from '../../types';
 import { InfractionType } from '@prisma/client';
 import { pastTenseInfractionTypes } from '../../lib/util/constants';
@@ -26,16 +26,12 @@ class WarnCommand extends Command {
 
     const durationStr = args[1];
     let duration = null;
-    if (durationStr && durationStr !== 'permanent') {
-      const unaryTest = +durationStr;
-      if (unaryTest) duration = unaryTest * 1000;
-      else duration = ms(durationStr) ?? null;
+    if (durationStr && durationStr !== 'permanent')
+      duration = parseDuration(durationStr)
 
-      if (duration !== null) duration = BigInt(duration);
-    }
     if (duration && duration < 1000) throw 'Temporary warn duration must be at least 1 second.';
 
-    const date = BigInt(Date.now());
+    const date = Date.now();
 
     let expires = duration ? duration + date : null;
 
@@ -48,7 +44,7 @@ class WarnCommand extends Command {
     }))!;
 
     if (!expires && durationStr !== 'permanent' && guild.defaultWarnDuration !== 0n)
-      expires = guild.defaultWarnDuration + date;
+      expires = Number(guild.defaultWarnDuration) + date;
 
     const infraction = await this.client.db.infraction.create({
       data: {
@@ -109,7 +105,7 @@ class WarnCommand extends Command {
         return infractionHistory.length >= curr.amount &&
           curr.amount >= prev.amount &&
           (within !== 0
-            ? within < (+prev.within || Infinity) && date - infractionHistory[curr.amount - 1].date <= within
+            ? within < (+prev.within || Infinity) && date - Number(infractionHistory[curr.amount - 1].date) <= within
             : curr.amount !== prev.amount)
           ? curr
           : prev;
@@ -119,7 +115,7 @@ class WarnCommand extends Command {
 
     if (escalation.amount === 0) return false;
 
-    const eDuration = BigInt(escalation.duration);
+    const eDuration = +escalation.duration;
     const eExpires = eDuration ? date + eDuration : null;
     const eExpiresStr = Math.floor(Number(eExpires) / 1000);
 
@@ -177,7 +173,7 @@ class WarnCommand extends Command {
       .setDescription(
         `${eInfraction.reason}${eExpires ? `\n\n***•** Expires: <t:${eExpiresStr}> (<t:${eExpiresStr}:R>)*` : ''}`
       )
-      .setFooter({ text: `Punishment ID: ${eInfraction.id}` })
+      .setFooter({ text: `Infraction ID: ${eInfraction.id}` })
       .setTimestamp();
 
     switch (escalation.punishment) {

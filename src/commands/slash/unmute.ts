@@ -32,7 +32,7 @@ class MuteCommand extends Command {
       throw 'I cannot unmute this member due to inadequete hierarchy.';
 
     const reason = interaction.options.getString('reason') ?? 'Unspecified reason.';
-    const date = BigInt(Date.now());
+    const date = Date.now();
 
     await interaction.deferReply();
 

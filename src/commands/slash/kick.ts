@@ -59,7 +59,7 @@ class KickCommand extends Command {
       .setDescription(
         `${reason}${infractionModeratorPublic ? `\n***•** Kicked by ${interaction.member.toString()}*\n` : ''}`
       )
-      .setFooter({ text: `Punishment ID: ${infraction.id}` })
+      .setFooter({ text: `Infraction ID: ${infraction.id}` })
       .setTimestamp();
 
     if (infoKick) dm.addFields([{ name: 'Additional Information', value: infoKick }]);

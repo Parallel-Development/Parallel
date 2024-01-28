@@ -8,7 +8,7 @@ import {
 } from 'discord.js';
 import ms from 'ms';
 import Command, { properties, data } from '../../lib/structs/Command';
-import { adequateHierarchy } from '../../lib/util/functions';
+import { adequateHierarchy, parseDuration } from '../../lib/util/functions';
 import punishLog from '../../handlers/punishLog';
 
 @data(
@@ -57,18 +57,12 @@ class BanCommand extends Command {
     const reason = interaction.options.getString('reason') ?? 'Unspecified reason.';
 
     const durationStr = interaction.options.getString('duration');
-    let duration = null;
-    if (durationStr && durationStr !== 'permanent') {
-      const unaryTest = +durationStr;
-      if (unaryTest) duration = unaryTest * 1000;
-      else duration = ms(durationStr) ?? null;
-
-      if (!duration) throw 'Invalid duration.';
-      duration = BigInt(duration);
-    }
+    const duration = durationStr ? parseDuration(durationStr) : null;
+    
+    if (Number.isNaN(duration) && durationStr !== 'permanent') throw 'Invalid duration.'
     if (duration && duration < 1000) throw 'Temporary ban duration must be at least 1 second.';
 
-    const date = BigInt(Date.now());
+    const date = Date.now();
 
     let expires = duration ? duration + date : null;
     const deleteMessageSeconds = Math.floor(
@@ -83,7 +77,7 @@ class BanCommand extends Command {
     }))!;
 
     if (!expires && durationStr !== 'permanent' && guild.defaultBanDuration !== 0n)
-      expires = guild.defaultBanDuration + date;
+      expires = Number(guild.defaultBanDuration) + date;
 
     const infraction = await this.client.db.infraction.create({
       data: {
@@ -133,7 +127,7 @@ class BanCommand extends Command {
           infractionModeratorPublic ? `\n***•** Banned by ${interaction.member.toString()}*\n` : ''
         }`
       )
-      .setFooter({ text: `Punishment ID: ${infraction.id}` })
+      .setFooter({ text: `Infraction ID: ${infraction.id}` })
       .setTimestamp();
 
     if (infoBan) dm.addFields([{ name: 'Additional Information', value: infoBan }]);

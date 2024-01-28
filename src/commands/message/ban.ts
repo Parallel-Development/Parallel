@@ -2,7 +2,7 @@ import { InfractionType } from '@prisma/client';
 import { PermissionFlagsBits, EmbedBuilder, Colors, Message, GuildMember } from 'discord.js';
 import ms from 'ms';
 import Command, { properties } from '../../lib/structs/Command';
-import { adequateHierarchy, getMember, getUser } from '../../lib/util/functions';
+import { adequateHierarchy, getMember, getUser, parseDuration } from '../../lib/util/functions';
 import punishLog from '../../handlers/punishLog';
 
 @properties<'message'>({
@@ -31,15 +31,10 @@ class BanCommand extends Command {
 
     const durationStr = args[1];
     let duration = null;
-    if (args.length >= 2 && args[1] !== 'permanent') {
-      const unaryTest = +args[1];
-      if (unaryTest) duration = unaryTest * 1000;
-      else duration = ms(args[1]) ?? null;
+    if (args.length >= 2 && args[1] !== 'permanent')
+      duration = parseDuration(durationStr);
 
-      if (duration !== null) duration = BigInt(duration);
-    }
-
-    const date = BigInt(Date.now());
+    const date = Date.now();
 
     if (duration && duration < 1000) throw 'Temporary ban duration must be at least 1 second.';
     let expires = duration ? duration + date : null;
@@ -54,7 +49,7 @@ class BanCommand extends Command {
     }))!;
 
     if (!expires && durationStr !== 'permanent' && guild.defaultBanDuration !== 0n)
-      expires = guild.defaultBanDuration + date;
+      expires = Number(guild.defaultBanDuration) + date;
 
     const infraction = await this.client.db.infraction.create({
       data: {
@@ -104,7 +99,7 @@ class BanCommand extends Command {
           infractionModeratorPublic ? `\n***•** Banned by ${message.member!.toString()}*\n` : ''
         }`
       )
-      .setFooter({ text: `Punishment ID: ${infraction.id}` })
+      .setFooter({ text: `Infraction ID: ${infraction.id}` })
       .setTimestamp();
 
     if (infoBan) dm.addFields([{ name: 'Additional Information', value: infoBan }]);

@@ -2,13 +2,14 @@ import { ChatInputCommandInteraction, EmbedBuilder, PermissionFlagsBits, SlashCo
 import Command, { data } from '../../lib/structs/Command';
 import ms from 'ms';
 import { InfractionType } from '@prisma/client';
-import { adequateHierarchy, getMember, hasSlashCommandPermission } from '../../lib/util/functions';
+import { adequateHierarchy, getMember, hasSlashCommandPermission, parseDuration } from '../../lib/util/functions';
 import { d28, infractionColors } from '../../lib/util/constants';
 
 @data(
   new SlashCommandBuilder()
     .setName('change-duration')
     .setDescription('Change the duration of a punishment.')
+    .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers)
     .addIntegerOption(opt =>
       opt
         .setName('id')
@@ -29,15 +30,6 @@ import { d28, infractionColors } from '../../lib/util/constants';
 )
 class DurationCommand extends Command {
   async run(interaction: ChatInputCommandInteraction<'cached'>) {
-    if (
-      !(
-        (await hasSlashCommandPermission(interaction.member, 'warn')) ||
-        (await hasSlashCommandPermission(interaction.member, 'mute')) ||
-        (await hasSlashCommandPermission(interaction.member, 'ban'))
-      )
-    )
-      throw 'You do not have permission to use this command.';
-
     const id = interaction.options.getInteger('id', true);
     const reason = interaction.options.getString('reason') ?? 'Unspecified reason.';
 
@@ -46,11 +38,8 @@ class DurationCommand extends Command {
 
     if (durationStr.toLowerCase() === 'permanent') duration = 0;
     else {
-      const unaryTest = +durationStr;
-      if (unaryTest) duration = unaryTest * 1000;
-      else duration = ms(durationStr) ?? null;
-
-      if (!duration) throw 'Invalid duration.';
+      duration = parseDuration(durationStr);
+      if (Number.isNaN(duration)) throw 'Invalid duration.';
     }
 
     if (duration !== 0 && duration < 1000) throw 'Duration must be at least 1 second.';

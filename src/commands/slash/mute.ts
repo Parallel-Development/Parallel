@@ -8,7 +8,7 @@ import {
 } from 'discord.js';
 import ms from 'ms';
 import Command, { properties, data } from '../../lib/structs/Command';
-import { adequateHierarchy } from '../../lib/util/functions';
+import { adequateHierarchy, parseDuration } from '../../lib/util/functions';
 import { d28 } from '../../lib/util/constants';
 import punishLog from '../../handlers/punishLog';
 
@@ -47,21 +47,15 @@ class MuteCommand extends Command {
     const reason = interaction.options.getString('reason') ?? 'Unspecified reason.';
 
     const durationStr = interaction.options.getString('duration');
-    let duration = null;
-    if (durationStr) {
-      const unaryTest = +durationStr;
-      if (unaryTest) duration = unaryTest * 1000;
-      else duration = ms(durationStr) ?? null;
+    let duration = durationStr ? parseDuration(durationStr) : null
 
-      if (!duration) throw 'Invalid duration.';
-      duration = BigInt(duration);
-    }
+    if (Number.isNaN(duration)) throw 'Invalid duration.';
     if (duration) {
       if (duration < 1000) throw 'Mute duration must be at least 1 second.';
       if (duration > d28) throw 'Mute duration can only be as long as 28 days.';
     }
 
-    const date = BigInt(Date.now());
+    const date = Date.now();
 
     let expires = duration ? duration + date : null;
 
@@ -75,8 +69,8 @@ class MuteCommand extends Command {
     await interaction.deferReply();
 
     if (!expires) {
-      expires = guild.defaultMuteDuration + date;
-      duration = guild.defaultMuteDuration;
+      expires = Number(guild.defaultMuteDuration) + date;
+      duration = Number(guild.defaultMuteDuration);
     }
 
     await member.timeout(Number(duration), reason);
@@ -118,7 +112,7 @@ class MuteCommand extends Command {
           infractionModeratorPublic ? `\n***•** Muted by ${interaction.member.toString()}*\n` : ''
         }`
       )
-      .setFooter({ text: `Punishment ID: ${infraction.id}` })
+      .setFooter({ text: `Infraction ID: ${infraction.id}` })
       .setTimestamp();
 
     if (infoMute) dm.addFields([{ name: 'Additional Information', value: infoMute }]);

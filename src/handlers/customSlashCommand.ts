@@ -26,8 +26,8 @@ export default async function (interaction: ChatInputCommandInteraction<'cached'
     throw 'The provided user is not in this guild.';
 
   const { punishment, reason, duration, deleteTime } = command;
-  const date = BigInt(Date.now());
-  const expires = duration ? date + duration : null;
+  const date = Date.now();
+  const expires = duration ? date + Number(duration) : null;
   const expiresStr = expires ? Math.floor(Number(expires) / 1000) : null;
   const lpunishment = punishment.toLowerCase();
 
@@ -103,7 +103,7 @@ export default async function (interaction: ChatInputCommandInteraction<'cached'
     )
     .setColor(infractionColors[punishment])
     .setDescription(`${reason}${expires ? `\n\n***•** Expires: <t:${expiresStr}> (<t:${expiresStr}:R>)*` : ''}`)
-    .setFooter({ text: `Punishment ID: ${infraction.id}` })
+    .setFooter({ text: `Infraction ID: ${infraction.id}` })
     .setTimestamp();
 
   switch (punishment) {
@@ -181,7 +181,7 @@ export default async function (interaction: ChatInputCommandInteraction<'cached'
       return infractionHistory.length >= curr.amount &&
         curr.amount >= prev.amount &&
         (within !== 0
-          ? within < (+prev.within || Infinity) && date - infractionHistory[curr.amount - 1].date <= within
+          ? within < (+prev.within || Infinity) && date - Number(infractionHistory[curr.amount - 1].date) <= within
           : curr.amount !== prev.amount)
         ? curr
         : prev;
@@ -191,7 +191,7 @@ export default async function (interaction: ChatInputCommandInteraction<'cached'
 
   if (escalation.amount === 0) return false;
 
-  const eDuration = BigInt(escalation.duration);
+  const eDuration = +escalation.duration;
   const eExpires = eDuration ? date + eDuration : null;
   const eExpiresStr = Math.floor(Number(eExpires) / 1000);
 
@@ -243,7 +243,7 @@ export default async function (interaction: ChatInputCommandInteraction<'cached'
     .setDescription(
       `${eInfraction.reason}${eExpires ? `\n\n***•** Expires: <t:${eExpiresStr}> (<t:${eExpiresStr}:R>)*` : ''}`
     )
-    .setFooter({ text: `Punishment ID: ${eInfraction.id}` })
+    .setFooter({ text: `Infraction ID: ${eInfraction.id}` })
     .setTimestamp();
 
   switch (escalation.punishment) {
