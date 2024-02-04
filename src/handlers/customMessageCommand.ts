@@ -27,6 +27,21 @@ export default async function (
     if (respondIfNoPermission) throw 'You do not have permission to use this command.';
     else return;
 
+  switch (command.punishment) {
+    case InfractionType.Ban:
+      if (!message.guild.members.me!.permissions.has(PermissionFlagsBits.BanMembers))
+        throw 'I must have the `Ban Members` permission to run this command.';
+      break;
+    case InfractionType.Mute:
+      if (!message.guild.members.me!.permissions.has(PermissionFlagsBits.MuteMembers))
+        throw 'I must have the `Mute Members` permission to run this command.';
+      break;
+    case InfractionType.Kick:
+      if (!message.guild.members.me!.permissions.has(PermissionFlagsBits.KickMembers))
+        throw 'I must have the `Kick Members` permission to run this command.';
+      break;
+  }
+
   if (args.length == 0) throw 'Missing required argument `user`.';
 
   const target = (await getMember(message.guildId, args[0])) ?? (await getUser(args[0]));
@@ -100,7 +115,7 @@ export default async function (
       });
   }
 
-  const { infoBan, infoKick, infoMute, infoWarn } = infraction.guild;
+  const { infoBan, infoKick, infoMute, infoWarn, infractionModeratorPublic } = infraction.guild;
 
   const dm = new EmbedBuilder()
     .setAuthor({ name: 'Parallel Moderation', iconURL: client.user!.displayAvatarURL() })
@@ -110,7 +125,7 @@ export default async function (
       } ${message.guild.name}`
     )
     .setColor(infractionColors[punishment])
-    .setDescription(`${reason}${expires ? `\n\n***•** Expires: <t:${expiresStr}> (<t:${expiresStr}:R>)*` : ''}`)
+    .setDescription(`${reason}${expires ? `\n\n***•** Expires: <t:${expiresStr}> (<t:${expiresStr}:R>)*` : ''}${infractionModeratorPublic ? `\n***•** Warning issued by ${message.member!.toString()}*\n` : ''}`)
     .setFooter({ text: `Infraction ID: ${infraction.id}` })
     .setTimestamp();
 

@@ -7,11 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum AppealMethod {
-  Modal
-  Link
-}
-
 enum InfractionType {
   Warn
   Mute
@@ -22,55 +17,49 @@ enum InfractionType {
 }
 
 model Guild {
-  id                             String          @id
-  infractionModeratorPublic      Boolean         @default(false)
-  notifyInfractionChange         Boolean         @default(true)
-  appealAllowed                  Boolean         @default(false)
-  appealAlertWebhookId           String?
-  appealMethod                   AppealMethod    @default(Modal)
-  appealLink                     String?
-  appealModalQuestions           String[]        @default(["Reason for appeal."])
-  appealDisregardAfter           BigInt          @default(2592000000)
-  appealBlacklist                String[]
-  modLogWebhookId                String?
-  messageLogWebhookId            String?
-  messageLogIgnoredChannels      String[]
-  infoWarn                       String?
-  infoMute                       String?
-  infoKick                       String?
-  infoBan                        String?
-  defaultWarnDuration            BigInt          @default(0)
-  defaultMuteDuration            BigInt          @default(0)
-  defaultBanDuration             BigInt          @default(0)
-
-  autoMod                        Json[]          @default(["{\"toggle\": false, \"duration\": \"0\", \"punishment\": null, \"immuneRoles\": [], \"immuneChannels\": []}","{\"ruleId\": \"\", \"toggle\": false, \"duration\": \"0\", \"punishment\": null}","{\"toggle\": false, \"duration\": \"0\", \"punishment\": null, \"immuneRoles\": [], \"immuneChannels\": []}","{\"ruleId\": \"\", \"toggle\": false, \"duration\": \"0\", \"punishment\": null}","{\"ruleId\": \"\", \"toggle\": false, \"duration\": \"0\", \"punishment\": null}"])
-  autoModSpamTriggers            Json[]          @default(["{ \"amount\": 5, \"within\": 5 }", "{ \"amount\": 10, \"within\": 20 }"])
-
-  escalationsAutoMod             Json[]
-  escalationsManual              Json[]
-  lockChannels                   String[]
-  lockOverrides                  BigInt          @default(377957124160) // SendMessages + CreatePublicThreads + CreatePrivateThreads + SendMessagesInThreads + AddReactions
-  prefix                         String          @default("-")
-  messageCommandsEnabled         Boolean         @default(true)
-  respondNoPermission            Boolean         @default(true)
-
-  ticketsEnabled                 Boolean         @default(false)
-  ticketLogWebhookId             String?
-  ticketLocation                 String?
-  allowUserCloseTicket           Boolean         @default(false)
-  pingRoleOnTicketCreation       String?
-  ticketAutoModeration           Boolean         @default(false)
-  ticketModeratorRoles           String[]
-  ticketBlacklist                String[]
-
-  infractions Infraction[]
-  appeals     Appeal[]
-  tasks       Task[]
-  locks       Lock[]
-  tags        Tag[]
-  shortcuts   Shortcut[]
-  chatlogs    Chatlog[]
-  tickets     Ticket[]
+  id                        String       @id
+  infractionModeratorPublic Boolean      @default(false)
+  notifyInfractionChange    Boolean      @default(true)
+  appealAllowed             Boolean      @default(false)
+  appealAlertWebhookId      String?
+  appealQuestions           String[]     @default(["Reason for appeal."])
+  appealDisregardAfter      BigInt       @default(2592000000)
+  appealBlacklist           String[]
+  modLogWebhookId           String?
+  messageLogWebhookId       String?
+  messageLogIgnoredChannels String[]
+  infoWarn                  String?
+  infoMute                  String?
+  infoKick                  String?
+  infoBan                   String?
+  defaultWarnDuration       BigInt       @default(0)
+  defaultMuteDuration       BigInt       @default(0)
+  defaultBanDuration        BigInt       @default(0)
+  autoMod                   Json[]       @default(["{\"toggle\": false, \"duration\": \"0\", \"punishment\": null, \"immuneRoles\": [], \"immuneChannels\": []}", "{\"ruleId\": \"\", \"toggle\": false, \"duration\": \"0\", \"punishment\": null}", "{\"toggle\": false, \"duration\": \"0\", \"punishment\": null, \"immuneRoles\": [], \"immuneChannels\": []}", "{\"ruleId\": \"\", \"toggle\": false, \"duration\": \"0\", \"punishment\": null}", "{\"ruleId\": \"\", \"toggle\": false, \"duration\": \"0\", \"punishment\": null}"])
+  autoModSpamTriggers       Json[]       @default(["{ \"amount\": 5, \"within\": 5 }", "{ \"amount\": 10, \"within\": 20 }"])
+  escalationsAutoMod        Json[]
+  escalationsManual         Json[]
+  lockChannels              String[]
+  lockOverrides             BigInt       @default(377957124160) // SendMessages + CreatePublicThreads + CreatePrivateThreads + SendMessagesInThreads + AddReactions
+  prefix                    String       @default("-")
+  messageCommandsEnabled    Boolean      @default(true)
+  respondNoPermission       Boolean      @default(true)
+  ticketsEnabled            Boolean      @default(false)
+  ticketLogWebhookId        String?
+  ticketLocation            String?
+  allowUserCloseTicket      Boolean      @default(false)
+  pingRoleOnTicketCreation  String?
+  ticketAutoModeration      Boolean      @default(false)
+  ticketModeratorRoles      String[]
+  ticketBlacklist           String[]
+  infractions               Infraction[]
+  appeals                   Appeal[]
+  tasks                     Task[]
+  locks                     Lock[]
+  tags                      Tag[]
+  shortcuts                 Shortcut[]
+  chatlogs                  Chatlog[]
+  tickets                   Ticket[]
 }
 
 model Infraction {
@@ -82,9 +71,8 @@ model Infraction {
   expires     BigInt?
   reason      String         @default("Unspecified reason.")
   moderatorId String         @default("833792285120528394")
-
-  appeal Appeal?
-  guild  Guild   @relation(fields: [guildId], references: [id], onDelete: Cascade)
+  appeal      Appeal?
+  guild       Guild          @relation(fields: [guildId], references: [id], onDelete: Cascade)
 }
 
 model Task {
@@ -99,13 +87,12 @@ model Task {
 }
 
 model Appeal {
-  id       Int    @id
-  userId   String
-  guildId  String
-  response Json[]
-  date     BigInt
-  incoming Boolean @default(false) // True if created by the website. Set to false as soon as the appeal is handled in routines
-
+  id         Int         @id
+  userId     String
+  guildId    String
+  response   Json[]
+  date       BigInt
+  incoming   Boolean     @default(false) // True if created by the website. Set to false as soon as the appeal is handled in routines
   infraction Infraction? @relation(fields: [id], references: [id], onDelete: Cascade)
   guild      Guild       @relation(fields: [guildId], references: [id], onDelete: Cascade)
 }
@@ -114,8 +101,7 @@ model Lock {
   channelId String @id
   guildId   String
   allow     BigInt
-
-  guild Guild @relation(fields: [guildId], references: [id], onDelete: Cascade)
+  guild     Guild  @relation(fields: [guildId], references: [id], onDelete: Cascade)
 }
 
 model Tag {
@@ -147,13 +133,13 @@ model Blacklist {
 }
 
 model Chatlog {
-  keyHash   Bytes @id
-  iv        Bytes
-  authTag   Bytes
-  html      Bytes
-  guildId   String
-  expires   BigInt
-  guild     Guild  @relation(fields: [guildId], references: [id], onDelete: Cascade)
+  keyHash Bytes  @id
+  iv      Bytes
+  authTag Bytes
+  html    Bytes
+  guildId String
+  expires BigInt
+  guild   Guild  @relation(fields: [guildId], references: [id], onDelete: Cascade)
 }
 
 model Ticket {
@@ -162,7 +148,7 @@ model Ticket {
   creatorId String
   invite    String? @unique
   guildId   String
+  guild     Guild   @relation(fields: [guildId], references: [id], onDelete: Cascade)
 
   @@unique([guildId, creatorId])
-  guild     Guild   @relation(fields: [guildId], references: [id], onDelete: Cascade)
 }

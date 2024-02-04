@@ -14,7 +14,7 @@ class PingCommand extends Command {
     const timeTaken = Math.round(end - start);
     const ws = this.client.ws.ping;
 
-    return interaction.editReply(`Pong! Latency: \`${timeTaken}ms\` | WebSocket ping: \`${ws}ms\``);
+    return interaction.editReply(`Pong! Roundtrip: \`${timeTaken}ms\` | Latency: \`${ws}ms\``);
   }
 }
 

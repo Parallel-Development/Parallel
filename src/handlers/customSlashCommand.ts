@@ -16,6 +16,21 @@ export default async function (interaction: ChatInputCommandInteraction<'cached'
 
   if (!command) throw 'Unknown Command.';
 
+  switch (command.punishment) {
+    case InfractionType.Ban:
+      if (!interaction.guild.members.me!.permissions.has(PermissionFlagsBits.BanMembers))
+        throw 'I must have the `Ban Members` permission to run this command.';
+      break;
+    case InfractionType.Mute:
+      if (!interaction.guild.members.me!.permissions.has(PermissionFlagsBits.MuteMembers))
+        throw 'I must have the `Mute Members` permission to run this command.';
+      break;
+    case InfractionType.Kick:
+      if (!interaction.guild.members.me!.permissions.has(PermissionFlagsBits.KickMembers))
+        throw 'I must have the `Kick Members` permission to run this command.';
+      break;
+  }
+
   const target =
     interaction.options.getMember('member') ??
     interaction.options.getUser('member') ??
@@ -92,7 +107,7 @@ export default async function (interaction: ChatInputCommandInteraction<'cached'
       });
   }
 
-  const { infoBan, infoKick, infoMute, infoWarn } = infraction.guild;
+  const { infoBan, infoKick, infoMute, infoWarn, infractionModeratorPublic } = infraction.guild;
 
   const dm = new EmbedBuilder()
     .setAuthor({ name: 'Parallel Moderation', iconURL: client.user!.displayAvatarURL() })
@@ -102,7 +117,7 @@ export default async function (interaction: ChatInputCommandInteraction<'cached'
       } ${interaction.guild.name}`
     )
     .setColor(infractionColors[punishment])
-    .setDescription(`${reason}${expires ? `\n\n***•** Expires: <t:${expiresStr}> (<t:${expiresStr}:R>)*` : ''}`)
+    .setDescription(`${reason}${expires ? `\n\n***•** Expires: <t:${expiresStr}> (<t:${expiresStr}:R>)*` : ''}${infractionModeratorPublic ? `\n***•** Warning issued by ${interaction.member!.toString()}*\n` : ''}`)
     .setFooter({ text: `Infraction ID: ${infraction.id}` })
     .setTimestamp();
 

@@ -2,6 +2,7 @@ import { type ChatInputCommandInteraction, SlashCommandBuilder, EmbedBuilder, Co
 import Command, { data, properties } from '../../lib/structs/Command';
 import { InfractionType } from '@prisma/client';
 import ms from 'ms';
+import { infractionColors } from '../../lib/util/constants';
 
 @data(
   new SlashCommandBuilder()
@@ -35,15 +36,7 @@ class MyCaseCommand extends Command {
 
     const infractionEmbed = new EmbedBuilder()
       .setTitle(`Case ${id} | ${infraction.type.toString()}`)
-      .setColor(
-        infraction.type === InfractionType.Warn
-          ? Colors.Yellow
-          : infraction.type === InfractionType.Mute || infraction.type === InfractionType.Kick
-          ? Colors.Orange
-          : infraction.type === InfractionType.Unmute || infraction.type === InfractionType.Unban
-          ? Colors.Green
-          : Colors.Red
-      )
+      .setColor(infractionColors[infraction.type])
       .setDescription(
         `${
           infractionModeratorPublic ? `\n**Moderator:** <@${infraction.moderatorId}> (${infraction.moderatorId})` : ''

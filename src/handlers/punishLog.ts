@@ -3,6 +3,7 @@ import { Infraction, InfractionType } from '@prisma/client';
 import { Colors } from 'discord.js';
 import ms from 'ms';
 import client from '../client';
+import { infractionColors } from '../lib/util/constants';
 
 export default async function (infraction: Infraction) {
   const guild = (await client.db.guild.findUnique({
@@ -29,15 +30,7 @@ export default async function (infraction: Infraction) {
 
   const embed = new EmbedBuilder()
     .setTitle(`${infraction.id ? `Case ${infraction.id} | ` : ''}${infraction.type.toString()}`)
-    .setColor(
-      infraction.type === InfractionType.Warn
-        ? Colors.Yellow
-        : infraction.type === InfractionType.Mute || infraction.type === InfractionType.Kick
-        ? Colors.Orange
-        : infraction.type === InfractionType.Unmute || infraction.type === InfractionType.Unban
-        ? Colors.Green
-        : Colors.Red
-    )
+    .setColor(infractionColors[infraction.type])
     .setDescription(
       `**User:** ${(await client.users.fetch(infraction.userId))!.username} (${infraction.userId})\n**Moderator:** ${
         (await client.users.fetch(infraction.moderatorId))!.username

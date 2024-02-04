@@ -9,7 +9,7 @@ import Command, { data } from '../../lib/structs/Command';
 import ms from 'ms';
 import { adequateHierarchy, parseDuration } from '../../lib/util/functions';
 import { InfractionType } from '@prisma/client';
-import { pastTenseInfractionTypes } from '../../lib/util/constants';
+import { infractionColors, pastTenseInfractionTypes } from '../../lib/util/constants';
 import { Escalation } from '../../types';
 import punishLog from '../../handlers/punishLog';
 
@@ -177,13 +177,7 @@ class WarnCommand extends Command {
           escalation.punishment === InfractionType.Ban || escalation.punishment === InfractionType.Kick ? 'from' : 'in'
         } ${interaction.guild.name}`
       )
-      .setColor(
-        escalation.punishment === InfractionType.Mute || escalation.punishment === InfractionType.Kick
-          ? Colors.Orange
-          : escalation.punishment === InfractionType.Unmute || escalation.punishment === InfractionType.Unban
-          ? Colors.Green
-          : Colors.Red
-      )
+      .setColor(infractionColors[escalation.punishment])
       .setDescription(
         `${eInfraction.reason}${eExpires ? `\n\n***•** Expires: <t:${eExpiresStr}> (<t:${eExpiresStr}:R>)*` : ''}`
       )

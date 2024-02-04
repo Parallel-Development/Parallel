@@ -1,6 +1,6 @@
 import { InfractionType } from '@prisma/client';
 import { Colors, EmbedBuilder, Guild, GuildMember, Message, PermissionFlagsBits } from 'discord.js';
-import { AutoModLocations, domainReg, pastTenseInfractionTypes } from '../lib/util/constants';
+import { AutoModLocations, domainReg, infractionColors, pastTenseInfractionTypes } from '../lib/util/constants';
 import { AutoModConfig, AutoModSpamTrigger, Escalation } from '../types';
 import client from '../client';
 import ms from 'ms';
@@ -118,6 +118,21 @@ export async function autoModPunish(
 ) {
   if (!punishment) return false;
 
+  switch (punishment) {
+    case InfractionType.Ban:
+      if (!member.guild.members.me!.permissions.has(PermissionFlagsBits.BanMembers))
+        return;
+      break;
+    case InfractionType.Mute:
+      if (!member.guild.members.me!.permissions.has(PermissionFlagsBits.MuteMembers))
+        return;
+      break;
+    case InfractionType.Kick:
+      if (!member.guild.members.me!.permissions.has(PermissionFlagsBits.KickMembers))
+        return;
+      break;
+  }
+
   const { infoWarn, infoMute, infoKick, infoBan, escalationsAutoMod } = (await client.db.guild.findUnique({
     where: { id: guild.id }
   }))!;
@@ -164,15 +179,7 @@ export async function autoModPunish(
         punishment === InfractionType.Ban || punishment === InfractionType.Kick ? 'from' : 'in'
       } ${guild.name}`
     )
-    .setColor(
-      punishment === InfractionType.Warn
-        ? Colors.Yellow
-        : punishment === InfractionType.Mute || punishment === InfractionType.Kick
-        ? Colors.Orange
-        : punishment === InfractionType.Unmute || punishment === InfractionType.Unban
-        ? Colors.Green
-        : Colors.Red
-    )
+    .setColor(infractionColors[punishment])
     .setDescription(`${reason}${expires ? `\n\n***•** Expires: <t:${expiresStr}> (<t:${expiresStr}:R>)*` : ''}`)
     .setFooter({ text: `Infraction ID: ${infraction.id}` })
     .setTimestamp();
@@ -288,13 +295,7 @@ export async function autoModPunish(
         escalation.punishment === InfractionType.Ban || escalation.punishment === InfractionType.Kick ? 'from' : 'in'
       } ${guild.name}`
     )
-    .setColor(
-      escalation.punishment === InfractionType.Mute || escalation.punishment === InfractionType.Kick
-        ? Colors.Orange
-        : escalation.punishment === InfractionType.Unmute || escalation.punishment === InfractionType.Unban
-        ? Colors.Green
-        : Colors.Red
-    )
+    .setColor(infractionColors[escalation.punishment])
     .setDescription(
       `${eInfraction.reason}${eExpires ? `\n\n***•** Expires: <t:${eExpiresStr}> (<t:${eExpiresStr}:R>)*` : ''}`
     )

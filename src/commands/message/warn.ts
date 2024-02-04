@@ -4,7 +4,7 @@ import ms from 'ms';
 import { adequateHierarchy, getMember, parseDuration } from '../../lib/util/functions';
 import { Escalation } from '../../types';
 import { InfractionType } from '@prisma/client';
-import { pastTenseInfractionTypes } from '../../lib/util/constants';
+import { infractionColors, pastTenseInfractionTypes } from '../../lib/util/constants';
 import punishLog from '../../handlers/punishLog';
 
 @properties<'message'>({
@@ -163,13 +163,7 @@ class WarnCommand extends Command {
           escalation.punishment === InfractionType.Ban || escalation.punishment === InfractionType.Kick ? 'from' : 'in'
         } ${message.guild.name}`
       )
-      .setColor(
-        escalation.punishment === InfractionType.Mute || escalation.punishment === InfractionType.Kick
-          ? Colors.Orange
-          : escalation.punishment === InfractionType.Unmute || escalation.punishment === InfractionType.Unban
-          ? Colors.Green
-          : Colors.Red
-      )
+      .setColor(infractionColors[escalation.punishment])
       .setDescription(
         `${eInfraction.reason}${eExpires ? `\n\n***•** Expires: <t:${eExpiresStr}> (<t:${eExpiresStr}:R>)*` : ''}`
       )

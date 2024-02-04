@@ -53,7 +53,7 @@ class BanCommand extends Command {
       if (!adequateHierarchy(interaction.guild.members.me!, member))
         throw 'I cannot ban this member due to inadequete hierarchy.';
     }
-
+    
     const reason = interaction.options.getString('reason') ?? 'Unspecified reason.';
 
     const durationStr = interaction.options.getString('duration');

@@ -1,4 +1,4 @@
-import { AppealMethod, InfractionType } from '@prisma/client';
+import { InfractionType } from '@prisma/client';
 import {
   type ChatInputCommandInteraction,
   ModalBuilder,
@@ -18,7 +18,7 @@ import {
 } from 'discord.js';
 import ms from 'ms';
 import Command, { data, properties } from '../../lib/structs/Command';
-import { infractionsPerPage, mainColor, yesNoRow } from '../../lib/util/constants';
+import { infractionColors, infractionsPerPage, mainColor, yesNoRow } from '../../lib/util/constants';
 import { getUser } from '../../lib/util/functions';
 
 @data(
@@ -194,15 +194,7 @@ class AppealCommand extends Command {
 
         const infractionEmbed = new EmbedBuilder()
           .setTitle(`Case ${infraction.id} | ${infraction.type.toString()}`)
-          .setColor(
-            infraction.type === InfractionType.Warn
-              ? Colors.Yellow
-              : infraction.type === InfractionType.Mute || infraction.type === InfractionType.Kick
-              ? Colors.Orange
-              : infraction.type === InfractionType.Unmute || infraction.type === InfractionType.Unban
-              ? Colors.Green
-              : Colors.Red
-          )
+          .setColor(infractionColors[infraction.type])
           .setDescription(
             `${
               infractionModeratorPublic
@@ -252,15 +244,12 @@ class AppealCommand extends Command {
     if (guild.appealBlacklist.includes(interaction.user.id))
       throw 'You are blacklisted from creating new appeals in this guild.';
 
-    if (guild.appealMethod === AppealMethod.Link)
-      return interaction.reply(`Infraction appeals for this guild are set to be handled at ${guild.appealLink}`);
-
     if (infraction.appeal) throw 'An appeal for that infraction has already been made.';
 
     const modal = new ModalBuilder();
     modal.setTitle('Appeal').setCustomId(`appeal:${id}`);
 
-    for (const question of guild.appealModalQuestions) {
+    for (const question of guild.appealQuestions) {
       const row = new ActionRowBuilder<ModalActionRowComponentBuilder>();
       const questionText = new TextInputBuilder()
         .setLabel(question)

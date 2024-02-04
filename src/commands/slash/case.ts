@@ -8,6 +8,7 @@ import {
 import Command, { data } from '../../lib/structs/Command';
 import { InfractionType } from '@prisma/client';
 import ms from 'ms';
+import { infractionColors } from '../../lib/util/constants';
 
 @data(
   new SlashCommandBuilder()
@@ -32,15 +33,7 @@ class CaseCommand extends Command {
 
     const infractionEmbed = new EmbedBuilder()
       .setTitle(`Case ${id} | ${infraction.type.toString()}`)
-      .setColor(
-        infraction.type === InfractionType.Warn
-          ? Colors.Yellow
-          : infraction.type === InfractionType.Mute || infraction.type === InfractionType.Kick
-          ? Colors.Orange
-          : infraction.type === InfractionType.Unmute || infraction.type === InfractionType.Unban
-          ? Colors.Green
-          : Colors.Red
-      )
+      .setColor(infractionColors[infraction.type])
       .setDescription(
         `**User:** <@${infraction.userId}> (${infraction.userId})\n**Moderator:** <@${infraction.moderatorId}> (${
           infraction.moderatorId

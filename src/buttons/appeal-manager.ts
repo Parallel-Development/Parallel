@@ -12,6 +12,7 @@ import {
 import ms from 'ms';
 import Button from '../lib/structs/Button';
 import { getMember, hasSlashCommandPermission } from '../lib/util/functions';
+import { infractionColors } from '../lib/util/constants';
 const reason = 'Unspecified reason.';
 
 class AppealManagerButton extends Button {
@@ -47,6 +48,7 @@ class AppealManagerButton extends Button {
 
       return interaction.update({ components: [row], embeds: [embed] });
     }
+    
     if (!infraction.appeal) {
       const notAcceptedButton = new ButtonBuilder()
         .setCustomId('?')
@@ -228,15 +230,7 @@ class AppealManagerButton extends Button {
       case 'context': {
         const infractionEmbed = new EmbedBuilder()
           .setTitle(`Case ${infractionId} | ${infraction.type.toString()}`)
-          .setColor(
-            infraction.type === InfractionType.Warn
-              ? Colors.Yellow
-              : infraction.type === InfractionType.Mute || infraction.type === InfractionType.Kick
-              ? Colors.Orange
-              : infraction.type === InfractionType.Unmute || infraction.type === InfractionType.Unban
-              ? Colors.Green
-              : Colors.Red
-          )
+          .setColor(infractionColors[infraction.type])
           .setDescription(
             `**User:** <@${infraction.userId}> (${infraction.userId})\n**Moderator:** <@${infraction.moderatorId}> (${
               infraction.moderatorId

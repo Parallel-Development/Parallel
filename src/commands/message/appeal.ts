@@ -16,7 +16,7 @@ import {
 } from 'discord.js';
 import ms from 'ms';
 import Command, { properties } from '../../lib/structs/Command';
-import { infractionsPerPage, mainColor, yesNoRow } from '../../lib/util/constants';
+import { infractionColors, infractionsPerPage, mainColor, yesNoRow } from '../../lib/util/constants';
 import { getUser } from '../../lib/util/functions';
 
 @properties<'message'>({
@@ -182,15 +182,7 @@ class AppealCommand extends Command {
 
         const infractionEmbed = new EmbedBuilder()
           .setTitle(`Case ${infraction.id} | ${infraction.type.toString()}`)
-          .setColor(
-            infraction.type === InfractionType.Warn
-              ? Colors.Yellow
-              : infraction.type === InfractionType.Mute || infraction.type === InfractionType.Kick
-              ? Colors.Orange
-              : infraction.type === InfractionType.Unmute || infraction.type === InfractionType.Unban
-              ? Colors.Green
-              : Colors.Red
-          )
+          .setColor(infractionColors[infraction.type])
           .setDescription(
             `${
               infractionModeratorPublic

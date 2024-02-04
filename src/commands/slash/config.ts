@@ -1,4 +1,4 @@
-import { AppealMethod, InfractionType } from '@prisma/client';
+import { InfractionType } from '@prisma/client';
 import {
   ChatInputCommandInteraction,
   SlashCommandBuilder,
@@ -49,31 +49,6 @@ import yaml from 'js-yaml';
                 .setDescription('The channel to send alerts to.')
                 .setRequired(true)
                 .addChannelTypes(ChannelType.GuildText)
-            )
-        )
-        .addSubcommand(cmd =>
-          cmd
-            .setName('method')
-            .setDescription('Choose how users may appeal infractions.')
-            .addStringOption(opt =>
-              opt
-                .setName('method')
-                .setDescription('How users can appeal infractions.')
-                .addChoices(
-                  { name: 'Bot', value: AppealMethod.Modal },
-                  { name: 'External Link', value: AppealMethod.Link }
-                )
-                .setRequired(true)
-            )
-        )
-        .addSubcommand(cmd =>
-          cmd
-            .setName('link')
-            .setDescription(
-              'The link to redirect users to appeal an infraction if `appeal-method` is set to `External Link`.'
-            )
-            .addStringOption(opt =>
-              opt.setName('link').setDescription('The link to redirect users to.').setRequired(true)
             )
         )
         .addSubcommand(cmd =>
@@ -367,82 +342,51 @@ class ConfigCommand extends Command {
               return interaction.editReply(`Alert channel set to ${channel.toString()}.`);
             }
           }
-          case 'method': {
-            const appealMethod = interaction.options.getString('method', true) as AppealMethod;
-
-            await this.client.db.guild.update({
-              where: {
-                id: interaction.guildId
-              },
-              data: {
-                appealMethod
-              }
-            });
-
-            return interaction.reply(
-              `The appeal method has been set to: \`${appealMethod === AppealMethod.Modal ? 'Bot' : 'External Link'}\`.`
-            );
-          }
-          case 'link': {
-            const appealLink = interaction.options.getString('link', true);
-            if (!urlReg.test(appealLink)) throw 'Invalid link.';
-
-            await this.client.db.guild.update({
-              where: {
-                id: interaction.guildId
-              },
-              data: {
-                appealLink
-              }
-            });
-
-            return interaction.reply(`The appeal link has been set to <${appealLink}>`);
-          }
           case 'add-question': {
-            const { appealModalQuestions } = (await this.client.db.guild.findUnique({
+            const { appealQuestions } = (await this.client.db.guild.findUnique({
               where: { id: interaction.guildId }
             }))!;
 
-            if (appealModalQuestions.length >= 5) throw 'You cannot have more than four questions.';
+            if (appealQuestions.length >= 5) throw 'You cannot have more than four questions.';
             const question = interaction.options.getString('question', true);
 
             await this.client.db.guild.update({
               where: { id: interaction.guildId },
-              data: { appealModalQuestions: { push: question } }
+              data: { appealQuestions: { push: question } }
             });
 
             return interaction.reply(`Question added: ${question}`);
           }
           case 'remove-question': {
-            const { appealModalQuestions } = (await this.client.db.guild.findUnique({
+            const { appealQuestions } = (await this.client.db.guild.findUnique({
               where: { id: interaction.guildId }
             }))!;
 
-            if (appealModalQuestions.length === 1)
+            if (appealQuestions.length === 1)
               throw 'You cannot remove another question because you need at least one.';
 
             const index = interaction.options.getInteger('question-index', true);
-            if (index > appealModalQuestions.length) throw `There is no index \`${index}\`.`;
+            if (index > appealQuestions.length) throw `There is no index \`${index}\`.`;
 
-            const question = appealModalQuestions[index - 1];
+            const question = appealQuestions[index - 1];
 
-            appealModalQuestions.splice(index - 1, 1);
+            appealQuestions.splice(index - 1, 1);
 
             await this.client.db.guild.update({
               where: { id: interaction.guildId },
-              data: { appealModalQuestions }
+              data: { appealQuestions }
             });
 
             return interaction.reply(`Removed question #${index}: ${question}`);
           }
           case 'view-questions': {
-            const { appealModalQuestions } = (await this.client.db.guild.findUnique({
+            const { appealQuestions } = (await this.client.db.guild.findUnique({
               where: { id: interaction.guildId }
             }))!;
 
-            if (appealModalQuestions.length === 0) throw 'There are no appeal questions.';
+            if (appealQuestions.length === 0) throw 'There are no appeal questions.';
 
-            const stringQuestions = appealModalQuestions.map((value, index) => `${index + 1}. ${value}`).join('\n\n');
+            const stringQuestions = appealQuestions.map((value, index) => `${index + 1}. ${value}`).join('\n\n');
 
             return interaction.reply(`\`\`\`\n${stringQuestions}\`\`\``);
           }
