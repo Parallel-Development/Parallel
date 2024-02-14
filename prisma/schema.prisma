@@ -92,7 +92,6 @@ model Appeal {
   guildId    String
   response   Json[]
   date       BigInt
-  incoming   Boolean     @default(false) // True if created by the website. Set to false as soon as the appeal is handled in routines
   infraction Infraction? @relation(fields: [id], references: [id], onDelete: Cascade)
   guild      Guild       @relation(fields: [guildId], references: [id], onDelete: Cascade)
 }

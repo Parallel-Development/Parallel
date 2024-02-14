@@ -51,6 +51,8 @@ export function getChannel(guild: Guild | string, channel: string) {
 }
 
 export function parseDuration(durationStr: string) {
+  if (!durationStr) return NaN;
+
   let duration;
   
   const unaryTest = +durationStr;

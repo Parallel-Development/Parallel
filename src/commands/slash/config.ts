@@ -350,6 +350,8 @@ class ConfigCommand extends Command {
             if (appealQuestions.length >= 5) throw 'You cannot have more than four questions.';
             const question = interaction.options.getString('question', true);
 
+            if (appealQuestions.includes(question)) throw 'This question already exists.';
+
             await this.client.db.guild.update({
               where: { id: interaction.guildId },
               data: { appealQuestions: { push: question } }
