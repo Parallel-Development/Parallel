@@ -17,12 +17,12 @@ export default async function (interaction: ChatInputCommandInteraction<'cached'
   if (!command) throw 'Unknown Command.';
 
   switch (command.punishment) {
-    case InfractionType.Ban:
+    case InfractionType.Ban: case InfractionType.Unban:
       if (!interaction.guild.members.me!.permissions.has(PermissionFlagsBits.BanMembers))
         throw 'I must have the `Ban Members` permission to run this command.';
       break;
-    case InfractionType.Mute:
-      if (!interaction.guild.members.me!.permissions.has(PermissionFlagsBits.MuteMembers))
+    case InfractionType.Mute: case InfractionType.Unmute:
+      if (!interaction.guild.members.me!.permissions.has(PermissionFlagsBits.ModerateMembers))
         throw 'I must have the `Mute Members` permission to run this command.';
       break;
     case InfractionType.Kick:

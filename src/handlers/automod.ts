@@ -124,7 +124,7 @@ export async function autoModPunish(
         return;
       break;
     case InfractionType.Mute:
-      if (!member.guild.members.me!.permissions.has(PermissionFlagsBits.MuteMembers))
+      if (!member.guild.members.me!.permissions.has(PermissionFlagsBits.ModerateMembers))
         return;
       break;
     case InfractionType.Kick:

@@ -140,7 +140,7 @@ class ShortcutsCommand extends Command {
             punishment === IT.Ban || punishment === IT.Unban
               ? PermissionFlagsBits.BanMembers
               : punishment === IT.Mute || punishment === IT.Unmute
-              ? PermissionFlagsBits.MuteMembers
+              ? PermissionFlagsBits.ModerateMembers
               : punishment === IT.Kick
               ? PermissionFlagsBits.KickMembers
               : PermissionFlagsBits.ModerateMembers,

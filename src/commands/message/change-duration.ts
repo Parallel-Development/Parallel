@@ -57,7 +57,7 @@ class DurationCommand extends Command {
     if (infraction.expires !== null && date >= infraction.expires) throw 'This infraction has already expired.';
 
     if (infraction.type === InfractionType.Mute) {
-      if (!message.guild.members.me!.permissions.has(PermissionFlagsBits.MuteMembers))
+      if (!message.guild.members.me!.permissions.has(PermissionFlagsBits.ModerateMembers))
         throw 'I do not have permission to mute members.';
 
       if (duration > d28 || duration === 0) throw 'Mute duration must be 28 days or less.';

@@ -137,7 +137,7 @@ export async function checkShortcuts(guildId: string) {
         command.punishment === InfractionType.Ban || command.punishment === InfractionType.Unban
           ? PermissionFlagsBits.BanMembers
           : command.punishment === InfractionType.Mute || command.punishment === InfractionType.Unmute
-          ? PermissionFlagsBits.MuteMembers
+          ? PermissionFlagsBits.ModerateMembers
           : command.punishment === InfractionType.Kick
           ? PermissionFlagsBits.KickMembers
           : PermissionFlagsBits.ModerateMembers,

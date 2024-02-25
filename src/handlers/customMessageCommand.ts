@@ -28,12 +28,12 @@ export default async function (
     else return;
 
   switch (command.punishment) {
-    case InfractionType.Ban:
+    case InfractionType.Ban: case InfractionType.Unban:
       if (!message.guild.members.me!.permissions.has(PermissionFlagsBits.BanMembers))
         throw 'I must have the `Ban Members` permission to run this command.';
       break;
-    case InfractionType.Mute:
-      if (!message.guild.members.me!.permissions.has(PermissionFlagsBits.MuteMembers))
+    case InfractionType.Mute: case InfractionType.Unmute:
+      if (!message.guild.members.me!.permissions.has(PermissionFlagsBits.ModerateMembers))
         throw 'I must have the `Mute Members` permission to run this command.';
       break;
     case InfractionType.Kick:
