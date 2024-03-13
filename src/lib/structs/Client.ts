@@ -6,6 +6,7 @@ import type Command from './Command';
 import type Listener from './Listener';
 import type Modal from './Modal';
 import Button from './Button';
+import InfractionManager from './InfractionManager';
 
 class Client extends DJSClient {
   public db = new PrismaClient();
@@ -17,6 +18,8 @@ class Client extends DJSClient {
 
   public modals = new Map<string, Modal>();
   public buttons = new Map<string, Button>();
+
+  public infractions = new InfractionManager();
 
   constructor() {
     super({

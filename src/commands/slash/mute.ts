@@ -6,11 +6,9 @@ import {
   EmbedBuilder,
   Colors
 } from 'discord.js';
-import ms from 'ms';
 import Command, { properties, data } from '../../lib/structs/Command';
 import { adequateHierarchy, parseDuration } from '../../lib/util/functions';
 import { d28 } from '../../lib/util/constants';
-import punishLog from '../../handlers/punishLog';
 
 @data(
   new SlashCommandBuilder()
@@ -47,7 +45,7 @@ class MuteCommand extends Command {
     const reason = interaction.options.getString('reason') ?? 'Unspecified reason.';
 
     const durationStr = interaction.options.getString('duration');
-    let duration = durationStr ? parseDuration(durationStr) : null
+    let duration = durationStr ? parseDuration(durationStr) : null;
 
     if (Number.isNaN(duration)) throw 'Invalid duration.';
     if (duration) {
@@ -100,26 +98,9 @@ class MuteCommand extends Command {
       create: data
     });
 
-    const { infractionModeratorPublic, infoMute } = guild;
-    const expiresStr = Math.floor(Number(infraction.expires) / 1000);
+    await this.client.infractions.createDM(infraction);
 
-    const dm = new EmbedBuilder()
-      .setAuthor({ name: 'Parallel Moderation', iconURL: this.client.user!.displayAvatarURL() })
-      .setTitle(`You were muted in ${interaction.guild.name}`)
-      .setColor(Colors.Orange)
-      .setDescription(
-        `${reason}${expires ? `\n\n***•** Expires: <t:${expiresStr}> (<t:${expiresStr}:R>)*` : ''}${
-          infractionModeratorPublic ? `\n***•** Muted by ${interaction.member.toString()}*\n` : ''
-        }`
-      )
-      .setFooter({ text: `Infraction ID: ${infraction.id}` })
-      .setTimestamp();
-
-    if (infoMute) dm.addFields([{ name: 'Additional Information', value: infoMute }]);
-
-    await member.send({ embeds: [dm] }).catch(() => {});
-
-    punishLog(infraction);
+    this.client.infractions.createLog(infraction);
 
     const embed = new EmbedBuilder()
       .setColor(Colors.Orange)

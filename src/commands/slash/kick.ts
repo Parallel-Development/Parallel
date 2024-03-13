@@ -8,7 +8,6 @@ import {
 import { adequateHierarchy } from '../../lib/util/functions';
 import { InfractionType } from '@prisma/client';
 import Command, { properties, data } from '../../lib/structs/Command';
-import punishLog from '../../handlers/punishLog';
 
 @data(
   new SlashCommandBuilder()
@@ -46,29 +45,12 @@ class KickCommand extends Command {
         date: BigInt(Date.now()),
         moderatorId: interaction.user.id,
         reason
-      },
-      include: { guild: { select: { infractionModeratorPublic: true, infoKick: true } } }
+      }
     });
 
-    const { infractionModeratorPublic, infoKick } = infraction.guild;
-
-    const dm = new EmbedBuilder()
-      .setAuthor({ name: 'Parallel Moderation', iconURL: this.client.user!.displayAvatarURL() })
-      .setTitle(`You were kicked from ${interaction.guild.name}`)
-      .setColor(Colors.Red)
-      .setDescription(
-        `${reason}${infractionModeratorPublic ? `\n***•** Kicked by ${interaction.member.toString()}*\n` : ''}`
-      )
-      .setFooter({ text: `Infraction ID: ${infraction.id}` })
-      .setTimestamp();
-
-    if (infoKick) dm.addFields([{ name: 'Additional Information', value: infoKick }]);
-
-    await member.send({ embeds: [dm] }).catch(() => {});
-
+    await this.client.infractions.createDM(infraction);
     await member.kick(reason);
-
-    punishLog(infraction);
+    this.client.infractions.createLog(infraction);
 
     const embed = new EmbedBuilder()
       .setColor(Colors.Orange)

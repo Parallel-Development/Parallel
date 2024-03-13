@@ -2,7 +2,6 @@ import { PermissionFlagsBits, Colors, EmbedBuilder, Message } from 'discord.js';
 import { adequateHierarchy, getMember } from '../../lib/util/functions';
 import { InfractionType } from '@prisma/client';
 import Command, { properties } from '../../lib/structs/Command';
-import punishLog from '../../handlers/punishLog';
 
 @properties<'message'>({
   name: 'kick',
@@ -40,25 +39,10 @@ class KickCommand extends Command {
       include: { guild: { select: { infractionModeratorPublic: true, infoKick: true } } }
     });
 
-    const { infractionModeratorPublic, infoKick } = infraction.guild;
-
-    const dm = new EmbedBuilder()
-      .setAuthor({ name: 'Parallel Moderation', iconURL: this.client.user!.displayAvatarURL() })
-      .setTitle(`You were kicked from ${message.guild.name}`)
-      .setColor(Colors.Red)
-      .setDescription(
-        `${reason}${infractionModeratorPublic ? `\n***•** Kicked by ${message.member!.toString()}*\n` : ''}`
-      )
-      .setFooter({ text: `Infraction ID: ${infraction.id}` })
-      .setTimestamp();
-
-    if (infoKick) dm.addFields([{ name: 'Additional Information', value: infoKick }]);
-
-    await member.send({ embeds: [dm] }).catch(() => {});
-
+    await this.client.infractions.createDM(infraction);
     await member.kick(reason);
 
-    punishLog(infraction);
+    this.client.infractions.createLog(infraction);
 
     const embed = new EmbedBuilder()
       .setColor(Colors.Orange)

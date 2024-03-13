@@ -12,7 +12,6 @@ import {
   ButtonStyle,
   Guild,
   EmbedBuilder,
-  Colors,
   EmbedField,
   ModalMessageModalSubmitInteraction
 } from 'discord.js';
@@ -192,17 +191,18 @@ class AppealCommand extends Command {
 
         const { infractionModeratorPublic } = infraction.guild;
 
+        const user = await getUser(infraction.userId);
+        const moderator = await getUser(infraction.moderatorId);
         const infractionEmbed = new EmbedBuilder()
-          .setTitle(`Case ${infraction.id} | ${infraction.type.toString()}`)
+          .setAuthor({
+            name: `${infractionModeratorPublic ? `${moderator!.username} (${moderator!.id})` : `Parallel Moderation`}`,
+            iconURL: infractionModeratorPublic ? moderator!.displayAvatarURL() : this.client.user!.displayAvatarURL()
+          })
           .setColor(infractionColors[infraction.type])
           .setDescription(
-            `${
-              infractionModeratorPublic
-                ? `\n**Moderator:** ${(await getUser(infraction.moderatorId))!.username} (${infraction.moderatorId})`
-                : ''
-            }\n**Date:** <t:${Math.floor(Number(infraction.date) / 1000)}> (<t:${Math.floor(
-              Number(infraction.date) / 1000
-            )}:R>)${
+            `**${
+              infraction.type === InfractionType.Ban || infraction.type === InfractionType.Unban ? 'User' : 'Member'
+            }:** \`${user!.username}\` (${user!.id})\n**Action:** ${infraction.type.toString()}${
               infraction.expires
                 ? `\n**Duration:** ${ms(Number(infraction.expires - infraction.date), {
                     long: true
@@ -211,7 +211,9 @@ class AppealCommand extends Command {
                   )}:R>)`
                 : ''
             }\n**Reason:** ${infraction.reason}`
-          );
+          )
+          .setFooter({ text: `Infraction ID: ${infraction.id ? infraction.id : 'Undefined'}` })
+          .setTimestamp(Number(infraction.date));
 
         return message.edit({
           content: 'This is my best guess for the infraction you are trying to appeal:',

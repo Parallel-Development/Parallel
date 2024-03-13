@@ -1,5 +1,4 @@
 import { Message, EmbedBuilder, Colors } from 'discord.js';
-
 import { checkBlacklisted, confirmGuild, unresolvedGuilds } from './chatInputCommand';
 import { hasSlashCommandPermission } from '../lib/util/functions';
 import client from '../client';

@@ -9,9 +9,7 @@ import Command, { data } from '../../lib/structs/Command';
 import ms from 'ms';
 import { adequateHierarchy, parseDuration } from '../../lib/util/functions';
 import { InfractionType } from '@prisma/client';
-import { infractionColors, pastTenseInfractionTypes } from '../../lib/util/constants';
 import { Escalation } from '../../types';
-import punishLog from '../../handlers/punishLog';
 
 @data(
   new SlashCommandBuilder()
@@ -43,8 +41,8 @@ class WarnCommand extends Command {
 
     const durationStr = interaction.options.getString('erase-after');
     const duration = durationStr ? parseDuration(durationStr) : null;
-    
-    if (Number.isNaN(duration) && durationStr !== 'permanent') throw 'Invalid duration.'
+
+    if (Number.isNaN(duration) && durationStr !== 'permanent') throw 'Invalid duration.';
     if (duration && duration < 1000) throw 'Temporary warn duration must be at least 1 second.';
 
     const date = Date.now();
@@ -71,24 +69,8 @@ class WarnCommand extends Command {
       }
     });
 
-    const { infractionModeratorPublic, infoWarn } = guild;
-
-    const dm = new EmbedBuilder()
-      .setAuthor({ name: 'Parallel Moderation', iconURL: this.client.user!.displayAvatarURL() })
-      .setTitle(`You received a warning in ${interaction.guild.name}`)
-      .setColor(Colors.Yellow)
-      .setDescription(
-        `${reason}${
-          expires ? `\n\n***•** This warning is valid until <t:${Math.floor(Number(infraction.expires) / 1000)}>*` : ''
-        }${infractionModeratorPublic ? `\n***•** Warning issued by ${interaction.member.toString()}*\n` : ''}`
-      )
-      .setFooter({ text: `Infraction ID: ${infraction.id}` })
-      .setTimestamp();
-
-    if (infoWarn) dm.addFields([{ name: 'Additional Information', value: infoWarn }]);
-
-    await member.send({ embeds: [dm] }).catch(() => {});
-    punishLog(infraction);
+    await this.client.infractions.createDM(infraction);
+    this.client.infractions.createLog(infraction);
 
     const embed = new EmbedBuilder()
       .setColor(Colors.Yellow)
@@ -168,38 +150,7 @@ class WarnCommand extends Command {
       });
     }
 
-    const eDm = new EmbedBuilder()
-      .setAuthor({ name: 'Parallel Moderation', iconURL: this.client.user!.displayAvatarURL() })
-      .setTitle(
-        `You were ${
-          pastTenseInfractionTypes[escalation.punishment.toLowerCase() as keyof typeof pastTenseInfractionTypes]
-        } ${
-          escalation.punishment === InfractionType.Ban || escalation.punishment === InfractionType.Kick ? 'from' : 'in'
-        } ${interaction.guild.name}`
-      )
-      .setColor(infractionColors[escalation.punishment])
-      .setDescription(
-        `${eInfraction.reason}${eExpires ? `\n\n***•** Expires: <t:${eExpiresStr}> (<t:${eExpiresStr}:R>)*` : ''}`
-      )
-      .setFooter({ text: `Infraction ID: ${eInfraction.id}` })
-      .setTimestamp();
-
-    switch (escalation.punishment) {
-      case InfractionType.Ban:
-        if (guild.infoBan) eDm.addFields([{ name: 'Additional Information', value: guild.infoBan }]);
-        break;
-      case InfractionType.Kick:
-        if (guild.infoKick) eDm.addFields([{ name: 'Additional Information', value: guild.infoKick }]);
-        break;
-      case InfractionType.Mute:
-        if (guild.infoMute) eDm.addFields([{ name: 'Additional Information', value: guild.infoMute }]);
-        break;
-      case InfractionType.Warn:
-        if (guild.infoWarn) eDm.addFields([{ name: 'Additional Information', value: guild.infoWarn }]);
-        break;
-    }
-
-    if (member) await member!.send({ embeds: [eDm] }).catch(() => {});
+    if (member) await this.client.infractions.createDM(eInfraction);
 
     switch (escalation.punishment) {
       case InfractionType.Ban:
@@ -213,7 +164,7 @@ class WarnCommand extends Command {
         break;
     }
 
-    punishLog(eInfraction);
+    this.client.infractions.createLog(eInfraction);
   }
 }
 

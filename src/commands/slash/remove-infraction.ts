@@ -8,7 +8,6 @@ import {
 import Command, { data } from '../../lib/structs/Command';
 import { getMember } from '../../lib/util/functions';
 import { Infraction, InfractionType } from '@prisma/client';
-import punishLog from '../../handlers/punishLog';
 
 @data(
   new SlashCommandBuilder()
@@ -67,7 +66,7 @@ class RemoveInfractionCommand extends Command {
           throw 'I cannot undo that type of punishment.';
       }
 
-      punishLog({
+      this.client.infractions.createLog({
         userId: infraction.userId,
         guildId: interaction.guildId,
         moderatorId: interaction.user.id,

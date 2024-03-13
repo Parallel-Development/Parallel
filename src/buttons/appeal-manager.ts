@@ -11,7 +11,7 @@ import {
 } from 'discord.js';
 import ms from 'ms';
 import Button from '../lib/structs/Button';
-import { getMember, hasSlashCommandPermission } from '../lib/util/functions';
+import { getMember, getUser, hasSlashCommandPermission } from '../lib/util/functions';
 import { infractionColors } from '../lib/util/constants';
 const reason = 'Unspecified reason.';
 
@@ -48,7 +48,7 @@ class AppealManagerButton extends Button {
 
       return interaction.update({ components: [row], embeds: [embed] });
     }
-    
+
     if (!infraction.appeal) {
       const notAcceptedButton = new ButtonBuilder()
         .setCustomId('?')
@@ -228,15 +228,15 @@ class AppealManagerButton extends Button {
         return interaction.editReply({ components: [row], embeds: [embed] });
       }
       case 'context': {
+        const user = await getUser(infraction.userId);
+        const moderator = await getUser(infraction.moderatorId);
         const infractionEmbed = new EmbedBuilder()
-          .setTitle(`Case ${infractionId} | ${infraction.type.toString()}`)
+          .setAuthor({ name: `${moderator!.username} (${moderator!.id})`, iconURL: moderator!.displayAvatarURL() })
           .setColor(infractionColors[infraction.type])
           .setDescription(
-            `**User:** <@${infraction.userId}> (${infraction.userId})\n**Moderator:** <@${infraction.moderatorId}> (${
-              infraction.moderatorId
-            })\n**Date:** <t:${Math.floor(Number(infraction.date) / 1000)}> (<t:${Math.floor(
-              Number(infraction.date) / 1000
-            )}:R>)${
+            `**${
+              infraction.type === InfractionType.Ban || infraction.type === InfractionType.Unban ? 'User' : 'Member'
+            }:** \`${user!.username}\` (${user!.id})\n**Action:** ${infraction.type.toString()}${
               infraction.expires
                 ? `\n**Duration:** ${ms(Number(infraction.expires - infraction.date), {
                     long: true
@@ -245,9 +245,11 @@ class AppealManagerButton extends Button {
                   )}:R>)`
                 : ''
             }\n**Reason:** ${infraction.reason}${
-              infraction.appeal ? '\n***•** There is an appeal for this infraction*' : ''
+              infraction.appeal ? `\n***\\- There is an appeal for this infraction.*` : ''
             }`
-          );
+          )
+          .setFooter({ text: `Infraction ID: ${infraction.id ? infraction.id : 'Undefined'}` })
+          .setTimestamp(Number(infraction.date));
 
         return interaction.reply({ embeds: [infractionEmbed], ephemeral: true });
       }
