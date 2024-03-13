@@ -9,7 +9,6 @@ import {
 import ms from 'ms';
 import Command, { properties, data } from '../../lib/structs/Command';
 import { adequateHierarchy, parseDuration } from '../../lib/util/functions';
-import punishLog from '../../handlers/punishLog';
 
 @data(
   new SlashCommandBuilder()
@@ -53,13 +52,13 @@ class BanCommand extends Command {
       if (!adequateHierarchy(interaction.guild.members.me!, member))
         throw 'I cannot ban this member due to inadequete hierarchy.';
     }
-    
+
     const reason = interaction.options.getString('reason') ?? 'Unspecified reason.';
 
     const durationStr = interaction.options.getString('duration');
     const duration = durationStr ? parseDuration(durationStr) : null;
-    
-    if (Number.isNaN(duration) && durationStr !== 'permanent') throw 'Invalid duration.'
+
+    if (Number.isNaN(duration) && durationStr !== 'permanent') throw 'Invalid duration.';
     if (duration && duration < 1000) throw 'Temporary ban duration must be at least 1 second.';
 
     const date = Date.now();
@@ -115,28 +114,9 @@ class BanCommand extends Command {
         })
         .catch(() => {});
 
-    const { infractionModeratorPublic, infoBan } = guild;
-    const expiresStr = Math.floor(Number(infraction.expires) / 1000);
-
-    const dm = new EmbedBuilder()
-      .setAuthor({ name: 'Parallel Moderation', iconURL: this.client.user!.displayAvatarURL() })
-      .setTitle(`You were banned from ${interaction.guild.name}`)
-      .setColor(Colors.Red)
-      .setDescription(
-        `${reason}${expires ? `\n\n***•** Expires: <t:${expiresStr}> (<t:${expiresStr}:R>)*` : ''}${
-          infractionModeratorPublic ? `\n***•** Banned by ${interaction.member.toString()}*\n` : ''
-        }`
-      )
-      .setFooter({ text: `Infraction ID: ${infraction.id}` })
-      .setTimestamp();
-
-    if (infoBan) dm.addFields([{ name: 'Additional Information', value: infoBan }]);
-
-    if (member) await member.send({ embeds: [dm] }).catch(() => {});
-
+    if (member) await this.client.infractions.createDM(infraction);
     await interaction.guild.members.ban(user.id, { reason, deleteMessageSeconds });
-
-    punishLog(infraction);
+    this.client.infractions.createLog(infraction);
 
     const embed = new EmbedBuilder()
       .setColor(Colors.Red)

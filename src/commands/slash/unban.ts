@@ -7,7 +7,6 @@ import {
   Colors
 } from 'discord.js';
 import Command, { properties, data } from '../../lib/structs/Command';
-import punishLog from '../../handlers/punishLog';
 
 @data(
   new SlashCommandBuilder()
@@ -44,7 +43,7 @@ class UnbanCommand extends Command {
 
     await interaction.guild.members.unban(user.id, reason);
 
-    punishLog(infraction);
+    this.client.infractions.createLog(infraction);
 
     const embed = new EmbedBuilder()
       .setColor(Colors.Green)

@@ -1,5 +1,5 @@
-import { PermissionFlagsBits, Message } from 'discord.js';
-import Command, { data, properties } from '../../lib/structs/Command';
+import {  Message } from 'discord.js';
+import Command, { properties } from '../../lib/structs/Command';
 import { bin } from '../../lib/util/functions';
 
 @properties<'message'>({

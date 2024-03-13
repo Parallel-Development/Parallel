@@ -9,7 +9,6 @@ import {
 import { InfractionType } from '@prisma/client';
 import client from '../client';
 import customSlashCommand from './customSlashCommand';
-import { AutoModConfig } from '../types';
 
 // imported by messageCommand
 export const customCommandsConfirmed = new Set();

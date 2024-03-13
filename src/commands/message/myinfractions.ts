@@ -1,4 +1,4 @@
-import { type ChatInputCommandInteraction, EmbedBuilder, type EmbedField, Message } from 'discord.js';
+import { EmbedBuilder, type EmbedField, Message } from 'discord.js';
 import Command, { properties } from '../../lib/structs/Command';
 import { infractionsPerPage, mainColor } from '../../lib/util/constants';
 

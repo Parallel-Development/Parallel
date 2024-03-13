@@ -2,7 +2,6 @@ import { PermissionFlagsBits, EmbedBuilder, Colors, Message } from 'discord.js';
 import Command, { properties } from '../../lib/structs/Command';
 import { getMember } from '../../lib/util/functions';
 import { Infraction, InfractionType } from '@prisma/client';
-import punishLog from '../../handlers/punishLog';
 
 @properties<'message'>({
   name: 'remove-infraction',
@@ -61,7 +60,7 @@ class RemoveInfractionCommand extends Command {
           throw 'I cannot undo that type of punishment.';
       }
 
-      punishLog({
+      this.client.infractions.createLog({
         userId: infraction.userId,
         guildId: message.guildId,
         moderatorId: message.author.id,

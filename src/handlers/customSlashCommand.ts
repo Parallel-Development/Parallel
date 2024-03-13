@@ -5,7 +5,6 @@ import { adequateHierarchy } from '../lib/util/functions';
 import { Escalation } from '../types';
 import ms from 'ms';
 import client from '../client';
-import punishLog from './punishLog';
 
 export default async function (interaction: ChatInputCommandInteraction<'cached'>) {
   const command = await client.db.shortcut.findUnique({
@@ -17,11 +16,13 @@ export default async function (interaction: ChatInputCommandInteraction<'cached'
   if (!command) throw 'Unknown Command.';
 
   switch (command.punishment) {
-    case InfractionType.Ban: case InfractionType.Unban:
+    case InfractionType.Ban:
+    case InfractionType.Unban:
       if (!interaction.guild.members.me!.permissions.has(PermissionFlagsBits.BanMembers))
         throw 'I must have the `Ban Members` permission to run this command.';
       break;
-    case InfractionType.Mute: case InfractionType.Unmute:
+    case InfractionType.Mute:
+    case InfractionType.Unmute:
       if (!interaction.guild.members.me!.permissions.has(PermissionFlagsBits.ModerateMembers))
         throw 'I must have the `Mute Members` permission to run this command.';
       break;
@@ -107,38 +108,7 @@ export default async function (interaction: ChatInputCommandInteraction<'cached'
       });
   }
 
-  const { infoBan, infoKick, infoMute, infoWarn, infractionModeratorPublic } = infraction.guild;
-
-  const dm = new EmbedBuilder()
-    .setAuthor({ name: 'Parallel Moderation', iconURL: client.user!.displayAvatarURL() })
-    .setTitle(
-      `You were ${pastTenseInfractionTypes[lpunishment as keyof typeof pastTenseInfractionTypes]} ${
-        punishment === IT.Ban || punishment === IT.Kick ? 'from' : 'in'
-      } ${interaction.guild.name}`
-    )
-    .setColor(infractionColors[punishment])
-    .setDescription(`${reason}${expires ? `\n\n***•** Expires: <t:${expiresStr}> (<t:${expiresStr}:R>)*` : ''}${infractionModeratorPublic ? `\n***•** Warning issued by ${interaction.member!.toString()}*\n` : ''}`)
-    .setFooter({ text: `Infraction ID: ${infraction.id}` })
-    .setTimestamp();
-
-  switch (punishment) {
-    case IT.Ban:
-      if (infoBan) dm.addFields([{ name: 'Additional Information', value: infoBan }]);
-      break;
-    case IT.Kick:
-      if (infoKick) dm.addFields([{ name: 'Additional Information', value: infoKick }]);
-      break;
-    case IT.Mute:
-      if (infoMute) dm.addFields([{ name: 'Additional Information', value: infoMute }]);
-      break;
-    case IT.Warn:
-      if (infoWarn) dm.addFields([{ name: 'Additional Information', value: infoWarn }]);
-      break;
-  }
-
-  if (target instanceof GuildMember) await target.send({ embeds: [dm] }).catch(() => {});
-
-  punishLog(infraction);
+  if (target instanceof GuildMember) await client.infractions.createDM(infraction);
 
   switch (punishment) {
     case IT.Ban:
@@ -157,6 +127,8 @@ export default async function (interaction: ChatInputCommandInteraction<'cached'
       await (target as GuildMember).timeout(null);
       break;
   }
+
+  client.infractions.createLog(infraction);
 
   const tense = pastTenseInfractionTypes[lpunishment as keyof typeof pastTenseInfractionTypes];
 
@@ -245,42 +217,7 @@ export default async function (interaction: ChatInputCommandInteraction<'cached'
     });
   }
 
-  const eDm = new EmbedBuilder()
-    .setAuthor({ name: 'Parallel Moderation', iconURL: client.user!.displayAvatarURL() })
-    .setTitle(
-      `You were ${
-        pastTenseInfractionTypes[escalation.punishment.toLowerCase() as keyof typeof pastTenseInfractionTypes]
-      } ${
-        escalation.punishment === InfractionType.Ban || escalation.punishment === InfractionType.Kick ? 'from' : 'in'
-      } ${interaction.guild.name}`
-    )
-    .setColor(infractionColors[escalation.punishment])
-    .setDescription(
-      `${eInfraction.reason}${eExpires ? `\n\n***•** Expires: <t:${eExpiresStr}> (<t:${eExpiresStr}:R>)*` : ''}`
-    )
-    .setFooter({ text: `Infraction ID: ${eInfraction.id}` })
-    .setTimestamp();
-
-  switch (escalation.punishment) {
-    case InfractionType.Ban:
-      if (infraction.guild.infoBan)
-        eDm.addFields([{ name: 'Additional Information', value: infraction.guild.infoBan }]);
-      break;
-    case InfractionType.Kick:
-      if (infraction.guild.infoKick)
-        eDm.addFields([{ name: 'Additional Information', value: infraction.guild.infoKick }]);
-      break;
-    case InfractionType.Mute:
-      if (infraction.guild.infoMute)
-        eDm.addFields([{ name: 'Additional Information', value: infraction.guild.infoMute }]);
-      break;
-    case InfractionType.Warn:
-      if (infraction.guild.infoWarn)
-        eDm.addFields([{ name: 'Additional Information', value: infraction.guild.infoWarn }]);
-      break;
-  }
-
-  await target.send({ embeds: [eDm] }).catch(() => {});
+  await client.infractions.createDM(eInfraction);
 
   switch (escalation.punishment) {
     case InfractionType.Ban:
@@ -294,5 +231,5 @@ export default async function (interaction: ChatInputCommandInteraction<'cached'
       break;
   }
 
-  punishLog(eInfraction);
+  client.infractions.createLog(eInfraction);
 }

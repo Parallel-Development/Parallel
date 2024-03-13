@@ -1,9 +1,7 @@
 import { InfractionType } from '@prisma/client';
 import { PermissionFlagsBits, EmbedBuilder, Colors, Message, GuildMember } from 'discord.js';
-import ms from 'ms';
 import Command, { properties } from '../../lib/structs/Command';
 import { adequateHierarchy, getMember, getUser, parseDuration } from '../../lib/util/functions';
-import punishLog from '../../handlers/punishLog';
 
 @properties<'message'>({
   name: 'ban',
@@ -31,8 +29,7 @@ class BanCommand extends Command {
 
     const durationStr = args[1];
     let duration = null;
-    if (args.length >= 2 && args[1] !== 'permanent')
-      duration = parseDuration(durationStr);
+    if (args.length >= 2 && args[1] !== 'permanent') duration = parseDuration(durationStr);
 
     const date = Date.now();
 
@@ -87,28 +84,11 @@ class BanCommand extends Command {
         })
         .catch(() => {});
 
-    const { infractionModeratorPublic, infoBan } = guild;
-    const expiresStr = Math.floor(Number(infraction.expires) / 1000);
-
-    const dm = new EmbedBuilder()
-      .setAuthor({ name: 'Parallel Moderation', iconURL: this.client.user!.displayAvatarURL() })
-      .setTitle(`You were banned from ${message.guild.name}`)
-      .setColor(Colors.Red)
-      .setDescription(
-        `${reason}${duration ? `\n\n***•** Expires: <t:${expiresStr}> (<t:${expiresStr}:R>)*` : ''}${
-          infractionModeratorPublic ? `\n***•** Banned by ${message.member!.toString()}*\n` : ''
-        }`
-      )
-      .setFooter({ text: `Infraction ID: ${infraction.id}` })
-      .setTimestamp();
-
-    if (infoBan) dm.addFields([{ name: 'Additional Information', value: infoBan }]);
-
-    if (user instanceof GuildMember) await user.send({ embeds: [dm] }).catch(() => {});
+    if (user instanceof GuildMember) await this.client.infractions.createDM(infraction);
 
     await message.guild.members.ban(user.id, { reason });
 
-    punishLog(infraction);
+    this.client.infractions.createLog(infraction);
 
     const embed = new EmbedBuilder()
       .setColor(Colors.Red)

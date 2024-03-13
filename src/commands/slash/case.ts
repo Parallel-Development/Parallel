@@ -9,6 +9,7 @@ import Command, { data } from '../../lib/structs/Command';
 import { InfractionType } from '@prisma/client';
 import ms from 'ms';
 import { infractionColors } from '../../lib/util/constants';
+import { getUser } from '../../lib/util/functions';
 
 @data(
   new SlashCommandBuilder()
@@ -31,15 +32,15 @@ class CaseCommand extends Command {
 
     if (infraction?.guildId !== interaction.guildId) throw 'No infraction with that ID exists in this guild.';
 
+    const user = await getUser(infraction.userId);
+    const moderator = await getUser(infraction.moderatorId);
     const infractionEmbed = new EmbedBuilder()
-      .setTitle(`Case ${id} | ${infraction.type.toString()}`)
+      .setAuthor({ name: `${moderator!.username} (${moderator!.id})`, iconURL: moderator!.displayAvatarURL() })
       .setColor(infractionColors[infraction.type])
       .setDescription(
-        `**User:** <@${infraction.userId}> (${infraction.userId})\n**Moderator:** <@${infraction.moderatorId}> (${
-          infraction.moderatorId
-        })\n**Date:** <t:${Math.floor(Number(infraction.date) / 1000)}> (<t:${Math.floor(
-          Number(infraction.date) / 1000
-        )}:R>)${
+        `**${
+          infraction.type === InfractionType.Ban || infraction.type === InfractionType.Unban ? 'User' : 'Member'
+        }:** \`${user!.username}\` (${user!.id})\n**Action:** ${infraction.type.toString()}${
           infraction.expires
             ? `\n**Duration:** ${ms(Number(infraction.expires - infraction.date), {
                 long: true
@@ -48,9 +49,11 @@ class CaseCommand extends Command {
               )}:R>)`
             : ''
         }\n**Reason:** ${infraction.reason}${
-          infraction.appeal ? '\n***•** There is an appeal for this infraction*' : ''
+          infraction.appeal ? `\n***\\- There is an appeal for this infraction.*` : ''
         }`
-      );
+      )
+      .setFooter({ text: `Infraction ID: ${infraction.id ? infraction.id : 'Undefined'}` })
+      .setTimestamp(Number(infraction.date));
 
     return interaction.reply({ embeds: [infractionEmbed] });
   }

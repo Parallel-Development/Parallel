@@ -3,7 +3,6 @@ import { Colors, PermissionFlagsBits } from 'discord.js';
 import { Infraction, InfractionType } from '@prisma/client';
 import client from './client';
 import { getMember, sleep } from './lib/util/functions';
-import punishLog from './handlers/punishLog';
 
 const MS_1_MINUTE = 60000;
 const MS_24_HOURS = 86400000;
@@ -88,7 +87,7 @@ setInterval(async () => {
         }
       });
 
-      punishLog({
+      client.infractions.createLog({
         userId: task.userId,
         guildId: task.guildId,
         moderatorId: client.user!.id,

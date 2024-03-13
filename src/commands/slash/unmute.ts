@@ -8,7 +8,6 @@ import {
 } from 'discord.js';
 import Command, { properties, data } from '../../lib/structs/Command';
 import { adequateHierarchy } from '../../lib/util/functions';
-import punishLog from '../../handlers/punishLog';
 
 @data(
   new SlashCommandBuilder()
@@ -58,24 +57,11 @@ class MuteCommand extends Command {
         moderatorId: interaction.user.id,
         date,
         reason
-      },
-      include: { guild: { select: { infractionModeratorPublic: true } } }
+      }
     }))!;
 
-    const { infractionModeratorPublic } = infraction.guild;
-
-    const dm = new EmbedBuilder()
-      .setAuthor({ name: 'Parallel Moderation', iconURL: this.client.user!.displayAvatarURL() })
-      .setTitle(`You were unmuted in ${interaction.guild.name}`)
-      .setColor(Colors.Green)
-      .setDescription(
-        `${reason}${infractionModeratorPublic ? `\n\n***•** Unmuted by ${interaction.member.toString()}*\n` : ''}`
-      )
-      .setTimestamp();
-
-    await member.send({ embeds: [dm] }).catch(() => {});
-
-    punishLog(infraction);
+    await this.client.infractions.createDM(infraction);
+    this.client.infractions.createLog(infraction);
 
     const embed = new EmbedBuilder()
       .setColor(Colors.Green)

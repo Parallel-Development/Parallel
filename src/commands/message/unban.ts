@@ -2,7 +2,6 @@ import { InfractionType } from '@prisma/client';
 import { PermissionFlagsBits, Message, EmbedBuilder, Colors } from 'discord.js';
 import Command, { properties, data } from '../../lib/structs/Command';
 import { getUser } from '../../lib/util/functions';
-import punishLog from '../../handlers/punishLog';
 
 @properties<'message'>({
   name: 'unban',
@@ -39,7 +38,7 @@ class UnbanCommand extends Command {
 
     await message.guild.members.unban(user.id, reason);
 
-    punishLog(infraction);
+    this.client.infractions.createLog(infraction);
 
     const embed = new EmbedBuilder()
       .setColor(Colors.Green)

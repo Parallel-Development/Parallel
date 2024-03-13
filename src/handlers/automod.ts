@@ -1,10 +1,9 @@
 import { InfractionType } from '@prisma/client';
-import { Colors, EmbedBuilder, Guild, GuildMember, Message, PermissionFlagsBits } from 'discord.js';
-import { AutoModLocations, domainReg, infractionColors, pastTenseInfractionTypes } from '../lib/util/constants';
+import {  Guild, GuildMember, Message, PermissionFlagsBits } from 'discord.js';
+import { AutoModLocations, domainReg} from '../lib/util/constants';
 import { AutoModConfig, AutoModSpamTrigger, Escalation } from '../types';
 import client from '../client';
 import ms from 'ms';
-import punishLog from './punishLog';
 
 // userId.guildId
 const spamTrack = new Map<string, number[]>();
@@ -92,13 +91,7 @@ export default async function (message: Message<true>) {
       await message.channel.bulkDelete(messages);
       if (!spam.punishment) return;
 
-      return autoModPunish(
-        message.member,
-        message.guild,
-        'Fast message spam.',
-        spam.punishment,
-        +spam.duration
-      );
+      return autoModPunish(message.member, message.guild, 'Fast message spam.', spam.punishment, +spam.duration);
     }
 
     const biggest = (automod.autoModSpamTriggers as AutoModSpamTrigger[]).reduce((prev, curr) =>
@@ -120,16 +113,13 @@ export async function autoModPunish(
 
   switch (punishment) {
     case InfractionType.Ban:
-      if (!member.guild.members.me!.permissions.has(PermissionFlagsBits.BanMembers))
-        return;
+      if (!member.guild.members.me!.permissions.has(PermissionFlagsBits.BanMembers)) return;
       break;
     case InfractionType.Mute:
-      if (!member.guild.members.me!.permissions.has(PermissionFlagsBits.ModerateMembers))
-        return;
+      if (!member.guild.members.me!.permissions.has(PermissionFlagsBits.ModerateMembers)) return;
       break;
     case InfractionType.Kick:
-      if (!member.guild.members.me!.permissions.has(PermissionFlagsBits.KickMembers))
-        return;
+      if (!member.guild.members.me!.permissions.has(PermissionFlagsBits.KickMembers)) return;
       break;
   }
 
@@ -172,36 +162,7 @@ export async function autoModPunish(
     });
   }
 
-  const dm = new EmbedBuilder()
-    .setAuthor({ name: 'Parallel Moderation', iconURL: client.user!.displayAvatarURL() })
-    .setTitle(
-      `You were ${pastTenseInfractionTypes[punishment.toLowerCase() as keyof typeof pastTenseInfractionTypes]} ${
-        punishment === InfractionType.Ban || punishment === InfractionType.Kick ? 'from' : 'in'
-      } ${guild.name}`
-    )
-    .setColor(infractionColors[punishment])
-    .setDescription(`${reason}${expires ? `\n\n***•** Expires: <t:${expiresStr}> (<t:${expiresStr}:R>)*` : ''}`)
-    .setFooter({ text: `Infraction ID: ${infraction.id}` })
-    .setTimestamp();
-
-  switch (punishment) {
-    case InfractionType.Ban:
-      if (infoBan) dm.addFields([{ name: 'Additional Information', value: infoBan }]);
-      break;
-    case InfractionType.Kick:
-      if (infoKick) dm.addFields([{ name: 'Additional Information', value: infoKick }]);
-      break;
-    case InfractionType.Mute:
-      if (infoMute) dm.addFields([{ name: 'Additional Information', value: infoMute }]);
-      break;
-    case InfractionType.Warn:
-      if (infoWarn) dm.addFields([{ name: 'Additional Information', value: infoWarn }]);
-      break;
-  }
-
-  await member!.send({ embeds: [dm] }).catch(() => {});
-
-  punishLog(infraction);
+  await client.infractions.createDM(infraction);
 
   switch (punishment) {
     case InfractionType.Ban:
@@ -214,6 +175,8 @@ export async function autoModPunish(
       await member!.timeout(Number(duration), reason);
       break;
   }
+
+  client.infractions.createLog(infraction);
 
   if (punishment !== InfractionType.Warn) return true;
 
@@ -286,40 +249,7 @@ export async function autoModPunish(
     });
   }
 
-  const eDm = new EmbedBuilder()
-    .setAuthor({ name: 'Parallel Moderation', iconURL: client.user!.displayAvatarURL() })
-    .setTitle(
-      `You were ${
-        pastTenseInfractionTypes[escalation.punishment.toLowerCase() as keyof typeof pastTenseInfractionTypes]
-      } ${
-        escalation.punishment === InfractionType.Ban || escalation.punishment === InfractionType.Kick ? 'from' : 'in'
-      } ${guild.name}`
-    )
-    .setColor(infractionColors[escalation.punishment])
-    .setDescription(
-      `${eInfraction.reason}${eExpires ? `\n\n***•** Expires: <t:${eExpiresStr}> (<t:${eExpiresStr}:R>)*` : ''}`
-    )
-    .setFooter({ text: `Infraction ID: ${eInfraction.id}` })
-    .setTimestamp();
-
-  switch (escalation.punishment) {
-    case InfractionType.Ban:
-      if (infoBan) eDm.addFields([{ name: 'Additional Information', value: infoBan }]);
-      break;
-    case InfractionType.Kick:
-      if (infoKick) eDm.addFields([{ name: 'Additional Information', value: infoKick }]);
-      break;
-    case InfractionType.Mute:
-      if (infoMute) eDm.addFields([{ name: 'Additional Information', value: infoMute }]);
-      break;
-    case InfractionType.Warn:
-      if (infoWarn) eDm.addFields([{ name: 'Additional Information', value: infoWarn }]);
-      break;
-  }
-
-  await member!.send({ embeds: [eDm] }).catch(() => {});
-
-  punishLog(eInfraction);
+  await client.infractions.createDM(eInfraction);
 
   switch (escalation.punishment) {
     case InfractionType.Ban:
@@ -333,5 +263,6 @@ export async function autoModPunish(
       break;
   }
 
+  client.infractions.createLog(eInfraction);
   return true;
 }
