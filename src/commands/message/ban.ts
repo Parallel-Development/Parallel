@@ -23,10 +23,10 @@ class BanCommand extends Command {
     if (user.id === this.client.user!.id) throw 'You cannot ban me.';
 
     if (user instanceof GuildMember) {
-      if (!adequateHierarchy(message.member!, user)) throw 'You cannot ban this member due to inadequete hierarchy.';
+      if (!adequateHierarchy(message.member!, user)) throw 'You cannot ban this member due to inadequate hierarchy.';
 
       if (!adequateHierarchy(message.guild.members.me!, user))
-        throw 'I cannot ban this member due to inadequete hierarchy.';
+        throw 'I cannot ban this member due to inadequate hierarchy.';
     }
 
     const durationStr = args[1];

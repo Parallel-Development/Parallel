@@ -23,10 +23,10 @@ class MuteCommand extends Command {
     if (member.id === message.author.id) throw 'You cannot mute yourself.';
     if (member.id === this.client.user!.id) throw 'You cannot mute me.';
 
-    if (!adequateHierarchy(message.member!, member)) throw 'You cannot mute this member due to inadequete hierarchy.';
+    if (!adequateHierarchy(message.member!, member)) throw 'You cannot mute this member due to inadequate hierarchy.';
 
     if (!adequateHierarchy(message.guild.members.me!, member))
-      throw 'I cannot mute this member due to inadequete hierarchy.';
+      throw 'I cannot mute this member due to inadequate hierarchy.';
 
     if (member.permissions.has(PermissionFlagsBits.Administrator)) throw 'You cannot mute an administrator.';
 

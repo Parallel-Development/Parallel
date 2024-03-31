@@ -29,7 +29,7 @@ class MuteCommand extends Command {
     if (!member.isCommunicationDisabled()) throw 'This member is not muted.';
 
     if (!adequateHierarchy(interaction.guild.members.me!, member))
-      throw 'I cannot unmute this member due to inadequete hierarchy.';
+      throw 'I cannot unmute this member due to inadequate hierarchy.';
 
     const reason = interaction.options.getString('reason') ?? 'Unspecified reason.';
     const date = Date.now();

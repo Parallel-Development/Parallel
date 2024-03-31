@@ -29,10 +29,10 @@ class KickCommand extends Command {
     if (member.id === this.client.user!.id) throw 'You cannot kick me.';
 
     if (!adequateHierarchy(interaction.member, member))
-      throw 'You cannot kick this member due to inadequete hierarchy.';
+      throw 'You cannot kick this member due to inadequate hierarchy.';
 
     if (!adequateHierarchy(interaction.guild.members.me!, member))
-      throw 'I cannot kick this member due to inadequete hierarchy.';
+      throw 'I cannot kick this member due to inadequate hierarchy.';
 
     const reason = interaction.options.getString('reason') ?? 'Unspecified reason.';
 

@@ -22,7 +22,7 @@ class WarnCommand extends Command {
     if (member.id === message.author.id) throw 'You cannot warn yourself.';
     if (member.id === this.client.user!.id) throw 'You cannot warn me.';
 
-    if (!adequateHierarchy(message.member!, member)) throw 'You cannot warn this member due to inadequete hierarchy.';
+    if (!adequateHierarchy(message.member!, member)) throw 'You cannot warn this member due to inadequate hierarchy.';
 
     const durationStr = args[1];
     let duration = null;

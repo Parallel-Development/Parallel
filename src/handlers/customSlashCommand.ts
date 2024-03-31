@@ -57,10 +57,10 @@ export default async function (interaction: ChatInputCommandInteraction<'cached'
       throw 'You cannot mute an administrator.';
 
     if (!adequateHierarchy(interaction.member, target))
-      throw `You cannot ${lpunishment} this member due to inadequete hierarchy.`;
+      throw `You cannot ${lpunishment} this member due to inadequate hierarchy.`;
 
     if (punishment !== IT.Warn && !adequateHierarchy(interaction.guild.members.me!, target))
-      throw `I cannot ${lpunishment} this member due to inadequete hierarchy.`;
+      throw `I cannot ${lpunishment} this member due to inadequate hierarchy.`;
   }
 
   await interaction.deferReply();

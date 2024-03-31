@@ -67,10 +67,10 @@ export default async function (
       throw 'You cannot mute an administrator.';
 
     if (!adequateHierarchy(message.member, target))
-      throw `You cannot ${lpunishment} this member due to inadequete hierarchy.`;
+      throw `You cannot ${lpunishment} this member due to inadequate hierarchy.`;
 
     if (punishment !== IT.Warn && !adequateHierarchy(message.guild.members.me!, target))
-      throw `I cannot ${lpunishment} this member due to inadequete hierarchy.`;
+      throw `I cannot ${lpunishment} this member due to inadequate hierarchy.`;
   }
 
   const infraction = await client.db.infraction.create({

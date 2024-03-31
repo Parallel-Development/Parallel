@@ -22,7 +22,7 @@ class MuteCommand extends Command {
     if (!member.isCommunicationDisabled()) throw 'This member is not muted.';
 
     if (!adequateHierarchy(message.guild.members.me!, member))
-      throw 'I cannot unmute this member due to inadequete hierarchy.';
+      throw 'I cannot unmute this member due to inadequate hierarchy.';
 
     const reason = args.slice(1).join(' ') || 'Unspecified reason.';
     if (reason.length > 3500) throw `The reason may only be a maximum of 3500 characters (${reason.length} provided.)`;

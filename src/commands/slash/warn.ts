@@ -37,7 +37,7 @@ class WarnCommand extends Command {
     if (member.id === this.client.user!.id) throw 'You cannot warn me.';
 
     if (!adequateHierarchy(interaction.member, member))
-      throw 'You cannot warn this member due to inadequete hierarchy.';
+      throw 'You cannot warn this member due to inadequate hierarchy.';
 
     const reason = interaction.options.getString('reason') ?? 'Unspecified reason.';
 

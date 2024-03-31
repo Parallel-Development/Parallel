@@ -20,10 +20,10 @@ class KickCommand extends Command {
     if (member.id === message.author.id) throw 'You cannot kick yourself.';
     if (member.id === this.client.user!.id) throw 'You cannot kick me.';
 
-    if (!adequateHierarchy(message.member!, member)) throw 'You cannot kick this member due to inadequete hierarchy.';
+    if (!adequateHierarchy(message.member!, member)) throw 'You cannot kick this member due to inadequate hierarchy.';
 
     if (!adequateHierarchy(message.guild.members.me!, member))
-      throw 'I cannot kick this member due to inadequete hierarchy.';
+      throw 'I cannot kick this member due to inadequate hierarchy.';
 
     const reason = args.slice(1).join(' ') || 'Unspecified reason.';
     if (reason.length > 3500) throw `The reason may only be a maximum of 3500 characters (${reason.length} provided.)`;
