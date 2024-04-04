@@ -71,6 +71,8 @@ export default async function (message: Message) {
 
   // Permission check
   if (message.inGuild() && !(await hasSlashCommandPermission(message.member!, commandName))) {
+    if (!respondIfNoPermission) return;
+
     const embed = new EmbedBuilder()
       .setColor(Colors.Red)
       .setDescription('You do not have permission to use this command.');
