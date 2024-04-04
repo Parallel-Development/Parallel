@@ -92,13 +92,7 @@ export default async function (message: Message<true>) {
       await message.channel.bulkDelete(messages);
       if (!spam.punishment) return;
 
-      return autoModPunish(
-        message.member,
-        message.guild,
-        'Fast message spam.',
-        spam.punishment,
-        +spam.duration
-      );
+      return autoModPunish(message.member, message.guild, 'Fast message spam.', spam.punishment, +spam.duration);
     }
 
     const biggest = (automod.autoModSpamTriggers as AutoModSpamTrigger[]).reduce((prev, curr) =>
@@ -120,16 +114,13 @@ export async function autoModPunish(
 
   switch (punishment) {
     case InfractionType.Ban:
-      if (!member.guild.members.me!.permissions.has(PermissionFlagsBits.BanMembers))
-        return;
+      if (!member.guild.members.me!.permissions.has(PermissionFlagsBits.BanMembers)) return;
       break;
     case InfractionType.Mute:
-      if (!member.guild.members.me!.permissions.has(PermissionFlagsBits.ModerateMembers))
-        return;
+      if (!member.guild.members.me!.permissions.has(PermissionFlagsBits.ModerateMembers)) return;
       break;
     case InfractionType.Kick:
-      if (!member.guild.members.me!.permissions.has(PermissionFlagsBits.KickMembers))
-        return;
+      if (!member.guild.members.me!.permissions.has(PermissionFlagsBits.KickMembers)) return;
       break;
   }
 

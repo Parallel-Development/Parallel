@@ -31,8 +31,7 @@ class BanCommand extends Command {
 
     const durationStr = args[1];
     let duration = null;
-    if (args.length >= 2 && args[1] !== 'permanent')
-      duration = parseDuration(durationStr);
+    if (args.length >= 2 && args[1] !== 'permanent') duration = parseDuration(durationStr);
 
     const date = Date.now();
 

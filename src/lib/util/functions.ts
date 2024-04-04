@@ -54,7 +54,7 @@ export function parseDuration(durationStr: string) {
   if (!durationStr) return NaN;
 
   let duration;
-  
+
   const unaryTest = +durationStr;
   if (unaryTest) duration = unaryTest * 1000;
   else duration = ms(durationStr) ?? NaN;
@@ -111,15 +111,27 @@ export async function hasSlashCommandPermission(
     permission =>
       permission.permission === false && (permission.id === member.id || member.roles.cache.has(permission.id))
   );
+
+  // if the user is explicitly denied
   if (denied?.some(deny => deny.type === ApplicationCommandPermissionType.User)) return false;
-  if (!allowed?.length && !(denied?.length && hasDefault)) {
-    if (
-      !member.roles.cache.some(
-        r => r.permissions.has(command.defaultMemberPermissions ?? 0n) && !denied?.some(role => role.id === r.id)
-      )
-    )
-      return false;
-  }
+
+  // If the user doesn't have permission to run the command by default and there are no allow overrides
+  if (!allowed?.length && !hasDefault) return false;
+
+  // if the user has the default permission without an allowed override, but there is a denied override,
+  // ensure that one of the roles they have that gives them the permission is not on the deny list.
+  if (
+    !allowed?.length &&
+    denied?.length &&
+    (!command.defaultMemberPermissions?.bitfield ||
+      denied.some(role => role.id === member.guild.id) ||
+      !member.roles.cache
+        .filter(r => r.id !== member.guild.id)
+        .some(
+          r => r.permissions.has(command.defaultMemberPermissions ?? 0n) && !denied?.some(role => role.id === r.id)
+        ))
+  )
+    return false;
 
   return true;
 }

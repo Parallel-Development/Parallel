@@ -26,8 +26,7 @@ class WarnCommand extends Command {
 
     const durationStr = args[1];
     let duration = null;
-    if (durationStr && durationStr !== 'permanent')
-      duration = parseDuration(durationStr)
+    if (durationStr && durationStr !== 'permanent') duration = parseDuration(durationStr);
 
     if (duration && duration < 1000) throw 'Temporary warn duration must be at least 1 second.';
 

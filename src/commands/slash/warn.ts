@@ -43,8 +43,8 @@ class WarnCommand extends Command {
 
     const durationStr = interaction.options.getString('erase-after');
     const duration = durationStr ? parseDuration(durationStr) : null;
-    
-    if (Number.isNaN(duration) && durationStr !== 'permanent') throw 'Invalid duration.'
+
+    if (Number.isNaN(duration) && durationStr !== 'permanent') throw 'Invalid duration.';
     if (duration && duration < 1000) throw 'Temporary warn duration must be at least 1 second.';
 
     const date = Date.now();

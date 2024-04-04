@@ -364,8 +364,7 @@ class ConfigCommand extends Command {
               where: { id: interaction.guildId }
             }))!;
 
-            if (appealQuestions.length === 1)
-              throw 'You cannot remove another question because you need at least one.';
+            if (appealQuestions.length === 1) throw 'You cannot remove another question because you need at least one.';
 
             const index = interaction.options.getInteger('question-index', true);
             if (index > appealQuestions.length) throw `There is no index \`${index}\`.`;

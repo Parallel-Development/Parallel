@@ -48,7 +48,7 @@ class AppealManagerButton extends Button {
 
       return interaction.update({ components: [row], embeds: [embed] });
     }
-    
+
     if (!infraction.appeal) {
       const notAcceptedButton = new ButtonBuilder()
         .setCustomId('?')

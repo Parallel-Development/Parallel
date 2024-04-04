@@ -30,7 +30,7 @@ export default async function (message: Message) {
 
   if (!message.content.startsWith(usedPrefix)) return;
   const args = message.content.slice(usedPrefix.length).split(' ');
-  let commandName = args[0];
+  let commandName = args[0].toLowerCase();
   args.shift();
 
   const command =

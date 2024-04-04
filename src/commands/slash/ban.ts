@@ -53,13 +53,13 @@ class BanCommand extends Command {
       if (!adequateHierarchy(interaction.guild.members.me!, member))
         throw 'I cannot ban this member due to inadequate hierarchy.';
     }
-    
+
     const reason = interaction.options.getString('reason') ?? 'Unspecified reason.';
 
     const durationStr = interaction.options.getString('duration');
     const duration = durationStr ? parseDuration(durationStr) : null;
-    
-    if (Number.isNaN(duration) && durationStr !== 'permanent') throw 'Invalid duration.'
+
+    if (Number.isNaN(duration) && durationStr !== 'permanent') throw 'Invalid duration.';
     if (duration && duration < 1000) throw 'Temporary ban duration must be at least 1 second.';
 
     const date = Date.now();

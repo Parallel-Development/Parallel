@@ -19,9 +19,10 @@ class HelpCommand extends Command {
     const commandName = interaction.options.getString('command');
 
     const prefix = interaction.inCachedGuild()
-    ? (await this.client.db.guild.findUnique({ where: { id: interaction.guildId }, select: { prefix: true } }))!.prefix
-    : process.env.PREFIX!;
-    
+      ? (await this.client.db.guild.findUnique({ where: { id: interaction.guildId }, select: { prefix: true } }))!
+          .prefix
+      : process.env.PREFIX!;
+
     if (commandName) {
       const command =
         this.client.commands.message.get(commandName) ??
@@ -91,7 +92,7 @@ class HelpCommand extends Command {
       .setTitle('Command List')
       .setColor(mainColor)
       .setDescription(commands.map(cmd => `\`${cmd.name}\``).join(', '))
-      .setFooter({ text: `Prefix: ${prefix} `});
+      .setFooter({ text: `Prefix: ${prefix} ` });
 
     if (shortcuts && shortcuts.length !== 0)
       embed.addFields({

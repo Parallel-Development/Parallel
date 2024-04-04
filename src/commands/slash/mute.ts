@@ -47,7 +47,7 @@ class MuteCommand extends Command {
     const reason = interaction.options.getString('reason') ?? 'Unspecified reason.';
 
     const durationStr = interaction.options.getString('duration');
-    let duration = durationStr ? parseDuration(durationStr) : null
+    let duration = durationStr ? parseDuration(durationStr) : null;
 
     if (Number.isNaN(duration)) throw 'Invalid duration.';
     if (duration) {
