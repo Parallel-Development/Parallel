@@ -1,6 +1,6 @@
 import autocomplete from '../handlers/autocomplete';
 import buttonPress from '../handlers/buttonPress';
-import chatInputCommand from '../handlers/chatInputCommand';
+import chatInputCommand, { confirmGuild } from '../handlers/chatInputCommand';
 import modalSubmit from '../handlers/modalSubmit';
 import Listener from '../lib/structs/Listener';
 import {
@@ -17,6 +17,8 @@ class InteractionCreateListener extends Listener {
   }
 
   async run(interaction: Interaction) {
+    if (interaction.inCachedGuild()) await confirmGuild(interaction.guildId);
+    
     switch (interaction.type) {
       case InteractionType.ApplicationCommand:
         return chatInputCommand(interaction as ChatInputCommandInteraction);

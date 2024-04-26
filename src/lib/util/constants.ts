@@ -1,13 +1,15 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Colors } from 'discord.js';
 import ms from 'ms';
+import { createComplexCustomId } from './functions';
 
 export const infractionsPerPage = 7;
 
 export const yesButton = new ButtonBuilder().setLabel('Yes').setStyle(ButtonStyle.Success).setCustomId('?yes');
-
 export const noButton = new ButtonBuilder().setLabel('No').setStyle(ButtonStyle.Danger).setCustomId('?no');
-
 export const yesNoRow = new ActionRowBuilder<ButtonBuilder>().addComponents(yesButton, noButton);
+
+const backButton = new ButtonBuilder().setLabel('<').setStyle(ButtonStyle.Secondary).setCustomId(createComplexCustomId('infractions', 'back', null));
+const forwardButton = new ButtonBuilder().setLabel('>').setStyle(ButtonStyle.Secondary).setCustomId(createComplexCustomId('infractions', 'back', null));
 
 export const mainColor = Colors.Blurple;
 export const commonChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789';

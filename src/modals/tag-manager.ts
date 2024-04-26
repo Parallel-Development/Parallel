@@ -1,6 +1,6 @@
 import { ModalSubmitInteraction } from 'discord.js';
 import Modal from '../lib/structs/Modal';
-import { hasSlashCommandPermission } from '../lib/util/functions';
+import { hasSlashCommandPermission, readComplexCustomId } from '../lib/util/functions';
 
 class TagManagerModal extends Modal {
   constructor() {
@@ -10,12 +10,13 @@ class TagManagerModal extends Modal {
   async run(interaction: ModalSubmitInteraction<'cached'>) {
     if (!(await hasSlashCommandPermission(interaction.member, 'tag-manager'))) throw 'Permission revoked.';
 
-    const name = interaction.fields.getTextInputValue('name').toLowerCase();
     const content = interaction.fields.getTextInputValue('content');
 
-    const method = interaction.customId.split(':')[1] as 'create' | 'edit';
+    const { option, data } = readComplexCustomId(interaction.customId);
 
-    if (method === 'create') {
+    if (option === 'create') {
+      const name = interaction.fields.getTextInputValue('name').toLowerCase();
+
       await this.client.db.tag
         .create({
           data: {
@@ -30,6 +31,9 @@ class TagManagerModal extends Modal {
 
       return interaction.reply(`Created tag \`${name}\`.`);
     } else {
+      if (!data) return;
+      const name = data[0];
+      
       await this.client.db.tag
         .update({
           data: {

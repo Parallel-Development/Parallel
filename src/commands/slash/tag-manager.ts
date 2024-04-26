@@ -1,7 +1,7 @@
 import { ActionRowBuilder, ModalActionRowComponentBuilder, ModalBuilder, TextInputBuilder } from '@discordjs/builders';
 import { ChatInputCommandInteraction, SlashCommandBuilder, PermissionFlagsBits, TextInputStyle } from 'discord.js';
 import Command, { data } from '../../lib/structs/Command';
-import { bin } from '../../lib/util/functions';
+import { bin, createComplexCustomId } from '../../lib/util/functions';
 
 @data(
   new SlashCommandBuilder()
@@ -20,14 +20,14 @@ import { bin } from '../../lib/util/functions';
       command
         .setName('delete')
         .setDescription('Delete a tag.')
-        .addStringOption(option => option.setName('name').setDescription('The name of the tag.').setRequired(true))
+        .addStringOption(option => option.setName('tag_name').setDescription('The name of the tag.').setAutocomplete(true).setRequired(true))
     )
     .addSubcommand(command =>
       command
         .setName('rename')
         .setDescription('Rename a tag.')
         .addStringOption(option =>
-          option.setName('name').setDescription('The name of the tag you are renaming.').setRequired(true)
+          option.setName('tag_name').setDescription('The name of the tag you are renaming.').setAutocomplete(true).setRequired(true)
         )
         .addStringOption(option =>
           option.setName('new_name').setDescription('The new name of the tag.').setMaxLength(30).setRequired(true)
@@ -37,7 +37,7 @@ import { bin } from '../../lib/util/functions';
       command
         .setName('edit')
         .setDescription('Change the content of a tag.')
-        .addStringOption(option => option.setName('name').setDescription('The name of the tag.').setRequired(true))
+        .addStringOption(option => option.setName('tag_name').setDescription('The name of the tag.').setAutocomplete(true).setRequired(true))
     )
     .addSubcommand(command => command.setName('view').setDescription('View all tags.'))
 )
@@ -55,7 +55,7 @@ class TagManagerCommand extends Command {
 
         if (exists) throw 'A tag with that name already exists.';
 
-        const modal = new ModalBuilder().setTitle('Create a new tag').setCustomId('tag-manager:create');
+        const modal = new ModalBuilder().setTitle('Create a new tag').setCustomId(createComplexCustomId('tag-manager', 'create', null));
 
         const nameRow = new ActionRowBuilder<ModalActionRowComponentBuilder>();
         const nameQ = new TextInputBuilder()
@@ -84,7 +84,7 @@ class TagManagerCommand extends Command {
         break;
       }
       case 'delete': {
-        const name = interaction.options.getString('name', true);
+        const name = interaction.options.getString('tag_name', true);
         const deleted = await this.client.db.tag.deleteMany({
           where: {
             guildId: interaction.guildId,
@@ -97,7 +97,7 @@ class TagManagerCommand extends Command {
         return interaction.reply('Tag deleted.');
       }
       case 'rename': {
-        const name = interaction.options.getString('name', true).toLowerCase();
+        const name = interaction.options.getString('tag_name', true).toLowerCase();
         const newName = interaction.options.getString('new_name', true).toLowerCase();
 
         await this.client.db.tag
@@ -116,28 +116,17 @@ class TagManagerCommand extends Command {
         return interaction.reply(`Tag renamed to \`${newName}\``);
       }
       case 'edit': {
-        const name = interaction.options.getString('name', true).toLowerCase();
+        const name = interaction.options.getString('tag_name', true).toLowerCase();
 
-        const exists = await this.client.db.tag.findUnique({
+        const tag = await this.client.db.tag.findUnique({
           where: {
             guildId_name: { guildId: interaction.guildId, name }
           }
         });
 
-        if (!exists) throw 'Tag does not exist.';
+        if (!tag) throw 'Tag does not exist.';
 
-        const modal = new ModalBuilder().setTitle('Edit tag').setCustomId('tag-manager:edit');
-
-        const nameRow = new ActionRowBuilder<ModalActionRowComponentBuilder>();
-        const nameQ = new TextInputBuilder()
-          .setLabel('name')
-          .setCustomId('name')
-          .setMaxLength(30)
-          .setRequired(true)
-          .setStyle(TextInputStyle.Short)
-          .setValue(name);
-
-        nameRow.setComponents(nameQ);
+        const modal = new ModalBuilder().setTitle('Edit tag').setCustomId(createComplexCustomId('tag-manager', 'edit', name));
 
         const contentRow = new ActionRowBuilder<ModalActionRowComponentBuilder>();
         const contentQ = new TextInputBuilder()
@@ -145,11 +134,12 @@ class TagManagerCommand extends Command {
           .setCustomId('content')
           .setMaxLength(1000)
           .setRequired(true)
+          .setValue(tag.content)
           .setStyle(TextInputStyle.Paragraph);
 
         contentRow.setComponents(contentQ);
 
-        modal.addComponents(nameRow, contentRow);
+        modal.addComponents(contentRow);
 
         interaction.showModal(modal);
         break;

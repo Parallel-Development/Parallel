@@ -1,6 +1,6 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ModalSubmitInteraction } from 'discord.js';
 import Modal from '../lib/structs/Modal';
-import { hasSlashCommandPermission } from '../lib/util/functions';
+import { hasSlashCommandPermission, readComplexCustomId } from '../lib/util/functions';
 
 class TicketHyperlinkModal extends Modal {
   constructor() {
@@ -10,8 +10,10 @@ class TicketHyperlinkModal extends Modal {
   async run(interaction: ModalSubmitInteraction<'cached'>) {
     if (!(await hasSlashCommandPermission(interaction.member, 'ticket-manager'))) throw 'Permission revoked.';
 
-    const buttonProperties = interaction.customId.split(':').slice(1);
-    const [buttonLabel, buttonColor] = buttonProperties;
+    const { data } = readComplexCustomId(interaction.customId);
+    if (!data) return;
+
+    const [buttonLabel, buttonColor] = data;
 
     const description = interaction.fields.getTextInputValue('description');
     const row = new ActionRowBuilder<ButtonBuilder>();

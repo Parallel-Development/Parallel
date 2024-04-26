@@ -11,7 +11,7 @@ import {
 } from 'discord.js';
 import ms from 'ms';
 import Button from '../lib/structs/Button';
-import { getMember, hasSlashCommandPermission } from '../lib/util/functions';
+import { getMember, hasSlashCommandPermission, readComplexCustomId } from '../lib/util/functions';
 import { infractionColors } from '../lib/util/constants';
 const reason = 'Unspecified reason.';
 
@@ -24,8 +24,10 @@ class AppealManagerButton extends Button {
     if (!(await hasSlashCommandPermission(interaction.member, 'appeal-manager')))
       throw "You don't have permission to use this button.";
 
-    const method = interaction.customId.split(':')[1].split('.')[0] as 'accept' | 'deny' | 'disregard' | 'context';
-    const infractionId = +interaction.customId.split('.')[1];
+    const { option, data } = readComplexCustomId(interaction.customId);
+    if (!option || !data) return;
+
+    const infractionId = +data[0];
 
     const infraction = await this.client.db.infraction.findUnique({
       where: {
@@ -66,7 +68,7 @@ class AppealManagerButton extends Button {
 
     const { appeal } = infraction;
 
-    switch (method) {
+    switch (option) {
       case 'accept': {
         switch (infraction.type) {
           case InfractionType.Ban: {

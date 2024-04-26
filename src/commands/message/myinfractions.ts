@@ -1,6 +1,7 @@
-import { type ChatInputCommandInteraction, EmbedBuilder, type EmbedField, Message } from 'discord.js';
+import { type ChatInputCommandInteraction, EmbedBuilder, type EmbedField, Message, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
 import Command, { properties } from '../../lib/structs/Command';
 import { infractionsPerPage, mainColor } from '../../lib/util/constants';
+import { createComplexCustomId } from '../../lib/util/functions';
 
 @properties<'message'>({
   name: 'myinfractions',
@@ -62,7 +63,15 @@ class MyInfractionsCommand extends Command {
 
     infractionsEmbed.setFields(fields);
 
-    return message.reply({ embeds: [infractionsEmbed] });
+    const backButton = new ButtonBuilder().setLabel('<').setStyle(ButtonStyle.Secondary)
+    .setCustomId(createComplexCustomId('infractions', 'back', [user.id, page.toString(), message.author.id]));
+
+    const forwardButton = new ButtonBuilder().setLabel('>').setStyle(ButtonStyle.Secondary)
+    .setCustomId(createComplexCustomId('infractions', 'forward', [user.id, page.toString(), message.author.id]));
+
+    const paginationRow = new ActionRowBuilder<ButtonBuilder>().addComponents(backButton, forwardButton);
+
+    return message.reply({ embeds: [infractionsEmbed], components: [paginationRow] });
   }
 }
 

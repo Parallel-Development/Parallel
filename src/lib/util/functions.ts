@@ -101,7 +101,7 @@ export async function hasSlashCommandPermission(
 
   if (!command) return true;
 
-  const permissions = commandsPermissionCache.get(member.guild.id)!.get(command.id);
+  const permissions = commandsPermissionCache.get(member.guild.id)?.get(command.id);
   const hasDefault = member.permissions?.has(command.defaultMemberPermissions ?? 0n);
   const allowed = permissions?.filter(
     permission =>
@@ -134,4 +134,25 @@ export async function hasSlashCommandPermission(
     return false;
 
   return true;
+}
+
+export function createComplexCustomId(name: string, option: string | null, data: string | string[] | null) {
+  // example: "tag-manager:create?test" or "eval:?true&5"
+  return `${name}:${option ?? ''}?${typeof data === 'string' ? data : data ? data.join('&') : ''}`;
+}
+
+export function readComplexCustomId(customId: string) {
+  const colonIndex = customId.indexOf(':');
+  if (colonIndex === -1) return { name: customId, option: null, data: null };
+
+  const name = customId.slice(0, colonIndex);
+
+  let questionIndex = customId.indexOf('?');
+  if (questionIndex === -1) questionIndex = customId.length;
+
+  const dataStr = customId.slice(questionIndex + 1);
+  const data = dataStr ? dataStr.split('&') : null;
+  const option = customId.slice(colonIndex + 1, questionIndex);
+
+  return { name, option: option || null, data };
 }

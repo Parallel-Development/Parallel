@@ -2,7 +2,7 @@ import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Colors, EmbedBuilder, Mod
 import Modal from '../lib/structs/Modal';
 import util from 'util';
 import ms from 'ms';
-import { bin } from '../lib/util/functions';
+import { bin, readComplexCustomId } from '../lib/util/functions';
 
 class EvalModal extends Modal {
   constructor() {
@@ -13,9 +13,12 @@ class EvalModal extends Modal {
     if (interaction.user.id !== process.env.DEV!) throw 'You cannot run this command.';
 
     const code = interaction.fields.getTextInputValue('code');
-    const props = interaction.customId.split(':')[1].split(' ');
-    const asyncronous = props[0] === 'true';
-    const depth = +props[1];
+
+    const { data } = readComplexCustomId(interaction.customId);
+    if (!data) return;
+  
+    const asyncronous = data[0] === 'true';
+    const depth = +data[1];
 
     await interaction.deferReply();
     let output;

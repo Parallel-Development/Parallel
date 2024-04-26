@@ -14,7 +14,7 @@ import {
 import ms from 'ms';
 import Command, { properties, data } from '../../lib/structs/Command';
 import util from 'util';
-import { bin } from '../../lib/util/functions';
+import { bin, createComplexCustomId } from '../../lib/util/functions';
 let _; // used to reference the last returned expression
 
 @data(
@@ -38,7 +38,7 @@ class EvalCommand extends Command {
     const depth = interaction.options.getInteger('depth') ?? 0;
 
     if (!code) {
-      const modal = new ModalBuilder().setTitle('Eval').setCustomId(`eval:${asyncronous} ${depth}`);
+      const modal = new ModalBuilder().setTitle('Eval').setCustomId(createComplexCustomId('eval', null, [asyncronous.toString(), depth.toString()]));
 
       const codeRow = new ActionRowBuilder<ModalActionRowComponentBuilder>();
       const codeText = new TextInputBuilder()

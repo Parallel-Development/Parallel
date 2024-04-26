@@ -19,7 +19,7 @@ import {
 import ms from 'ms';
 import Command, { data, properties } from '../../lib/structs/Command';
 import { infractionColors, infractionsPerPage, mainColor, yesNoRow } from '../../lib/util/constants';
-import { getUser } from '../../lib/util/functions';
+import { createComplexCustomId, getUser } from '../../lib/util/functions';
 
 @data(
   new SlashCommandBuilder()
@@ -247,7 +247,7 @@ class AppealCommand extends Command {
     if (infraction.appeal) throw 'An appeal for that infraction has already been made.';
 
     const modal = new ModalBuilder();
-    modal.setTitle('Appeal').setCustomId(`appeal:${id}`);
+    modal.setTitle('Appeal').setCustomId(createComplexCustomId('appeal', null, id.toString()));
 
     for (const question of guild.appealQuestions) {
       const row = new ActionRowBuilder<ModalActionRowComponentBuilder>();

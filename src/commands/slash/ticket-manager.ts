@@ -10,7 +10,7 @@ import {
   TextInputStyle
 } from 'discord.js';
 import Command, { data } from '../../lib/structs/Command';
-import { bin } from '../../lib/util/functions';
+import { bin, createComplexCustomId } from '../../lib/util/functions';
 
 @data(
   new SlashCommandBuilder()
@@ -358,13 +358,13 @@ class TicketManagerCommand extends Command {
       }
       case 'add_create_ticket_button': {
         const buttonLabel = interaction.options.getString('button_label') ?? 'Create Ticket';
-        const buttonColor = interaction.options.getString('button_color') ?? ButtonStyle.Primary;
+        const buttonColor = interaction.options.getString('button_color') ?? ButtonStyle.Primary.toString();
 
         if (buttonLabel.length > 80) throw 'Button label is too long.';
 
         const modal = new ModalBuilder()
           .setTitle('Create Ticket Message')
-          .setCustomId(`ticket-hyperlink:${buttonLabel}:${buttonColor}`);
+          .setCustomId(createComplexCustomId('ticket-hyperlink', null, [buttonLabel, buttonColor]));
         const descriptionRow = new ActionRowBuilder<TextInputBuilder>();
         const descriptionComponent = new TextInputBuilder()
           .setCustomId('description')

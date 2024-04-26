@@ -3,6 +3,7 @@ import Modal from '../lib/structs/Modal';
 import { mainColor } from '../lib/util/constants';
 import { InfractionType } from '@prisma/client';
 import type { AppealResponse } from '../types';
+import { createComplexCustomId, readComplexCustomId } from '../lib/util/functions';
 
 class AppealModal extends Modal {
   constructor() {
@@ -10,7 +11,10 @@ class AppealModal extends Modal {
   }
 
   async run(interaction: ModalSubmitInteraction<'cached'>) {
-    const infractionId = +interaction.customId.split(':')[1];
+    const { data } = readComplexCustomId(interaction.customId);
+    if (!data) return;
+
+    const infractionId = +data[0];
     if ((!infractionId && infractionId !== 0) || infractionId < 1) throw 'Invalid infraction ID.';
 
     const infraction = await this.client.db.infraction.findUnique({
@@ -78,7 +82,7 @@ class AppealModal extends Modal {
 
       let embedDescription = '';
       embedDescription += `**Infraction ID:** ${infraction.id}\n**Infraction Type:** ${infraction.type.toString()}\n\n`;
-      embedDescription += response.map(q => `Question: ${q.question}\nResponse: ${q.response}`).join('\n\n');
+      embedDescription += response.map(q => `** — ${q.question} —**\n${q.response}`).join('\n\n');
 
       const embed = new EmbedBuilder()
         .setColor(mainColor)
@@ -90,22 +94,22 @@ class AppealModal extends Modal {
         .setTimestamp();
 
       const acceptButton = new ButtonBuilder()
-        .setCustomId(`appeal-manager:accept.${infraction.id}`)
+        .setCustomId(createComplexCustomId('appeal-manager', 'accept', infraction.id.toString()))
         .setLabel('Accept')
         .setStyle(ButtonStyle.Success);
 
       const denyButton = new ButtonBuilder()
-        .setCustomId(`appeal-manager:deny.${infraction.id}`)
+        .setCustomId(createComplexCustomId('appeal-manager', 'deny', infraction.id.toString()))
         .setLabel('Deny')
         .setStyle(ButtonStyle.Danger);
 
       const disregardButton = new ButtonBuilder()
-        .setCustomId(`appeal-manager:disregard.${infraction.id}`)
+        .setCustomId(createComplexCustomId('appeal-manager', 'disregard', infraction.id.toString()))
         .setLabel('Disregard')
         .setStyle(ButtonStyle.Secondary);
 
       const contextButton = new ButtonBuilder()
-        .setCustomId(`appeal-manager:context.${infraction.id}`)
+        .setCustomId(createComplexCustomId('appeal-manager', 'context', infraction.id.toString()))
         .setLabel('Context')
         .setStyle(ButtonStyle.Primary);
 

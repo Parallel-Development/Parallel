@@ -4,7 +4,7 @@ import { Escalation } from '../types';
 import ms from 'ms';
 import client from '../client';
 
-export default async function (interaction: AutocompleteInteraction<'cached'>) {
+export default async function (interaction: AutocompleteInteraction) {
   const focused = interaction.options.getFocused(true);
   const focusedLowercase = focused.value.toLowerCase();
 
@@ -16,23 +16,6 @@ export default async function (interaction: AutocompleteInteraction<'cached'>) {
         .slice(0, 25);
 
       return interaction.respond(filtered).catch(() => {});
-    }
-    case 'rule': {
-      const rules = await interaction.guild.autoModerationRules.fetch();
-      const filtered = [
-        ...rules
-          .filter(
-            rule =>
-              rule.triggerType === AutoModerationRuleTriggerType.Keyword &&
-              rule.name.toLowerCase().includes(focusedLowercase)
-          )
-          .sort((a, b) => a.name.localeCompare(b.name))
-          .values()
-      ]
-        .slice(0, 24)
-        .map(rule => ({ name: rule.name, value: rule.id }));
-
-      return interaction.respond([{ name: 'Create For Me', value: 'create' }].concat(filtered)).catch(() => {});
     }
     case 'duration':
     case 'erase-after':
@@ -55,6 +38,10 @@ export default async function (interaction: AutocompleteInteraction<'cached'>) {
     }
     // lol
     case 'with-in': {
+      if (!interaction.inCachedGuild()) {
+        return interaction.respond([]);
+      }
+
       const type = interaction.options.getString('type');
       const amount = interaction.options.getInteger('amount');
 
@@ -118,6 +105,21 @@ export default async function (interaction: AutocompleteInteraction<'cached'>) {
         .map(c => ({ name: c, value: c }));
 
       return interaction.respond(final);
+    }
+    case 'tag_name': {
+      if (!interaction.inCachedGuild()) {
+        return interaction.respond([]);
+      }
+
+      let _tags = await client.db.tag.findMany({ where: { guildId: interaction.guildId }});
+      _tags = _tags.sort((a, b) => a.name.localeCompare(b.name));
+      const tags = _tags.map(tag => ({ name: tag.name, value: tag.name }));
+
+      const filteredTags = tags
+      .filter(tag => tag.name.includes(focusedLowercase))
+      .slice(0, 25);
+
+      return interaction.respond(filteredTags);
     }
   }
 }

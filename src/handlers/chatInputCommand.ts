@@ -10,6 +10,7 @@ import { InfractionType } from '@prisma/client';
 import client from '../client';
 import customSlashCommand from './customSlashCommand';
 import { AutoModConfig } from '../types';
+import { commandsPermissionCache } from '../lib/util/functions';
 
 // imported by messageCommand
 export const customCommandsConfirmed = new Set();
@@ -57,9 +58,7 @@ export default async function (interaction: ChatInputCommandInteraction) {
         ephemeral: true
       });
   }
-
-  if (interaction.inCachedGuild()) await confirmGuild(interaction.guildId);
-
+  
   if (command.guildResolve) {
     if (unresolvedGuilds.has(`${interaction.guildId!} ${interaction.commandName}`))
       return interaction.reply({
@@ -93,6 +92,12 @@ export default async function (interaction: ChatInputCommandInteraction) {
 export async function confirmGuild(guildId: string) {
   if (!customCommandsConfirmed.has(guildId)) {
     checkShortcuts(guildId);
+    
+    if (!commandsPermissionCache.has(guildId)) {
+      const permissions = await client.application!.commands.permissions.fetch({ guild: guildId });
+      commandsPermissionCache.set(guildId, permissions);
+    }
+
     customCommandsConfirmed.add(guildId);
   }
 
