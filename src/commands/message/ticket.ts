@@ -3,6 +3,7 @@ import Command, { properties } from '../../lib/structs/Command';
 import discordTranscripts, { ExportReturnType } from 'discord-html-transcripts';
 import crypto from 'crypto';
 import { mainColor } from '../../lib/util/constants';
+import { webhookSend } from '../../lib/util/functions';
 
 @properties<'message'>({
   name: 'ticket',
@@ -19,10 +20,10 @@ class TicketCommand extends Command {
         throw 'Please run this as a slash command.';
       }
       case 'close': {
-        const { allowUserCloseTicket, ticketModeratorRoles, ticketLogWebhookId } =
+        const { allowUserCloseTicket, ticketModeratorRoles, ticketLogWebhookURL } =
           (await this.client.db.guild.findUnique({
             where: { id: message.guildId },
-            select: { allowUserCloseTicket: true, ticketModeratorRoles: true, ticketLogWebhookId: true }
+            select: { allowUserCloseTicket: true, ticketModeratorRoles: true, ticketLogWebhookURL: true }
           }))!;
 
         const ticket = await this.client.db.ticket.findUnique({
@@ -43,69 +44,67 @@ class TicketCommand extends Command {
 
         message.reply('Preparing to close ticket...');
 
-        if (ticketLogWebhookId) {
-          const webhook = await this.client.fetchWebhook(ticketLogWebhookId).catch(() => null);
-          if (!webhook) {
+        if (ticketLogWebhookURL) {
+          // fetch up to 300 messages (three dapi calls)
+
+          let before;
+          let ticketMessages = new Collection<string, Message<true>>();
+          for (let i = 0; i < 3; i++) {
+            const messages = await message.channel!.messages.fetch({ limit: 100, before }).then(msgs => {
+              if (msgs.size == 0) return false;
+              before = msgs.last()!.id;
+              ticketMessages = ticketMessages.concat(msgs);
+            });
+            if (!messages) break;
+          }
+
+          const html = await discordTranscripts.generateFromMessages(ticketMessages.reverse(), message.channel!, {
+            poweredBy: false,
+            footerText: '',
+            returnType: ExportReturnType.Buffer,
+            saveImages: false
+          });
+
+          // create key hash.
+          const key = crypto.randomBytes(16);
+          const hash = crypto.createHash('sha256');
+          hash.update(key);
+          const keyHash = hash.digest();
+
+          // encrypt data with key
+          const iv = crypto.randomBytes(4);
+          const cipher = crypto.createCipheriv('aes-128-gcm', key, iv);
+          const cipherBytes = Buffer.concat([cipher.update(html), cipher.final()]);
+          const authTag = cipher.getAuthTag();
+
+          await this.client.db.chatlog.create({
+            data: {
+              keyHash,
+              iv,
+              authTag,
+              html: cipherBytes,
+              guildId: message.guildId,
+              expires: BigInt(Date.now() + 604800000) // 7 days
+            }
+          });
+
+          const embed = new EmbedBuilder()
+            .setAuthor({ name: 'Ticket Closed', iconURL: this.client.user!.displayAvatarURL() })
+            .setTitle(`${ticket.title}`)
+            .setColor(mainColor)
+            .setDescription(
+              `**Created by:** <@${ticket.creatorId}>\n**Closed by:** ${message.author.toString()}\n**Chat log:** ${
+                process.env.API
+              }/chatlog/${key.toString('hex')}`
+            );
+            
+          try {
+            await webhookSend(ticketLogWebhookURL, { embeds: [embed] });
+          } catch {
             await this.client.db.guild.update({
               where: { id: message.guildId },
-              data: { ticketLogWebhookId: null }
+              data: { ticketLogWebhookURL: null }
             });
-          } else {
-            // fetch up to 300 messages (three dapi calls)
-            let before;
-            let ticketMessages = new Collection<string, Message<true>>();
-            for (let i = 0; i < 3; i++) {
-              const messages = await message.channel!.messages.fetch({ limit: 100, before }).then(msgs => {
-                if (msgs.size == 0) return false;
-                before = msgs.last()!.id;
-
-                ticketMessages = ticketMessages.concat(msgs);
-              });
-
-              if (!messages) break;
-            }
-
-            const html = await discordTranscripts.generateFromMessages(ticketMessages.reverse(), message.channel!, {
-              poweredBy: false,
-              footerText: '',
-              returnType: ExportReturnType.Buffer,
-              saveImages: false
-            });
-
-            // create key hash.
-            const key = crypto.randomBytes(16);
-            const hash = crypto.createHash('sha256');
-            hash.update(key);
-            const keyHash = hash.digest();
-
-            // encrypt data with key
-            const iv = crypto.randomBytes(4);
-            const cipher = crypto.createCipheriv('aes-128-gcm', key, iv);
-            const cipherBytes = Buffer.concat([cipher.update(html), cipher.final()]);
-            const authTag = cipher.getAuthTag();
-
-            await this.client.db.chatlog.create({
-              data: {
-                keyHash,
-                iv,
-                authTag,
-                html: cipherBytes,
-                guildId: message.guildId,
-                expires: BigInt(Date.now() + 604800000) // 7 days
-              }
-            });
-
-            const embed = new EmbedBuilder()
-              .setAuthor({ name: 'Ticket Closed', iconURL: this.client.user!.displayAvatarURL() })
-              .setTitle(`${ticket.title}`)
-              .setColor(mainColor)
-              .setDescription(
-                `**Created by:** <@${ticket.creatorId}>\n**Closed by:** ${message.author.toString()}\n**Chat log:** ${
-                  process.env.API
-                }/chatlog/${key.toString('hex')}`
-              );
-
-            webhook.send({ embeds: [embed] });
           }
         }
 

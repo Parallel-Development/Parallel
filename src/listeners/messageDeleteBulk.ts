@@ -2,6 +2,7 @@ import { Collection, Colors, EmbedBuilder, Message, PartialMessage } from 'disco
 import Listener from '../lib/structs/Listener';
 import discordTranscripts, { ExportReturnType } from 'discord-html-transcripts';
 import crypto from 'crypto';
+import { webhookSend } from '../lib/util/functions';
 
 class MessageDeleteBulkListener extends Listener {
   constructor() {
@@ -19,22 +20,8 @@ class MessageDeleteBulkListener extends Listener {
       }
     });
 
-    if (!guild?.messageLogWebhookId) return;
+    if (!guild?.messageLogWebhookURL) return;
     if (guild.messageLogIgnoredChannels.includes(refMsg.channel.id)) return;
-
-    const webhook = await this.client.fetchWebhook(guild.messageLogWebhookId!).catch(() => null);
-    if (!webhook) {
-      await this.client.db.guild.update({
-        where: {
-          id: guild.id
-        },
-        data: {
-          messageLogWebhookId: null
-        }
-      });
-
-      return false;
-    }
 
     const embed = new EmbedBuilder()
       .setColor(Colors.Orange)
@@ -44,7 +31,23 @@ class MessageDeleteBulkListener extends Listener {
       })
       .setTimestamp();
 
-    if (messages.size === 0) return webhook.send({ embeds: [embed] });
+    if (messages.size === 0) {
+      try {
+        await webhookSend(guild.messageLogWebhookURL, { embeds: [embed]} );
+      } catch {
+        await this.client.db.guild.update({
+          where: {
+            id: guild.id
+          },
+          data: {
+            messageLogWebhookURL: null
+          }
+        });
+
+        return;
+      }
+    }
+    //return webhook.send({ embeds: [embed] });
 
     const html = await discordTranscripts.generateFromMessages(messages.reverse(), refMsg.channel, {
       poweredBy: false,
@@ -78,7 +81,20 @@ class MessageDeleteBulkListener extends Listener {
 
     embed.setDescription(`[View chat log](${process.env.API}/chatlog/${key.toString('hex')})`);
 
-    return webhook.send({ embeds: [embed] });
+    try {
+      await webhookSend(guild.messageLogWebhookURL, { embeds: [embed]} );
+    } catch {
+      await this.client.db.guild.update({
+        where: {
+          id: guild.id
+        },
+        data: {
+          messageLogWebhookURL: null
+        }
+      });
+
+      return;
+    }
   }
 }
 

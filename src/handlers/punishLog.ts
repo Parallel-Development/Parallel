@@ -1,9 +1,9 @@
 import { EmbedBuilder } from '@discordjs/builders';
-import { Infraction, InfractionType } from '@prisma/client';
-import { Colors } from 'discord.js';
+import { Infraction } from '@prisma/client';
 import ms from 'ms';
 import client from '../client';
 import { infractionColors } from '../lib/util/constants';
+import { webhookSend } from '../lib/util/functions';
 
 export default async function (infraction: Infraction) {
   const guild = (await client.db.guild.findUnique({
@@ -12,21 +12,7 @@ export default async function (infraction: Infraction) {
     }
   }))!;
 
-  if (!guild.modLogWebhookId) return false;
-
-  const webhook = await client.fetchWebhook(guild.modLogWebhookId!).catch(() => null);
-  if (!webhook) {
-    await client.db.guild.update({
-      where: {
-        id: guild.id
-      },
-      data: {
-        modLogWebhookId: null
-      }
-    });
-
-    return false;
-  }
+  if (!guild.modLogWebhookURL) return false;
 
   const embed = new EmbedBuilder()
     .setTitle(`${infraction.id ? `Case ${infraction.id} | ` : ''}${infraction.type.toString()}`)
@@ -46,6 +32,16 @@ export default async function (infraction: Infraction) {
     )
     .setTimestamp();
 
-  await webhook.send({ embeds: [embed] });
-  return;
+  try {
+    await webhookSend(guild.modLogWebhookURL, { embeds: [embed] });
+  } catch {
+    await client.db.guild.update({
+      where: {
+        id: guild.id
+      },
+      data: {
+        modLogWebhookURL: null
+      }
+    });
+  }
 }

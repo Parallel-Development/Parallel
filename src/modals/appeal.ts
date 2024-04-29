@@ -3,7 +3,7 @@ import Modal from '../lib/structs/Modal';
 import { mainColor } from '../lib/util/constants';
 import { InfractionType } from '@prisma/client';
 import type { AppealResponse } from '../types';
-import { createComplexCustomId, readComplexCustomId } from '../lib/util/functions';
+import { createComplexCustomId, readComplexCustomId, webhookSend } from '../lib/util/functions';
 
 class AppealModal extends Modal {
   constructor() {
@@ -65,21 +65,7 @@ class AppealModal extends Modal {
       }
     });
 
-    if (guild.appealAlertWebhookId) {
-      const webhook = await this.client.fetchWebhook(guild.appealAlertWebhookId).catch(() => null);
-      if (!webhook) {
-        await this.client.db.guild.update({
-          where: {
-            id: guild.id
-          },
-          data: {
-            appealAlertWebhookId: null
-          }
-        });
-
-        return;
-      }
-
+    if (guild.appealAlertWebhookURL) {
       let embedDescription = '';
       embedDescription += `**Infraction ID:** ${infraction.id}\n**Infraction Type:** ${infraction.type.toString()}\n\n`;
       embedDescription += response.map(q => `** — ${q.question} —**\n${q.response}`).join('\n\n');
@@ -116,7 +102,18 @@ class AppealModal extends Modal {
       const row = new ActionRowBuilder<ButtonBuilder>();
       row.addComponents(acceptButton, denyButton, disregardButton, contextButton);
 
-      await webhook.send({ embeds: [embed], components: [row] });
+      try {
+        await webhookSend(guild.appealAlertWebhookURL, { embeds: [embed], components: [row] });
+      } catch {
+        await this.client.db.guild.update({
+          where: {
+            id: guild.id
+          },
+          data: {
+            appealAlertWebhookURL: null
+          }
+        });
+      }
     }
 
     await interaction.editReply('Appeal successfully submitted!');

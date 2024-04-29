@@ -301,12 +301,12 @@ class ConfigCommand extends Command {
 
             const channel = interaction.options.getChannel('channel', true, [ChannelType.GuildText]);
             await interaction.deferReply();
-            const { appealAlertWebhookId } = (await this.client.db.guild.findUnique({
+            const { appealAlertWebhookURL } = (await this.client.db.guild.findUnique({
               where: { id: interaction.guildId }
             }))!;
 
             const webhooks = await interaction.guild.fetchWebhooks();
-            const webhook = webhooks.find(wh => wh.id === appealAlertWebhookId);
+            const webhook = webhooks.find(wh => wh.url === appealAlertWebhookURL);
 
             if (webhook) {
               if (webhook.channel!.id === channel.id) throw 'Alert channel is already set to that channel.';
@@ -332,7 +332,7 @@ class ConfigCommand extends Command {
                     id: interaction.guildId
                   },
                   data: {
-                    appealAlertWebhookId: newWebhook.id
+                    appealAlertWebhookURL: newWebhook.url
                   }
                 })
                 .catch(() => {
@@ -557,12 +557,12 @@ class ConfigCommand extends Command {
 
             const channel = interaction.options.getChannel('channel', true, [ChannelType.GuildText]);
             await interaction.deferReply();
-            const { messageLogWebhookId } = (await this.client.db.guild.findUnique({
+            const { messageLogWebhookURL } = (await this.client.db.guild.findUnique({
               where: { id: interaction.guildId }
             }))!;
 
             const webhooks = await interaction.guild.fetchWebhooks();
-            const webhook = webhooks.find(wh => wh.id === messageLogWebhookId);
+            const webhook = webhooks.find(wh => wh.url === messageLogWebhookURL);
 
             if (webhook) {
               if (webhook.channel!.id === channel.id) throw 'Message log channel is already set to that channel.';
@@ -586,7 +586,7 @@ class ConfigCommand extends Command {
                     id: interaction.guildId
                   },
                   data: {
-                    messageLogWebhookId: newWebhook.id
+                    messageLogWebhookURL: newWebhook.url
                   }
                 })
                 .catch(() => {
@@ -665,23 +665,23 @@ class ConfigCommand extends Command {
             return interaction.reply(channelsStr.join(', '));
           }
           case 'none': {
-            const { messageLogWebhookId } = (await this.client.db.guild.findUnique({
+            const { messageLogWebhookURL } = (await this.client.db.guild.findUnique({
               where: {
                 id: interaction.guildId
               }
             }))!;
 
-            if (!messageLogWebhookId) return interaction.reply('Message logging disabled.');
+            if (!messageLogWebhookURL) return interaction.reply('Message logging disabled.');
 
             await interaction.deferReply();
-            await this.client.deleteWebhook(messageLogWebhookId).catch(() => {});
+            await this.client.deleteWebhook(messageLogWebhookURL).catch(() => {});
 
             await this.client.db.guild.update({
               where: {
                 id: interaction.guildId
               },
               data: {
-                messageLogWebhookId: null
+                messageLogWebhookURL: null
               }
             });
 
@@ -740,7 +740,7 @@ class ConfigCommand extends Command {
         if (!interaction.guild.members.me!.permissions.has(PermissionFlagsBits.ManageWebhooks))
           throw 'I need permission to manage webhooks.';
 
-        const { modLogWebhookId } = (await this.client.db.guild.findUnique({
+        const { modLogWebhookURL } = (await this.client.db.guild.findUnique({
           where: { id: interaction.guildId }
         }))!;
 
@@ -750,7 +750,7 @@ class ConfigCommand extends Command {
             await interaction.deferReply();
 
             const webhooks = await interaction.guild.fetchWebhooks();
-            const webhook = webhooks.find(wh => wh.id === modLogWebhookId);
+            const webhook = webhooks.find(wh => wh.url === modLogWebhookURL);
 
             if (webhook) {
               if (webhook.channel!.id === channel.id) throw 'Mod log channel is already set to that channel.';
@@ -774,7 +774,7 @@ class ConfigCommand extends Command {
                     id: interaction.guildId
                   },
                   data: {
-                    modLogWebhookId: newWebhook.id
+                    modLogWebhookURL: newWebhook.url
                   }
                 })
                 .catch(() => {
@@ -785,9 +785,9 @@ class ConfigCommand extends Command {
             return interaction.editReply(`Mod log channel set to ${channel.toString()}.`);
           }
           case 'none': {
-            if (!modLogWebhookId) return interaction.reply('Moderation logging disabled.');
+            if (!modLogWebhookURL) return interaction.reply('Moderation logging disabled.');
             await interaction.deferReply();
-            await this.client.deleteWebhook(modLogWebhookId).catch(() => {});
+            await this.client.deleteWebhook(modLogWebhookURL).catch(() => {});
             return interaction.editReply('Moderation logging disabled.');
           }
         }
@@ -906,6 +906,17 @@ class ConfigCommand extends Command {
         const guild = (await this.client.db.guild.findUnique({
           where: { id: interaction.guildId }
         }))!;
+
+        // @ts-ignore
+        delete guild.modLogWebhookURL;
+        // @ts-ignore
+        delete guild.messageLogWebhookURL;
+        // @ts-ignore
+        delete guild.appealAlertWebhookURL;
+        // @ts-ignore
+        delete guild.ticketLogWebhookURL;
+        // @ts-ignore
+        delete guild.autoMod;
 
         const yamlString = yaml.dump(
           JSON.parse(JSON.stringify(guild, (k, v) => (typeof v === 'bigint' ? v.toString() : v)))

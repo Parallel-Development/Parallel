@@ -4,7 +4,8 @@ import {
   ApplicationCommandPermissionType,
   Collection,
   ApplicationCommandPermissions,
-  PermissionFlagsBits
+  PermissionFlagsBits,
+  MessageCreateOptions
 } from 'discord.js';
 import client from '../../client';
 import ms from 'ms';
@@ -155,4 +156,17 @@ export function readComplexCustomId(customId: string) {
   const option = customId.slice(colonIndex + 1, questionIndex);
 
   return { name, option: option || null, data };
+}
+
+export async function webhookSend(webhookURL: string, messageData: MessageCreateOptions) {
+  const req = await fetch(webhookURL, {
+    body: JSON.stringify(messageData),
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+
+  if (!req.ok) throw await req.json();
+  else return;
 }

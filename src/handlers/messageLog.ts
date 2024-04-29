@@ -1,5 +1,5 @@
 import { Colors, EmbedBuilder, Message } from 'discord.js';
-import { bin } from '../lib/util/functions';
+import { bin, webhookSend } from '../lib/util/functions';
 import client from '../client';
 
 export default async function (oldMessage: Message<true> | null, message: Message<true>) {
@@ -15,22 +15,8 @@ export default async function (oldMessage: Message<true> | null, message: Messag
     }
   });
 
-  if (!guild?.messageLogWebhookId) return;
+  if (!guild?.messageLogWebhookURL) return;
   if (guild.messageLogIgnoredChannels.includes(message.channel.id)) return;
-
-  const webhook = await client.fetchWebhook(guild.messageLogWebhookId!).catch(() => null);
-  if (!webhook) {
-    await client.db.guild.update({
-      where: {
-        id: guild.id
-      },
-      data: {
-        messageLogWebhookId: null
-      }
-    });
-
-    return false;
-  }
 
   const embed = new EmbedBuilder()
     .setColor(Colors.Orange)
@@ -85,5 +71,16 @@ export default async function (oldMessage: Message<true> | null, message: Messag
     }
   }
 
-  return webhook.send({ embeds: [embed] });
+  try {
+    await webhookSend(guild.messageLogWebhookURL, { embeds: [embed] });
+  } catch {
+    await client.db.guild.update({
+      where: {
+        id: guild.id
+      },
+      data: {
+        messageLogWebhookURL: null
+      }
+    });
+  }
 }

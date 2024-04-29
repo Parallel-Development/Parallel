@@ -21,12 +21,12 @@ model Guild {
   infractionModeratorPublic Boolean      @default(false)
   notifyInfractionChange    Boolean      @default(true)
   appealAllowed             Boolean      @default(false)
-  appealAlertWebhookId      String?
+  appealAlertWebhookURL     String?
   appealQuestions           String[]     @default(["Reason for appeal."])
   appealDisregardAfter      BigInt       @default(2592000000)
   appealBlacklist           String[]
-  modLogWebhookId           String?
-  messageLogWebhookId       String?
+  modLogWebhookURL          String?
+  messageLogWebhookURL      String?
   messageLogIgnoredChannels String[]
   infoWarn                  String?
   infoMute                  String?
@@ -45,7 +45,7 @@ model Guild {
   messageCommandsEnabled    Boolean      @default(true)
   respondNoPermission       Boolean      @default(true)
   ticketsEnabled            Boolean      @default(false)
-  ticketLogWebhookId        String?
+  ticketLogWebhookURL       String?
   ticketLocation            String?
   allowUserCloseTicket      Boolean      @default(false)
   pingRoleOnTicketCreation  String?

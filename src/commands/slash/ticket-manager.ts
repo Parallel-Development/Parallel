@@ -147,7 +147,7 @@ class TicketManagerCommand extends Command {
           if (!interaction.guild.members.me!.permissions.has(PermissionFlagsBits.ManageWebhooks))
             throw 'I need permission to manage webhooks.';
 
-          const { ticketLogWebhookId } = (await this.client.db.guild.findUnique({
+          const { ticketLogWebhookURL } = (await this.client.db.guild.findUnique({
             where: { id: interaction.guildId }
           }))!;
 
@@ -157,7 +157,7 @@ class TicketManagerCommand extends Command {
               await interaction.deferReply();
 
               const webhooks = await interaction.guild.fetchWebhooks();
-              const webhook = webhooks.find(wh => wh.id === ticketLogWebhookId);
+              const webhook = webhooks.find(wh => wh.url === ticketLogWebhookURL);
 
               if (webhook) {
                 if (webhook.channel!.id === channel.id) throw 'Ticket log channel is already set to that channel.';
@@ -181,7 +181,7 @@ class TicketManagerCommand extends Command {
                       id: interaction.guildId
                     },
                     data: {
-                      ticketLogWebhookId: newWebhook.id
+                      ticketLogWebhookURL: newWebhook.url
                     }
                   })
                   .catch(() => {
@@ -192,9 +192,9 @@ class TicketManagerCommand extends Command {
               return interaction.editReply(`Ticket log channel set to ${channel.toString()}.`);
             }
             case 'none': {
-              if (!ticketLogWebhookId) return interaction.reply('Ticket logging disabled.');
+              if (!ticketLogWebhookURL) return interaction.reply('Ticket logging disabled.');
               await interaction.deferReply();
-              await this.client.deleteWebhook(ticketLogWebhookId).catch(() => {});
+              await this.client.deleteWebhook(ticketLogWebhookURL).catch(() => {});
               return interaction.editReply('Ticket logging disabled.');
             }
           }
