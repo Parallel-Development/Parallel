@@ -324,6 +324,9 @@ class ConfigCommand extends Command {
               const newWebhook = await channel.createWebhook({
                 name: 'Appeal Alerts',
                 avatar: this.client.user!.displayAvatarURL()
+              })
+              .catch(() => {
+                throw 'Failed to set an alert channel likely due to permissions.';
               });
 
               await this.client.db.guild
@@ -335,9 +338,6 @@ class ConfigCommand extends Command {
                     appealAlertWebhookURL: newWebhook.url
                   }
                 })
-                .catch(() => {
-                  throw 'Failed to set an alert channel likely due to permissions.';
-                });
 
               return interaction.editReply(`Alert channel set to ${channel.toString()}.`);
             }
@@ -578,6 +578,9 @@ class ConfigCommand extends Command {
               const newWebhook = await channel.createWebhook({
                 name: 'Message Logger',
                 avatar: this.client.user!.displayAvatarURL()
+              })
+              .catch(() => {
+                throw 'Failed to set log channel likely due to permissions.';
               });
 
               await this.client.db.guild
@@ -589,9 +592,6 @@ class ConfigCommand extends Command {
                     messageLogWebhookURL: newWebhook.url
                   }
                 })
-                .catch(() => {
-                  throw 'Failed to set log channel likely due to permissions.';
-                });
             }
 
             return interaction.editReply(`Message log channel set to ${channel.toString()}.`);
@@ -766,6 +766,9 @@ class ConfigCommand extends Command {
               const newWebhook = await channel.createWebhook({
                 name: 'Mod Logger',
                 avatar: this.client.user!.displayAvatarURL()
+              })
+              .catch(() => {
+                throw 'Failed to set log channel likely due to permissions.';
               });
 
               await this.client.db.guild
@@ -777,9 +780,6 @@ class ConfigCommand extends Command {
                     modLogWebhookURL: newWebhook.url
                   }
                 })
-                .catch(() => {
-                  throw 'Failed to set log channel likely due to permissions.';
-                });
             }
 
             return interaction.editReply(`Mod log channel set to ${channel.toString()}.`);
