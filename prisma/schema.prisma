@@ -70,7 +70,7 @@ model Infraction {
   date        BigInt
   expires     BigInt?
   reason      String         @default("Unspecified reason.")
-  moderatorId String         @default("833792285120528394")
+  moderatorId String         @default("745401642664460319")
   appeal      Appeal?
   guild       Guild          @relation(fields: [guildId], references: [id], onDelete: Cascade)
 }
