@@ -266,9 +266,6 @@ import yaml from 'js-yaml';
         )
     )
 )
-@properties<'slash'>({
-  clientPermissions: PermissionFlagsBits.ManageGuild
-})
 class ConfigCommand extends Command {
   async run(interaction: ChatInputCommandInteraction<'cached'>) {
     const group = interaction.options.getSubcommandGroup();
