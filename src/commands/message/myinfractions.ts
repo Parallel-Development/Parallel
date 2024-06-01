@@ -73,8 +73,12 @@ class MyInfractionsCommand extends Command {
       const field: EmbedField = {
         name: `ID ${infraction.id}: ${infraction.type.toString()}`,
         value: `${infraction.reason.slice(0, 100)}${infraction.reason.length > 100 ? '...' : ''}${
-          infraction.appeal ? `\n*\\- This infraction has an appeal.*` : ''
-        }\n*\\- <@${infraction.moderatorId}> at <t:${Math.floor(Number(infraction.date / 1000n))}>*`,
+          infraction.appeal ? `\n*\\- You made an appeal for this infraction.*` : ''
+        }\n*\\- ${
+          infraction.guild.infractionModeratorPublic
+            ? `<@${infraction.moderatorId}> at `
+            : ''
+        }<t:${Math.floor(Number(infraction.date / 1000n))}>*`,
         inline: false
       };
 
