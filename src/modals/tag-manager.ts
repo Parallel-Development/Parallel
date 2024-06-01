@@ -33,7 +33,7 @@ class TagManagerModal extends Modal {
     } else {
       if (!data) return;
       const name = data[0];
-      
+
       await this.client.db.tag
         .update({
           data: {

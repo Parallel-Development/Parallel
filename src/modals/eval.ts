@@ -16,7 +16,7 @@ class EvalModal extends Modal {
 
     const { data } = readComplexCustomId(interaction.customId);
     if (!data) return;
-  
+
     const asyncronous = data[0] === 'true';
     const depth = +data[1];
 

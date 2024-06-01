@@ -1,4 +1,11 @@
-import { PermissionFlagsBits, EmbedBuilder, type EmbedField, Message, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
+import {
+  EmbedBuilder,
+  type EmbedField,
+  Message,
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle
+} from 'discord.js';
 import Command, { properties } from '../../lib/structs/Command';
 import { infractionsPerPage, mainColor } from '../../lib/util/constants';
 import { createComplexCustomId, getUser } from '../../lib/util/functions';
@@ -6,7 +13,7 @@ import { createComplexCustomId, getUser } from '../../lib/util/functions';
 @properties<'message'>({
   name: 'infractions',
   description: "View a user's current infractions.",
-  args: '<user> [page]',
+  args: '<user> [page] [manual|automod|all]',
   aliases: ['warnings']
 })
 class InfractionsCommand extends Command {
@@ -18,21 +25,36 @@ class InfractionsCommand extends Command {
     let page = +args[1] || 1;
     if (!Number.isInteger(page)) throw 'Page number cannot be a decimal.';
 
+    let type;
+    if (args.includes('all')) type = 'all';
+    else if (args.includes('automod')) type = 'automod';
+    else type = 'manual';
+
+    const filter = {
+      ...(type == 'manual'
+        ? { moderatorId: { not: this.client.user!.id } }
+        : type == 'automod'
+        ? { moderatorId: this.client.user!.id }
+        : {})
+    };
+
     const infractionCount = await this.client.db.infraction.count({
       where: {
         guildId: message.guildId,
-        userId: user.id
+        userId: user.id,
+        ...filter
       }
     });
 
-    if (infractionCount === 0) return message.reply('There are no infractions for this user.');
+    if (infractionCount === 0) return message.reply(`There are no ${type !== 'all' ? `${type} ` : ''}infractions for this user.`);
     const pages = Math.ceil(infractionCount / 7);
     if (page > pages) page = pages;
 
     const infractions = await this.client.db.infraction.findMany({
       where: {
         guildId: message.guildId,
-        userId: user.id
+        userId: user.id,
+        ...filter
       },
       include: { appeal: true },
       orderBy: {
@@ -44,7 +66,8 @@ class InfractionsCommand extends Command {
 
     const infractionsEmbed = new EmbedBuilder()
       .setAuthor({ name: `Infractions for ${user.username} (${user.id})`, iconURL: user.displayAvatarURL() })
-      .setDescription(`Total infractions: \`${infractionCount}\`\nPage: \`${page}\`/\`${pages}\``)
+      .setDescription(`Total infractions: \`${infractionCount}\`\nPage: \`${page}\`/\`${pages}\`\nShowing ${type !== 'all' ? 'only ' : ''}${type} infractions. ${type === 'manual' ? `(\`/infractions type\`)` : ''}`)
+      .setFooter({ text: '/case <id>' })
       .setColor(mainColor);
 
     const fields: EmbedField[] = [];
@@ -53,9 +76,7 @@ class InfractionsCommand extends Command {
         name: `ID ${infraction.id}: ${infraction.type.toString()}`,
         value: `${infraction.reason.slice(0, 100)}${infraction.reason.length > 100 ? '...' : ''}${
           infraction.appeal ? `\n*\\- This infraction has an appeal.*` : ''
-        }\n*\\- <t:${Math.floor(Number(infraction.date / 1000n))}>, issued by <@${infraction.moderatorId}> (${
-          infraction.moderatorId
-        })*`,
+        }\n*\\- <@${infraction.moderatorId}> at <t:${Math.floor(Number(infraction.date / 1000n))}>*`,
         inline: false
       };
 
@@ -64,11 +85,15 @@ class InfractionsCommand extends Command {
 
     infractionsEmbed.setFields(fields);
 
-    const backButton = new ButtonBuilder().setLabel('<').setStyle(ButtonStyle.Secondary)
-    .setCustomId(createComplexCustomId('infractions', 'back', [user.id, message.author.id]));
+    const backButton = new ButtonBuilder()
+      .setLabel('<')
+      .setStyle(ButtonStyle.Secondary)
+      .setCustomId(createComplexCustomId('infractions', 'back', [user.id, message.author.id, type, 'false']));
 
-    const forwardButton = new ButtonBuilder().setLabel('>').setStyle(ButtonStyle.Secondary)
-    .setCustomId(createComplexCustomId('infractions', 'forward', [user.id, message.author.id]));
+    const forwardButton = new ButtonBuilder()
+      .setLabel('>')
+      .setStyle(ButtonStyle.Secondary)
+      .setCustomId(createComplexCustomId('infractions', 'forward', [user.id, message.author.id, type, 'false']));
 
     const paginationRow = new ActionRowBuilder<ButtonBuilder>().addComponents(backButton, forwardButton);
 

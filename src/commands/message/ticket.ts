@@ -97,7 +97,7 @@ class TicketCommand extends Command {
                 process.env.API
               }/chatlog/${key.toString('hex')}`
             );
-            
+
           try {
             await webhookSend(ticketLogWebhookURL, { embeds: [embed] });
           } catch {

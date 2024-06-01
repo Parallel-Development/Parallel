@@ -18,7 +18,7 @@ class InteractionCreateListener extends Listener {
 
   async run(interaction: Interaction) {
     if (interaction.inCachedGuild()) await confirmGuild(interaction.guildId);
-    
+
     switch (interaction.type) {
       case InteractionType.ApplicationCommand:
         return chatInputCommand(interaction as ChatInputCommandInteraction);

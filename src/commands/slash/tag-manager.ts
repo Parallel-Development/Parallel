@@ -20,14 +20,20 @@ import { bin, createComplexCustomId } from '../../lib/util/functions';
       command
         .setName('delete')
         .setDescription('Delete a tag.')
-        .addStringOption(option => option.setName('tag_name').setDescription('The name of the tag.').setAutocomplete(true).setRequired(true))
+        .addStringOption(option =>
+          option.setName('tag_name').setDescription('The name of the tag.').setAutocomplete(true).setRequired(true)
+        )
     )
     .addSubcommand(command =>
       command
         .setName('rename')
         .setDescription('Rename a tag.')
         .addStringOption(option =>
-          option.setName('tag_name').setDescription('The name of the tag you are renaming.').setAutocomplete(true).setRequired(true)
+          option
+            .setName('tag_name')
+            .setDescription('The name of the tag you are renaming.')
+            .setAutocomplete(true)
+            .setRequired(true)
         )
         .addStringOption(option =>
           option.setName('new_name').setDescription('The new name of the tag.').setMaxLength(30).setRequired(true)
@@ -37,7 +43,9 @@ import { bin, createComplexCustomId } from '../../lib/util/functions';
       command
         .setName('edit')
         .setDescription('Change the content of a tag.')
-        .addStringOption(option => option.setName('tag_name').setDescription('The name of the tag.').setAutocomplete(true).setRequired(true))
+        .addStringOption(option =>
+          option.setName('tag_name').setDescription('The name of the tag.').setAutocomplete(true).setRequired(true)
+        )
     )
     .addSubcommand(command => command.setName('view').setDescription('View all tags.'))
 )
@@ -55,7 +63,9 @@ class TagManagerCommand extends Command {
 
         if (exists) throw 'A tag with that name already exists.';
 
-        const modal = new ModalBuilder().setTitle('Create a new tag').setCustomId(createComplexCustomId('tag-manager', 'create', null));
+        const modal = new ModalBuilder()
+          .setTitle('Create a new tag')
+          .setCustomId(createComplexCustomId('tag-manager', 'create', null));
 
         const nameRow = new ActionRowBuilder<ModalActionRowComponentBuilder>();
         const nameQ = new TextInputBuilder()
@@ -126,7 +136,9 @@ class TagManagerCommand extends Command {
 
         if (!tag) throw 'Tag does not exist.';
 
-        const modal = new ModalBuilder().setTitle('Edit tag').setCustomId(createComplexCustomId('tag-manager', 'edit', name));
+        const modal = new ModalBuilder()
+          .setTitle('Edit tag')
+          .setCustomId(createComplexCustomId('tag-manager', 'edit', name));
 
         const contentRow = new ActionRowBuilder<ModalActionRowComponentBuilder>();
         const contentQ = new TextInputBuilder()

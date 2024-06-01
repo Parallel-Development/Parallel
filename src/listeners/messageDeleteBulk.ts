@@ -33,7 +33,7 @@ class MessageDeleteBulkListener extends Listener {
 
     if (messages.size === 0) {
       try {
-        await webhookSend(guild.messageLogWebhookURL, { embeds: [embed]} );
+        await webhookSend(guild.messageLogWebhookURL, { embeds: [embed] });
       } catch {
         await this.client.db.guild.update({
           where: {
@@ -82,7 +82,7 @@ class MessageDeleteBulkListener extends Listener {
     embed.setDescription(`[View chat log](${process.env.API}/chatlog/${key.toString('hex')})`);
 
     try {
-      await webhookSend(guild.messageLogWebhookURL, { embeds: [embed]} );
+      await webhookSend(guild.messageLogWebhookURL, { embeds: [embed] });
     } catch {
       await this.client.db.guild.update({
         where: {

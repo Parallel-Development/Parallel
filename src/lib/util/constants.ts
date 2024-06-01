@@ -8,8 +8,14 @@ export const yesButton = new ButtonBuilder().setLabel('Yes').setStyle(ButtonStyl
 export const noButton = new ButtonBuilder().setLabel('No').setStyle(ButtonStyle.Danger).setCustomId('?no');
 export const yesNoRow = new ActionRowBuilder<ButtonBuilder>().addComponents(yesButton, noButton);
 
-const backButton = new ButtonBuilder().setLabel('<').setStyle(ButtonStyle.Secondary).setCustomId(createComplexCustomId('infractions', 'back', null));
-const forwardButton = new ButtonBuilder().setLabel('>').setStyle(ButtonStyle.Secondary).setCustomId(createComplexCustomId('infractions', 'back', null));
+const backButton = new ButtonBuilder()
+  .setLabel('<')
+  .setStyle(ButtonStyle.Secondary)
+  .setCustomId(createComplexCustomId('infractions', 'back', null));
+const forwardButton = new ButtonBuilder()
+  .setLabel('>')
+  .setStyle(ButtonStyle.Secondary)
+  .setCustomId(createComplexCustomId('infractions', 'back', null));
 
 export const mainColor = Colors.Blurple;
 export const commonChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789';

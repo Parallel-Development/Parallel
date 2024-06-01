@@ -38,7 +38,9 @@ class EvalCommand extends Command {
     const depth = interaction.options.getInteger('depth') ?? 0;
 
     if (!code) {
-      const modal = new ModalBuilder().setTitle('Eval').setCustomId(createComplexCustomId('eval', null, [asyncronous.toString(), depth.toString()]));
+      const modal = new ModalBuilder()
+        .setTitle('Eval')
+        .setCustomId(createComplexCustomId('eval', null, [asyncronous.toString(), depth.toString()]));
 
       const codeRow = new ActionRowBuilder<ModalActionRowComponentBuilder>();
       const codeText = new TextInputBuilder()

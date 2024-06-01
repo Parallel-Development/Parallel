@@ -58,7 +58,7 @@ export default async function (interaction: ChatInputCommandInteraction) {
         ephemeral: true
       });
   }
-  
+
   if (command.guildResolve) {
     if (unresolvedGuilds.has(`${interaction.guildId!} ${interaction.commandName}`))
       return interaction.reply({
@@ -92,7 +92,7 @@ export default async function (interaction: ChatInputCommandInteraction) {
 export async function confirmGuild(guildId: string) {
   if (!customCommandsConfirmed.has(guildId)) {
     checkShortcuts(guildId);
-    
+
     if (!commandsPermissionCache.has(guildId)) {
       const permissions = await client.application!.commands.permissions.fetch({ guild: guildId });
       commandsPermissionCache.set(guildId, permissions);

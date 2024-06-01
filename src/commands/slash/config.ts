@@ -318,23 +318,23 @@ class ConfigCommand extends Command {
 
               return interaction.editReply(`Alert channel set to ${channel.toString()}.`);
             } else {
-              const newWebhook = await channel.createWebhook({
-                name: 'Appeal Alerts',
-                avatar: this.client.user!.displayAvatarURL()
-              })
-              .catch(() => {
-                throw 'Failed to set an alert channel likely due to permissions.';
-              });
-
-              await this.client.db.guild
-                .update({
-                  where: {
-                    id: interaction.guildId
-                  },
-                  data: {
-                    appealAlertWebhookURL: newWebhook.url
-                  }
+              const newWebhook = await channel
+                .createWebhook({
+                  name: 'Appeal Alerts',
+                  avatar: this.client.user!.displayAvatarURL()
                 })
+                .catch(() => {
+                  throw 'Failed to set an alert channel likely due to permissions.';
+                });
+
+              await this.client.db.guild.update({
+                where: {
+                  id: interaction.guildId
+                },
+                data: {
+                  appealAlertWebhookURL: newWebhook.url
+                }
+              });
 
               return interaction.editReply(`Alert channel set to ${channel.toString()}.`);
             }
@@ -572,23 +572,23 @@ class ConfigCommand extends Command {
                   throw 'Failed to change log channel likely due to permissions.';
                 });
             } else {
-              const newWebhook = await channel.createWebhook({
-                name: 'Message Logger',
-                avatar: this.client.user!.displayAvatarURL()
-              })
-              .catch(() => {
-                throw 'Failed to set log channel likely due to permissions.';
-              });
-
-              await this.client.db.guild
-                .update({
-                  where: {
-                    id: interaction.guildId
-                  },
-                  data: {
-                    messageLogWebhookURL: newWebhook.url
-                  }
+              const newWebhook = await channel
+                .createWebhook({
+                  name: 'Message Logger',
+                  avatar: this.client.user!.displayAvatarURL()
                 })
+                .catch(() => {
+                  throw 'Failed to set log channel likely due to permissions.';
+                });
+
+              await this.client.db.guild.update({
+                where: {
+                  id: interaction.guildId
+                },
+                data: {
+                  messageLogWebhookURL: newWebhook.url
+                }
+              });
             }
 
             return interaction.editReply(`Message log channel set to ${channel.toString()}.`);
@@ -760,23 +760,23 @@ class ConfigCommand extends Command {
                   throw 'Failed to change log channel likely due to permissions.';
                 });
             } else {
-              const newWebhook = await channel.createWebhook({
-                name: 'Mod Logger',
-                avatar: this.client.user!.displayAvatarURL()
-              })
-              .catch(() => {
-                throw 'Failed to set log channel likely due to permissions.';
-              });
-
-              await this.client.db.guild
-                .update({
-                  where: {
-                    id: interaction.guildId
-                  },
-                  data: {
-                    modLogWebhookURL: newWebhook.url
-                  }
+              const newWebhook = await channel
+                .createWebhook({
+                  name: 'Mod Logger',
+                  avatar: this.client.user!.displayAvatarURL()
                 })
+                .catch(() => {
+                  throw 'Failed to set log channel likely due to permissions.';
+                });
+
+              await this.client.db.guild.update({
+                where: {
+                  id: interaction.guildId
+                },
+                data: {
+                  modLogWebhookURL: newWebhook.url
+                }
+              });
             }
 
             return interaction.editReply(`Mod log channel set to ${channel.toString()}.`);

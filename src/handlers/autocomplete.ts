@@ -111,13 +111,11 @@ export default async function (interaction: AutocompleteInteraction) {
         return interaction.respond([]);
       }
 
-      let _tags = await client.db.tag.findMany({ where: { guildId: interaction.guildId }});
+      let _tags = await client.db.tag.findMany({ where: { guildId: interaction.guildId } });
       _tags = _tags.sort((a, b) => a.name.localeCompare(b.name));
       const tags = _tags.map(tag => ({ name: tag.name, value: tag.name }));
 
-      const filteredTags = tags
-      .filter(tag => tag.name.includes(focusedLowercase))
-      .slice(0, 25);
+      const filteredTags = tags.filter(tag => tag.name.includes(focusedLowercase)).slice(0, 25);
 
       return interaction.respond(filteredTags);
     }
