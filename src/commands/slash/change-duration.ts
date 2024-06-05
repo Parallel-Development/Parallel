@@ -94,7 +94,7 @@ class DurationCommand extends Command {
 
     if (infraction.type !== InfractionType.Warn) {
       if (expires)
-        await this.client.db.task.update({
+        await this.client.db.task.upsert({
           where: {
             userId_guildId_type: {
               userId: infraction.userId,
@@ -102,9 +102,8 @@ class DurationCommand extends Command {
               type: infraction.type
             }
           },
-          data: {
-            expires
-          }
+          create: { userId: infraction.userId, guildId: interaction.guildId, type: infraction.type, expires },
+          update: { expires }
         });
       else
         await this.client.db.task.delete({
