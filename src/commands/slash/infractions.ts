@@ -47,9 +47,7 @@ class InfractionsCommand extends Command {
         : type == 'automod'
         ? { moderatorId: this.client.user!.id }
         : {}),
-      ...(!showRemovals
-        ? { type: { notIn: [InfractionType.Unban, InfractionType.Unmute] }  }
-        : {})
+      ...(!showRemovals ? { type: { notIn: [InfractionType.Unban, InfractionType.Unmute] } } : {})
     };
 
     const infractionCount = await this.client.db.infraction.count({
@@ -60,7 +58,8 @@ class InfractionsCommand extends Command {
       }
     });
 
-    if (infractionCount === 0) return interaction.reply(`There are no ${type !== 'all' ? `${type} ` : ''}infractions for this user.`);
+    if (infractionCount === 0)
+      return interaction.reply(`There are no ${type !== 'all' ? `${type} ` : ''}infractions for this user.`);
     const pages = Math.ceil(infractionCount / 7);
     if (page > pages) page = pages;
 
@@ -80,7 +79,11 @@ class InfractionsCommand extends Command {
 
     const infractionsEmbed = new EmbedBuilder()
       .setAuthor({ name: `Infractions for ${user.username} (${user.id})`, iconURL: user.displayAvatarURL() })
-      .setDescription(`Total infractions: \`${infractionCount}\`\nPage: \`${page}\`/\`${pages}\`\nShowing ${type !== 'all' ? 'only ' : ''}${type} infractions. ${type === 'manual' ? `(\`/infractions type\`)` : ''}`)
+      .setDescription(
+        `Total infractions: \`${infractionCount}\`\nPage: \`${page}\`/\`${pages}\`\nShowing ${
+          type !== 'all' ? 'only ' : ''
+        }${type} infractions. ${type === 'manual' ? `(\`/infractions type\`)` : ''}`
+      )
       .setFooter({ text: '/case <id>' })
       .setColor(mainColor);
 
@@ -102,12 +105,16 @@ class InfractionsCommand extends Command {
     const backButton = new ButtonBuilder()
       .setLabel('<')
       .setStyle(ButtonStyle.Secondary)
-      .setCustomId(createComplexCustomId('infractions', 'back', [user.id, interaction.user.id, type, showRemovals.toString()]));
+      .setCustomId(
+        createComplexCustomId('infractions', 'back', [user.id, interaction.user.id, type, showRemovals.toString()])
+      );
 
     const forwardButton = new ButtonBuilder()
       .setLabel('>')
       .setStyle(ButtonStyle.Secondary)
-      .setCustomId(createComplexCustomId('infractions', 'forward', [user.id, interaction.user.id, type, showRemovals.toString()]));
+      .setCustomId(
+        createComplexCustomId('infractions', 'forward', [user.id, interaction.user.id, type, showRemovals.toString()])
+      );
 
     const paginationRow = new ActionRowBuilder<ButtonBuilder>().addComponents(backButton, forwardButton);
 

@@ -10,6 +10,7 @@ import {
 import Command, { properties } from '../../lib/structs/Command';
 import { infractionsPerPage, mainColor } from '../../lib/util/constants';
 import { createComplexCustomId } from '../../lib/util/functions';
+import { InfractionType } from '@prisma/client';
 
 @properties<'message'>({
   name: 'myinfractions',
@@ -40,6 +41,7 @@ class MyInfractionsCommand extends Command {
       where: {
         guildId: message.guildId,
         userId: user.id,
+        type: { notIn: [InfractionType.Unban, InfractionType.Unmute] },
         ...filter
       }
     });
@@ -52,6 +54,7 @@ class MyInfractionsCommand extends Command {
       where: {
         guildId: message.guildId,
         userId: user.id,
+        type: { notIn: [InfractionType.Unban, InfractionType.Unmute] },
         ...filter
       },
       include: { appeal: true, guild: { select: { infractionModeratorPublic: true } } },
@@ -64,7 +67,11 @@ class MyInfractionsCommand extends Command {
 
     const infractionsEmbed = new EmbedBuilder()
       .setAuthor({ name: `Your infractions`, iconURL: user.displayAvatarURL() })
-      .setDescription(`Total infractions: \`${infractionCount}\`\nPage: \`${page}\`/\`${pages}\`\nShowing ${type !== 'all' ? 'only ' : ''}${type} infractions. ${type === 'manual' ? `(\`/infractions type\`)` : ''}`)
+      .setDescription(
+        `Total infractions: \`${infractionCount}\`\nPage: \`${page}\`/\`${pages}\`\nShowing ${
+          type !== 'all' ? 'only ' : ''
+        }${type} infractions. ${type === 'manual' ? `(\`/infractions type\`)` : ''}`
+      )
       .setFooter({ text: '/mycase <id>' })
       .setColor(mainColor);
 
@@ -74,11 +81,9 @@ class MyInfractionsCommand extends Command {
         name: `ID ${infraction.id}: ${infraction.type.toString()}`,
         value: `${infraction.reason.slice(0, 100)}${infraction.reason.length > 100 ? '...' : ''}${
           infraction.appeal ? `\n*\\- You made an appeal for this infraction.*` : ''
-        }\n*\\- ${
-          infraction.guild.infractionModeratorPublic
-            ? `<@${infraction.moderatorId}> at `
-            : ''
-        }<t:${Math.floor(Number(infraction.date / 1000n))}>*`,
+        }\n*\\- ${infraction.guild.infractionModeratorPublic ? `<@${infraction.moderatorId}> at ` : ''}<t:${Math.floor(
+          Number(infraction.date / 1000n)
+        )}>*`,
         inline: false
       };
 

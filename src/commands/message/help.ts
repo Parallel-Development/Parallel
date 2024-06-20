@@ -42,7 +42,7 @@ class HelpCommand extends Command {
           .setDescription(
             `${shortcut.description}\n\nThis command will \`${shortcut.punishment.toLowerCase()}\` the provided user${
               shortcut.duration ? ` for \`${ms(Number(shortcut.duration), { long: true })}\`` : ''
-            }${
+            } for ${shortcut.reason}${
               shortcut.deleteTime
                 ? ` and purge messages by them up to \`${ms(shortcut.deleteTime * 1000, { long: true })}\` old`
                 : ''

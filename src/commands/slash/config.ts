@@ -729,7 +729,7 @@ class ConfigCommand extends Command {
               }
             });
 
-            return interaction.reply(`The prefix is now set to \`${prefix}\`.`);
+            return interaction.reply(`The prefix is now set to \`${prefix}\``);
           }
         }
       }

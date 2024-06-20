@@ -23,9 +23,7 @@ class InfractionsButton extends Button {
         : type == 'automod'
         ? { moderatorId: this.client.user!.id }
         : {}),
-      ...(showRemovals === 'false'
-        ? { type: { notIn: [InfractionType.Unban, InfractionType.Unmute] } }
-        : {})
+      ...(showRemovals === 'false' ? { type: { notIn: [InfractionType.Unban, InfractionType.Unmute] } } : {})
     };
 
     if (interaction.user.id !== controllerId) throw 'You cannot use this button.';
@@ -48,7 +46,12 @@ class InfractionsButton extends Button {
       }
     });
 
-    if (infractionCount === 0) return interaction.update({ content: `No ${type !== 'all' ? `${type} ` : ''}infractions.`, embeds: [], components: [] });
+    if (infractionCount === 0)
+      return interaction.update({
+        content: `No ${type !== 'all' ? `${type} ` : ''}infractions.`,
+        embeds: [],
+        components: []
+      });
 
     const pages = Math.ceil(infractionCount / 7);
     if (page > pages) page = pages;
@@ -71,21 +74,22 @@ class InfractionsButton extends Button {
     if (!infractionModeratorPublic) infractionModeratorPublic = infractions[0].guild.infractionModeratorPublic;
 
     const infractionsEmbed = new EmbedBuilder()
-      .setDescription(`Total infractions: \`${infractionCount}\`\nPage: \`${page}\`/\`${pages}\`\nShowing ${type !== 'all' ? 'only ' : ''}${type} infractions. ${type === 'manual' ? `(\`/infractions type\`)` : ''}`)
+      .setDescription(
+        `Total infractions: \`${infractionCount}\`\nPage: \`${page}\`/\`${pages}\`\nShowing ${
+          type !== 'all' ? 'only ' : ''
+        }${type} infractions. ${type === 'manual' ? `(\`/infractions type\`)` : ''}`
+      )
       .setFooter(interaction.message.embeds[0]!.footer)
       .setColor(mainColor);
 
     const iconURL = interaction.message.embeds[0]!.author!.iconURL;
     if (userId === controllerId) {
-      infractionsEmbed
-        .setAuthor({ name: `Your infractions`, iconURL })
-        .setFooter({ text: '/mycase <id>' });
-    }
-    else {
+      infractionsEmbed.setAuthor({ name: `Your infractions`, iconURL }).setFooter({ text: '/mycase <id>' });
+    } else {
       const username = interaction.message.embeds[0]!.author?.name.split(' ')[2]; // Infractions (0) for (1) username (2)
       infractionsEmbed
         .setAuthor({ name: `Infractions for ${username} (${userId})`, iconURL })
-        .setFooter({ text: '/case <id>' })
+        .setFooter({ text: '/case <id>' });
     }
 
     const fields: EmbedField[] = [];
@@ -94,9 +98,9 @@ class InfractionsButton extends Button {
         name: `ID ${infraction.id}: ${infraction.type.toString()}`,
         value: `${infraction.reason.slice(0, 100)}${infraction.reason.length > 100 ? '...' : ''}${
           infraction.appeal ? `\n*\\- You made an appeal for this infraction.*` : ''
-        }\n*\\- ${
-          infractionModeratorPublic ? `<@${infraction.moderatorId}> at ` : ''
-        }<t:${Math.floor(Number(infraction.date / 1000n))}>*`,
+        }\n*\\- ${infractionModeratorPublic ? `<@${infraction.moderatorId}> at ` : ''}<t:${Math.floor(
+          Number(infraction.date / 1000n)
+        )}>*`,
         inline: false
       };
 

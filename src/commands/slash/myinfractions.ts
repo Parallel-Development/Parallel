@@ -42,11 +42,8 @@ class MyInfractionsCommand extends Command {
         : type == 'automod'
         ? { moderatorId: this.client.user!.id }
         : {}),
-      ...(!showRemovals
-        ? { type: { notIn: [InfractionType.Unban, InfractionType.Unmute] }  }
-        : {})
+      ...(!showRemovals ? { type: { notIn: [InfractionType.Unban, InfractionType.Unmute] } } : {})
     };
-
 
     const infractionCount = await this.client.db.infraction.count({
       where: {
@@ -76,7 +73,11 @@ class MyInfractionsCommand extends Command {
 
     const infractionsEmbed = new EmbedBuilder()
       .setAuthor({ name: `Your infractions`, iconURL: user.displayAvatarURL() })
-      .setDescription(`Total infractions: \`${infractionCount}\`\nPage: \`${page}\`/\`${pages}\`\nShowing ${type !== 'all' ? 'only ' : ''}${type} infractions. ${type === 'manual' ? `(\`/infractions type\`)` : ''}`)
+      .setDescription(
+        `Total infractions: \`${infractionCount}\`\nPage: \`${page}\`/\`${pages}\`\nShowing ${
+          type !== 'all' ? 'only ' : ''
+        }${type} infractions. ${type === 'manual' ? `(\`/infractions type\`)` : ''}`
+      )
       .setFooter({ text: '/mycase <id>' })
       .setColor(mainColor);
 
@@ -86,11 +87,9 @@ class MyInfractionsCommand extends Command {
         name: `ID ${infraction.id}: ${infraction.type.toString()}`,
         value: `${infraction.reason.slice(0, 100)}${infraction.reason.length > 100 ? '...' : ''}${
           infraction.appeal ? `\n*\\- You made an appeal for this infraction.*` : ''
-        }\n*\\- ${
-          infraction.guild.infractionModeratorPublic
-            ? `<@${infraction.moderatorId}> at `
-            : ''
-        }<t:${Math.floor(Number(infraction.date / 1000n))}>*`,
+        }\n*\\- ${infraction.guild.infractionModeratorPublic ? `<@${infraction.moderatorId}> at ` : ''}<t:${Math.floor(
+          Number(infraction.date / 1000n)
+        )}>*`,
         inline: false
       };
 
@@ -102,12 +101,16 @@ class MyInfractionsCommand extends Command {
     const backButton = new ButtonBuilder()
       .setLabel('<')
       .setStyle(ButtonStyle.Secondary)
-      .setCustomId(createComplexCustomId('infractions', 'back', [user.id, interaction.user.id, type, showRemovals.toString()]));
+      .setCustomId(
+        createComplexCustomId('infractions', 'back', [user.id, interaction.user.id, type, showRemovals.toString()])
+      );
 
     const forwardButton = new ButtonBuilder()
       .setLabel('>')
       .setStyle(ButtonStyle.Secondary)
-      .setCustomId(createComplexCustomId('infractions', 'forward', [user.id, interaction.user.id, type, showRemovals.toString()]));
+      .setCustomId(
+        createComplexCustomId('infractions', 'forward', [user.id, interaction.user.id, type, showRemovals.toString()])
+      );
 
     const paginationRow = new ActionRowBuilder<ButtonBuilder>().addComponents(backButton, forwardButton);
 

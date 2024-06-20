@@ -1,14 +1,8 @@
-import {
-  EmbedBuilder,
-  type EmbedField,
-  Message,
-  ActionRowBuilder,
-  ButtonBuilder,
-  ButtonStyle
-} from 'discord.js';
+import { EmbedBuilder, type EmbedField, Message, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
 import Command, { properties } from '../../lib/structs/Command';
 import { infractionsPerPage, mainColor } from '../../lib/util/constants';
 import { createComplexCustomId, getUser } from '../../lib/util/functions';
+import { InfractionType } from '@prisma/client';
 
 @properties<'message'>({
   name: 'infractions',
@@ -42,11 +36,13 @@ class InfractionsCommand extends Command {
       where: {
         guildId: message.guildId,
         userId: user.id,
+        type: { notIn: [InfractionType.Unban, InfractionType.Unmute] },
         ...filter
       }
     });
 
-    if (infractionCount === 0) return message.reply(`There are no ${type !== 'all' ? `${type} ` : ''}infractions for this user.`);
+    if (infractionCount === 0)
+      return message.reply(`There are no ${type !== 'all' ? `${type} ` : ''}infractions for this user.`);
     const pages = Math.ceil(infractionCount / 7);
     if (page > pages) page = pages;
 
@@ -54,6 +50,7 @@ class InfractionsCommand extends Command {
       where: {
         guildId: message.guildId,
         userId: user.id,
+        type: { notIn: [InfractionType.Unban, InfractionType.Unmute] },
         ...filter
       },
       include: { appeal: true },
@@ -66,7 +63,11 @@ class InfractionsCommand extends Command {
 
     const infractionsEmbed = new EmbedBuilder()
       .setAuthor({ name: `Infractions for ${user.username} (${user.id})`, iconURL: user.displayAvatarURL() })
-      .setDescription(`Total infractions: \`${infractionCount}\`\nPage: \`${page}\`/\`${pages}\`\nShowing ${type !== 'all' ? 'only ' : ''}${type} infractions. ${type === 'manual' ? `(\`/infractions type\`)` : ''}`)
+      .setDescription(
+        `Total infractions: \`${infractionCount}\`\nPage: \`${page}\`/\`${pages}\`\nShowing ${
+          type !== 'all' ? 'only ' : ''
+        }${type} infractions. ${type === 'manual' ? `(\`/infractions type\`)` : ''}`
+      )
       .setFooter({ text: '/case <id>' })
       .setColor(mainColor);
 
