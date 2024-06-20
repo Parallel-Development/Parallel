@@ -8,6 +8,8 @@ import Command, { properties } from '../../lib/structs/Command';
 class PrefixCommand extends Command {
   async run(message: Message<true>, args: string[]) {
     const prefix = args[0];
+    if (!prefix) throw 'Missing required argument `prefix`.';
+    
     if (prefix.length > 10) throw 'The prefix may not be longer than 10 characters.';
 
     await this.client.db.guild.update({
