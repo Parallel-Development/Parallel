@@ -12,7 +12,6 @@ import {
   ButtonStyle,
   Guild,
   EmbedBuilder,
-  Colors,
   EmbedField,
   ModalMessageModalSubmitInteraction
 } from 'discord.js';

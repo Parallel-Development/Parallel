@@ -28,8 +28,8 @@ class HelpCommand extends Command {
         this.client.commands.message.get(commandName) ??
         this.client.commands.message.get(this.client.aliases.get(commandName) as string);
 
-      if (command?.name === 'eval' && interaction.user.id !== process.env.DEV)
-        throw 'The eval command is restricted for developers.';
+      if (command?.devOnly && interaction.user.id !== process.env.DEV)
+        throw 'No command with that name or alias exists.';
 
       if (!command) {
         // check for shortcut
@@ -77,11 +77,7 @@ class HelpCommand extends Command {
       return interaction.reply({ embeds: [embed] });
     }
 
-    const commands = [...this.client.commands.message.values()];
-    commands.splice(
-      commands.findIndex(c => c.name === 'eval'),
-      1
-    );
+    const commands = [...this.client.commands.message.values()].filter(cmd => !cmd.devOnly);
 
     const shortcuts = interaction.inGuild()
       ? (await this.client.db.shortcut.findMany({ where: { guildId: interaction.guildId } }))!

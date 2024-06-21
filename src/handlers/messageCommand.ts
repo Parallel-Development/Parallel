@@ -49,6 +49,8 @@ export default async function (message: Message) {
     return;
   }
 
+  if (command.devOnly && message.author.id !== process.env.DEV) return;
+
   commandName = command.name;
 
   if (!message.inGuild() && !command.allowDM) return message.reply('That command must be ran in a guild.');

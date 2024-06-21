@@ -10,12 +10,11 @@ let _; // used to reference the last returned expression
   description: 'Execute a string of JavaScript code.',
   args: '<code> [--async] [--depth={depth}]',
   allowDM: true,
-  aliases: ['evaluate', 'run', 'ev', 'e']
+  aliases: ['evaluate', 'run', 'ev', 'e'],
+  devOnly: true
 })
 class EvalCommand extends Command {
   async run(message: Message, args: string[]) {
-    if (message.author.id !== process.env.DEV!) throw 'You cannot run this command.';
-
     let isAsync = false;
     let depth = 0;
 

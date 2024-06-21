@@ -97,7 +97,9 @@ class InfractionsButton extends Button {
       const field: EmbedField = {
         name: `ID ${infraction.id}: ${infraction.type.toString()}`,
         value: `${infraction.reason.slice(0, 100)}${infraction.reason.length > 100 ? '...' : ''}${
-          infraction.appeal ? `\n*\\- You made an appeal for this infraction.*` : ''
+          infraction.appeal
+            ? `\n*\\- ${userId === controllerId ? 'You made' : 'There is'} an appeal for this infraction.*`
+            : ''
         }\n*\\- ${infractionModeratorPublic ? `<@${infraction.moderatorId}> at ` : ''}<t:${Math.floor(
           Number(infraction.date / 1000n)
         )}>*`,

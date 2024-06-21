@@ -28,11 +28,11 @@ let _; // used to reference the last returned expression
     .addIntegerOption(option => option.setName('depth').setDescription('Output depth.').setMinValue(0))
 )
 @properties<'slash'>({
-  allowDM: true
+  allowDM: true,
+  devOnly: true
 })
 class EvalCommand extends Command {
   async run(interaction: ChatInputCommandInteraction) {
-    if (interaction.user.id !== process.env.DEV!) throw 'You cannot run this command.';
     const code = interaction.options.getString('code');
     const asyncronous = interaction.options.getBoolean('async') ?? false;
     const depth = interaction.options.getInteger('depth') ?? 0;

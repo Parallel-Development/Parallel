@@ -1,6 +1,5 @@
 import { Client as DJSClient, GatewayIntentBits as Intents, Options, Partials, Sweepers } from 'discord.js';
 import { PrismaClient } from '@prisma/client';
-import { createPrismaRedisCache } from 'prisma-redis-middleware';
 import fs from 'fs';
 import type Command from './Command';
 import type Listener from './Listener';
@@ -118,17 +117,6 @@ class Client extends DJSClient {
     await this._cacheButtons();
     await this._loadListeners();
 
-    this.db.$use(
-      createPrismaRedisCache({
-        storage: {
-          type: 'memory',
-          options: {
-            invalidation: true
-          }
-        },
-        cacheTime: 600000
-      })
-    );
     await this.db.$connect();
 
     return super.login(token);

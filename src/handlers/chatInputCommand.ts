@@ -45,6 +45,8 @@ export default async function (interaction: ChatInputCommandInteraction) {
     return;
   }
 
+  if (command.devOnly && interaction.user.id !== process.env.DEV) return;
+
   if (!interaction.inCachedGuild() && !command.allowDM)
     return interaction.reply({ content: 'That command must be ran in a guild.', ephemeral: true });
 

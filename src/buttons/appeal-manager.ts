@@ -7,11 +7,21 @@ import {
   Colors,
   EmbedBuilder,
   EmbedData,
-  PermissionFlagsBits
+  ModalActionRowComponentBuilder,
+  ModalBuilder,
+  PermissionFlagsBits,
+  TextInputBuilder,
+  TextInputComponent,
+  TextInputStyle
 } from 'discord.js';
 import ms from 'ms';
 import Button from '../lib/structs/Button';
-import { getMember, hasSlashCommandPermission, readComplexCustomId } from '../lib/util/functions';
+import {
+  createComplexCustomId,
+  getMember,
+  hasSlashCommandPermission,
+  readComplexCustomId
+} from '../lib/util/functions';
 import { infractionColors } from '../lib/util/constants';
 const reason = 'Unspecified reason.';
 
@@ -164,44 +174,22 @@ class AppealManagerButton extends Button {
         return;
       }
       case 'deny': {
-        await interaction.deferUpdate();
+        const modal = new ModalBuilder()
+          .setTitle('Deny Appeal')
+          .setCustomId(createComplexCustomId('appeal-manager', null, infractionId.toString()));
+        const denyReason = new TextInputBuilder()
+          .setLabel('Reason')
+          .setMaxLength(3500)
+          .setCustomId('reason')
+          .setStyle(TextInputStyle.Paragraph)
+          .setRequired(false);
 
-        await this.client.db.appeal
-          .delete({
-            where: {
-              id: infractionId
-            }
-          })
-          .catch(() => {});
+        const row = new ActionRowBuilder<ModalActionRowComponentBuilder>();
+        row.setComponents(denyReason);
 
-        const denyButton = new ButtonBuilder()
-          .setCustomId('?')
-          .setLabel('Denied')
-          .setStyle(ButtonStyle.Danger)
-          .setDisabled(true);
+        modal.components.push(row);
 
-        const row = new ActionRowBuilder<ButtonBuilder>();
-        row.addComponents(denyButton);
-
-        const embed = new EmbedBuilder(interaction.message.embeds[0] as EmbedData).setColor(Colors.Red);
-
-        interaction.editReply({ components: [row], embeds: [embed] });
-
-        const denyEmbed = new EmbedBuilder()
-          .setAuthor({ name: 'Parallel Moderation', iconURL: this.client.user!.displayAvatarURL() })
-          .setTitle('Appeal Denied')
-          .setColor(Colors.Red)
-          .setDescription(
-            `**Infraction ID:** \`${infraction.id}\`\n**Infraction punishment:** \`${infraction.type.toString()}\`${
-              reason ? `\n${reason}` : ''
-            }`
-          );
-
-        if (infraction.guild.notifyInfractionChange)
-          await this.client.users
-            .fetch(appeal.userId)
-            .then(user => user.send({ embeds: [denyEmbed] }))
-            .catch(() => {});
+        interaction.showModal(modal);
 
         return;
       }

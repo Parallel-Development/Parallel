@@ -53,6 +53,7 @@ type MessageCommandProperties = {
   guildResolve?: boolean;
   aliases?: string[];
   slashOnly?: boolean;
+  devOnly?: boolean;
 };
 
 export type CommandProperties<M extends 'slash' | 'message'> = M extends 'message'
@@ -61,4 +62,5 @@ export type CommandProperties<M extends 'slash' | 'message'> = M extends 'messag
       clientPermissions?: bigint | bigint[];
       allowDM?: boolean;
       guildResolve?: boolean;
+      devOnly?: boolean;
     };

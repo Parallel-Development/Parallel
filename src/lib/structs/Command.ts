@@ -16,6 +16,7 @@ export default abstract class Command<IsMsg extends boolean = false> {
   public args: If<IsMsg, string[] | null> = null!;
   // Not Available - Redirect to slash command
   public slashOnly: If<IsMsg, boolean> = null!;
+  public devOnly = false;
 
   public allowDM = false;
   public guildResolve = false;
@@ -46,6 +47,7 @@ export function properties<M extends 'message' | 'slash'>(properties: CommandPro
         : null;
       aliases = isMessageCommandProperties(properties) ? properties.aliases ?? [] : [];
       slashOnly = isMessageCommandProperties(properties) ? properties.slashOnly : null;
+      devOnly = properties.devOnly;
 
       allowDM = properties.allowDM;
       guildResolve = properties.guildResolve;
