@@ -531,7 +531,7 @@ class AutomodCommand extends Command {
             return interaction.editReply(`Removed \`${word}\` from the filter.`);
           }
           case 'view': {
-            const filter = automodRule.triggerMetadata.keywordFilter.join(', ');
+            const filter = `\`\`\`\n${automodRule.triggerMetadata.keywordFilter.join(', ')}\`\`\``;
             if (filter.length === 0) return interaction.editReply('The automod filter is empty.');
             if (filter.length > 1900) throw 'Too big to display. Please view in settings.';
 
