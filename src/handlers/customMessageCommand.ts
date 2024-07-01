@@ -205,15 +205,18 @@ export default async function (
   // find matching escalations
   const escalation = (infraction.guild.escalationsManual as Escalation[]).reduce(
     (prev, curr) => {
-      const within = +curr.within;
+      if (curr.amount < prev.amount) return prev;
+      if (infractionHistory.length < curr.amount) return prev;
 
-      return infractionHistory.length >= curr.amount &&
-        curr.amount >= prev.amount &&
-        (within !== 0
-          ? within < (+prev.within || Infinity) && date - Number(infractionHistory[curr.amount - 1].date) <= within
-          : curr.amount !== prev.amount)
-        ? curr
-        : prev;
+      const within = +curr.within;
+      if (!within) return curr;
+
+      const isWithin = date - Number(infractionHistory[curr.amount - 1].date) <= within;
+      if (!isWithin) return prev;
+      if (curr.amount > prev.amount) return curr;
+
+      if (within < +prev.within) return curr;
+      else return prev;
     },
     { amount: 0, within: '0', punishment: InfractionType.Warn, duration: '0' }
   );
