@@ -45,8 +45,8 @@ class InfractionsCommand extends Command {
       ...(type == 'manual'
         ? { moderatorId: { not: this.client.user!.id } }
         : type == 'automod'
-        ? { moderatorId: this.client.user!.id }
-        : {}),
+          ? { moderatorId: this.client.user!.id }
+          : {}),
       ...(!showRemovals ? { type: { notIn: [InfractionType.Unban, InfractionType.Unmute] } } : {})
     };
 

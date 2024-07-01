@@ -37,12 +37,12 @@ type AutoModConfigRaw = {
 export type AutoModConfig<I extends 'integrated' | 'raw' = null> = I extends 'integrated'
   ? AutoModConfigIntegrated
   : I extends 'raw'
-  ? AutoModConfigRaw
-  : {
-      toggle: boolean;
-      punishment: InfractionType | null;
-      duration: `${number}`;
-    };
+    ? AutoModConfigRaw
+    : {
+        toggle: boolean;
+        punishment: InfractionType | null;
+        duration: `${number}`;
+      };
 
 type MessageCommandProperties = {
   name: string;

@@ -140,10 +140,10 @@ class ShortcutsCommand extends Command {
             punishment === IT.Ban || punishment === IT.Unban
               ? PermissionFlagsBits.BanMembers
               : punishment === IT.Mute || punishment === IT.Unmute
-              ? PermissionFlagsBits.ModerateMembers
-              : punishment === IT.Kick
-              ? PermissionFlagsBits.KickMembers
-              : PermissionFlagsBits.ModerateMembers,
+                ? PermissionFlagsBits.ModerateMembers
+                : punishment === IT.Kick
+                  ? PermissionFlagsBits.KickMembers
+                  : PermissionFlagsBits.ModerateMembers,
           options: [
             {
               name: punishment === IT.Ban || punishment === IT.Unban ? 'user' : 'member',

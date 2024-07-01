@@ -28,8 +28,8 @@ class InfractionsCommand extends Command {
       ...(type == 'manual'
         ? { moderatorId: { not: this.client.user!.id } }
         : type == 'automod'
-        ? { moderatorId: this.client.user!.id }
-        : {})
+          ? { moderatorId: this.client.user!.id }
+          : {})
     };
 
     const infractionCount = await this.client.db.infraction.count({

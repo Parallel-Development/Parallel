@@ -4,9 +4,6 @@
   "main": "dist/index.js",
   "license": "CC-BY-NC-SA-4.0",
   "type": "commonjs",
-  "engines": {
-    "node": "21.x"
-  },
   "scripts": {
     "start": "node .",
     "build": "tsc",

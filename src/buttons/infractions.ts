@@ -21,8 +21,8 @@ class InfractionsButton extends Button {
       ...(type == 'manual'
         ? { moderatorId: { not: this.client.user!.id } }
         : type == 'automod'
-        ? { moderatorId: this.client.user!.id }
-        : {}),
+          ? { moderatorId: this.client.user!.id }
+          : {}),
       ...(showRemovals === 'false' ? { type: { notIn: [InfractionType.Unban, InfractionType.Unmute] } } : {})
     };
 
