@@ -17,6 +17,7 @@ import {
 import ms from 'ms';
 import Button from '../lib/structs/Button';
 import {
+  adequateHierarchy,
   createComplexCustomId,
   getMember,
   hasSlashCommandPermission,
@@ -104,12 +105,20 @@ class AppealManagerButton extends Button {
             break;
           }
           case InfractionType.Mute: {
+            const useCommandErr = "If you don't want to undo the punishment, use the command `/appeal-manager accept` and set the `dont-undo` option to `True`.";
+
             if (!interaction.guild.members.me!.permissions.has(PermissionFlagsBits.ModerateMembers))
-              throw "I cannot undo the punishment because I do not have the Moderate Members permission. If you don't want to undo the punishment, use the command `/appeal-manager accept` and set the `dont-undo` option to `True`";
+              throw `I cannot undo the punishment because I do not have the Moderate Members permission. ${useCommandErr}`;
 
             const member = await getMember(interaction.guild, infraction.userId);
             if (!member)
-              throw 'I could not undo the punishment because the member is not in the guild. Use the command `/appeal-manager accept` and set the `dont-undo` option to `True` to accept.';
+              throw `I cannot undo the punishment because the member is not in the guild. ${useCommandErr}`;
+
+            if (!adequateHierarchy(interaction.guild.members.me!, member))
+              throw `I cannot undo the punishment because I do not have adequate hierarchy to unmute the member. ${useCommandErr}`;
+
+            if (!adequateHierarchy(interaction.member, member))
+                throw `You cannot undo the punishment because you do not have adequate hierarchy to unmute the member. ${useCommandErr}`;
 
             await member.timeout(null, reason);
 
