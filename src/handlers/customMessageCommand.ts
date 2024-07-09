@@ -223,6 +223,19 @@ export default async function (
 
   if (escalation.amount === 0) return false;
 
+  if (!adequateHierarchy(message.guild.members.me!, target)) return;
+  switch (escalation.punishment) {
+    case InfractionType.Ban:
+      if (!message.guild.members.me!.permissions.has(PermissionFlagsBits.BanMembers)) return;
+      break;
+    case InfractionType.Kick:
+      if (!message.guild.members.me!.permissions.has(PermissionFlagsBits.KickMembers)) return;
+      break;
+    case InfractionType.Mute:
+      if (!message.guild.members.me!.permissions.has(PermissionFlagsBits.MuteMembers)) return;
+      break;
+  }
+
   const eDuration = +escalation.duration;
   const eExpires = eDuration ? date + eDuration : null;
   const eExpiresStr = Math.floor(Number(eExpires) / 1000);

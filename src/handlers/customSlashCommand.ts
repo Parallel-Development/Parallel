@@ -215,6 +215,19 @@ export default async function (interaction: ChatInputCommandInteraction<'cached'
 
   if (escalation.amount === 0) return false;
 
+  if (!adequateHierarchy(interaction.guild.members.me!, target)) return;
+  switch (escalation.punishment) {
+    case InfractionType.Ban:
+      if (!interaction.guild.members.me!.permissions.has(PermissionFlagsBits.BanMembers)) return;
+      break;
+    case InfractionType.Kick:
+      if (!interaction.guild.members.me!.permissions.has(PermissionFlagsBits.KickMembers)) return;
+      break;
+    case InfractionType.Mute:
+      if (!interaction.guild.members.me!.permissions.has(PermissionFlagsBits.MuteMembers)) return;
+      break;
+  }
+
   const eDuration = +escalation.duration;
   const eExpires = eDuration ? date + eDuration : null;
   const eExpiresStr = Math.floor(Number(eExpires) / 1000);

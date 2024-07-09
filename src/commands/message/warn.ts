@@ -1,4 +1,4 @@
-import { EmbedBuilder, Colors, Message } from 'discord.js';
+import { EmbedBuilder, Colors, Message, PermissionFlagsBits } from 'discord.js';
 import Command, { properties } from '../../lib/structs/Command';
 import ms from 'ms';
 import { adequateHierarchy, getMember, parseDuration } from '../../lib/util/functions';
@@ -116,6 +116,19 @@ class WarnCommand extends Command {
     );
 
     if (escalation.amount === 0) return false;
+
+    if (!adequateHierarchy(message.guild.members.me!, member)) return;
+    switch (escalation.punishment) {
+      case InfractionType.Ban:
+        if (!message.guild.members.me!.permissions.has(PermissionFlagsBits.BanMembers)) return;
+        break;
+      case InfractionType.Kick:
+        if (!message.guild.members.me!.permissions.has(PermissionFlagsBits.KickMembers)) return;
+        break;
+      case InfractionType.Mute:
+        if (!message.guild.members.me!.permissions.has(PermissionFlagsBits.MuteMembers)) return;
+        break;
+    }
 
     const eDuration = +escalation.duration;
     const eExpires = eDuration ? date + eDuration : null;
