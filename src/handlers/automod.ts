@@ -40,7 +40,7 @@ export default async function (message: Message<true>) {
   if (
     malicious.toggle &&
     !malicious.immuneChannels.includes(message.channelId) &&
-    !message.member!.roles.cache.some(role => malicious.immuneRoles.includes(role.id))
+    !malicious.immuneRoles.some(roleId => message.member!.roles.cache.has(roleId))
   ) {
     if (domainReg.test(message.content)) {
       const req = await fetch('https://anti-fish.bitflow.dev/check', {
@@ -72,7 +72,7 @@ export default async function (message: Message<true>) {
   if (
     spam.toggle &&
     !spam.immuneChannels.includes(message.channelId) &&
-    !message.member!.roles.cache.some(role => spam.immuneRoles.includes(role.id))
+    !spam.immuneRoles.some(roleId => message.member!.roles.cache.has(roleId))
   ) {
     const key = `${message.author.id}.${message.guildId}`;
     const userSpam = spamTrack.get(key)?.concat([Date.now()]) ?? [Date.now()];
