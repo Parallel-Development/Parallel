@@ -24,13 +24,14 @@ class UserinfoCommand extends Command {
 
     const embed = new EmbedBuilder()
       .setAuthor({
-        name: user instanceof GuildMember ? user.user.username : user.username,
+        name:
+          user instanceof GuildMember ? user.user.globalName ?? user.user.username : user.globalName ?? user.username,
         iconURL: user.displayAvatarURL()
       })
       .setColor(mainColor)
       .setThumbnail(user.displayAvatarURL())
       .setDescription(
-        `**User ID:** ${user.id}\n**Created:** <t:${createdStr}> (<t:${createdStr}:R>)${
+        `**Username:** ${user instanceof GuildMember ? user.user.username : user.username}\n**User ID:** ${user.id}\n**Created:** <t:${createdStr}> (<t:${createdStr}:R>)${
           joinedStr ? `\n**Joined:** <t:${joinedStr}> (<t:${joinedStr}:R>)` : ''
         }\n**Bot:** ${(user instanceof GuildMember ? user.user.bot : user.bot) ? 'Yes' : 'No'}`
       );

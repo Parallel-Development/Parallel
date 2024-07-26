@@ -22,11 +22,11 @@ class UserinfoCommand extends Command {
     const joinedStr = member ? Math.floor(member.joinedTimestamp! / 1000) : null;
 
     const embed = new EmbedBuilder()
-      .setAuthor({ name: user.username, iconURL: user.displayAvatarURL() })
+      .setAuthor({ name: user.globalName ?? user.username, iconURL: user.displayAvatarURL() })
       .setColor(mainColor)
       .setThumbnail(user.displayAvatarURL())
       .setDescription(
-        `**User ID:** ${user.id}\n**Created:** <t:${createdStr}> (<t:${createdStr}:R>)${
+        `**Username:** ${user.username}\n**User ID:** ${user.id}\n**Created:** <t:${createdStr}> (<t:${createdStr}:R>)${
           joinedStr ? `\n**Joined:** <t:${joinedStr}> (<t:${joinedStr}:R>)` : ''
         }\n**Bot:** ${user.bot ? 'Yes' : 'No'}`
       );
