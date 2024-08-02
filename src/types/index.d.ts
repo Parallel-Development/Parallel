@@ -5,20 +5,6 @@ export type AppealResponse = {
   response: string;
 };
 
-export type AutoModSpamTrigger = {
-  amount: number;
-  within: number;
-};
-
-export type EscalationType = 'Manual' | 'AutoMod';
-
-export type Escalation = {
-  amount: number;
-  within: `${number}`;
-  punishment: InfractionType;
-  duration: `${number}`;
-};
-
 type AutoModConfigIntegrated = {
   toggle: boolean;
   punishment: InfractionType | null;
@@ -44,6 +30,29 @@ export type AutoModConfig<I extends 'integrated' | 'raw' = null> = I extends 'in
         duration: `${number}`;
       };
 
+export type AutoModSpamTrigger = {
+  amount: number;
+  within: number;
+};
+
+export type CommandProperties<M extends 'slash' | 'message'> = M extends 'message'
+  ? MessageCommandProperties
+  : {
+      clientPermissions?: bigint | bigint[];
+      allowDM?: boolean;
+      guildResolve?: boolean;
+      devOnly?: boolean;
+    };
+
+export type EscalationType = 'Manual' | 'AutoMod';
+
+export type Escalation = {
+  amount: number;
+  within: `${number}`;
+  punishment: InfractionType;
+  duration: `${number}`;
+};
+
 type MessageCommandProperties = {
   name: string;
   description: string;
@@ -55,12 +64,3 @@ type MessageCommandProperties = {
   slashOnly?: boolean;
   devOnly?: boolean;
 };
-
-export type CommandProperties<M extends 'slash' | 'message'> = M extends 'message'
-  ? MessageCommandProperties
-  : {
-      clientPermissions?: bigint | bigint[];
-      allowDM?: boolean;
-      guildResolve?: boolean;
-      devOnly?: boolean;
-    };

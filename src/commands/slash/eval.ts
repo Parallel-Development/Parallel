@@ -76,8 +76,7 @@ class EvalCommand extends Command {
     _ = output;
     const type = typeof output;
     output = typeof output === 'string' ? output : util.inspect(output, { depth });
-    const unit =
-      timeTaken < 1 ? `${Math.round(timeTaken / 1e-2)} microseconds` : ms(Math.round(timeTaken), { long: true });
+    const unit = timeTaken < 1 ? `${Math.round(timeTaken / 1e-2)} μs` : ms(Math.round(timeTaken), { long: true });
 
     const embed = new EmbedBuilder()
       .setColor(error ? Colors.Red : Colors.Green)

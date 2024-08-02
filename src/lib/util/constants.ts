@@ -8,15 +8,6 @@ export const yesButton = new ButtonBuilder().setLabel('Yes').setStyle(ButtonStyl
 export const noButton = new ButtonBuilder().setLabel('No').setStyle(ButtonStyle.Danger).setCustomId('?no');
 export const yesNoRow = new ActionRowBuilder<ButtonBuilder>().addComponents(yesButton, noButton);
 
-const backButton = new ButtonBuilder()
-  .setLabel('<')
-  .setStyle(ButtonStyle.Secondary)
-  .setCustomId(createComplexCustomId('infractions', 'back', null));
-const forwardButton = new ButtonBuilder()
-  .setLabel('>')
-  .setStyle(ButtonStyle.Secondary)
-  .setCustomId(createComplexCustomId('infractions', 'back', null));
-
 export const mainColor = Colors.Blurple;
 export const commonChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789';
 export const domainReg = /(?:[A-z0-9](?:[A-z0-9-]{0,61}[A-z0-9])?\.)+[A-z0-9][A-z0-9-]{0,61}[A-z0-9]/;
@@ -91,4 +82,11 @@ export enum AutoModLocations {
   MaliciousLinks = 2,
   Links = 3,
   Invites = 4
+}
+
+export enum NoChannelPermissionError {
+  Server, // No permission to use application commands in the server
+  Channel, // No permission to use application commands in the channel
+  AllCommands, // No permission to use Parallel's commands in the channel
+  OneCommand // No permission to use a single command in the channel
 }

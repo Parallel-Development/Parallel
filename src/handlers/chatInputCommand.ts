@@ -9,7 +9,6 @@ import {
 import { InfractionType } from '@prisma/client';
 import client from '../client';
 import customSlashCommand from './customSlashCommand';
-import { AutoModConfig } from '../types';
 import { commandsPermissionCache } from '../lib/util/functions';
 
 // imported by messageCommand

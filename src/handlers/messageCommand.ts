@@ -1,9 +1,10 @@
 import { Message, EmbedBuilder, Colors } from 'discord.js';
 
 import { checkBlacklisted, confirmGuild, unresolvedGuilds } from './chatInputCommand';
-import { hasSlashCommandPermission } from '../lib/util/functions';
+import { hasChannelPermission, hasSlashCommandPermission } from '../lib/util/functions';
 import client from '../client';
 import customMessageCommand from './customMessageCommand';
+import { NoChannelPermissionError } from '../lib/util/constants';
 
 export default async function (message: Message) {
   if (message.author.bot || !message.content) return;
@@ -65,15 +66,43 @@ export default async function (message: Message) {
       );
   }
 
-  // Permission check
-  if (message.inGuild() && !(await hasSlashCommandPermission(message.member!, commandName))) {
-    if (!respondIfNoPermission) return;
+  // Permission  & channel check
+  if (message.inGuild()) {
+    if (!(await hasSlashCommandPermission(message.member!, commandName))) {
+      if (!respondIfNoPermission) return;
 
-    const embed = new EmbedBuilder()
-      .setColor(Colors.Red)
-      .setDescription('You do not have permission to use this command.');
+      const embed = new EmbedBuilder()
+        .setColor(Colors.Red)
+        .setDescription('You do not have permission to use this command.');
 
-    return message.reply({ embeds: [embed] });
+      return message.reply({ embeds: [embed] });
+    }
+
+    const channelPermError = await hasChannelPermission(message.member!, message.channel, commandName);
+    if (channelPermError !== true) {
+      if (!respondIfNoPermission) return;
+
+      let description = '';
+
+      switch (channelPermError) {
+        case NoChannelPermissionError.Server:
+          description = 'You do not have permission to run commands in this server.';
+          break;
+        case NoChannelPermissionError.Channel:
+          description = 'You do not have permission to run commands in this channel.';
+          break;
+        case NoChannelPermissionError.AllCommands:
+          description = 'You do not have permission to run Parallel commands in this channel.';
+          break;
+        case NoChannelPermissionError.OneCommand:
+          description = 'You do not have permission to run that command in this channel.';
+          break;
+      }
+
+      const embed = new EmbedBuilder().setColor(Colors.Red).setDescription(description);
+
+      return message.reply({ embeds: [embed] });
+    }
   }
 
   if (command.guildResolve) {

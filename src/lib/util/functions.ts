@@ -1,14 +1,15 @@
 import {
   type Guild,
   type GuildMember,
-  ApplicationCommandPermissionType,
   Collection,
   ApplicationCommandPermissions,
   PermissionFlagsBits,
-  MessageCreateOptions
+  MessageCreateOptions,
+  GuildTextBasedChannel
 } from 'discord.js';
 import client from '../../client';
 import ms from 'ms';
+import { NoChannelPermissionError } from './constants';
 export const commandsPermissionCache = new Map<string, Collection<string, readonly ApplicationCommandPermissions[]>>();
 
 export function adequateHierarchy(member1: GuildMember, member2: GuildMember) {
@@ -78,61 +79,95 @@ export async function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export async function hasSlashCommandPermission(
-  member: GuildMember,
-  commandName: string,
-  type: 'global' | 'guild' = 'global'
-) {
+export async function getCommand(guild: Guild, commandName: string) {
+  const isGlobal = client.commands.slash.has(commandName);
+
+  const cmdId = isGlobal
+    ? client.commands.slash.get(commandName)?.id!
+    : (
+        await client.db.shortcut.findUnique({
+          where: { guildId_name: { guildId: guild.id, name: commandName } }
+        })
+      )?.id!;
+
+  const command = isGlobal
+    ? await client.application!.commands.fetch(cmdId, { guildId: guild.id }).catch(() => null)
+    : await guild.commands.fetch(cmdId).catch(() => null);
+
+  return command;
+}
+
+export async function hasSlashCommandPermission(member: GuildMember, commandName: string) {
   if (member.permissions.has(PermissionFlagsBits.Administrator)) return true;
 
-  const cmdId = type === 'global' ? client.commands.slash.get(commandName)?.id! : '';
-  const shortcutId =
-    type === 'guild'
-      ? (
-          await client.db.shortcut.findUnique({
-            where: { guildId_name: { guildId: member.guild.id, name: commandName } }
-          })
-        )?.id!
-      : '';
-
-  const command =
-    type === 'global'
-      ? await client.application!.commands.fetch(cmdId, { guildId: member.guild.id })
-      : await member.guild.commands.fetch(shortcutId);
-
+  const command = await getCommand(member.guild, commandName);
   if (!command) return true;
 
-  const permissions = commandsPermissionCache.get(member.guild.id)?.get(command.id);
   const hasDefault = member.permissions?.has(command.defaultMemberPermissions ?? 0n);
-  const allowed = permissions?.filter(
-    permission =>
-      permission.permission === true && (permission.id === member.id || member.roles.cache.has(permission.id))
+
+  const botPermissions = commandsPermissionCache.get(member.guild.id)!;
+
+  const globalPerms = botPermissions.get(client.user!.id);
+  const cmdPerms = botPermissions.get(command.id);
+
+  const allowed = cmdPerms?.some(
+    perm => perm.permission === true && (perm.id === member.id || member.roles.cache.has(perm.id))
   );
-  const denied = permissions?.filter(
-    permission =>
-      permission.permission === false && (permission.id === member.id || member.roles.cache.has(permission.id))
-  );
+  const denied = cmdPerms?.some(perm => perm.permission === false && member.roles.cache.has(perm.id));
+  const userDenied = cmdPerms?.some(perm => perm.permission === false && perm.id === member.id);
 
   // if the user is explicitly denied
-  if (denied?.some(deny => deny.type === ApplicationCommandPermissionType.User)) return false;
+  if (userDenied) return false;
 
-  // If the user doesn't have permission to run the command by default and there are no allow overrides
-  if (!allowed?.length && !hasDefault) return false;
+  // if they have a role that's denied and no allowed role (or user)
+  if (denied && !allowed) return false;
 
-  // if the user has the default permission without an allowed override, but there is a denied override,
-  // ensure that one of the roles they have that gives them the permission is not on the deny list.
-  if (
-    !allowed?.length &&
-    denied?.length &&
-    (!command.defaultMemberPermissions?.bitfield ||
-      denied.some(role => role.id === member.guild.id) ||
-      !member.roles.cache
-        .filter(r => r.id !== member.guild.id)
-        .some(
-          r => r.permissions.has(command.defaultMemberPermissions ?? 0n) && !denied?.some(role => role.id === r.id)
-        ))
-  )
-    return false;
+  // If the user doesn't have permission to run the command by default OR they are denied in global perms
+  // ... and there are no allow overrides
+  if (!allowed) {
+    if (!hasDefault) return false;
+
+    if (globalPerms) {
+      const allowed = globalPerms?.some(
+        perm => perm.permission === true && (perm.id === member.id || member.roles.cache.has(perm.id))
+      );
+      const denied = globalPerms?.some(perm => perm.permission === false && member.roles.cache.has(perm.id));
+      const userDenied = globalPerms?.some(perm => perm.permission === false && perm.id === member.id);
+
+      if (userDenied) return false;
+      if (denied && !allowed) return false;
+    }
+  }
+
+  return true;
+}
+
+// return true if they have permission, otherwise return why they can't run that command in the channel.
+export async function hasChannelPermission(member: GuildMember, channel: GuildTextBasedChannel, commandName: string) {
+  if (member.permissions.has(PermissionFlagsBits.Administrator)) return true;
+
+  const command = await getCommand(member.guild, commandName);
+  if (!command) return true;
+
+  if (!channel.permissionsFor(member).has(PermissionFlagsBits.UseApplicationCommands)) {
+    if (!member.permissions.has(PermissionFlagsBits.UseApplicationCommands)) return NoChannelPermissionError.Server;
+    else return NoChannelPermissionError.Channel;
+  }
+
+  const botPermissions = commandsPermissionCache.get(member.guild.id)!;
+
+  // I have no idea either
+  const allChannelsId = (BigInt(member.guild.id) - 1n).toString();
+
+  const globalPerms =
+    botPermissions.get(client.user!.id)?.find(perm => perm.id === channel.id) ??
+    botPermissions.get(client.user!.id)?.find(perm => perm.id === allChannelsId);
+
+  const cmdPerms = botPermissions.get(command.id)?.find(perm => perm.id === channel.id);
+
+  if (cmdPerms?.permission === false) return NoChannelPermissionError.OneCommand;
+
+  if (globalPerms?.permission === false && cmdPerms?.permission !== true) return NoChannelPermissionError.AllCommands;
 
   return true;
 }

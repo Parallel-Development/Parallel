@@ -1,7 +1,13 @@
 import { InfractionType as IT, InfractionType } from '@prisma/client';
-import { EmbedBuilder, GuildMember, Message, PermissionFlagsBits, User } from 'discord.js';
-import { infractionColors, pastTenseInfractionTypes } from '../lib/util/constants';
-import { adequateHierarchy, getMember, getUser, hasSlashCommandPermission } from '../lib/util/functions';
+import { Colors, EmbedBuilder, GuildMember, Message, PermissionFlagsBits, User } from 'discord.js';
+import { infractionColors, NoChannelPermissionError, pastTenseInfractionTypes } from '../lib/util/constants';
+import {
+  adequateHierarchy,
+  getMember,
+  getUser,
+  hasChannelPermission,
+  hasSlashCommandPermission
+} from '../lib/util/functions';
 import { Escalation } from '../types';
 import ms from 'ms';
 import client from '../client';
@@ -23,9 +29,35 @@ export default async function (
 
   if (!command) return;
 
-  if (!(await hasSlashCommandPermission(message.member, commandName, 'guild')))
-    if (respondIfNoPermission) throw 'You do not have permission to use this command.';
-    else return;
+  // Permission  & channel check
+  if (!(await hasSlashCommandPermission(message.member!, commandName))) {
+    if (!respondIfNoPermission) return;
+
+    throw 'You do not have permission to use this command.';
+  }
+
+  const channelPermError = await hasChannelPermission(message.member!, message.channel, commandName);
+  if (channelPermError !== true) {
+    if (!respondIfNoPermission) return;
+
+    let description = '';
+    switch (channelPermError) {
+      case NoChannelPermissionError.Server:
+        description = 'You do not have permission to run commands in this server.';
+        break;
+      case NoChannelPermissionError.Channel:
+        description = 'You do not have permission to run commands in this channel.';
+        break;
+      case NoChannelPermissionError.AllCommands:
+        description = 'You do not have permission to run Parallel commands in this channel.';
+        break;
+      case NoChannelPermissionError.OneCommand:
+        description = 'You do not have permission to run that command in this channel.';
+        break;
+    }
+
+    throw description;
+  }
 
   switch (command.punishment) {
     case InfractionType.Ban:
