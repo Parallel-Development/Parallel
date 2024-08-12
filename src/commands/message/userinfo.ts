@@ -17,23 +17,22 @@ class UserinfoCommand extends Command {
       args.length > 0 ? (await getMember(message.guild, args[0])) ?? (await getUser(args[0])) : message.member!;
     if (!user) throw 'Invalid user.';
 
-    const createdStr = Math.floor(
-      (user instanceof GuildMember ? user.user.createdTimestamp : user.createdTimestamp) / 1000
-    );
+    const userUser = user instanceof GuildMember ? user.user : user;
+
+    const createdStr = Math.floor(userUser.createdTimestamp / 1000);
     const joinedStr = user instanceof GuildMember ? Math.floor(user.joinedTimestamp! / 1000) : null;
 
     const embed = new EmbedBuilder()
       .setAuthor({
-        name:
-          user instanceof GuildMember ? user.user.globalName ?? user.user.username : user.globalName ?? user.username,
+        name: userUser.globalName ?? userUser.username,
         iconURL: user.displayAvatarURL()
       })
       .setColor(mainColor)
       .setThumbnail(user.displayAvatarURL())
       .setDescription(
-        `**Username:** ${user instanceof GuildMember ? user.user.username : user.username}\n**User ID:** ${user.id}\n**Created:** <t:${createdStr}> (<t:${createdStr}:R>)${
+        `**Username:** ${userUser.username}${userUser.discriminator !== '0' ? `#${userUser.discriminator}` : ''}\n**User ID:** ${user.id}\n**Created:** <t:${createdStr}> (<t:${createdStr}:R>)${
           joinedStr ? `\n**Joined:** <t:${joinedStr}> (<t:${joinedStr}:R>)` : ''
-        }\n**Bot:** ${(user instanceof GuildMember ? user.user.bot : user.bot) ? 'Yes' : 'No'}`
+        }\n**Bot?** ${userUser.bot ? `Yes. [Click to invite](https://discord.com/oauth2/authorize?client_id=${user.id}&permissions=2048&integration_type=0&scope=bot+applications.commands).` : 'No'}`
       );
 
     return message.reply({ embeds: [embed] });

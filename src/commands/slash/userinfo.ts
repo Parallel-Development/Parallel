@@ -26,9 +26,9 @@ class UserinfoCommand extends Command {
       .setColor(mainColor)
       .setThumbnail(user.displayAvatarURL())
       .setDescription(
-        `**Username:** ${user.username}\n**User ID:** ${user.id}\n**Created:** <t:${createdStr}> (<t:${createdStr}:R>)${
+        `**Username:** ${user.username}${user.discriminator !== '0' ? `#${user.discriminator}` : ''}\n**User ID:** ${user.id}\n**Created:** <t:${createdStr}> (<t:${createdStr}:R>)${
           joinedStr ? `\n**Joined:** <t:${joinedStr}> (<t:${joinedStr}:R>)` : ''
-        }\n**Bot:** ${user.bot ? 'Yes' : 'No'}`
+        }\n**Bot?** ${user.bot ? `Yes. [Click to invite](https://discord.com/oauth2/authorize?client_id=${user.id}&permissions=2048&integration_type=0&scope=bot+applications.commands).` : 'No'}`
       );
 
     return interaction.reply({ embeds: [embed] });
