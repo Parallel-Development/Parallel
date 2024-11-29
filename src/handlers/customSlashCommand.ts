@@ -91,7 +91,7 @@ export default async function (interaction: ChatInputCommandInteraction<'cached'
     }
   });
 
-  if (expires) {
+  if (expires && punishment !== IT.Warn) {
     const data = {
       guildId: interaction.guildId,
       userId: target.id,
@@ -99,14 +99,13 @@ export default async function (interaction: ChatInputCommandInteraction<'cached'
       expires
     };
 
-    if (punishment === IT.Mute)
-      await client.db.task.upsert({
-        where: {
-          userId_guildId_type: { userId: target.id, guildId: interaction.guildId, type: punishment }
-        },
-        update: data,
-        create: data
-      });
+    await client.db.task.upsert({
+      where: {
+        userId_guildId_type: { userId: target.id, guildId: interaction.guildId, type: punishment }
+      },
+      update: data,
+      create: data
+    });
   }
 
   const { infoBan, infoKick, infoMute, infoWarn, infractionModeratorPublic } = infraction.guild;

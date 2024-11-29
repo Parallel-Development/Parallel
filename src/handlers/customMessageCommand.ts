@@ -131,7 +131,7 @@ export default async function (
     }
   });
 
-  if (expires) {
+  if (expires && punishment !== IT.Warn) {
     const data = {
       guildId: message.guildId,
       userId: target.id,
@@ -139,14 +139,13 @@ export default async function (
       expires
     };
 
-    if (punishment === IT.Mute)
-      await client.db.task.upsert({
-        where: {
-          userId_guildId_type: { userId: target.id, guildId: message.guildId, type: punishment }
-        },
-        update: data,
-        create: data
-      });
+    await client.db.task.upsert({
+      where: {
+        userId_guildId_type: { userId: target.id, guildId: message.guildId, type: punishment }
+      },
+      update: data,
+      create: data
+    });
   }
 
   const { infoBan, infoKick, infoMute, infoWarn, infractionModeratorPublic } = infraction.guild;
