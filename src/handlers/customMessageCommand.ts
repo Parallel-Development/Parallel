@@ -131,21 +131,31 @@ export default async function (
     }
   });
 
-  if (expires && punishment !== IT.Warn) {
-    const data = {
-      guildId: message.guildId,
-      userId: target.id,
-      type: punishment,
-      expires
-    };
+  if (punishment !== IT.Warn) {
+    if (expires) {
+      const data = {
+        guildId: message.guildId,
+        userId: target.id,
+        type: punishment,
+        expires
+      };
 
-    await client.db.task.upsert({
-      where: {
-        userId_guildId_type: { userId: target.id, guildId: message.guildId, type: punishment }
-      },
-      update: data,
-      create: data
-    });
+      await client.db.task.upsert({
+        where: {
+          userId_guildId_type: { userId: target.id, guildId: message.guildId, type: punishment }
+        },
+        update: data,
+        create: data
+      });
+    } else {
+      await client.db.task
+        .delete({
+          where: {
+            userId_guildId_type: { userId: target.id, guildId: message.guildId, type: punishment }
+          }
+        })
+        .catch(() => {});
+    }
   }
 
   const { infoBan, infoKick, infoMute, infoWarn, infractionModeratorPublic } = infraction.guild;
@@ -304,6 +314,14 @@ export default async function (
       update: data,
       create: data
     });
+  } else if (escalation.punishment === IT.Ban) {
+    await client.db.task
+      .delete({
+        where: {
+          userId_guildId_type: { userId: target.id, guildId: message.guildId, type: IT.Ban }
+        }
+      })
+      .catch(() => {});
   }
 
   const eDm = new EmbedBuilder()

@@ -167,6 +167,14 @@ class WarnCommand extends Command {
         update: data,
         create: data
       });
+    } else if (escalation.punishment === InfractionType.Ban) {
+      await this.client.db.task
+        .delete({
+          where: {
+            userId_guildId_type: { userId: member.id, guildId: message.guildId, type: InfractionType.Ban }
+          }
+        })
+        .catch(() => {});
     }
 
     const eDm = new EmbedBuilder()
